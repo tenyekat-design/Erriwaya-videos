@@ -714,17 +714,23 @@
   // ---------- intro ----------
   const NKC = [-15.98, 18.09];
   const INTRO_CITIES = [
+    { name: 'سينلوي', lon: -16.49, lat: 16.03, side: 'left' },
+    { name: 'داكار', lon: -17.44, lat: 14.69, side: 'down' },
     { name: 'نواذيبو', lon: -17.03, lat: 20.94, side: 'left' },
+    { name: 'الداخلة', lon: -15.93, lat: 23.70, side: 'left' },
+    { name: 'العيون', lon: -13.20, lat: 27.15, side: 'down' },
+    { name: 'لاس بالماس', lon: -15.41, lat: 28.12, side: 'up' },
     { name: 'الرباط', lon: -6.84, lat: 34.02, side: 'left' },
     { name: 'الجزائر', lon: 3.06, lat: 36.75, side: 'up' },
     { name: 'تونس', lon: 10.18, lat: 36.81, side: 'right' },
     { name: 'طرابلس', lon: 13.19, lat: 32.89, side: 'down' },
-    { name: 'داكار', lon: -17.44, lat: 14.69, side: 'left' },
     { name: 'أبيدجان', lon: -4.03, lat: 5.32, side: 'down' },
-    { name: 'لاغوس', lon: 3.39, lat: 6.45, side: 'down' },
+    { name: 'تندوف', lon: -8.15, lat: 27.67, side: 'right', at: 1.25 },
+    { name: 'تمبكتو', lon: -3.0, lat: 16.77, side: 'up', at: 1.5 },
     { name: 'باماكو', lon: -8.0, lat: 12.64, side: 'down', at: 1.75 },
-    { name: 'نيامي', lon: 2.11, lat: 13.51, side: 'right', at: 2.15 },
-    { name: 'تمبكتو', lon: -3.0, lat: 16.77, side: 'up', at: 1.45 },
+    { name: 'كيدال', lon: 1.41, lat: 18.44, side: 'right', at: 1.95 },
+    { name: 'نيامي', lon: 2.11, lat: 13.51, side: 'right', at: 2.2 },
+    { name: 'تمنراست', lon: 5.52, lat: 22.79, side: 'right', at: 2.45 },
   ];
   const coastProg = t => eio(prog(t, 0.35, 3.3));
   function prepCoast(pts) {
@@ -874,7 +880,7 @@
         ctx.restore();
       }
       // Nouakchott hub
-      const hubGlow = 40 + arrivals * 9 + accel * 40;
+      const hubGlow = 40 + Math.min(arrivals, 12) * 9 + accel * 40;
       glowDot(hub[0], hub[1], hubGlow, '16,185,129', 0.85);
       ctx.fillStyle = C.navy;
       ctx.beginPath(); ctx.arc(hub[0], hub[1], 10, 0, Math.PI * 2); ctx.fill();
