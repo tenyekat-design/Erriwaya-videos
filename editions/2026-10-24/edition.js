@@ -1,5 +1,5 @@
-// Content of the 24 Oct 2026 brief. All times are in seconds of the ORIGINAL voice-over
-// (assets/audio/voiceover.mp3); the renderer maps them onto the video timeline.
+// Edition of 24 Oct 2026. All times are in seconds of the ORIGINAL voice-over (voiceover.mp3 in this
+// folder); the template maps them onto the video timeline. Images are files in ./img.
 window.TIMELINE = {
   date: 'السبت 24 أكتوبر 2026',
   title: 'الموجز الإخباري',
@@ -13,41 +13,41 @@ window.TIMELINE = {
   // focus = [x, y] in 0..1 of the image, z = zoom over a "cover" fit.
   cards: [
     // opening teaser
-    { img: 'mr-dz-signing', moves: [{ t: 9.40, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.12] }] },
-    { img: 'unsc', moves: [{ t: 11.20, a: [0.5, 0.5, 1.0], b: [0.45, 0.5, 1.12] }] },
-    { img: 'dz-parliament', moves: [{ t: 13.00, a: [0.5, 0.5, 1.05], b: [0.6, 0.5, 1.15] }] },
-    { img: 'ma-parliament', moves: [{ t: 14.80, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.12] }] },
-    { img: 'tn-olives', moves: [{ t: 16.60, a: [0.55, 0.5, 1.0], b: [0.55, 0.45, 1.12] }] },
-    { img: 'sn-fr', moves: [{ t: 18.40, a: [0.5, 0.5, 1.0], b: [0.5, 0.48, 1.1] }] },
+    { img: 'mr-dz-signing.jpg', moves: [{ t: 9.40, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.12] }] },
+    { img: 'unsc.jpg', moves: [{ t: 11.20, a: [0.5, 0.5, 1.0], b: [0.45, 0.5, 1.12] }] },
+    { img: 'dz-parliament.webp', moves: [{ t: 13.00, a: [0.5, 0.5, 1.05], b: [0.6, 0.5, 1.15] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 14.80, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.12] }] },
+    { img: 'tn-olives.jpg', moves: [{ t: 16.60, a: [0.55, 0.5, 1.0], b: [0.55, 0.45, 1.12] }] },
+    { img: 'sn-fr.png', moves: [{ t: 18.40, a: [0.5, 0.5, 1.0], b: [0.5, 0.48, 1.1] }] },
     // Mauritania
-    { img: 'mr-salute', moves: [{ t: 20.20, a: [0.32, 0.5, 1.05], b: [0.24, 0.5, 1.22] }] },
-    { img: 'mr-dz-signing', moves: [{ t: 25.12, a: [0.5, 0.42, 1.0], b: [0.5, 0.4, 1.16] }] },
-    { img: 'mr-salute', moves: [{ t: 32.64, a: [0.78, 0.55, 1.28], b: [0.6, 0.5, 1.08] }] },
+    { img: 'mr-salute.jpg', moves: [{ t: 20.20, a: [0.32, 0.5, 1.05], b: [0.24, 0.5, 1.22] }] },
+    { img: 'mr-dz-signing.jpg', moves: [{ t: 25.12, a: [0.5, 0.42, 1.0], b: [0.5, 0.4, 1.16] }] },
+    { img: 'mr-salute.jpg', moves: [{ t: 32.64, a: [0.78, 0.55, 1.28], b: [0.6, 0.5, 1.08] }] },
     // Western Sahara
-    { img: 'unsc', moves: [{ t: 40.86, a: [0.5, 0.5, 1.0], b: [0.5, 0.52, 1.14] }] },
-    { img: 'minurso', moves: [{ t: 47.82, a: [0.28, 0.5, 1.18], b: [0.5, 0.48, 1.04] },
+    { img: 'unsc.jpg', moves: [{ t: 40.86, a: [0.5, 0.5, 1.0], b: [0.5, 0.52, 1.14] }] },
+    { img: 'minurso.png', moves: [{ t: 47.82, a: [0.28, 0.5, 1.18], b: [0.5, 0.48, 1.04] },
                               { t: 58.70, a: [0.68, 0.45, 1.25], b: [0.74, 0.45, 1.12] }] },
-    { img: 'unsc', moves: [{ t: 64.52, a: [0.32, 0.6, 1.28], b: [0.45, 0.55, 1.1] }] },
+    { img: 'unsc.jpg', moves: [{ t: 64.52, a: [0.32, 0.6, 1.28], b: [0.45, 0.55, 1.1] }] },
     // Algeria
-    { img: 'dz-parliament', moves: [{ t: 71.38, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.14] }] },
-    { img: 'dz-speaker', moves: [{ t: 76.68, a: [0.5, 0.42, 1.0], b: [0.5, 0.4, 1.12] }] },
-    { img: 'dz-parliament', moves: [{ t: 83.64, a: [0.76, 0.5, 1.4], b: [0.7, 0.5, 1.2] }] },
+    { img: 'dz-parliament.webp', moves: [{ t: 71.38, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.14] }] },
+    { img: 'dz-speaker.jpg', moves: [{ t: 76.68, a: [0.5, 0.42, 1.0], b: [0.5, 0.4, 1.12] }] },
+    { img: 'dz-parliament.webp', moves: [{ t: 83.64, a: [0.76, 0.5, 1.4], b: [0.7, 0.5, 1.2] }] },
     // Morocco
-    { img: 'ma-parliament', moves: [{ t: 91.86, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] }] },
-    { img: 'ma-finance', moves: [{ t: 97.32, a: [0.42, 0.5, 1.04], b: [0.48, 0.48, 1.16] }] },
-    { img: 'ma-parliament', moves: [{ t: 105.30, a: [0.25, 0.62, 1.35], b: [0.35, 0.58, 1.15] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 91.86, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] }] },
+    { img: 'ma-finance.png', moves: [{ t: 97.32, a: [0.42, 0.5, 1.04], b: [0.48, 0.48, 1.16] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 105.30, a: [0.25, 0.62, 1.35], b: [0.35, 0.58, 1.15] }] },
     // Tunisia
-    { img: 'tn-cabinet', moves: [{ t: 110.10, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.15] }] },
-    { img: 'tn-olives', moves: [{ t: 115.60, a: [0.55, 0.45, 1.0], b: [0.52, 0.5, 1.12] },
+    { img: 'tn-cabinet.jpg', moves: [{ t: 110.10, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.15] }] },
+    { img: 'tn-olives.jpg', moves: [{ t: 115.60, a: [0.55, 0.45, 1.0], b: [0.52, 0.5, 1.12] },
                                 { t: 122.58, a: [0.5, 0.72, 1.35], b: [0.5, 0.66, 1.18] }] },
     // Africa – France
-    { img: 'sn-fr', moves: [{ t: 129.90, a: [0.5, 0.5, 1.0], b: [0.5, 0.48, 1.08] },
+    { img: 'sn-fr.png', moves: [{ t: 129.90, a: [0.5, 0.5, 1.0], b: [0.5, 0.48, 1.08] },
                             { t: 137.22, a: [0.78, 0.42, 1.45], b: [0.74, 0.42, 1.3] },
                             { t: 144.84, a: [0.2, 0.42, 1.45], b: [0.24, 0.42, 1.3] }] },
     // wrap-up
-    { img: 'tn-cabinet', moves: [{ t: 149.64, a: [0.5, 0.45, 1.05], b: [0.5, 0.45, 1.15] }] },
-    { img: 'ma-parliament', moves: [{ t: 151.30, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'mr-salute', moves: [{ t: 152.90, a: [0.4, 0.5, 1.05], b: [0.4, 0.5, 1.15] }] },
+    { img: 'tn-cabinet.jpg', moves: [{ t: 149.64, a: [0.5, 0.45, 1.05], b: [0.5, 0.45, 1.15] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 151.30, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
+    { img: 'mr-salute.jpg', moves: [{ t: 152.90, a: [0.4, 0.5, 1.05], b: [0.4, 0.5, 1.15] }] },
   ],
 
   // Kicker + headline blocks under the progress bar.

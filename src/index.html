@@ -13,7 +13,13 @@
 <canvas id="c"></canvas>
 <script src="map-data.js"></script>
 <script src="icons.js"></script>
-<script src="timeline.js"></script>
-<script src="app.js"></script>
+<script>
+  // ?edition=YYYY-MM-DD selects the folder in editions/ (content, images, voice-over)
+  window.EDITION_DIR = '../editions/' + (new URLSearchParams(location.search).get('edition') || '');
+  const edition = document.createElement('script');
+  edition.src = window.EDITION_DIR + '/edition.js';
+  edition.onload = () => { const app = document.createElement('script'); app.src = 'app.js'; document.body.appendChild(app); };
+  document.body.appendChild(edition);
+</script>
 </body>
 </html>

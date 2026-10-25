@@ -1,31 +1,38 @@
-# Erriwaya videos
+# قالب «الموجز الإخباري» – الرواية
 
-Renderer for the **الموجز الإخباري** news brief by الرواية (ERRIWAYA), 1080×1350.
+القالب المعتمد لموجز الرواية: فيديو 1080×1350 بخلفية بيضاء وخط AL-Quds.
 
-Layout: cinematic image carousel at the top, a player-style progress bar in the middle, a headline block, and a
-pixel-grid map of the region at the bottom that follows each story (accurate borders from Natural Earth 50m).
-It opens with an intro (a glowing coastline from Nouakchott, light threads from the cities, then the logo with
-"الموجز الإخباري") and closes on the logo with the social handles.
+- **الجينيريك (7 ثوانٍ):** خط ساحلي مشع ينطلق من نواكشوط، وتظهر المدن وتخرج منها خيوط مضيئة نحو نواكشوط، ثم ينصهر كل ذلك في الشعار مع «الموجز الإخباري». الجينيريك مصحوب بموسيقى أخبار أصلية.
+- **المتن:**
+  - في الأعلى بطاقات صور بحركة سينمائية.
+  - في الوسط شريط تقدم بأزرار المشغل، ثم اسم البلد والعنوان (سطران كحد أقصى).
+  - في الأسفل خريطة رقمية بالمربعات تتحرك إلى موقع كل خبر، مع الدبابيس والخطوط والأرقام.
+- **الخاتمة:** الشعار مع حسابات ERRIWAYA على فيسبوك وتيك توك ويوتيوب، وERRIWAYA.MR على إنستغرام.
 
+## ما هو ثابت وما يتغير في كل عدد
+
+| ثابت (القالب) | يتغير (العدد) |
+|---|---|
+| `src/app.js` التصميم والحركة والجينيريك والخاتمة | `editions/<التاريخ>/voiceover.mp3` التعليق الصوتي |
+| `assets/` الشعار، الخط، موسيقى الجينيريك | `editions/<التاريخ>/img/` صور الأخبار |
+| `src/map-data.js` بيانات الخريطة | `editions/<التاريخ>/edition.js` العناوين والتوقيتات والخريطة |
+
+## إعداد عدد جديد
+
+```bash
+node tools/new-edition.js 2026-10-25 "الأحد 25 أكتوبر 2026"
+# ضع التعليق الصوتي في editions/2026-10-25/voiceover.mp3 والصور في editions/2026-10-25/img/
+python3 tools/transcribe.py 2026-10-25        # النص المفرّغ + audioCut / audioEnd / outroAt
+# املأ editions/2026-10-25/edition.js (المثال الكامل: editions/2026-10-24)
+node tools/render.js --edition 2026-10-25 --stills 10,40,90   # صور للمراجعة في output/stills/
+node tools/render.js --edition 2026-10-25                     # output/erriwaya-brief-2026-10-25.mp4
 ```
-assets/        images, logo, font (AL-Quds), voice-over
-src/timeline.js  all content and timing (in voice-over seconds): cards, headlines, map camera, pins, lines, figures
-src/app.js       canvas renderer (renderFrame(t))
-src/map-data.js  generated pixel grid + borders (npm run build:map)
-tools/render.js  headless Chromium + ffmpeg
-tools/make-music.py  synthesizes the opening news theme -> assets/audio/intro-music.wav
-output/          final video
-```
 
-## Usage
+يُقتطع التعليق الصوتي تلقائياً عند `audioCut` (ما قبل «أهلا بكم»)، ويبدأ بعد الجينيريك.
 
-```
-npm install            # plus playwright (preinstalled in the cloud image)
-npm run build:map      # only if the map region changes
-python3 tools/make-music.py   # only if the opening theme changes (numpy + scipy)
-node tools/render.js --stills 12,40,95   # check frames -> output/stills/
-node tools/render.js                     # full video -> output/erriwaya-brief.mp4
-```
+## المتطلبات
 
-For a new edition: replace the voice-over and images, set `audioCut` (the start of "أهلا بكم"), then edit the
-`timeline.js` entries.
+- Node + Playwright (Chromium) و ffmpeg، ثم `npm install`.
+- للتفريغ الصوتي: `tools/setup-asr.sh` مرة واحدة (faster-whisper ونموذج Whisper small).
+- لإعادة توليد موسيقى الجينيريك: `python3 tools/make-music.py` (numpy + scipy).
+- لإعادة بناء الخريطة: `npm run build:map`، ولا تلزم إلا عند تغيير حدود المنطقة.

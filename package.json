@@ -1,10 +1,12 @@
 {
   "name": "erriwaya-videos",
   "private": true,
-  "description": "Erriwaya news brief video renderer (1080x1350)",
+  "description": "قالب الموجز الإخباري للرواية (1080x1350)",
   "scripts": {
+    "new": "node tools/new-edition.js",
+    "render": "node tools/render.js",
     "build:map": "node tools/build-map.js",
-    "render": "node tools/render.js"
+    "music": "python3 tools/make-music.py"
   },
   "devDependencies": {
     "d3-array": "^3.2.4",

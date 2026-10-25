@@ -1,7 +1,8 @@
 // Renders src/index.html frame by frame with headless Chromium and encodes it with ffmpeg.
-//   node tools/render.js                      full video -> output/erriwaya-brief.mp4
-//   node tools/render.js --stills 3,30,95     PNG stills -> output/stills/
-//   node tools/render.js --from 0 --to 10     partial render (no audio mix)
+//   node tools/render.js --edition 2026-10-24                 full video -> output/erriwaya-brief-2026-10-24.mp4
+//   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
+//   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
+// Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -14,8 +15,11 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, v, i, arr) =>
 }, []));
 const FPS = +(args.fps || 30);
 const WORKERS = +(args.workers || 4);
-const OUT = path.resolve(ROOT, args.out || 'output/erriwaya-brief.mp4');
-const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html');
+const EDITION = String(args.edition || fs.readdirSync(path.join(ROOT, 'editions')).filter(d => /^\d{4}-\d{2}-\d{2}/.test(d)).sort().pop());
+const EDIR = path.join(ROOT, 'editions', EDITION);
+if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition at ' + EDIR); process.exit(1); }
+const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION);
 
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1350 } });
@@ -59,9 +63,9 @@ async function renderRange(browser, f0, f1, file) {
 }
 
 function buildAudio(duration, file) {
-  const voice = path.join(ROOT, 'assets', 'audio', 'voiceover.mp3');
+  const voice = path.join(EDIR, 'voiceover.mp3');
   const music = path.join(ROOT, 'assets', 'audio', 'intro-music.wav');
-  const tl = fs.readFileSync(path.join(ROOT, 'src', 'timeline.js'), 'utf8');
+  const tl = fs.readFileSync(path.join(EDIR, 'edition.js'), 'utf8');
   const cut = parseFloat(tl.match(/audioCut:\s*([\d.]+)/)[1]);
   const intro = parseFloat(tl.match(/intro:\s*([\d.]+)/)[1]);
   const delay = Math.round(intro * 1000);
@@ -82,12 +86,12 @@ function buildAudio(duration, file) {
   await probe.close();
   const from = +(args.from || 0), to = Math.min(duration, +(args.to || duration));
   const F0 = Math.round(from * FPS), F1 = Math.round(to * FPS);
-  const tmp = path.join(ROOT, 'frames');
+  const tmp = path.join(ROOT, 'frames', EDITION);
   fs.mkdirSync(tmp, { recursive: true });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   const per = Math.ceil((F1 - F0) / WORKERS);
   const parts = [];
-  console.log(`rendering ${F1 - F0} frames (${(to - from).toFixed(2)}s) with ${WORKERS} workers`);
+  console.log(`edition ${EDITION}: rendering ${F1 - F0} frames (${(to - from).toFixed(2)}s) with ${WORKERS} workers`);
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
     const a = F0 + w * per, b = Math.min(F1, a + per);
     if (a >= b) return null;

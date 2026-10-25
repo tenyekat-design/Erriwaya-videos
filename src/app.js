@@ -1080,9 +1080,8 @@
   async function init() {
     await document.fonts.load(font(48));
     await document.fonts.ready;
-    const names = ['mr-salute.jpg', 'mr-dz-signing.jpg', 'unsc.jpg', 'minurso.png', 'dz-parliament.webp', 'dz-speaker.jpg',
-      'ma-parliament.jpg', 'ma-finance.png', 'tn-cabinet.jpg', 'tn-olives.jpg', 'sn-fr.png'];
-    await Promise.all(names.map(async n => { IMG[n.replace(/\.\w+$/, '')] = await loadImage('../assets/img/' + n); }));
+    const files = [...new Set(TL.cards.map(c => c.img))];
+    await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
     const logo = await loadImage('../assets/logo-white.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
