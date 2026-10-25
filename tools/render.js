@@ -70,7 +70,7 @@ function buildAudio(duration, file) {
     `anoisesrc=d=4.4:c=pink:a=0.5,bandpass=f=2200:w=1800,afade=t=in:d=4.1:curve=exp,afade=t=out:st=4.15:d=0.25,volume=0.22,adelay=350|350,aformat=channel_layouts=stereo[r]`,
     `sine=f=52:d=1.8,afade=t=out:st=0.02:d=1.75,volume=0.9,adelay=4850|4850,aformat=channel_layouts=stereo[h]`,
     `anoisesrc=d=0.6:c=brown:a=0.6,lowpass=f=500,afade=t=out:st=0:d=0.6,volume=0.5,adelay=4850|4850,aformat=channel_layouts=stereo[n]`,
-    `[v][r][h][n]amix=inputs=4:normalize=0:duration=longest,atrim=0:${duration},alimiter=limit=0.95[out]`,
+    `[v][r][h][n]amix=inputs=4:normalize=0:duration=longest,apad,atrim=0:${duration},alimiter=limit=0.95[out]`,
   ].join(';');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', voice, '-filter_complex', filter, '-map', '[out]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
 }
