@@ -13,6 +13,7 @@ src/timeline.js  all content and timing (in voice-over seconds): cards, headline
 src/app.js       canvas renderer (renderFrame(t))
 src/map-data.js  generated pixel grid + borders (npm run build:map)
 tools/render.js  headless Chromium + ffmpeg
+tools/make-music.py  synthesizes the opening news theme -> assets/audio/intro-music.wav
 output/          final video
 ```
 
@@ -21,6 +22,7 @@ output/          final video
 ```
 npm install            # plus playwright (preinstalled in the cloud image)
 npm run build:map      # only if the map region changes
+python3 tools/make-music.py   # only if the opening theme changes (numpy + scipy)
 node tools/render.js --stills 12,40,95   # check frames -> output/stills/
 node tools/render.js                     # full video -> output/erriwaya-brief.mp4
 ```
