@@ -14,7 +14,7 @@
 | ثابت (القالب) | يتغير (العدد) |
 |---|---|
 | `src/app.js` التصميم والحركة والجينيريك والخاتمة | `editions/<التاريخ>/voiceover.mp3` التعليق الصوتي |
-| `assets/` الشعار، الخط، موسيقى الجينيريك | `editions/<التاريخ>/img/` صور الأخبار |
+| `assets/` الشعار، الخط، موسيقى الجينيريك والخلفية والخاتمة، مؤثر الانتقال | `editions/<التاريخ>/img/` صور الأخبار |
 | `src/map-data.js` بيانات الخريطة | `editions/<التاريخ>/edition.js` العناوين والتوقيتات والخريطة |
 
 ## إعداد عدد جديد
@@ -34,5 +34,6 @@ node tools/render.js --edition 2026-10-25                     # output/erriwaya-
 
 - Node + Playwright (Chromium) و ffmpeg، ثم `npm install`.
 - للتفريغ الصوتي: `tools/setup-asr.sh` مرة واحدة (faster-whisper ونموذج Whisper small).
-- لإعادة توليد موسيقى الجينيريك: `python3 tools/make-music.py` (numpy + scipy).
+- الصوت (يُولَّد برمجياً، numpy + scipy): `python3 tools/make-music.py` لموسيقى الجينيريك، و`python3 tools/make-cues.py` لموسيقى الخلفية الخافتة ومؤثر الانتقال بين الأخبار وموسيقى الخاتمة.
+  عند التصيير تنخفض الموسيقى تلقائياً كلما تكلم المعلق، ويوضع مؤثر الانتقال في لحظة الصمت قبل كل خبر (`chapters`).
 - لإعادة بناء الخريطة: `npm run build:map`، ولا تلزم إلا عند تغيير حدود المنطقة.

@@ -193,75 +193,6 @@ def riser(dur, gain=1.0):
     return (noise * 0.7 + tone) * e * gain
 
 
-# ---------- arrangement ----------
-D2, F2, A2 = 38, 41, 45
-chords = {  # bar -> (root, chord tones)
-    0: (38, [62, 65, 69, 74]),   # Dm
-    1: (34, [58, 62, 65, 70]),   # Bb
-    2: (36, [60, 64, 67, 72]),   # C
-}
-ARP = [0, 2, 1, 3, 2, 1, 3, 2]
-
-# bars 1-3 (0.05s .. 4.85s)
-for bar in range(3):
-    root, tones = chords[bar]
-    b0 = T0 + bar * 4 * BEAT
-    # pulsing bass in eighths
-    for e8 in range(8):
-        place(bass(note(root), BEAT * 0.48, 0.3), b0 + e8 * BEAT / 2)
-    # 16th arpeggio, louder and brighter each bar
-    for s16 in range(16):
-        tn = tones[ARP[s16 % 8]] + (12 if bar == 2 and s16 % 4 == 3 else 0)
-        place(pluck(note(tn), 0.16, 0.5 + 0.15 * bar), b0 + s16 * BEAT / 4, pan=0.35 if s16 % 2 else -0.35)
-    # strings pad
-    place(pad([note(x - 12) for x in tones[:3]], 4 * BEAT + 0.1, 0.4 + 0.12 * bar, attack=0.5), b0)
-    # drums: kick on 1 and 3, toms driving on the offbeats, clock ticks
-    for bt in range(4):
-        tb = b0 + bt * BEAT
-        if bt in (0, 2) or bar == 2:
-            place(kick(0.6), tb)
-        place(tom(110 if bt % 2 else 82, 0.35), tb + BEAT / 2, pan=-0.2 if bt % 2 else 0.2)
-        if bt in (1, 3):
-            place(snare(0.35), tb)
-    for s16 in range(16):
-        place(tick(0.22 if s16 % 4 == 0 else 0.11), b0 + s16 * BEAT / 4, pan=0.5)
-
-# opening impact
-place(boom(0.35), T0)
-place(crash(0.08, 0.8), T0)
-
-# bar 3 build: snare roll accelerating into the hit
-b3 = T0 + 8 * BEAT
-roll_t = b3
-k = 0
-while roll_t < HIT - 0.02:
-    p = (roll_t - b3) / (HIT - b3)
-    place(snare(0.12 + 0.45 * p ** 1.5, 0.08), roll_t, pan=0.15 * (-1) ** k)
-    roll_t += BEAT / 4 if p < 0.5 else BEAT / 8 if p < 0.85 else BEAT / 16
-    k += 1
-place(riser(HIT - (T0 + 4 * BEAT), 0.35), T0 + 4 * BEAT)
-
-# the hit (logo)
-place(boom(0.6), HIT)
-place(kick(0.7), HIT)
-place(crash(0.25, 1.5), HIT)
-place(brass([note(x) for x in (38, 45, 50, 53, 57, 62)], 3.4, 1.7), HIT)
-place(pad([note(x) for x in (50, 57, 62, 65, 69)], 5.5, 0.55, attack=0.05, cutoff=3200), HIT)
-for i, tt in enumerate([0, 0.2, 0.4, 0.8]):      # timpani-like toms answering the hit
-    place(tom(62 if i % 2 else 55, 0.6 - i * 0.1), HIT + 4 * BEAT * 0 + 2 * BEAT + tt)
-# motif on top: D5 A4 D5 F5 E5 D5
-for i, (n_, d_) in enumerate([(74, 1), (69, 1), (74, 1), (77, 2), (76, 1), (74, 3)]):
-    st = HIT + 0.5 * BEAT + sum(x[1] for x in [(74, 1), (69, 1), (74, 1), (77, 2), (76, 1), (74, 3)][:i]) * BEAT / 2
-    place(brass([note(n_), note(n_ - 12)], d_ * BEAT / 2 + 0.25, 0.65), st, pan=0.1)
-# pulse continues softly into the voice-over
-for e8 in range(24):
-    tt = HIT + 4 * BEAT + e8 * BEAT / 2
-    place(bass(note(38), BEAT * 0.45, 0.32 * max(0, 1 - e8 / 24)), tt)
-    if e8 % 2 == 0:
-        place(tick(0.08 * max(0, 1 - e8 / 24)), tt, pan=0.5)
-place(boom(0.35), HIT + 8 * BEAT)
-place(crash(0.08, 1.8), HIT + 8 * BEAT)
-
 # ---------- reverb + master ----------
 def reverb(x, seconds=2.2, wet=0.22, seed=1):
     n = int(seconds * SR)
@@ -272,16 +203,98 @@ def reverb(x, seconds=2.2, wet=0.22, seed=1):
     return x + wet * signal.fftconvolve(x, ir)[: len(x)]
 
 
-L = reverb(L, seed=1)
-R = reverb(R, seed=2)
-mix = np.stack([L, R], axis=1)
-mix = highpass(mix.T, 28).T
-# glue compression (simple soft clip) and normalize to -1 dBFS
-mix = np.tanh(mix / np.max(np.abs(mix)) * 1.8)
-mix *= 10 ** (-1 / 20) / np.max(np.abs(mix))
-# fade out the tail under the voice
-t = t_(len(mix))
-mix *= np.clip((LENGTH - t) / 3.0, 0, 1)[:, None]
-out = sys.argv[1] if len(sys.argv) > 1 else 'assets/audio/intro-music.wav'
-wavfile.write(out, SR, (mix * 32767).astype(np.int16))
-print('wrote', out, f'{LENGTH:.1f}s, hit at {HIT:.2f}s')
+def reset(seconds):
+    """Fresh stereo buffer for place()."""
+    global L, R
+    L = np.zeros(int(seconds * SR))
+    R = np.zeros_like(L)
+
+
+def build_intro():
+    global L, R
+    # ---------- arrangement ----------
+    D2, F2, A2 = 38, 41, 45
+    chords = {  # bar -> (root, chord tones)
+        0: (38, [62, 65, 69, 74]),   # Dm
+        1: (34, [58, 62, 65, 70]),   # Bb
+        2: (36, [60, 64, 67, 72]),   # C
+    }
+    ARP = [0, 2, 1, 3, 2, 1, 3, 2]
+
+    # bars 1-3 (0.05s .. 4.85s)
+    for bar in range(3):
+        root, tones = chords[bar]
+        b0 = T0 + bar * 4 * BEAT
+        # pulsing bass in eighths
+        for e8 in range(8):
+            place(bass(note(root), BEAT * 0.48, 0.3), b0 + e8 * BEAT / 2)
+        # 16th arpeggio, louder and brighter each bar
+        for s16 in range(16):
+            tn = tones[ARP[s16 % 8]] + (12 if bar == 2 and s16 % 4 == 3 else 0)
+            place(pluck(note(tn), 0.16, 0.5 + 0.15 * bar), b0 + s16 * BEAT / 4, pan=0.35 if s16 % 2 else -0.35)
+        # strings pad
+        place(pad([note(x - 12) for x in tones[:3]], 4 * BEAT + 0.1, 0.4 + 0.12 * bar, attack=0.5), b0)
+        # drums: kick on 1 and 3, toms driving on the offbeats, clock ticks
+        for bt in range(4):
+            tb = b0 + bt * BEAT
+            if bt in (0, 2) or bar == 2:
+                place(kick(0.6), tb)
+            place(tom(110 if bt % 2 else 82, 0.35), tb + BEAT / 2, pan=-0.2 if bt % 2 else 0.2)
+            if bt in (1, 3):
+                place(snare(0.35), tb)
+        for s16 in range(16):
+            place(tick(0.22 if s16 % 4 == 0 else 0.11), b0 + s16 * BEAT / 4, pan=0.5)
+
+    # opening impact
+    place(boom(0.35), T0)
+    place(crash(0.08, 0.8), T0)
+
+    # bar 3 build: snare roll accelerating into the hit
+    b3 = T0 + 8 * BEAT
+    roll_t = b3
+    k = 0
+    while roll_t < HIT - 0.02:
+        p = (roll_t - b3) / (HIT - b3)
+        place(snare(0.12 + 0.45 * p ** 1.5, 0.08), roll_t, pan=0.15 * (-1) ** k)
+        roll_t += BEAT / 4 if p < 0.5 else BEAT / 8 if p < 0.85 else BEAT / 16
+        k += 1
+    place(riser(HIT - (T0 + 4 * BEAT), 0.35), T0 + 4 * BEAT)
+
+    # the hit (logo)
+    place(boom(0.6), HIT)
+    place(kick(0.7), HIT)
+    place(crash(0.25, 1.5), HIT)
+    place(brass([note(x) for x in (38, 45, 50, 53, 57, 62)], 3.4, 1.7), HIT)
+    place(pad([note(x) for x in (50, 57, 62, 65, 69)], 5.5, 0.55, attack=0.05, cutoff=3200), HIT)
+    for i, tt in enumerate([0, 0.2, 0.4, 0.8]):      # timpani-like toms answering the hit
+        place(tom(62 if i % 2 else 55, 0.6 - i * 0.1), HIT + 4 * BEAT * 0 + 2 * BEAT + tt)
+    # motif on top: D5 A4 D5 F5 E5 D5
+    for i, (n_, d_) in enumerate([(74, 1), (69, 1), (74, 1), (77, 2), (76, 1), (74, 3)]):
+        st = HIT + 0.5 * BEAT + sum(x[1] for x in [(74, 1), (69, 1), (74, 1), (77, 2), (76, 1), (74, 3)][:i]) * BEAT / 2
+        place(brass([note(n_), note(n_ - 12)], d_ * BEAT / 2 + 0.25, 0.65), st, pan=0.1)
+    # pulse continues softly into the voice-over
+    for e8 in range(24):
+        tt = HIT + 4 * BEAT + e8 * BEAT / 2
+        place(bass(note(38), BEAT * 0.45, 0.32 * max(0, 1 - e8 / 24)), tt)
+        if e8 % 2 == 0:
+            place(tick(0.08 * max(0, 1 - e8 / 24)), tt, pan=0.5)
+    place(boom(0.35), HIT + 8 * BEAT)
+    place(crash(0.08, 1.8), HIT + 8 * BEAT)
+
+    L = reverb(L, seed=1)
+    R = reverb(R, seed=2)
+    mix = np.stack([L, R], axis=1)
+    mix = highpass(mix.T, 28).T
+    # glue compression (simple soft clip) and normalize to -1 dBFS
+    mix = np.tanh(mix / np.max(np.abs(mix)) * 1.8)
+    mix *= 10 ** (-1 / 20) / np.max(np.abs(mix))
+    # fade out the tail under the voice
+    t = t_(len(mix))
+    mix *= np.clip((LENGTH - t) / 3.0, 0, 1)[:, None]
+    out = sys.argv[1] if len(sys.argv) > 1 else 'assets/audio/intro-music.wav'
+    wavfile.write(out, SR, (mix * 32767).astype(np.int16))
+    print('wrote', out, f'{LENGTH:.1f}s, hit at {HIT:.2f}s')
+
+
+if __name__ == '__main__':
+    build_intro()

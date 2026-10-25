@@ -62,20 +62,58 @@ async function renderRange(browser, f0, f1, file) {
   await page.close();
 }
 
+function loadEdition() {
+  const window = {};
+  new Function('window', fs.readFileSync(path.join(EDIR, 'edition.js'), 'utf8'))(window);
+  return window.TIMELINE;
+}
+
+// Decodes mono 8 kHz audio to find quiet moments in the voice-over.
+function voiceEnergy(file) {
+  const raw = execFileSync('ffmpeg', ['-v', 'error', '-i', file, '-ac', '1', '-ar', '8000', '-f', 'f32le', '-'], { maxBuffer: 1 << 28 });
+  return new Float32Array(raw.buffer, raw.byteOffset, raw.length / 4);
+}
+function quietest(samples, t0, t1) {
+  const sr = 8000, w = 320;  // 40 ms windows
+  let best = null;
+  for (let i = Math.max(0, Math.round(t0 * sr)); i + w < Math.min(samples.length, t1 * sr); i += 80) {
+    let e = 0;
+    for (let k = 0; k < w; k++) e += samples[i + k] * samples[i + k];
+    if (!best || e < best.e) best = { e, t: (i + w / 2) / sr };
+  }
+  return best ? best.t : t1;
+}
+
 function buildAudio(duration, file) {
+  const A = p => path.join(ROOT, 'assets', 'audio', p);
   const voice = path.join(EDIR, 'voiceover.mp3');
-  const music = path.join(ROOT, 'assets', 'audio', 'intro-music.wav');
-  const tl = fs.readFileSync(path.join(EDIR, 'edition.js'), 'utf8');
-  const cut = parseFloat(tl.match(/audioCut:\s*([\d.]+)/)[1]);
-  const intro = parseFloat(tl.match(/intro:\s*([\d.]+)/)[1]);
-  const delay = Math.round(intro * 1000);
-  // voice trimmed at "أهلا بكم" + the synthesized opening theme (tools/make-music.py), ducked under the voice
-  const filter = [
-    `[0:a]atrim=start=${cut},asetpts=PTS-STARTPTS,adelay=${delay}|${delay},aformat=channel_layouts=stereo[v]`,
+  const TL = loadEdition();
+  const intro = TL.intro, cut = TL.audioCut;
+  const vt = a => intro + a - cut;
+  const ms = s => Math.max(0, Math.round(s * 1000));
+  const outro = vt(TL.outroAt), voiceEnd = vt(TL.audioEnd);
+  // story transitions: the whoosh peaks (0.55s into the file) in the pause just before each story
+  const energy = voiceEnergy(voice);
+  const hits = TL.chapters.map(c => vt(quietest(energy, c - cut - 1.0, c - cut + 0.4)));
+  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav, placed on the last word
+  const inputs = ['-i', voice, '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav')];
+  const f = [
+    `[0:a]atrim=start=${cut},asetpts=PTS-STARTPTS,adelay=${ms(intro)}|${ms(intro)},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[v][vk0]`,
+    `[vk0]apad[vk]`,
+    // opening theme, ducked when the voice starts
     `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume='if(lt(t,${intro - 0.1}),0.75,0.75*max(0.2,1-(t-${intro - 0.1})*1.6))':eval=frame[m]`,
-    `[v][m]amix=inputs=2:normalize=0:duration=longest,apad,atrim=0:${duration},alimiter=limit=0.95[out]`,
+    // quiet bed under the stories, handing over to the closing music
+    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration - intro + 1},volume=0.16,afade=t=in:st=0:d=2.5,afade=t=out:st=${outro - intro - 1}:d=2,adelay=${ms(intro - 0.6)}|${ms(intro - 0.6)}[bed]`,
+    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(voiceEnd - OUTRO_HIT + 0.25)}|${ms(voiceEnd - OUTRO_HIT + 0.25)}[out]`,
+    // music ducks a further ~8 dB whenever the voice speaks
+    `[bed][out]amix=inputs=2:normalize=0:duration=longest[bus]`,
+    `[bus][vk]sidechaincompress=threshold=0.015:ratio=6:attack=20:release=450:knee=4[duck]`,
+    `[4:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=300,volume=0.24,asplit=${hits.length}${hits.map((_, i) => `[w${i}]`).join('')}`,
+    ...hits.map((h, i) => `[w${i}]adelay=${ms(h - 0.55)}|${ms(h - 0.55)}[wd${i}]`),
+    `[v][m][duck]${hits.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + hits.length}:normalize=0:duration=longest,apad,atrim=0:${duration},alimiter=limit=0.95[mix]`,
   ].join(';');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', voice, '-i', music, '-filter_complex', filter, '-map', '[out]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
+  execFileSync('ffmpeg', ['-v', 'error', '-y', ...inputs, '-filter_complex', f, '-map', '[mix]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
+  console.log('transitions at', hits.map(h => h.toFixed(2)).join(' '));
 }
 
 (async () => {
