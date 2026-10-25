@@ -2,6 +2,7 @@
 //   node tools/render.js --edition 2026-10-24                 full video -> output/erriwaya-brief-2026-10-24.mp4
 //   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
 //   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
+//   add --format youtube for the 1920x1080 layout (default: feed, 1080x1350)
 // Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -18,11 +19,15 @@ const WORKERS = +(args.workers || 4);
 const EDITION = String(args.edition || fs.readdirSync(path.join(ROOT, 'editions')).filter(d => /^\d{4}-\d{2}-\d{2}/.test(d)).sort().pop());
 const EDIR = path.join(ROOT, 'editions', EDITION);
 if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition at ' + EDIR); process.exit(1); }
-const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION);
+const FORMAT = String(args.format || 'feed');
+const SIZE = { feed: [1080, 1350], youtube: [1920, 1080] }[FORMAT];
+if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
+const SUFFIX = FORMAT === 'feed' ? '' : '-' + FORMAT;
+const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT;
 
 async function openPage(browser) {
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1350 } });
+  const page = await browser.newPage({ viewport: { width: SIZE[0], height: SIZE[1] } });
   page.on('pageerror', e => { console.error('page error:', e.message); process.exit(1); });
   await page.goto(PAGE);
   await page.waitForFunction(() => window.READY === true, null, { timeout: 60000 });
@@ -124,12 +129,12 @@ function buildAudio(duration, file) {
   await probe.close();
   const from = +(args.from || 0), to = Math.min(duration, +(args.to || duration));
   const F0 = Math.round(from * FPS), F1 = Math.round(to * FPS);
-  const tmp = path.join(ROOT, 'frames', EDITION);
+  const tmp = path.join(ROOT, 'frames', EDITION + SUFFIX);
   fs.mkdirSync(tmp, { recursive: true });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   const per = Math.ceil((F1 - F0) / WORKERS);
   const parts = [];
-  console.log(`edition ${EDITION}: rendering ${F1 - F0} frames (${(to - from).toFixed(2)}s) with ${WORKERS} workers`);
+  console.log(`edition ${EDITION} (${FORMAT} ${SIZE.join('x')}): rendering ${F1 - F0} frames (${(to - from).toFixed(2)}s) with ${WORKERS} workers`);
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
     const a = F0 + w * per, b = Math.min(F1, a + per);
     if (a >= b) return null;

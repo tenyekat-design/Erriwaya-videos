@@ -3,3 +3,4 @@ frames/
 *.log
 .asr-model
 __pycache__/
+output/*-youtube.mp4

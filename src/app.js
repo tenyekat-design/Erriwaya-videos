@@ -1,6 +1,5 @@
 // Erriwaya news brief renderer. Draws one frame for a given time with renderFrame(t).
 (() => {
-  const W = 1080, H = 1350;
   const TL = window.TIMELINE;
   const MD = window.MAP_DATA;
   const FONT = 'AlQuds';
@@ -19,17 +18,44 @@
     seaDot: '#E3E8F0',
   };
 
-  // Layout
-  const L = {
-    margin: 60,
-    logoH: 96,
-    card: { cx: 540, cy: 360, w: 600, h: 400 },
-    pillY: 560,
-    bar: { x0: 160, x1: 920, y: 632 },
-    kickerY: 678,
-    head: { cy: 782, maxW: 920, lineH: 62 },
-    map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
+  // Layouts: 'feed' (1080x1350, the default) and 'youtube' (1920x1080), chosen with ?format=
+  const LAYOUTS = {
+    feed: {
+      W: 1080, H: 1350,
+      margin: 60,
+      logoH: 96, logoY: 44,
+      card: { cx: 540, cy: 360, w: 600, h: 400 },
+      side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
+      pill: { cx: 540, y: 560 },
+      bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 678 },
+      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
+      map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
+      dotsH: 840,
+      intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
+      outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
+    },
+    youtube: {
+      W: 1920, H: 1080,
+      margin: 80,
+      logoH: 100, logoY: 46,
+      card: { cx: 1350, cy: 466, w: 900, h: 520 },
+      side: [560, 900],
+      pill: { cx: 1350, y: 726 },
+      bar: { x0: 980, x1: 1720, y: 800, tl: 860, tr: 1840 },
+      kicker: { cx: 1350, y: 858 },
+      head: { cx: 1350, cy: 952, maxW: 940, lineH: 64 },
+      map: { x: 80, y: 190, w: 720, h: 810, r: 34 },
+      dotsH: 1080,
+      intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
+      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
+    },
   };
+  const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
+  const L = LAYOUTS[FORMAT] || LAYOUTS.feed;
+  const W = L.W, H = L.H;
+  // edition cameras are framed for the feed map (980x422); keep the same visible area on other map shapes
+  const CAM_SCALE = Math.sqrt((422 / 980) / (L.map.h / L.map.w));
 
   const INTRO = TL.intro, CUT = TL.audioCut;
   const vt = a => INTRO + (a - CUT);          // voice-over time -> video time
@@ -352,6 +378,7 @@
     ctx.save();
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.clip();
     const cam = cameraAt(a);
+    cam.w *= CAM_SCALE;
     const P = drawGrid(cam, R, { layers: layersAt(a, TL.highlights) });
     strokeLines(P, MD.coasts, 'rgba(11,31,75,0.22)', 1.2);
     strokeLines(P, MD.borders, 'rgba(11,31,75,0.42)', 1.4);
@@ -436,7 +463,7 @@
       if (ar > 2.6) continue;
       const sgn = Math.sign(r);
       // next cards sit on the left (RTL reading order)
-      const off = ar <= 1 ? lerp(0, 445, ar) : lerp(445, 760, ar - 1);
+      const off = ar <= 1 ? lerp(0, L.side[0], ar) : lerp(L.side[0], L.side[1], ar - 1);
       const sc = ar <= 1 ? lerp(1, 0.7, ar) : lerp(0.7, 0.5, ar - 1);
       items.push({ i, r, ar, x: cx - sgn * off, sc });
     }
@@ -485,7 +512,7 @@
   // ---------- player controls + progress ----------
   function drawControls(a, alpha) {
     if (alpha <= 0) return;
-    const cx = 540, cy = L.pillY, pw = 270, ph = 70;
+    const cx = L.pill.cx, cy = L.pill.y, pw = 270, ph = 70;
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.shadowColor = 'rgba(11,31,75,0.22)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
@@ -543,8 +570,8 @@
     ctx.beginPath(); ctx.arc(xk, y, 4, 0, Math.PI * 2); ctx.fill();
     // times (RTL: elapsed on the right)
     ctx.font = font(24); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.gray;
-    ctx.textAlign = 'right'; ctx.fillText(mmss(Math.max(0, a - CUT)), W - L.margin, y + 2);
-    ctx.textAlign = 'left'; ctx.fillText(mmss(TL.audioEnd - CUT), L.margin, y + 2);
+    ctx.textAlign = 'right'; ctx.fillText(mmss(Math.max(0, a - CUT)), L.bar.tr, y + 2);
+    ctx.textAlign = 'left'; ctx.fillText(mmss(TL.audioEnd - CUT), L.bar.tl, y + 2);
     ctx.restore();
   }
 
@@ -634,27 +661,27 @@
       ctx.font = font(28); ctx.direction = 'rtl';
       const tw = ctx.measureText(h.kicker).width;
       const cw = tw + 64, ch = 46;
-      const x = 540 - cw / 2, y = L.kickerY - ch / 2;
+      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2;
       ctx.globalAlpha = alpha * kp;
       ctx.fillStyle = 'rgba(16,185,129,0.12)';
       rrect(x, y, cw, ch, ch / 2); ctx.fill();
       ctx.fillStyle = C.acc;
-      ctx.beginPath(); ctx.arc(x + cw - 24, L.kickerY, 5.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + cw - 24, L.kicker.y, 5.5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#0A8F65';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(h.kicker, x + cw - 40, L.kickerY + 2);
+      ctx.fillText(h.kicker, x + cw - 40, L.kicker.y + 2);
     }
     void prevSame;
     ctx.globalAlpha = alpha;
     const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
-    drawWords(lay, 540, L.head.cy, L.head.lineH, C.ink, a, h.t, tOut);
+    drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.ink, a, h.t, tOut);
     ctx.restore();
   }
 
   // ---------- header ----------
   function logoBox() {
     const h = L.logoH, w = h * LOGO.width / LOGO.height;
-    return { x: W - L.margin - w, y: 44, w, h };
+    return { x: W - L.margin - w, y: L.logoY, w, h };
   }
   function drawLogoAt(cx, cy, h, alpha = 1, img = LOGO) {
     const w = h * img.width / img.height;
@@ -704,11 +731,11 @@
     const g1 = ctx.createRadialGradient(80, 120, 0, 80, 120, 560);
     g1.addColorStop(0, 'rgba(16,185,129,0.07)'); g1.addColorStop(1, 'rgba(16,185,129,0)');
     ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
-    const g2 = ctx.createRadialGradient(1000, 760, 0, 1000, 760, 620);
+    const g2 = ctx.createRadialGradient(W - 80, H * 0.56, 0, W - 80, H * 0.56, 620);
     g2.addColorStop(0, 'rgba(11,31,75,0.05)'); g2.addColorStop(1, 'rgba(11,31,75,0)');
     ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#EDF0F5';
-    for (let y = 18; y < 840; y += 36) for (let x = 18; x < W; x += 36) ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+    for (let y = 18; y < L.dotsH; y += 36) for (let x = 18; x < W; x += 36) ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
   }
 
   // ---------- intro ----------
@@ -752,8 +779,8 @@
   });
 
   function introCam(t) {
-    const w0 = 48, w1 = 43;
-    let cam = { x: 0, y: mercY(23), w: lerp(w0, w1, eio(prog(t, 0, 4.2))) };
+    const [w0, w1] = L.intro.w;
+    let cam = { x: L.intro.lon, y: mercY(23), w: lerp(w0, w1, eio(prog(t, 0, 4.2))) };
     const z = ein(prog(t, 4.15, 5.0));
     if (z > 0) {
       cam.x = lerp(cam.x, NKC[0], eout(prog(t, 4.15, 4.9)));
@@ -898,7 +925,7 @@
     const bloom = eio(prog(t, 4.4, 5.05)) * (1 - eio(prog(t, 5.05, 5.7)));
     if (bloom > 0) {
       const r = 60 + 900 * bloom;
-      const g = ctx.createRadialGradient(540, 600, 0, 540, 600, r);
+      const g = ctx.createRadialGradient(L.intro.logo.cx, L.intro.logo.cy + 40, 0, L.intro.logo.cx, L.intro.logo.cy + 40, r);
       g.addColorStop(0, `rgba(255,255,255,${bloom})`);
       g.addColorStop(0.3, `rgba(190,245,225,${bloom * 0.9})`);
       g.addColorStop(0.65, `rgba(16,185,129,${bloom * 0.25})`);
@@ -913,7 +940,7 @@
     if (lp <= 0) return;
     const glide = eio(prog(t, 6.0, 6.85));
     const lb = logoBox();
-    const h0 = 380, cx0 = 540, cy0 = 560;
+    const { h: h0, cx: cx0, cy: cy0 } = L.intro.logo;
     const h = lerp(h0, lb.h, glide);
     const cx = lerp(cx0, lb.x + lb.w / 2, glide), cy = lerp(cy0, lb.y + lb.h / 2, glide);
     const s = lerp(1.25, 1, eout(lp));
@@ -933,16 +960,16 @@
       ctx.globalAlpha = so;
       ctx.font = font(70); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const tw = ctx.measureText(TL.title).width;
-      const y = 840;
+      const y = L.intro.titleY, mx = L.intro.logo.cx;
       ctx.save();
       const rev = eout(sp);
-      ctx.beginPath(); ctx.rect(540 + tw / 2 + 20 - (tw + 40) * rev, y - 70, (tw + 40) * rev, 140); ctx.clip();
+      ctx.beginPath(); ctx.rect(mx + tw / 2 + 20 - (tw + 40) * rev, y - 70, (tw + 40) * rev, 140); ctx.clip();
       ctx.fillStyle = C.navy;
-      ctx.fillText(TL.title, 540, y);
+      ctx.fillText(TL.title, mx, y);
       ctx.restore();
       const lw = (tw * 0.55) * eout(prog(t, 5.5, 6.1));
       ctx.fillStyle = C.acc;
-      rrect(540 - lw / 2, y + 62, lw, 6, 3); ctx.fill();
+      rrect(mx - lw / 2, y + 62, lw, 6, 3); ctx.fill();
       ctx.restore();
     }
   }
@@ -972,7 +999,7 @@
     if (ma > 0) {
       ctx.save();
       ctx.globalAlpha = ma * 0.55;
-      const cam = { x: -2, y: mercY(24), w: lerp(52, 46, prog(o, 0, 8)) };
+      const cam = { x: L.outro.lon, y: mercY(24), w: lerp(L.outro.w[0], L.outro.w[1], prog(o, 0, 8)) };
       const P = drawGrid(cam, { x: 0, y: 0, w: W, h: H }, {
         landRGB: [232, 236, 243], seaColor: '#F1F3F7',
         layers: [{ set: new Set(['478', '504', '732', '012', '788', '434'].map(id => idIndex[id])), kind: 'primary', alpha: 0.18, elapsed: o + 2, ox: NKC[0], oy: mercY(NKC[1]) }],
@@ -980,15 +1007,15 @@
       strokeLines(P, MD.borders, 'rgba(11,31,75,0.12)', 1.2);
       ctx.restore();
       // keep the centre readable
-      const g = ctx.createRadialGradient(540, 640, 100, 540, 640, 640);
+      const g = ctx.createRadialGradient(W / 2, L.outro.logo.cy + 110, 100, W / 2, L.outro.logo.cy + 110, 640);
       g.addColorStop(0, `rgba(255,255,255,${0.92 * ma})`); g.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
     // logo glides from the header to the centre
     const lb = logoBox();
     const gp = eio(prog(o, 0.15, 1.15));
-    const h = lerp(lb.h, 300, gp);
-    const cx = lerp(lb.x + lb.w / 2, 540, gp), cy = lerp(lb.y + lb.h / 2, 530, gp);
+    const h = lerp(lb.h, L.outro.logo.h, gp);
+    const cx = lerp(lb.x + lb.w / 2, L.outro.logo.cx, gp), cy = lerp(lb.y + lb.h / 2, L.outro.logo.cy, gp);
     if (gp > 0.02 && gp < 0.98) {
       ctx.save(); ctx.globalAlpha = 0.35 * Math.sin(gp * Math.PI);
       ctx.filter = 'blur(18px)'; drawLogoAt(cx, cy, h, 1, LOGO_ACC); ctx.filter = 'none';
@@ -1001,10 +1028,10 @@
     ctx.globalAlpha = sp;
     ctx.font = font(52); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillStyle = C.navy;
-    ctx.fillText(TL.title, 540, 750 + (1 - sp) * 20);
+    ctx.fillText(TL.title, W / 2, L.outro.titleY + (1 - sp) * 20);
     ctx.fillStyle = C.acc;
     const lw = 160 * eout(prog(o, 1.1, 1.7));
-    rrect(540 - lw / 2, 800, lw, 5, 2.5); ctx.fill();
+    rrect(W / 2 - lw / 2, L.outro.titleY + 50, lw, 5, 2.5); ctx.fill();
     ctx.restore();
     // social rows
     const kp = eout(prog(o, 1.3, 1.8));
@@ -1012,16 +1039,16 @@
     ctx.globalAlpha = kp;
     ctx.font = font(28); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillStyle = C.gray;
-    ctx.fillText('تابعونا على', 540, 890);
+    ctx.fillText('تابعونا على', W / 2, L.outro.followY);
     ctx.restore();
     const S = 72, gap = 16;
     SOCIAL.forEach((row, ri) => {
-      const y = 960 + ri * 112;
+      const y = L.outro.rowsY + ri * 112;
       ctx.font = font(46); ctx.direction = 'ltr';
       const tw = ctx.measureText(row.handle).width;
       const iw = row.icons.length * S + (row.icons.length - 1) * gap;
       const total = iw + 30 + tw;
-      const x0 = 540 - total / 2;
+      const x0 = W / 2 - total / 2;
       const rp = prog(o, 1.5 + ri * 0.25, 2.1 + ri * 0.25);
       if (rp <= 0) return;
       ctx.save();
@@ -1087,6 +1114,7 @@
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
     window.DURATION = DURATION;
+    window.SIZE = [W, H];
     window.READY = true;
     const q = new URLSearchParams(location.search);
     renderFrame(parseFloat(q.get('t') || '0'));
