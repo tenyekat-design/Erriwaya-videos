@@ -23,7 +23,7 @@
     feed: {
       W: 1080, H: 1350,
       margin: 60,
-      logoH: 96, logoY: 44,
+      logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
       card: { cx: 540, cy: 360, w: 600, h: 400 },
       side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
       pill: { cx: 540, y: 560 },
@@ -37,15 +37,15 @@
     },
     youtube: {
       W: 1920, H: 1080,
-      margin: 80,
-      logoH: 100, logoY: 46,
-      card: { cx: 1350, cy: 466, w: 900, h: 520 },
-      side: [560, 900],
-      pill: { cx: 1350, y: 726 },
-      bar: { x0: 980, x1: 1720, y: 800, tl: 860, tr: 1840 },
-      kicker: { cx: 1350, y: 858 },
-      head: { cx: 1350, cy: 952, maxW: 940, lineH: 64 },
-      map: { x: 80, y: 190, w: 720, h: 810, r: 34 },
+      margin: 96,                        // 5% title-safe area
+      logoH: 150, logoY: 54,
+      card: { cx: 1344, cy: 486, w: 880, h: 500 },
+      side: [550, 880],
+      pill: { cx: 1344, y: 736 },
+      bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
+      kicker: { cx: 1344, y: 864 },
+      head: { cx: 1344, cy: 956, maxW: 920, lineH: 62 },
+      map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
       outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
@@ -699,9 +699,9 @@
     const tx = lb.x - 26;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     ctx.fillStyle = C.navy; ctx.font = font(38);
-    ctx.fillText(TL.title, tx, lb.y + 32);
+    ctx.fillText(TL.title, tx, lb.y + lb.h / 2 - 20);
     ctx.fillStyle = C.gray; ctx.font = font(24);
-    ctx.fillText(TL.date, tx, lb.y + 74);
+    ctx.fillText(TL.date, tx, lb.y + lb.h / 2 + 24);
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
@@ -710,12 +710,12 @@
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
     ctx.font = font(34); ctx.fillStyle = C.navy;
     const num = String(ch).padStart(2, '0');
-    ctx.fillText(num, L.margin, lb.y + 34);
+    ctx.fillText(num, L.margin, lb.y + lb.h / 2 - 14);
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = C.gray;
-    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, lb.y + 37);
+    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, lb.y + lb.h / 2 - 11);
     for (let i = 0; i < n; i++) {
-      const bx = L.margin + i * 30, by = lb.y + 70;
+      const bx = L.margin + i * 30, by = lb.y + lb.h / 2 + 22;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
       ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
