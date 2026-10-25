@@ -23,14 +23,16 @@ window.TIMELINE = {
     { img: 'mr-president.jpg', moves: [{ t: 24.26, a: [0.45, 0.35, 1.0], b: [0.47, 0.3, 1.14] }] },
     { img: 'mr-students.jpg', moves: [{ t: 29.46, a: [0.5, 0.5, 1.0], b: [0.7, 0.5, 1.2] }] },
     // Algeria (Libya talks)
-    { img: 'dz-ministers.jpg', moves: [{ t: 34.54, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] },
-                                       { t: 43.22, a: [0.55, 0.45, 1.45], b: [0.55, 0.43, 1.3] }] },
+    { img: 'dz-eg-tn-ministers.jpg', moves: [{ t: 34.54, a: [0.5, 0.35, 1.0], b: [0.5, 0.3, 1.12] }] },
+    { img: 'dz-ministers.jpg', moves: [{ t: 40.94, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] },
+                                       { t: 46.82, a: [0.55, 0.45, 1.45], b: [0.55, 0.43, 1.3] }] },
     // Senegal
     { img: 'sn-pm.jpg', moves: [{ t: 50.88, a: [0.5, 0.45, 1.0], b: [0.45, 0.5, 1.2] }] },
     { img: 'sn-pm-portrait.jpg', moves: [{ t: 59.72, a: [0.5, 0.3, 1.0], b: [0.5, 0.27, 1.12] }] },
     // Morocco
-    { img: 'ma-parliament.jpg', moves: [{ t: 71.78, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] },
-                                        { t: 82.98, a: [0.3, 0.6, 1.35], b: [0.35, 0.55, 1.15] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 71.78, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] }] },
+    { img: 'ma-finance-minister.png', moves: [{ t: 77.20, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.1] },
+                                              { t: 82.98, a: [0.33, 0.4, 1.45], b: [0.35, 0.4, 1.3] }] },
     // Libya
     { img: 'ly-parliament.webp', moves: [{ t: 88.52, a: [0.5, 0.5, 1.0], b: [0.4, 0.45, 1.15] }] },
     { img: 'ly-tr.jpg', moves: [{ t: 93.90, a: [0.5, 0.5, 1.0], b: [0.5, 0.48, 1.1] },
