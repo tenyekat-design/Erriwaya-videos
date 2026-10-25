@@ -1,4 +1,4 @@
 node_modules/
 frames/
 *.log
-.asr-model/
+.asr-model
