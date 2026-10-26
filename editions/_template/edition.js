@@ -12,8 +12,8 @@ window.TIMELINE = {
   audioCut: 0,        // silence just before "أهلا بكم"
   audioEnd: 0,        // length of voiceover.mp3
   intro: 7.0,         // opening length; keep at 7.0 (the music and animation are built for it)
-  outroAt: 0,         // "شكرا لمتابعتكم"
-  tail: 3.0,
+  outroAt: 0,         // audioEnd + 0.5: the outro and its music come after the report
+  tail: 9.0,          // outro length
 
   // Carousel cards. A card shows one image; give it several moves to re-frame it without changing card.
   // a/b = [focusX, focusY, zoom] at the start/end of the move (focus 0..1 in the image, zoom >= 1).

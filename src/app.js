@@ -24,14 +24,14 @@
       W: 1080, H: 1350,
       margin: 60,
       logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
-      card: { cx: 540, cy: 360, w: 600, h: 400 },
-      side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
-      pill: { cx: 540, y: 560 },
-      bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
-      kicker: { cx: 540, y: 678 },
-      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
-      map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
-      dotsH: 840,
+      card: { cx: 540, cy: 455, w: 840, h: 520 },   // the photo frame is larger than the map frame
+      side: [520, 860],                  // horizontal offset of the 1st / 2nd side cards
+      pill: { cx: 540, y: 715 },
+      bar: { x0: 160, x1: 920, y: 787, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 833 },
+      head: { cx: 540, cy: 925, maxW: 920, lineH: 62 },
+      map: { x: 50, y: 1015, w: 980, h: 290, r: 34 },
+      dotsH: 1000,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
       outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
     },
@@ -39,13 +39,13 @@
       W: 1920, H: 1080,
       margin: 96,                        // 5% title-safe area
       logoH: 150, logoY: 54,
-      card: { cx: 1344, cy: 486, w: 880, h: 500 },
-      side: [550, 880],
-      pill: { cx: 1344, y: 736 },
-      bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
-      kicker: { cx: 1344, y: 864 },
-      head: { cx: 1344, cy: 956, maxW: 920, lineH: 62 },
-      map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
+      card: { cx: 1310, cy: 476, w: 960, h: 540 },
+      side: [600, 940],
+      pill: { cx: 1310, y: 746 },
+      bar: { x0: 946, x1: 1674, y: 816, tl: 830, tr: 1790 },
+      kicker: { cx: 1310, y: 868 },
+      head: { cx: 1310, cy: 960, maxW: 920, lineH: 62 },
+      map: { x: 96, y: 250, w: 620, h: 740, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
       outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
@@ -61,7 +61,8 @@
   const vt = a => INTRO + (a - CUT);          // voice-over time -> video time
   const at = t => t - INTRO + CUT;            // video time -> voice-over time
   const OUTRO = vt(TL.outroAt);
-  const DURATION = vt(TL.audioEnd) + TL.tail;
+  // the outro may start after the last word (outroAt >= audioEnd); the video then runs `tail` seconds past it
+  const DURATION = Math.max(vt(TL.audioEnd), OUTRO) + TL.tail;
 
   // ---------- helpers ----------
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -423,8 +424,34 @@
     ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
   }
 
+  // ---------- video clips ----------
+  // A card may show a clip (card.clip, optional card.from in seconds) instead of a still. tools/render.js
+  // extracts its frames to frames/clips/<edition>/<clip>/ and lists them in index.js (window.CLIPS).
+  const FRAMES = new Map();
+  const clipDir = () => '../frames/clips/' + new URLSearchParams(location.search).get('edition') + '/';
+  function clipFrame(card, a) {
+    const info = window.CLIPS[card.clip];
+    const local = Math.max(0, a - card.start) + (card.from || 0);
+    return Math.min(info.n, Math.max(1, Math.floor(local * info.fps) + 1));
+  }
+  const frameUrl = (card, i) => clipDir() + card.clip.replace(/\.[^.]+$/, '') + '/' + String(i).padStart(5, '0') + '.jpg';
+  async function prepareFrame(t) {
+    const a = Math.max(at(t), CUT);
+    const p = carouselPos(a);
+    const need = [];
+    for (let i = Math.max(0, Math.floor(p) - 2); i <= Math.min(CARDS.length - 1, Math.floor(p) + 3); i++) {
+      if (CARDS[i].clip) need.push([CARDS[i], frameUrl(CARDS[i], clipFrame(CARDS[i], a))]);
+    }
+    await Promise.all(need.map(async ([card, url]) => {
+      if (!FRAMES.has(url)) FRAMES.set(url, await loadImage(url));
+      card.frame = FRAMES.get(url);
+    }));
+    if (FRAMES.size > 40) for (const k of [...FRAMES.keys()].slice(0, FRAMES.size - 40)) FRAMES.delete(k);
+  }
+
   function drawCardImage(card, x, y, w, h, a) {
-    const img = IMG[card.img];
+    const img = card.clip ? card.frame : IMG[card.img];
+    if (!img) return;
     const mv = card.moves;
     let m = 0;
     for (let i = 0; i < mv.length; i++) if (a >= mv[i].t - 0.25) m = i;
@@ -1107,17 +1134,23 @@
   async function init() {
     await document.fonts.load(font(48));
     await document.fonts.ready;
-    const files = [...new Set(TL.cards.map(c => c.img))];
+    const files = [...new Set(TL.cards.map(c => c.img).filter(Boolean))];
+    if (TL.cards.some(c => c.clip)) {
+      await new Promise((res, rej) => { const s = document.createElement('script'); s.onload = res; s.onerror = rej; s.src = clipDir() + 'index.js'; document.body.appendChild(s); });
+    }
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
     const logo = await loadImage('../assets/logo-white.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
+    window.prepareFrame = prepareFrame;
     window.DURATION = DURATION;
     window.SIZE = [W, H];
     window.READY = true;
     const q = new URLSearchParams(location.search);
-    renderFrame(parseFloat(q.get('t') || '0'));
+    const t0 = parseFloat(q.get('t') || '0');
+    await prepareFrame(t0);
+    renderFrame(t0);
   }
   init();
 })();

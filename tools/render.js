@@ -35,8 +35,27 @@ async function openPage(browser) {
 }
 
 async function grab(page, t, type = 'image/jpeg') {
-  const url = await page.evaluate(([t, type]) => { window.renderFrame(t); return document.getElementById('c').toDataURL(type, 0.95); }, [t, type]);
+  const url = await page.evaluate(async ([t, type]) => { await window.prepareFrame(t); window.renderFrame(t); return document.getElementById('c').toDataURL(type, 0.95); }, [t, type]);
   return Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
+}
+
+// Cards with a `clip` play a video from editions/<date>/clips/: extract its frames once (muted, 960px wide).
+function extractClips() {
+  const clips = [...new Set(loadEdition().cards.map(c => c.clip).filter(Boolean))];
+  if (!clips.length) return;
+  const dir = path.join(ROOT, 'frames', 'clips', EDITION);
+  const index = {};
+  for (const clip of clips) {
+    const src = path.join(EDIR, 'clips', clip);
+    const out = path.join(dir, clip.replace(/\.[^.]+$/, ''));
+    const fps = 25;
+    if (!fs.existsSync(path.join(out, '00001.jpg'))) {
+      fs.mkdirSync(out, { recursive: true });
+      execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', src, '-vf', `fps=${fps},scale=960:-2`, '-q:v', '3', path.join(out, '%05d.jpg')]);
+    }
+    index[clip] = { fps, n: fs.readdirSync(out).filter(f => f.endsWith('.jpg')).length };
+  }
+  fs.writeFileSync(path.join(dir, 'index.js'), 'window.CLIPS = ' + JSON.stringify(index) + ';\n');
 }
 
 async function stills(list) {
@@ -100,7 +119,13 @@ function buildAudio(duration, file) {
   // story transitions: the whoosh peaks (0.55s into the file) in the pause just before each story
   const energy = voiceEnergy(voice);
   const hits = TL.chapters.map(c => vt(quietest(energy, c - cut - 1.0, c - cut + 0.4)));
-  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav, placed on the last word
+  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav
+  // Outro after the report (outroAt >= audioEnd): the music starts with the outro, skipping the build-up so
+  // the chord lands OUTRO_IN s later. Otherwise (older editions) the chord lands on the last word.
+  const after = TL.outroAt >= TL.audioEnd, OUTRO_IN = 4.5, skip = OUTRO_HIT - OUTRO_IN;
+  const outMusic = after
+    ? `atrim=start=${skip},asetpts=PTS-STARTPTS,afade=t=in:st=0:d=0.6,volume=0.7,adelay=${ms(outro)}|${ms(outro)}`
+    : `volume=0.55,adelay=${ms(voiceEnd - OUTRO_HIT + 0.25)}|${ms(voiceEnd - OUTRO_HIT + 0.25)}`;
   const inputs = ['-i', voice, '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav')];
   const f = [
     `[0:a]atrim=start=${cut},asetpts=PTS-STARTPTS,adelay=${ms(intro)}|${ms(intro)},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[v][vk0]`,
@@ -109,7 +134,7 @@ function buildAudio(duration, file) {
     `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume='if(lt(t,${intro - 0.1}),0.75,0.75*max(0.2,1-(t-${intro - 0.1})*1.6))':eval=frame[m]`,
     // quiet bed under the stories, handing over to the closing music
     `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration - intro + 1},volume=0.16,afade=t=in:st=0:d=2.5,afade=t=out:st=${outro - intro - 1}:d=2,adelay=${ms(intro - 0.6)}|${ms(intro - 0.6)}[bed]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(voiceEnd - OUTRO_HIT + 0.25)}|${ms(voiceEnd - OUTRO_HIT + 0.25)}[out]`,
+    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,${outMusic}[out]`,
     // music ducks a further ~8 dB whenever the voice speaks
     `[bed][out]amix=inputs=2:normalize=0:duration=longest[bus]`,
     `[bus][vk]sidechaincompress=threshold=0.015:ratio=6:attack=20:release=450:knee=4[duck]`,
@@ -122,6 +147,7 @@ function buildAudio(duration, file) {
 }
 
 (async () => {
+  extractClips();
   if (args.stills) return stills(String(args.stills).split(',').map(Number));
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   const probe = await openPage(browser);
