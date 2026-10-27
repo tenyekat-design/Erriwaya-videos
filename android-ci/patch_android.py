@@ -73,3 +73,27 @@ for name in ("drawable/launch_background.xml", "drawable-v21/launch_background.x
                     '    <item android:drawable="@color/erriwaya_green" />\n</layer-list>\n')
 
 print(open(manifest_path, encoding="utf-8").read())
+
+# Fixed signing key so every new build installs as an update over the previous one.
+gradle_kts = os.path.join(root, "android", "app", "build.gradle.kts")
+signing = '''    signingConfigs {
+        create("erriwaya") {
+            storeFile = file("../../android-ci/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
+    buildTypes {'''
+with open(gradle_kts, encoding="utf-8") as f:
+    g = f.read()
+if 'create("erriwaya")' not in g:
+    assert "    buildTypes {" in g, "buildTypes block not found"
+    g = g.replace("    buildTypes {", signing, 1)
+    g = g.replace('signingConfig = signingConfigs.getByName("debug")',
+                  'signingConfig = signingConfigs.getByName("erriwaya")')
+    assert 'getByName("erriwaya")' in g, "release signingConfig not patched"
+with open(gradle_kts, "w", encoding="utf-8") as f:
+    f.write(g)
+print(g)
