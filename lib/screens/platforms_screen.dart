@@ -28,10 +28,7 @@ class PlatformsScreen extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             EmbedView(
-              url: 'https://www.facebook.com/plugins/page.php?href='
-                  '${Uri.encodeComponent(AppConfig.facebookUrl)}'
-                  '&tabs=timeline&width=500&height=3000&small_header=true'
-                  '&adapt_container_width=true&hide_cover=false&show_facepile=false&locale=ar_AR',
+              html: _facebookHtml(MediaQuery.sizeOf(context)),
               externalUrl: AppConfig.facebookUrl,
               externalLabel: 'فتح الصفحة في فيسبوك',
             ),
@@ -53,6 +50,23 @@ class PlatformsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// إضافة صفحة فيسبوك الرسمية (Page Plugin) داخل إطار، بعرض الشاشة.
+String _facebookHtml(Size size) {
+  final w = size.width.clamp(180, 500).round();
+  final h = (size.height * 3).clamp(1200, 4000).round();
+  final src = 'https://www.facebook.com/plugins/page.php?href='
+      '${Uri.encodeComponent(AppConfig.facebookUrl)}'
+      '&tabs=timeline&width=$w&height=$h&small_header=false'
+      '&adapt_container_width=true&hide_cover=false&show_facepile=false&locale=ar_AR';
+  return '''
+<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;padding:0;background:#fff}iframe{display:block;margin:0 auto;border:none;overflow:hidden}</style>
+</head><body>
+<iframe src="$src" width="$w" height="$h" scrolling="no" frameborder="0" allowfullscreen="true"
+ allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+</body></html>''';
 }
 
 class EmbedView extends StatefulWidget {

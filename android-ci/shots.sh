@@ -22,8 +22,8 @@ shot 04-player 12
 adb shell input keyevent KEYCODE_BACK
 python3 android-ci/tap.py "فيديوهات" && shot 05-videos 6
 python3 android-ci/tap.py "قصيرة" && shot 06-videos-shorts 4
-python3 android-ci/tap.py "المنصات" && shot 07-facebook 15
-python3 android-ci/tap.py "تيك توك" && shot 08-tiktok 15
+python3 android-ci/tap.py "المنصات" && shot 07-facebook 25
+python3 android-ci/tap.py "تيك توك" && shot 08-tiktok 25
 python3 android-ci/tap.py "تابعنا" && shot 09-follow 4
 python3 android-ci/tap.py "المحفوظات" && shot 10-saved 4
 python3 android-ci/tap.py "الأخبار"
