@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/push_sender.dart';
@@ -22,8 +25,21 @@ class _PushKeyScreenState extends State<PushKeyScreen> {
     PushSender.hasKey().then((v) => setState(() => _has = v));
   }
 
-  Future<void> _save() async {
-    final err = await PushSender.saveKey(_ctrl.text);
+  Future<void> _pickFile() async {
+    try {
+      final res = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
+      final bytes = res?.files.single.bytes;
+      if (bytes == null) return;
+      await _saveText(utf8.decode(bytes, allowMalformed: true));
+    } catch (e) {
+      setState(() => _msg = 'تعذر فتح الملف: $e');
+    }
+  }
+
+  Future<void> _save() => _saveText(_ctrl.text);
+
+  Future<void> _saveText(String text) async {
+    final err = await PushSender.saveKey(text);
     setState(() {
       _msg = err ?? 'حُفظ المفتاح. الإشعارات العاجلة جاهزة.';
       if (err == null) {
@@ -43,11 +59,20 @@ class _PushKeyScreenState extends State<PushKeyScreen> {
             leading: Icon(_has == true ? Icons.check_circle : Icons.info_outline,
                 color: _has == true ? Brand.green : Brand.muted),
             title: Text(_has == true ? 'المفتاح مضاف على هذا الهاتف' : 'لم يُضف المفتاح بعد'),
-            subtitle: const Text('من Firebase: إعدادات المشروع ← حسابات الخدمة ← إنشاء مفتاح خاص جديد. '
-                'افتح الملف وانسخ محتواه كاملاً والصقه هنا.'),
+            subtitle: const Text('من Firebase: إعدادات المشروع ← Service accounts ← '
+                'Generate new private key. ثم اختر الملف الذي نزل على هاتفك.'),
           ),
         ),
         const SizedBox(height: 14),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+          onPressed: _pickFile,
+          icon: const Icon(Icons.file_open_outlined),
+          label: const Text('اختيار ملف المفتاح', style: TextStyle(fontSize: 16)),
+        ),
+        const SizedBox(height: 18),
+        const Text('أو الصق محتوى الملف هنا:', style: TextStyle(color: Brand.muted)),
+        const SizedBox(height: 8),
         TextField(
           controller: _ctrl,
           minLines: 6,
@@ -60,7 +85,7 @@ class _PushKeyScreenState extends State<PushKeyScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        FilledButton(onPressed: _save, child: const Text('حفظ المفتاح')),
+        OutlinedButton(onPressed: _save, child: const Text('حفظ المحتوى الملصق')),
         if (_has == true)
           TextButton(
             onPressed: () async {

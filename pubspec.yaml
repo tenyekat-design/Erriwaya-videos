@@ -1,7 +1,7 @@
 name: erriwaya
 description: تطبيق الرواية – أخبار وتقارير وفيديوهات.
 publish_to: 'none'
-version: 1.2.1+7
+version: 1.2.2+8
 
 environment:
   sdk: ^3.5.0
@@ -24,6 +24,7 @@ dependencies:
   image_picker: ^1.1.2
   image: ^4.2.0
   googleapis_auth: ^1.6.0
+  file_picker: ^8.1.2
 
 dev_dependencies:
   flutter_test:
