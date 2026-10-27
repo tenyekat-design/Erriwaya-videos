@@ -7,17 +7,17 @@ jobs:
       - shell: bash {0}
         run: |
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-          MUA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
+          ID=UCI5O5rxscjt_t1S1gSbLAEg
           out=""
-          curl -sL -A "$UA" -H 'Cookie: CONSENT=YES+1' -o d.html "https://www.youtube.com/@ERRIWAYA"
-          curl -sL -A "$MUA" -H 'Cookie: CONSENT=YES+1' -o m.html "https://www.youtube.com/@ERRIWAYA"
-          for f in d.html m.html; do
-            a=$(grep -oE '.{40}UC[A-Za-z0-9_-]{22}' $f | head -5 | tr '\n' ' ' | tr '|' '/')
-            out="$out $f size=$(wc -c <$f) :: $a |"
+          for t in videos shorts streams; do
+            curl -sL -A "$UA" -H 'Cookie: CONSENT=YES+1' -H 'Accept-Language: ar' -o $t.html "https://www.youtube.com/channel/$ID/$t"
+            n=$(grep -oE '"videoId":"[A-Za-z0-9_-]{11}"' $t.html | sort -u | wc -l)
+            out="$out $t: size=$(wc -c <$t.html) uniqueVideoIds=$n |"
           done
-          id=$(grep -oE 'UC[A-Za-z0-9_-]{22}' d.html | sort | uniq -c | sort -rn | head -1 | awk '{print $2}')
-          r=$(curl -sL -o rss.xml -w '%{http_code}' "https://www.youtube.com/feeds/videos.xml?channel_id=$id"); n=$(grep -c '<entry>' rss.xml); tt=$(grep -oE '<title>[^<]*' rss.xml | head -4 | tr '\n' ' '); lk=$(grep -oE 'href="[^"]*(shorts|watch)[^"]*"' rss.xml | head -3 | tr '\n' ' ')
-          out="$out ID=$id RSS $r entries=$n $tt $lk |"
-          for h in erriwaya erriwaya.mr ERRIWAYA; do o=$(curl -sL "https://www.tiktok.com/oembed?url=https://www.tiktok.com/@$h" | head -c 300 | tr '|' '/'); out="$out ttoembed@$h: $o |"; done
-          o=$(curl -sL -A "$UA" -o fbp.html -w '%{http_code} %{url_effective}' "https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FERRIWAYA&tabs=timeline&width=500&height=800"); t=$(grep -oE '_1drp[^<]{0,80}|<title>[^<]*' fbp.html | head -3 | tr '\n' ' '); out="$out fbplugin: $o size=$(wc -c <fbp.html) $t |"
+          ex=$(grep -oE '"videoRenderer":\{"videoId":"[^"]{11}".{0,700}' videos.html | head -1 | tr '|' '/')
+          out="$out VR: $ex |"
+          sx=$(grep -oE '"shortsLockupViewModel".{0,900}' shorts.html | head -1 | tr '|' '/')
+          out="$out SL: $sx |"
+          r=$(curl -sL -o r2.xml -w '%{http_code}' "https://www.youtube.com/feeds/videos.xml?playlist_id=UUI5O5rxscjt_t1S1gSbLAEg"); out="$out UUfeed $r $(grep -c '<entry>' r2.xml) |"
+          about=$(grep -oE '"videoCountText":\{[^}]{0,200}|[0-9,]+ (videos|فيديو)' videos.html | head -2 | tr '|' '/'); out="$out count: $about |"
           echo "::notice title=diag::$out"
