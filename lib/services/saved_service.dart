@@ -42,5 +42,5 @@ class SavedService extends ChangeNotifier {
   }
 
   static Future<void> share(VideoItem v) =>
-      Share.share('${v.title}\n\n${v.url}\n\nعبر تطبيق الرواية', subject: v.title);
+      Share.share('${v.displayTitle}\n\n${v.url}\n\nعبر تطبيق الرواية', subject: v.displayTitle);
 }

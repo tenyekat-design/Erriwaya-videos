@@ -39,7 +39,7 @@ class PlatformsScreen extends StatelessWidget {
               html: '''
 <!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
 <style>body{margin:0;padding:8px;background:#fff;display:flex;justify-content:center}</style></head><body>
-<blockquote class="tiktok-embed" cite="${AppConfig.tiktokUrl}" data-unique-id="${AppConfig.tiktokUser}"
+<blockquote class="tiktok-embed" cite="${AppConfig.tiktokUrl}" data-unique-id="${AppConfig.tiktokUser.toLowerCase()}"
  data-embed-type="creator" style="max-width:780px;min-width:288px;">
 <section><a target="_blank" href="${AppConfig.tiktokUrl}">@${AppConfig.tiktokUser}</a></section></blockquote>
 <script async src="https://www.tiktok.com/embed.js"></script>
@@ -75,6 +75,7 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
   late final WebViewController _web;
   bool _loading = true;
   bool _failed = false;
+  DateTime? _loadedAt;
 
   @override
   bool get wantKeepAlive => true;
@@ -87,21 +88,26 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
       ..setBackgroundColor(Colors.white)
       ..setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) {
+          _loadedAt ??= DateTime.now();
           if (mounted) setState(() => _loading = false);
         },
         onWebResourceError: (e) {
           if (e.isForMainFrame == true && mounted) setState(() => _failed = true);
         },
         onNavigationRequest: (req) {
-          // أي رابط يضغطه القارئ يُفتح في التطبيق الأصلي (فيسبوك/تيك توك/المتصفح).
-          final first = widget.url;
-          final isStart = req.url == first || req.url.startsWith('https://erriwaya.mr') ||
-              req.url == 'about:blank';
-          if (req.isMainFrame && !isStart) {
-            launchUrl(Uri.parse(req.url), mode: LaunchMode.externalApplication);
-            return NavigationDecision.prevent;
+          if (!req.isMainFrame) return NavigationDecision.navigate;
+          final u = req.url;
+          final isStart = u == widget.url || u.startsWith('https://erriwaya.mr') || u == 'about:blank';
+          if (isStart) return NavigationDecision.navigate;
+          // تحويلات تلقائية (تسجيل دخول وما شابه) تُمنع بصمت حتى لا يقفز القارئ خارج التطبيق.
+          final auto = _loadedAt == null ||
+              DateTime.now().difference(_loadedAt!) < const Duration(seconds: 3) ||
+              RegExp(r'/login|/checkpoint|/plugins/|/embed|consent|/sharer').hasMatch(u);
+          if (!auto) {
+            // ضغطة من القارئ على منشور أو فيديو: تُفتح في تطبيق المنصة.
+            launchUrl(Uri.parse(u), mode: LaunchMode.externalApplication);
           }
-          return NavigationDecision.navigate;
+          return NavigationDecision.prevent;
         },
       ));
     _load();

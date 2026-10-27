@@ -83,11 +83,11 @@ class HeroCard extends StatelessWidget {
                   Text(cat.first, style: const TextStyle(color: Brand.red, fontSize: 13)),
                   const Text('  •  ', style: TextStyle(color: Brand.muted, fontSize: 13)),
                 ],
-                Text(timeAgo(video.published),
+                Text(video.hasDate ? timeAgo(video.published) : 'يوتيوب',
                     style: const TextStyle(color: Brand.muted, fontSize: 13)),
               ]),
               const SizedBox(height: 6),
-              Text(video.title,
+              Text(video.displayTitle,
                   style: const TextStyle(fontSize: 20, height: 1.5, color: Brand.ink)),
             ]),
           ),
@@ -117,13 +117,13 @@ class NewsTile extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(video.title,
+                Text(video.displayTitle,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 15.5, height: 1.45, color: Brand.ink)),
                 const SizedBox(height: 6),
                 Text(
-                  [if (cat.isNotEmpty) cat.first, timeAgo(video.published)].join('  •  '),
+                  [if (cat.isNotEmpty) cat.first, if (video.hasDate) timeAgo(video.published)].join('  •  '),
                   style: const TextStyle(fontSize: 12, color: Brand.muted),
                 ),
               ]),
@@ -151,7 +151,7 @@ class GridVideoCard extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
-              child: Text(video.title,
+              child: Text(video.displayTitle,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 13.5, height: 1.45, color: Brand.ink)),
@@ -159,7 +159,10 @@ class GridVideoCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
-            child: Text(timeAgo(video.published),
+            child: Text(
+                video.hasDate
+                    ? timeAgo(video.published)
+                    : (video.views > 0 ? '${video.views} مشاهدة' : 'قصير'),
                 style: const TextStyle(fontSize: 11.5, color: Brand.muted)),
           ),
         ]),

@@ -58,10 +58,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(v.title, style: const TextStyle(fontSize: 20, height: 1.5, color: Brand.ink)),
+            Text(v.displayTitle, style: const TextStyle(fontSize: 20, height: 1.5, color: Brand.ink)),
             const SizedBox(height: 6),
             Text(
-              [timeAgo(v.published), if (v.views > 0) '${v.views} مشاهدة'].join('  •  '),
+              [if (v.hasDate) timeAgo(v.published), if (v.views > 0) '${v.views} مشاهدة'].join('  •  '),
               style: const TextStyle(color: Brand.muted, fontSize: 13),
             ),
             const SizedBox(height: 14),

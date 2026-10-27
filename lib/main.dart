@@ -58,6 +58,8 @@ class Shell extends StatefulWidget {
 
 class _ShellState extends State<Shell> {
   int _index = 0;
+  final _visited = <int>{0};
+  static const _screens = [HomeScreen(), VideosScreen(), PlatformsScreen(), SavedScreen()];
   StreamSubscription<BreakingNews>? _sub;
 
   @override
@@ -102,15 +104,17 @@ class _ShellState extends State<Shell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _index, children: const [
-        HomeScreen(),
-        VideosScreen(),
-        PlatformsScreen(),
-        SavedScreen(),
+      // كل شاشة تُبنى عند أول زيارة لها فقط (لا تُحمَّل صفحات فيسبوك وتيك توك عند فتح التطبيق).
+      body: IndexedStack(index: _index, children: [
+        for (var i = 0; i < 4; i++)
+          _visited.contains(i) ? _screens[i] : const SizedBox.shrink(),
       ]),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
+        onDestinationSelected: (i) => setState(() {
+          _index = i;
+          _visited.add(i);
+        }),
         destinations: const [
           NavigationDestination(
               icon: Icon(Icons.newspaper_outlined),

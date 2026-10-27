@@ -19,6 +19,15 @@ class VideoItem {
     this.views = 0,
   });
 
+  static final unknownDate = DateTime(2000);
+  bool get hasDate => published.year > 2000;
+
+  /// العنوان بدون علامات الوسوم: «#موجز_الأخبار» ← «موجز الأخبار».
+  String get displayTitle {
+    final t = title.replaceAll('#', ' ').replaceAll('_', ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+    return t.isEmpty ? 'الرواية' : t;
+  }
+
   String get url => isShort ? 'https://www.youtube.com/shorts/$id' : 'https://www.youtube.com/watch?v=$id';
   String get hqThumb => 'https://i.ytimg.com/vi/$id/hqdefault.jpg';
   String get bigThumb => 'https://i.ytimg.com/vi/$id/maxresdefault.jpg';
@@ -75,6 +84,7 @@ class BreakingNews {
 
 /// «منذ 3 ساعات» بالعربية.
 String timeAgo(DateTime t) {
+  if (t.year <= 2000) return '';
   final d = DateTime.now().difference(t);
   if (d.inMinutes < 1) return 'الآن';
   if (d.inMinutes < 60) return _plural(d.inMinutes, 'دقيقة', 'دقيقتين', 'دقائق');

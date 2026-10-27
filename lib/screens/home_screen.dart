@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListenableBuilder(
       listenable: _ctrl,
       builder: (context, _) {
-        final all = _ctrl.items;
+        final all = _ctrl.items.where((v) => !v.isShort).toList();
         final list = _cat == 'الكل' ? all : all.where((v) => v.categories.contains(_cat)).toList();
         return RefreshIndicator(
           color: Brand.green,

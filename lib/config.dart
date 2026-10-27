@@ -9,9 +9,9 @@ class AppConfig {
 
   /// اتركه فارغاً ليُكتشف معرّف القناة تلقائياً من @ERRIWAYA،
   /// أو ضع المعرّف (يبدأ بـ UC) لتسريع التحميل.
-  static const youtubeChannelId = '';
+  static const youtubeChannelId = 'UCI5O5rxscjt_t1S1gSbLAEg';
   static const facebookPage = 'ERRIWAYA';
-  static const tiktokUser = 'ERRIWAYA';
+  static const tiktokUser = 'erriwaya';
   static const instagramUser = 'erriwaya.mr';
 
   static String get youtubeUrl => 'https://www.youtube.com/@$youtubeHandle';
