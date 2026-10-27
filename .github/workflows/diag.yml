@@ -1,21 +1,13 @@
 name: diag
 on: {push: {branches: [android-diag]}}
-permissions: {contents: write}
 jobs:
   d:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - shell: bash {0}
         run: |
-          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-          MUA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
-          ID=UCI5O5rxscjt_t1S1gSbLAEg
-          mkdir -p dump
-          for t in videos shorts; do
-            curl -sL -A "$UA" -H 'Cookie: CONSENT=YES+1' -H 'Accept-Language: ar' -o dump/$t.html "https://www.youtube.com/channel/$ID/$t"
-            curl -sL -A "$MUA" -H 'Cookie: CONSENT=YES+1' -H 'Accept-Language: ar' -o dump/m-$t.html "https://www.youtube.com/channel/$ID/$t"
-          done
-          gzip dump/*.html
-          git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add dump && git commit -qm "dump [skip ci]" && git push
+          K=AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc
+          r=$(curl -s "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents/articles?key=$K" | head -c 400 | tr '\n|' '  ')
+          w=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"fields":{"title":{"stringValue":"x"}}}' "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents/articles?key=$K" | head -c 300 | tr '\n|' '  ')
+          a=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"email":"probe@example.com","password":"x"}' "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$K" | head -c 300 | tr '\n|' '  ')
+          echo "::notice title=diag::READ: $r | ANON-WRITE: $w | AUTH: $a"
