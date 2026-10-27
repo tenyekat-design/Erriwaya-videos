@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/firebase_boot.dart';
 import '../services/push_service.dart';
+import 'about_screen.dart';
 import 'admin/login_screen.dart';
 import '../theme.dart';
 
@@ -11,6 +12,7 @@ Future<void> showSettingsSheet(BuildContext context) async {
   await showModalBottomSheet(
     context: context,
     showDragHandle: true,
+    isScrollControlled: true,
     builder: (_) => _Settings(initial: enabled),
   );
 }
@@ -47,6 +49,25 @@ class _SettingsState extends State<_Settings> {
           ),
           const Divider(),
           ListTile(
+            leading: const Icon(Icons.info_outline, color: Brand.green),
+            title: const Text('عن الرواية'),
+            onTap: () {
+              final nav = Navigator.of(context);
+              nav.pop();
+              nav.push(MaterialPageRoute(builder: (_) => const AboutScreen()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.mail_outline, color: Brand.green),
+            title: const Text('اتصل بنا'),
+            onTap: () {
+              final nav = Navigator.of(context);
+              nav.pop();
+              nav.push(MaterialPageRoute(builder: (_) => const ContactScreen()));
+            },
+          ),
+          const Divider(),
+          ListTile(
             leading: const Icon(Icons.edit_note, color: Brand.green),
             title: const Text('دخول المحرر'),
             subtitle: Text(FirebaseBoot.ready ? 'نشر الأخبار والعاجل' : 'يتطلب إعداد Firebase'),
@@ -61,7 +82,7 @@ class _SettingsState extends State<_Settings> {
           ListTile(
             leading: Image.asset('assets/images/logo_white.png', height: 32, color: Brand.green),
             title: const Text('الرواية'),
-            subtitle: const Text('الإصدار 1.1.1'),
+            subtitle: const Text('الإصدار 1.2.0'),
           ),
         ]),
       ),

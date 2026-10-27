@@ -10,6 +10,7 @@ import '../theme.dart';
 import '../widgets/article_card.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
+import 'about_screen.dart';
 import 'settings_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
               pinned: true,
               expandedHeight: 150,
               backgroundColor: Brand.green,
+              leading: IconButton(
+                icon: const Icon(Icons.info_outline, color: Colors.white),
+                tooltip: 'عن الرواية',
+                onPressed: () => Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (_) => const AboutScreen())),
+              ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.settings_outlined, color: Colors.white),

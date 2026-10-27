@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../config.dart';
 import '../../models.dart';
+import '../../portals.dart';
 import '../../services/articles_service.dart';
 import '../../services/push_sender.dart';
 import '../../theme.dart';
@@ -24,6 +25,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
   final _body = TextEditingController();
   String _category = '';
   bool _breaking = false;
+  final Set<String> _portals = {};
   final List<Uint8List> _images = [];
   bool _busy = false;
   String _status = '';
@@ -40,6 +42,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
       _body.text = a.body;
       _category = AppConfig.categories.containsKey(a.category) ? a.category : '';
       _breaking = a.breaking;
+      _portals.addAll(a.portals);
       _loadingImages = a.imageCount > 0;
       ArticlesService.instance.images(a).then((imgs) {
         if (!mounted) return;
@@ -87,6 +90,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
           category: _category,
           breaking: _breaking,
           images: _images,
+          portals: _portals.toList(),
         );
         if (!mounted) return;
         Navigator.of(context).pop();
@@ -106,6 +110,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
         breaking: _breaking,
         images: _images,
         author: FirebaseAuth.instance.currentUser?.email ?? '',
+        portals: _portals.toList(),
       );
       var msg = 'نُشر الخبر.';
       if (_breaking) {
@@ -161,6 +166,24 @@ class _ComposeScreenState extends State<ComposeScreen> {
               for (final c in AppConfig.categories.keys) DropdownMenuItem(value: c, child: Text(c)),
             ],
             onChanged: (v) => setState(() => _category = v ?? ''),
+          ),
+          const SizedBox(height: 14),
+          const Text('البوابات (الدول المعنية بالخبر)', style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: [
+            for (final p in portals)
+              FilterChip(
+                label: Text(p.name),
+                selected: _portals.contains(p.id),
+                selectedColor: Brand.green.withValues(alpha: 0.18),
+                checkmarkColor: Brand.green,
+                onSelected: (v) => setState(() => v ? _portals.add(p.id) : _portals.remove(p.id)),
+              ),
+          ]),
+          const Padding(
+            padding: EdgeInsets.only(top: 6),
+            child: Text('يظهر الخبر أيضاً تلقائياً في بوابة كل دولة يُذكر اسمها في نصه.',
+                style: TextStyle(fontSize: 12.5, color: Brand.muted)),
           ),
           const SizedBox(height: 8),
           SwitchListTile(

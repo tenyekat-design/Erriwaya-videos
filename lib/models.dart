@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'config.dart';
+import 'portals.dart';
 
 class VideoItem {
   final String id;
@@ -38,7 +39,7 @@ class VideoItem {
   List<String> get categories {
     final text = '$title $description';
     return AppConfig.categories.entries
-        .where((e) => e.value.any(text.contains))
+        .where((e) => matchesAny(text, e.value))
         .map((e) => e.key)
         .toList();
   }
@@ -120,6 +121,7 @@ class Article {
   final String thumb; // صورة مصغرة base64 (JPEG)
   final int imageCount;
   final DateTime createdAt;
+  final List<String> portals; // معرّفات البوابات التي اختارها المحرر
 
   Article({
     required this.id,
@@ -130,6 +132,7 @@ class Article {
     required this.thumb,
     required this.imageCount,
     required this.createdAt,
+    this.portals = const [],
   });
 
   Uint8List? _thumbBytes;
@@ -158,6 +161,7 @@ class Article {
         'thumb': thumb,
         'imageCount': imageCount,
         'createdAt': createdAt.toIso8601String(),
+        'portals': portals,
       };
 
   factory Article.fromJson(Map<String, dynamic> j) => Article(
@@ -169,6 +173,7 @@ class Article {
         thumb: (j['thumb'] ?? '') as String,
         imageCount: (j['imageCount'] ?? 0) as int,
         createdAt: DateTime.tryParse((j['createdAt'] ?? '') as String) ?? DateTime.now(),
+        portals: ((j['portals'] ?? const []) as List).map((e) => e.toString()).toList(),
       );
 }
 
@@ -182,6 +187,6 @@ List<String> feedCategories(Object o) {
   final text = '${a.title} ${a.body}';
   return {
     if (a.category.isNotEmpty) a.category,
-    ...AppConfig.categories.entries.where((e) => e.value.any(text.contains)).map((e) => e.key),
+    ...AppConfig.categories.entries.where((e) => matchesAny(text, e.value)).map((e) => e.key),
   }.toList();
 }

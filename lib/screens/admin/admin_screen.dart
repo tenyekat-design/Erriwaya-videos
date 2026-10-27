@@ -7,6 +7,7 @@ import '../../theme.dart';
 import '../../widgets/article_card.dart';
 import 'compose_screen.dart';
 import 'push_key_screen.dart';
+import 'site_admin_screens.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -45,6 +46,18 @@ class AdminScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('لوحة التحرير'),
         actions: [
+          IconButton(
+            tooltip: 'رسائل القراء',
+            icon: const Icon(Icons.inbox_outlined),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const MessagesScreen())),
+          ),
+          IconButton(
+            tooltip: 'عن الرواية والاتصال',
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SiteInfoEditScreen())),
+          ),
           IconButton(
             tooltip: 'مفتاح الإشعارات',
             icon: const Icon(Icons.notifications_active_outlined),

@@ -20,6 +20,10 @@ sleep 2
 adb shell input tap 540 700
 shot 04-player 12
 adb shell input keyevent KEYCODE_BACK
+python3 android-ci/tap.py "البوابات" && shot 05a-portals 4
+python3 android-ci/tap.py "موريتانيا" && shot 05b-portal-mr 4
+adb shell input keyevent KEYCODE_BACK
+sleep 2
 python3 android-ci/tap.py "فيديوهات" && shot 05-videos 6
 python3 android-ci/tap.py "قصيرة" && shot 06-videos-shorts 4
 python3 android-ci/tap.py "المنصات" && shot 07-facebook 25
@@ -29,6 +33,8 @@ python3 android-ci/tap.py "المحفوظات" && shot 10-saved 4
 python3 android-ci/tap.py "الأخبار"
 sleep 2
 python3 android-ci/tap.py "الإعدادات" && shot 11-settings 4
+python3 android-ci/tap.py "عن الرواية" && shot 12-about 4
+python3 android-ci/tap.py "اتصل بنا" && shot 13-contact 4
 adb logcat -d > shots/logcat.txt
 grep -iE "flutter|exception|E/" shots/logcat.txt | grep -i -E "flutter|erriwaya" | tail -200 > shots/flutter-log.txt
 ls -la shots

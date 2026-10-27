@@ -9,11 +9,13 @@ import 'config.dart';
 import 'models.dart';
 import 'screens/home_screen.dart';
 import 'screens/platforms_screen.dart';
+import 'screens/portals_screen.dart';
 import 'screens/saved_screen.dart';
 import 'screens/videos_screen.dart';
 import 'services/articles_service.dart';
 import 'services/firebase_boot.dart';
 import 'services/push_service.dart';
+import 'services/site_service.dart';
 import 'services/saved_service.dart';
 import 'services/videos_controller.dart';
 import 'theme.dart';
@@ -31,6 +33,7 @@ Future<void> main() async {
   // الشبكة والإشعارات بعد ظهور الواجهة حتى لا يتأخر فتح التطبيق.
   unawaited(VideosController.instance.start());
   unawaited(ArticlesService.instance.start());
+  unawaited(SiteService.instance.start());
   unawaited(PushService.init());
 }
 
@@ -64,7 +67,13 @@ class Shell extends StatefulWidget {
 class _ShellState extends State<Shell> {
   int _index = 0;
   final _visited = <int>{0};
-  static const _screens = [HomeScreen(), VideosScreen(), PlatformsScreen(), SavedScreen()];
+  static const _screens = [
+    HomeScreen(),
+    PortalsScreen(),
+    VideosScreen(),
+    PlatformsScreen(),
+    SavedScreen(),
+  ];
   StreamSubscription<BreakingNews>? _sub;
 
   @override
@@ -114,7 +123,7 @@ class _ShellState extends State<Shell> {
     return Scaffold(
       // كل شاشة تُبنى عند أول زيارة لها فقط (لا تُحمَّل صفحات فيسبوك وتيك توك عند فتح التطبيق).
       body: IndexedStack(index: _index, children: [
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < _screens.length; i++)
           _visited.contains(i) ? _screens[i] : const SizedBox.shrink(),
       ]),
       bottomNavigationBar: NavigationBar(
@@ -128,6 +137,10 @@ class _ShellState extends State<Shell> {
               icon: Icon(Icons.newspaper_outlined),
               selectedIcon: Icon(Icons.newspaper, color: Brand.green),
               label: 'الأخبار'),
+          NavigationDestination(
+              icon: Icon(Icons.travel_explore_outlined),
+              selectedIcon: Icon(Icons.travel_explore, color: Brand.green),
+              label: 'البوابات'),
           NavigationDestination(
               icon: Icon(Icons.play_circle_outline),
               selectedIcon: Icon(Icons.play_circle, color: Brand.green),

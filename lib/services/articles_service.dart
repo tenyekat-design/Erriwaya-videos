@@ -56,6 +56,7 @@ class ArticlesService extends ChangeNotifier {
       thumb: (m['thumb'] ?? '') as String,
       imageCount: (m['imageCount'] ?? 0) as int,
       createdAt: ts is Timestamp ? ts.toDate() : DateTime.now(),
+      portals: ((m['portals'] ?? const []) as List).map((e) => e.toString()).toList(),
     );
   }
 
@@ -82,6 +83,7 @@ class ArticlesService extends ChangeNotifier {
     required bool breaking,
     required List<Uint8List> images,
     required String author,
+    List<String> portals = const [],
   }) async {
     final prepared = await compute(_prepareImages, images);
     final doc = _col.doc();
@@ -94,6 +96,7 @@ class ArticlesService extends ChangeNotifier {
       'thumb': prepared.thumb,
       'imageCount': prepared.full.length,
       'author': author,
+      'portals': portals,
       'createdAt': FieldValue.serverTimestamp(),
     });
     for (var i = 0; i < prepared.full.length; i++) {
@@ -111,6 +114,7 @@ class ArticlesService extends ChangeNotifier {
     required String category,
     required bool breaking,
     required List<Uint8List> images,
+    List<String> portals = const [],
   }) async {
     final prepared = await compute(_prepareImages, images);
     final doc = _col.doc(original.id);
@@ -126,6 +130,7 @@ class ArticlesService extends ChangeNotifier {
       'breaking': breaking,
       'thumb': prepared.thumb,
       'imageCount': prepared.full.length,
+      'portals': portals,
       'updatedAt': FieldValue.serverTimestamp(),
     });
     for (var i = 0; i < prepared.full.length; i++) {
