@@ -1,6 +1,6 @@
 // Edition of 27 Oct 2026. All times are in seconds of the ORIGINAL voice-over (voiceover.mp3 in this
-// folder); the template maps them onto the video timeline. Images are files in ./img; stories without a
-// clip or photo get a text card (graphic without a map: see makeGraphic in src/app.js).
+// folder); the template maps them onto the video timeline. Images are files in ./img; every card is a
+// photo or a clip.
 //
 // Country ids (world-atlas): Mauritania 478, Morocco 504, W. Sahara 732, Algeria 012, Tunisia 788,
 // Libya 434, Mali 466, Niger 562, Senegal 686, Gambia 270, Chad 148, Russia 643.
@@ -28,8 +28,10 @@ window.TIMELINE = {
     { video: 'mr-moscow-arrival.mp4', from: 0, moves: [{ t: 28.0, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.06] },
                                                        { t: 32.4, a: [0.5, 0.45, 1.06], b: [0.55, 0.45, 1.12] }] },
     // Mauritania: ruling party and the third term
-    { img: 'mr-insaf-meeting.jpg', moves: [{ t: 42.74, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.1] },
-                                           { t: 51.00, a: [0.45, 0.52, 1.6], b: [0.45, 0.52, 1.45] }] },
+    { img: 'mr-insaf-meeting.jpg', moves: [{ t: 42.74, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.1] }] },
+    { img: 'mr-insaf-chair.jpg', moves: [{ t: 47.30, a: [0.6, 0.55, 1.0], b: [0.68, 0.55, 1.15] }] },
+    { img: 'mr-insaf-members.jpg', moves: [{ t: 51.00, a: [0.5, 0.45, 1.0], b: [0.4, 0.45, 1.12] },
+                                           { t: 55.08, a: [0.35, 0.45, 1.45], b: [0.33, 0.45, 1.3] }] },
     { img: 'mr-president.jpg', moves: [{ t: 57.14, a: [0.5, 0.35, 1.25], b: [0.5, 0.3, 1.4] }] },
     // Algeria sends troops to Niger
     { img: 'dz-tebboune-niger.jpg', moves: [{ t: 60.62, a: [0.5, 0.35, 1.0], b: [0.45, 0.32, 1.1] },
@@ -61,15 +63,17 @@ window.TIMELINE = {
     // Tunisia: new parliamentary session
     { video: 'tn-parliament.mp4', from: 0, moves: [{ t: 177.68, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
     // Libya: cost of delayed reforms
-    { img: 'ly-interview.jpg', moves: [{ t: 193.80, a: [0.45, 0.4, 1.0], b: [0.45, 0.35, 1.12] },
-                                       { t: 203.76, a: [0.42, 0.3, 1.5], b: [0.43, 0.28, 1.35] }] },
-    // Gambia: fuel subsidy (no photo: text card)
-    { graphic: { kicker: 'غامبيا', title: 'دعم الوقود', figure: '827 مليون دالاسي', sub: 'إنفاق حكومي خلال سبعة أشهر رغم ارتفاع أسعار المحروقات' },
-      moves: [{ t: 210.24, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
-    // Nouakchott: transformer fire in Teyarett (no photo: text card)
-    { graphic: { kicker: 'نواكشوط', title: 'حريق في محول كهرباء بمقاطعة تيارت', sub: 'انقطاع التيار عن أحد الأحياء قبل تدخل شركة صوملك' },
-      moves: [{ t: 227.78, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
-    { img: 'mr-president.jpg', moves: [{ t: 243.86, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] }] },
+    { img: 'ly-interview.jpg', moves: [{ t: 193.80, a: [0.45, 0.4, 1.0], b: [0.45, 0.35, 1.12] }] },
+    { img: 'ly-refinery.jpg', moves: [{ t: 200.30, a: [0.5, 0.5, 1.0], b: [0.45, 0.45, 1.12] }] },
+    { img: 'ly-refinery-smoke.jpg', moves: [{ t: 206.20, a: [0.5, 0.45, 1.0], b: [0.4, 0.4, 1.12] }] },
+    // Gambia: fuel subsidy
+    { img: 'gm-dalasi.jpg', moves: [{ t: 210.24, a: [0.5, 0.5, 1.0], b: [0.65, 0.45, 1.15] }] },
+    { img: 'gm-official.jpg', moves: [{ t: 215.40, a: [0.5, 0.35, 1.0], b: [0.5, 0.32, 1.12] }] },
+    { img: 'gm-dalasi-old.jpg', moves: [{ t: 221.10, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.15] }] },
+    // Nouakchott: transformer fire in Teyarett
+    { img: 'mr-fire-teyarett.jpg', moves: [{ t: 227.78, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] },
+                                           { t: 237.34, a: [0.25, 0.5, 1.5], b: [0.28, 0.5, 1.35] }] },
+    { img: 'mr-fire-teyarett-tall.jpg', moves: [{ t: 243.86, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.12] }] },
     // wrap-up
     { img: 'ml-soldier.jpg', moves: [{ t: 248.06, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
     { video: 'ma-lekjaa-parliament.mp4', from: 16.6, moves: [{ t: 251.06, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },

@@ -87,7 +87,7 @@
 
   // ---------- assets ----------
   const IMG = {};
-  let LOGO = null, LOGO_ACC = null;
+  let LOGO = null, LOGO_ACC = null, LOGO_INK = null;
   function loadImage(src) {
     return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
   }
@@ -100,6 +100,17 @@
     g.fillStyle = color;
     g.fillRect(0, 0, c.width, c.height);
     return c;
+  }
+
+  // bounding box of the opaque pixels of a canvas (the logo's visible ink)
+  function inkBox(c) {
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let left = c.width, right = 0, top = c.height, bottom = 0;
+    for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+      if (d[(y * c.width + x) * 4 + 3] < 40) continue;
+      if (x < left) left = x; if (x > right) right = x; if (y < top) top = y; if (y > bottom) bottom = y;
+    }
+    return { left, right, top, bottom };
   }
 
   // ---------- map ----------
@@ -820,12 +831,19 @@
     const lb = logoBox();
     ctx.save();
     ctx.globalAlpha = alpha;
-    const tx = lb.x - 26;
+    // title + date block sized to the logo's ink and centred on the same axis, with a divider between
+    const k = lb.h / LOGO.height;
+    const top = lb.y + LOGO_INK.top * k, bot = lb.y + LOGO_INK.bottom * k;
+    const cy = (top + bot) / 2, ih = bot - top;
+    const sx = lb.x + LOGO_INK.left * k - 24;
+    ctx.fillStyle = C.line;
+    rrect(sx - 1.5, cy - ih * 0.4, 3, ih * 0.8, 1.5); ctx.fill();
+    const tx = sx - 24;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(38);
-    ctx.fillText(TL.title, tx, lb.y + lb.h / 2 - 20);
-    ctx.fillStyle = C.gray; ctx.font = font(24);
-    ctx.fillText(TL.date, tx, lb.y + lb.h / 2 + 24);
+    ctx.fillStyle = C.navy; ctx.font = font(Math.round(ih * 0.38));
+    ctx.fillText(TL.title, tx, cy - ih * 0.19);
+    ctx.fillStyle = C.gray; ctx.font = font(Math.round(ih * 0.22));
+    ctx.fillText(TL.date, tx, cy + ih * 0.27);
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
@@ -834,12 +852,12 @@
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
     ctx.font = font(34); ctx.fillStyle = C.navy;
     const num = String(ch).padStart(2, '0');
-    ctx.fillText(num, L.margin, lb.y + lb.h / 2 - 14);
+    ctx.fillText(num, L.margin, cy - 14);
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = C.gray;
-    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, lb.y + lb.h / 2 - 11);
+    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, cy - 11);
     for (let i = 0; i < n; i++) {
-      const bx = L.margin + i * 30, by = lb.y + lb.h / 2 + 22;
+      const bx = L.margin + i * 30, by = cy + 22;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
       ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
@@ -1238,6 +1256,7 @@
     for (const c of CARDS) if (c.graphic) IMG[c.key] = makeGraphic(c.graphic);
     const logo = await loadImage('../assets/logo-white.png');
     LOGO = tint(logo, C.navy);
+    LOGO_INK = inkBox(LOGO);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
     window.prepareFrame = prepareFrame;
