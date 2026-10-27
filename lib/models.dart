@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'config.dart';
 
 class VideoItem {
@@ -65,19 +68,22 @@ class BreakingNews {
   final String title;
   final String body;
   final String? url;
+  final String? articleId;
   final DateTime time;
 
-  const BreakingNews({required this.title, required this.body, this.url, required this.time});
+  const BreakingNews(
+      {required this.title, required this.body, this.url, this.articleId, required this.time});
 
   bool get isFresh => DateTime.now().difference(time).inHours < 24;
 
   Map<String, dynamic> toJson() =>
-      {'title': title, 'body': body, 'url': url, 'time': time.toIso8601String()};
+      {'title': title, 'body': body, 'url': url, 'articleId': articleId, 'time': time.toIso8601String()};
 
   factory BreakingNews.fromJson(Map<String, dynamic> j) => BreakingNews(
         title: (j['title'] ?? '') as String,
         body: (j['body'] ?? '') as String,
         url: j['url'] as String?,
+        articleId: j['articleId'] as String?,
         time: DateTime.tryParse((j['time'] ?? '') as String) ?? DateTime.now(),
       );
 }
@@ -102,4 +108,80 @@ String _plural(int n, String one, String two, String few) {
   if (n == 2) return 'منذ $two';
   if (n <= 10) return 'منذ $n $few';
   return 'منذ $n $one';
+}
+
+/// خبر مكتوب ينشره المحرر من لوحة التحرير.
+class Article {
+  final String id;
+  final String title;
+  final String body;
+  final String category;
+  final bool breaking;
+  final String thumb; // صورة مصغرة base64 (JPEG)
+  final int imageCount;
+  final DateTime createdAt;
+
+  Article({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.category,
+    required this.breaking,
+    required this.thumb,
+    required this.imageCount,
+    required this.createdAt,
+  });
+
+  Uint8List? _thumbBytes;
+  Uint8List? get thumbBytes {
+    if (thumb.isEmpty) return null;
+    try {
+      return _thumbBytes ??= base64Decode(thumb);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool get isFreshBreaking => breaking && DateTime.now().difference(createdAt).inHours < 24;
+
+  String get excerpt {
+    final t = body.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return t.length > 160 ? '${t.substring(0, 160)}…' : t;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'body': body,
+        'category': category,
+        'breaking': breaking,
+        'thumb': thumb,
+        'imageCount': imageCount,
+        'createdAt': createdAt.toIso8601String(),
+      };
+
+  factory Article.fromJson(Map<String, dynamic> j) => Article(
+        id: j['id'] as String,
+        title: (j['title'] ?? '') as String,
+        body: (j['body'] ?? '') as String,
+        category: (j['category'] ?? '') as String,
+        breaking: (j['breaking'] ?? false) as bool,
+        thumb: (j['thumb'] ?? '') as String,
+        imageCount: (j['imageCount'] ?? 0) as int,
+        createdAt: DateTime.tryParse((j['createdAt'] ?? '') as String) ?? DateTime.now(),
+      );
+}
+
+/// تاريخ أي عنصر في الخلاصة (خبر مكتوب أو فيديو).
+DateTime feedDate(Object o) => o is Article ? o.createdAt : (o as VideoItem).published;
+
+/// تصنيفات أي عنصر في الخلاصة.
+List<String> feedCategories(Object o) {
+  if (o is VideoItem) return o.categories;
+  final a = o as Article;
+  final text = '${a.title} ${a.body}';
+  return {
+    if (a.category.isNotEmpty) a.category,
+    ...AppConfig.categories.entries.where((e) => e.value.any(text.contains)).map((e) => e.key),
+  }.toList();
 }

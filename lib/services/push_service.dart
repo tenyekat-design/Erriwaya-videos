@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../config.dart';
 import '../models.dart';
+import 'firebase_boot.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseBackgroundHandler(RemoteMessage message) async {
@@ -36,9 +37,8 @@ class PushService {
         latest.value = BreakingNews.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
       } catch (_) {}
     }
-    if (!available) return;
+    if (!FirebaseBoot.ready) return;
     try {
-      await Firebase.initializeApp(options: AppConfig.firebaseOptions);
       FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
       final fm = FirebaseMessaging.instance;
       await fm.requestPermission(alert: true, badge: true, sound: true);
@@ -70,6 +70,7 @@ class PushService {
       title: m.notification?.title ?? m.data['title']?.toString() ?? 'عاجل',
       body: m.notification?.body ?? m.data['body']?.toString() ?? '',
       url: m.data['url']?.toString(),
+      articleId: m.data['articleId']?.toString(),
       time: m.sentTime ?? DateTime.now(),
     );
     final p = await SharedPreferences.getInstance();

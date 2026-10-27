@@ -94,6 +94,8 @@ if 'create("erriwaya")' not in g:
     g = g.replace('signingConfig = signingConfigs.getByName("debug")',
                   'signingConfig = signingConfigs.getByName("erriwaya")')
     assert 'getByName("erriwaya")' in g, "release signingConfig not patched"
+# Firestore/Auth need minSdk 23.
+g = re.sub(r"minSdk = flutter\.minSdkVersion", "minSdk = 23", g)
 with open(gradle_kts, "w", encoding="utf-8") as f:
     f.write(g)
 print(g)

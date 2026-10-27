@@ -11,10 +11,13 @@ import 'screens/home_screen.dart';
 import 'screens/platforms_screen.dart';
 import 'screens/saved_screen.dart';
 import 'screens/videos_screen.dart';
+import 'services/articles_service.dart';
+import 'services/firebase_boot.dart';
 import 'services/push_service.dart';
 import 'services/saved_service.dart';
 import 'services/videos_controller.dart';
 import 'theme.dart';
+import 'widgets/article_card.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +26,11 @@ Future<void> main() async {
     statusBarIconBrightness: Brightness.light,
   ));
   await SavedService.instance.load();
+  await FirebaseBoot.init();
   runApp(const ErriwayaApp());
   // الشبكة والإشعارات بعد ظهور الواجهة حتى لا يتأخر فتح التطبيق.
   unawaited(VideosController.instance.start());
+  unawaited(ArticlesService.instance.start());
   unawaited(PushService.init());
 }
 
@@ -65,8 +70,11 @@ class _ShellState extends State<Shell> {
   @override
   void initState() {
     super.initState();
-    _sub = PushService.opened.stream.listen((b) {
-      if (b.url != null && b.url!.isNotEmpty) {
+    _sub = PushService.opened.stream.listen((b) async {
+      if (b.articleId != null && b.articleId!.isNotEmpty) {
+        final a = await ArticlesService.instance.byId(b.articleId!);
+        if (a != null && mounted) openArticle(context, a);
+      } else if (b.url != null && b.url!.isNotEmpty) {
         launchUrl(Uri.parse(b.url!), mode: LaunchMode.externalApplication);
       } else {
         setState(() => _index = 0);

@@ -68,7 +68,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             ListenableBuilder(
               listenable: SavedService.instance,
               builder: (context, _) {
-                final saved = SavedService.instance.isSaved(v.id);
+                final saved = SavedService.instance.isSaved(v);
                 return Wrap(spacing: 8, runSpacing: 8, children: [
                   FilledButton.icon(
                     onPressed: () => SavedService.instance.toggle(v),

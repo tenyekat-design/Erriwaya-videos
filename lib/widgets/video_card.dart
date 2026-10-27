@@ -179,7 +179,7 @@ class _Actions extends StatelessWidget {
     return ListenableBuilder(
       listenable: SavedService.instance,
       builder: (context, _) {
-        final saved = SavedService.instance.isSaved(video.id);
+        final saved = SavedService.instance.isSaved(video);
         return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           IconButton(
             tooltip: saved ? 'إزالة من المحفوظات' : 'حفظ',

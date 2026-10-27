@@ -3,9 +3,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../config.dart';
 import '../models.dart';
+import '../services/articles_service.dart';
 import '../services/push_service.dart';
 import '../services/videos_controller.dart';
 import '../theme.dart';
+import '../widgets/article_card.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
 import 'settings_sheet.dart';
@@ -23,10 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _ctrl,
+      listenable: Listenable.merge([_ctrl, ArticlesService.instance]),
       builder: (context, _) {
-        final all = _ctrl.items.where((v) => !v.isShort).toList();
-        final list = _cat == 'الكل' ? all : all.where((v) => v.categories.contains(_cat)).toList();
+        // الأخبار المكتوبة وفيديوهات يوتيوب في خلاصة واحدة مرتبة بالتاريخ.
+        final all = <Object>[
+          ...ArticlesService.instance.items,
+          ..._ctrl.items.where((v) => !v.isShort),
+        ]..sort((a, b) => feedDate(b).compareTo(feedDate(a)));
+        final list =
+            _cat == 'الكل' ? all : all.where((o) => feedCategories(o).contains(_cat)).toList();
         return RefreshIndicator(
           color: Brand.green,
           onRefresh: _ctrl.refresh,
@@ -106,9 +113,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: list.length + 1,
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, i) {
-                    if (i == 0) return HeroCard(video: list.first);
                     if (i == 1) return const _SectionTitle('آخر الأخبار');
-                    return NewsTile(video: list[i - 1]);
+                    final o = list[i == 0 ? 0 : i - 1];
+                    if (i == 0) {
+                      return o is Article ? ArticleHero(article: o) : HeroCard(video: o as VideoItem);
+                    }
+                    return o is Article ? ArticleTile(article: o) : NewsTile(video: o as VideoItem);
                   },
                 ),
               ),
@@ -136,10 +146,31 @@ class _SectionTitle extends StatelessWidget {
 class _BreakingBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<BreakingNews?>(
-      valueListenable: PushService.latest,
-      builder: (context, b, _) {
-        if (b == null || !b.isFresh) return const SizedBox.shrink();
+    return ListenableBuilder(
+      listenable: Listenable.merge([ArticlesService.instance, PushService.latest]),
+      builder: (context, _) {
+        Article? art;
+        for (final a in ArticlesService.instance.items) {
+          if (a.isFreshBreaking) {
+            art = a;
+            break;
+          }
+        }
+        final b = PushService.latest.value;
+        final String text;
+        VoidCallback? onTap;
+        if (art != null) {
+          final a = art;
+          text = a.title;
+          onTap = () => openArticle(context, a);
+        } else if (b != null && b.isFresh) {
+          text = b.body.isEmpty ? b.title : '${b.title}: ${b.body}';
+          if (b.url != null) {
+            onTap = () => launchUrl(Uri.parse(b.url!), mode: LaunchMode.externalApplication);
+          }
+        } else {
+          return const SizedBox.shrink();
+        }
         return Padding(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
           child: Material(
@@ -147,9 +178,7 @@ class _BreakingBanner extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: b.url == null
-                  ? null
-                  : () => launchUrl(Uri.parse(b.url!), mode: LaunchMode.externalApplication),
+              onTap: onTap,
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(children: [
@@ -161,10 +190,8 @@ class _BreakingBanner extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(
-                      b.body.isEmpty ? b.title : '${b.title}: ${b.body}',
-                      style: const TextStyle(color: Colors.white, fontSize: 15, height: 1.4),
-                    ),
+                    child: Text(text,
+                        style: const TextStyle(color: Colors.white, fontSize: 15, height: 1.4)),
                   ),
                 ]),
               ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../services/firebase_boot.dart';
 import '../services/push_service.dart';
+import 'admin/login_screen.dart';
 import '../theme.dart';
 
 Future<void> showSettingsSheet(BuildContext context) async {
@@ -45,9 +47,21 @@ class _SettingsState extends State<_Settings> {
           ),
           const Divider(),
           ListTile(
+            leading: const Icon(Icons.edit_note, color: Brand.green),
+            title: const Text('دخول المحرر'),
+            subtitle: Text(FirebaseBoot.ready ? 'نشر الأخبار والعاجل' : 'يتطلب إعداد Firebase'),
+            enabled: FirebaseBoot.ready,
+            onTap: () {
+              final nav = Navigator.of(context);
+              nav.pop();
+              nav.push(editorRoute());
+            },
+          ),
+          const Divider(),
+          ListTile(
             leading: Image.asset('assets/images/logo_white.png', height: 32, color: Brand.green),
             title: const Text('الرواية'),
-            subtitle: const Text('الإصدار 1.0.2'),
+            subtitle: const Text('الإصدار 1.1.0'),
           ),
         ]),
       ),

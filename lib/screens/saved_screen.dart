@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../models.dart';
 import '../services/saved_service.dart';
 import '../theme.dart';
 import '../widgets/states.dart';
+import '../widgets/article_card.dart';
 import '../widgets/video_card.dart';
 
 class SavedScreen extends StatelessWidget {
@@ -29,7 +31,7 @@ class SavedScreen extends StatelessWidget {
             itemBuilder: (context, i) {
               final v = items[i];
               return Dismissible(
-                key: ValueKey(v.id),
+                key: ValueKey(SavedService.keyOf(v)),
                 background: Container(
                   alignment: AlignmentDirectional.centerEnd,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -38,7 +40,7 @@ class SavedScreen extends StatelessWidget {
                   child: const Icon(Icons.delete_outline, color: Colors.white),
                 ),
                 onDismissed: (_) => SavedService.instance.toggle(v),
-                child: NewsTile(video: v),
+                child: v is Article ? ArticleTile(article: v) : NewsTile(video: v as VideoItem),
               );
             },
           );
