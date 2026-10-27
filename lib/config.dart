@@ -31,10 +31,10 @@ class AppConfig {
   // ── الإشعارات العاجلة (Firebase Cloud Messaging) ──
   // تُملأ من مشروع Firebase: Project settings ← تطبيق Android.
   // ما دامت فارغة يعمل التطبيق بدون إشعارات.
-  static const firebaseApiKey = '';
-  static const firebaseAppId = '';
-  static const firebaseSenderId = '';
-  static const firebaseProjectId = '';
+  static const firebaseApiKey = 'AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc';
+  static const firebaseAppId = '1:1075479073978:android:a26bb24ae045f4210d9e83';
+  static const firebaseSenderId = '1075479073978';
+  static const firebaseProjectId = 'erriwaya-68022';
   static const breakingTopic = 'breaking';
 
   static bool get firebaseEnabled =>
