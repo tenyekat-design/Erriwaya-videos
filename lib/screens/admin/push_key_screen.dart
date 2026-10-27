@@ -86,6 +86,20 @@ class _PushKeyScreenState extends State<PushKeyScreen> {
         ),
         const SizedBox(height: 12),
         OutlinedButton(onPressed: _save, child: const Text('حفظ المحتوى الملصق')),
+        if (_has == true) ...[
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(backgroundColor: Brand.red),
+            onPressed: () async {
+              setState(() => _msg = 'جارٍ إرسال إشعار تجريبي…');
+              final err = await PushSender.sendBreaking(
+                  title: 'إشعار تجريبي من لوحة التحرير', articleId: '');
+              setState(() => _msg = err ?? 'أُرسل الإشعار التجريبي. يجب أن يصل خلال ثوانٍ.');
+            },
+            icon: const Icon(Icons.notifications_active),
+            label: const Text('إرسال إشعار تجريبي'),
+          ),
+        ],
         if (_has == true)
           TextButton(
             onPressed: () async {
