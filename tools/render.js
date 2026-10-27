@@ -50,7 +50,7 @@ function prepareClips() {
       fs.writeFileSync(stampFile, stamp);
     }
     const n = fs.readdirSync(dir).filter(f => f.endsWith('.jpg')).length;
-    CLIPS[c.video] = { n, fps: FPS, dir: '../frames/' + EDITION + '/clips/' + name };
+    CLIPS[i] = { n, fps: FPS, dir: '../frames/' + EDITION + '/clips/' + name };
   });
   return CLIPS;
 }

@@ -1,6 +1,6 @@
 // Edition of 27 Oct 2026. All times are in seconds of the ORIGINAL voice-over (voiceover.mp3 in this
 // folder); the template maps them onto the video timeline. Images are files in ./img; stories without a
-// photo of their own get a map graphic card (graphic: see makeGraphic in src/app.js).
+// clip or photo get a text card (graphic without a map: see makeGraphic in src/app.js).
 //
 // Country ids (world-atlas): Mauritania 478, Morocco 504, W. Sahara 732, Algeria 012, Tunisia 788,
 // Libya 434, Mali 466, Niger 562, Senegal 686, Gambia 270, Chad 148, Russia 643.
@@ -14,80 +14,67 @@ window.TIMELINE = {
   tail: 3.0,
 
   cards: [
-    // opening teaser
-    { img: 'mr-president.jpg', moves: [{ t: 0.0, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.12] }] },
-    { img: 'ne-dz-handshake.jpg', moves: [{ t: 3.2, a: [0.5, 0.4, 1.0], b: [0.5, 0.42, 1.1] }] },
-    { img: 'ml-security.png', moves: [{ t: 6.4, a: [0.5, 0.5, 1.0], b: [0.55, 0.45, 1.12] }] },
-    { img: 'minurso.webp', moves: [{ t: 9.6, a: [0.55, 0.5, 1.0], b: [0.62, 0.5, 1.1] }] },
-    { img: 'ma-parliament.jpg', moves: [{ t: 12.8, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.12] }] },
-    { img: 'sn-pm.jpg', moves: [{ t: 16.0, a: [0.5, 0.45, 1.0], b: [0.48, 0.5, 1.12] }] },
-    { img: 'dz-parliament.webp', moves: [{ t: 19.2, a: [0.5, 0.5, 1.0], b: [0.45, 0.5, 1.1] }] },
-    { img: 'unsc-vote.jpg', moves: [{ t: 22.4, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.1] }] },
+    // opening teaser (clips and photos of the day's stories)
+    { video: 'mr-moscow-arrival.mp4', from: 0.6, moves: [{ t: 0.0, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.08] }] },
+    { img: 'dz-tebboune-niger.jpg', moves: [{ t: 3.2, a: [0.5, 0.35, 1.0], b: [0.5, 0.32, 1.1] }] },
+    { video: 'ma-lekjaa-parliament.mp4', from: 12.3, moves: [{ t: 6.4, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
+    { img: 'ml-soldier.jpg', moves: [{ t: 9.6, a: [0.5, 0.5, 1.0], b: [0.6, 0.45, 1.12] }] },
+    { video: 'sn-assembly.mp4', from: 2.0, moves: [{ t: 12.8, a: [0.5, 0.5, 1.0], b: [0.5, 0.55, 1.1] }] },
+    { img: 'unsc-session.jpg', moves: [{ t: 16.0, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.12] }] },
+    { video: 'tn-parliament.mp4', from: 21.0, moves: [{ t: 19.2, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
+    { img: 'mr-insaf-meeting.jpg', moves: [{ t: 22.4, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.1] }] },
     // Mauritania: Ghazouani in Moscow
     { img: 'mr-president.jpg', moves: [{ t: 25.34, a: [0.5, 0.45, 1.0], b: [0.47, 0.32, 1.15] }] },
-    { graphic: { lon: 40, lat: 54, w: 34, ids: ['643'], pins: [{ lon: 37.62, lat: 55.75, label: 'موسكو' }],
-                 kicker: 'روسيا', title: 'القمة الروسية الإفريقية', sub: 'مساعٍ روسية لتعزيز الحضور في القارة الإفريقية' },
-      moves: [{ t: 30.66, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { video: 'mr-moscow-arrival.mp4', from: 0, moves: [{ t: 28.0, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.06] },
+                                                       { t: 32.4, a: [0.5, 0.45, 1.06], b: [0.55, 0.45, 1.12] }] },
     // Mauritania: ruling party and the third term
-    { graphic: { lon: -12.0, lat: 20.2, w: 24, ids: ['478'], pins: [{ lon: -15.98, lat: 18.09, label: 'نواكشوط' }],
-                 kicker: 'حزب الإنصاف', title: 'الجدل حول المأمورية الرئاسية الثالثة', sub: 'اجتماع مع رؤساء الجهات تحضيراً للحوار الوطني' },
-      moves: [{ t: 42.74, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { img: 'mr-insaf-meeting.jpg', moves: [{ t: 42.74, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.1] },
+                                           { t: 51.00, a: [0.45, 0.52, 1.6], b: [0.45, 0.52, 1.45] }] },
     { img: 'mr-president.jpg', moves: [{ t: 57.14, a: [0.5, 0.35, 1.25], b: [0.5, 0.3, 1.4] }] },
     // Algeria sends troops to Niger
-    { img: 'ne-dz-handshake.jpg', moves: [{ t: 60.62, a: [0.5, 0.45, 1.0], b: [0.45, 0.4, 1.1] },
-                                          { t: 64.68, a: [0.3, 0.3, 1.45], b: [0.32, 0.3, 1.3] }] },
-    { graphic: { lon: 6.5, lat: 24.0, w: 38, ids: ['012', '562'], pins: [{ lon: 3.06, lat: 36.75, label: 'الجزائر', up: true }, { lon: 2.11, lat: 13.51, label: 'نيامي' }],
-                 kicker: 'الجزائر – النيجر', title: 'وحدات من الجيش الجزائري إلى النيجر', sub: 'لحماية المصالح الطاقوية والاقتصادية المشتركة' },
-      moves: [{ t: 69.58, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { img: 'dz-tebboune-niger.jpg', moves: [{ t: 60.62, a: [0.5, 0.35, 1.0], b: [0.45, 0.32, 1.1] },
+                                            { t: 66.58, a: [0.27, 0.32, 1.6], b: [0.29, 0.32, 1.45] },
+                                            { t: 69.58, a: [0.73, 0.3, 1.55], b: [0.7, 0.3, 1.4] }] },
+    { video: 'ne-niamey.mp4', from: 0, moves: [{ t: 71.20, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
     { img: 'dz-parliament.webp', moves: [{ t: 74.70, a: [0.5, 0.5, 1.0], b: [0.4, 0.45, 1.15] }] },
     // Niger and Chad
-    { img: 'ne-minister.jpg', moves: [{ t: 77.52, a: [0.55, 0.3, 1.0], b: [0.55, 0.28, 1.12] }] },
-    { graphic: { lon: 12.5, lat: 15.5, w: 30, ids: ['562', '148'], pins: [{ lon: 2.11, lat: 13.51, label: 'نيامي' }, { lon: 15.04, lat: 12.11, label: 'إنجامينا' }],
-                 kicker: 'النيجر – تشاد', title: 'اتهام بضربة جوية', figure: 'قتيلان مدنيان', sub: 'إنجامينا تنفي وتطالب بتحقيق دولي مستقل' },
-      moves: [{ t: 84.50, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { video: 'ne-niamey.mp4', from: 0.4, moves: [{ t: 77.52, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
+    { img: 'ne-minister.jpg', moves: [{ t: 81.44, a: [0.55, 0.3, 1.0], b: [0.55, 0.28, 1.12] },
+                                      { t: 90.58, a: [0.5, 0.33, 1.5], b: [0.52, 0.3, 1.35] }] },
     { img: 'unsc.jpg', moves: [{ t: 97.18, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] }] },
     // Western Sahara: US draft on MINURSO
-    { img: 'unsc-vote.jpg', moves: [{ t: 101.78, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.14] }] },
+    { img: 'unsc-session.jpg', moves: [{ t: 101.78, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.14] }] },
     { img: 'minurso.webp', moves: [{ t: 109.70, a: [0.55, 0.5, 1.0], b: [0.65, 0.5, 1.12] }] },
     { img: 'minurso-patrol.png', moves: [{ t: 112.50, a: [0.5, 0.5, 1.0], b: [0.4, 0.55, 1.15] }] },
-    { img: 'unsc-vote.jpg', moves: [{ t: 122.08, a: [0.5, 0.45, 1.2], b: [0.5, 0.45, 1.35] }] },
-    // Morocco: 2027 budget
+    { img: 'unsc-vote.jpg', moves: [{ t: 122.08, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.12] }] },
+    // Morocco: 2027 budget (Lekjaa at the House of Representatives)
     { img: 'ma-parliament.jpg', moves: [{ t: 125.02, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] }] },
-    { img: 'ma-finance-minister.png', moves: [{ t: 132.00, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.1] },
-                                              { t: 137.82, a: [0.33, 0.4, 1.45], b: [0.35, 0.4, 1.3] }] },
+    { video: 'ma-lekjaa-parliament.mp4', from: 0, moves: [{ t: 128.98, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] }] },
     // Senegal: amending budget
-    { img: 'sn-pm.jpg', moves: [{ t: 142.70, a: [0.5, 0.45, 1.0], b: [0.45, 0.5, 1.2] }] },
-    { graphic: { lon: -15.0, lat: 14.2, w: 9, ids: ['686'], pins: [{ lon: -17.44, lat: 14.69, label: 'داكار', up: true }],
-                 kicker: 'السنغال', title: 'الميزانية التعديلية تعود إلى لجنة المالية', sub: 'مشاورات لتجاوز الخلاف بين الحكومة والبرلمان' },
-      moves: [{ t: 153.50, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { img: 'sn-pm.jpg', moves: [{ t: 142.70, a: [0.5, 0.45, 1.0], b: [0.45, 0.5, 1.15] }] },
+    { video: 'sn-assembly.mp4', from: 0, moves: [{ t: 146.32, a: [0.5, 0.5, 1.0], b: [0.5, 0.55, 1.12] },
+                                                 { t: 153.50, a: [0.6, 0.6, 1.4], b: [0.55, 0.6, 1.25] }] },
     // Mali: army strikes
     { img: 'ml-security.png', moves: [{ t: 160.82, a: [0.5, 0.45, 1.0], b: [0.55, 0.42, 1.14] }] },
-    { graphic: { lon: -5.6, lat: 14.0, w: 13, ids: ['466'], pins: [{ lon: -7.56, lat: 12.86, label: 'كوليكورو' }, { lon: -4.20, lat: 14.49, label: 'موبتي', up: true }],
-                 kicker: 'مالي', title: 'ضربات على مواقع لمجموعات مسلحة', sub: 'دون صدور حصيلة مستقلة للخسائر' },
-      moves: [{ t: 167.08, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { img: 'ml-soldier.jpg', moves: [{ t: 165.04, a: [0.5, 0.5, 1.0], b: [0.6, 0.45, 1.12] },
+                                     { t: 172.62, a: [0.35, 0.4, 1.35], b: [0.3, 0.4, 1.2] }] },
     // Tunisia: new parliamentary session
-    { graphic: { lon: 8.5, lat: 34.0, w: 11, ids: ['788'], pins: [{ lon: 10.18, lat: 36.81, label: 'تونس', up: true }],
-                 kicker: 'تونس', title: 'البرلمان يفتتح دورته الجديدة', sub: 'استعداد لمناقشة ميزانية العام المقبل' },
-      moves: [{ t: 177.68, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
-    { img: 'tn-cabinet.jpg', moves: [{ t: 182.72, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.14] }] },
+    { video: 'tn-parliament.mp4', from: 0, moves: [{ t: 177.68, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
     // Libya: cost of delayed reforms
-    { graphic: { lon: 15.5, lat: 27.0, w: 26, ids: ['434'], pins: [{ lon: 13.19, lat: 32.89, label: 'طرابلس', up: true }],
-                 kicker: 'ليبيا', title: 'خسائر سنوية', figure: 'بمليارات الدولارات', sub: 'نتيجة تأخر الإصلاحات الاقتصادية والنقدية' },
-      moves: [{ t: 193.80, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
-    // Gambia: fuel subsidy
-    { graphic: { lon: -15.3, lat: 13.45, w: 7.5, ids: ['270'], pins: [{ lon: -16.58, lat: 13.45, label: 'بانجول', up: true }],
-                 kicker: 'غامبيا', title: 'دعم الوقود', figure: '827 مليون دالاسي', sub: 'إنفاق حكومي خلال سبعة أشهر' },
-      moves: [{ t: 210.24, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
-    // Nouakchott: transformer fire in Teyarett
-    { graphic: { lon: -14.6, lat: 18.6, w: 8, ids: ['478'], pins: [{ lon: -15.94, lat: 18.13, label: 'تيارت – نواكشوط' }],
-                 kicker: 'نواكشوط', title: 'حريق في محول كهرباء بمقاطعة تيارت', sub: 'انقطاع التيار عن أحد الأحياء قبل تدخل صوملك' },
-      moves: [{ t: 227.78, a: [0.5, 0.5, 1.0], b: [0.47, 0.5, 1.08] }] },
+    { img: 'ly-interview.jpg', moves: [{ t: 193.80, a: [0.45, 0.4, 1.0], b: [0.45, 0.35, 1.12] },
+                                       { t: 203.76, a: [0.42, 0.3, 1.5], b: [0.43, 0.28, 1.35] }] },
+    // Gambia: fuel subsidy (no photo: text card)
+    { graphic: { kicker: 'غامبيا', title: 'دعم الوقود', figure: '827 مليون دالاسي', sub: 'إنفاق حكومي خلال سبعة أشهر رغم ارتفاع أسعار المحروقات' },
+      moves: [{ t: 210.24, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
+    // Nouakchott: transformer fire in Teyarett (no photo: text card)
+    { graphic: { kicker: 'نواكشوط', title: 'حريق في محول كهرباء بمقاطعة تيارت', sub: 'انقطاع التيار عن أحد الأحياء قبل تدخل شركة صوملك' },
+      moves: [{ t: 227.78, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
     { img: 'mr-president.jpg', moves: [{ t: 243.86, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] }] },
     // wrap-up
-    { img: 'ml-security.png', moves: [{ t: 248.06, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'dz-parliament.webp', moves: [{ t: 251.06, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'ma-parliament.jpg', moves: [{ t: 253.48, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'ne-dz-handshake.jpg', moves: [{ t: 256.00, a: [0.5, 0.45, 1.05], b: [0.5, 0.45, 1.15] }] },
+    { img: 'ml-soldier.jpg', moves: [{ t: 248.06, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
+    { video: 'ma-lekjaa-parliament.mp4', from: 16.6, moves: [{ t: 251.06, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
+    { img: 'dz-tebboune-niger.jpg', moves: [{ t: 253.48, a: [0.5, 0.35, 1.05], b: [0.5, 0.35, 1.15] }] },
+    { video: 'mr-moscow-arrival.mp4', from: 7.0, moves: [{ t: 256.00, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.08] }] },
   ],
 
   headlines: [

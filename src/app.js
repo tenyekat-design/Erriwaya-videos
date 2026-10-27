@@ -434,11 +434,11 @@
   // ---------- carousel ----------
   // A card shows an image (img), a video clip (video: file in ./img, from: start second in the clip) or a
   // map graphic (graphic: see makeGraphic). Clips are pre-extracted to frames by tools/render.js.
-  const CARDS = TL.cards.map((c, i) => ({ ...c, key: c.img || c.video || 'graphic:' + i, start: c.moves[0].t, end: i + 1 < TL.cards.length ? TL.cards[i + 1].moves[0].t : TL.audioEnd }));
+  const CARDS = TL.cards.map((c, i) => ({ ...c, index: i, key: c.img || (c.video ? 'video:' + i : 'graphic:' + i), start: c.moves[0].t, end: i + 1 < TL.cards.length ? TL.cards[i + 1].moves[0].t : TL.audioEnd }));
   const CLIP_LEAD = 0.6;   // a clip starts playing while its card slides in
   const FRAME_CACHE = new Map();
   function clipFrameUrl(card, a) {
-    const info = (window.CLIP_FRAMES || {})[card.video];
+    const info = (window.CLIP_FRAMES || {})[card.index];
     if (!info) return null;
     let i = Math.floor((a - card.start + CLIP_LEAD) * info.fps);
     i = clamp(i, 0, info.n - 1);
@@ -459,7 +459,8 @@
   }
 
   // Map graphic for a story without a photo: the country drawn from the fine grid, a pin, and text.
-  // { lon, lat, w (camera), ids: [...], pins: [{ lon, lat, label, up }], kicker, title, sub, figure }
+  // { lon, lat, w (camera), ids: [...], pins: [{ lon, lat, label, up }], kicker, title, sub, figure };
+  // without lon/lat it is a text-only card (no map).
   function makeGraphic(g) {
     const GW = 1600, GH = 900;
     const c = document.createElement('canvas');
@@ -469,28 +470,37 @@
     const bg = ctx.createLinearGradient(0, 0, GW, GH);
     bg.addColorStop(0, '#0B1F4B'); bg.addColorStop(1, '#16336F');
     ctx.fillStyle = bg; ctx.fillRect(0, 0, GW, GH);
+    const mapped = g.lon != null;
+    if (!mapped) {
+      // text-only card: dot texture and a soft green glow instead of the map
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      for (let y = 24; y < GH; y += 40) for (let x = 24; x < GW; x += 40) ctx.fillRect(x - 2, y - 2, 4, 4);
+      glowDot(GW * 0.18, GH * 0.75, 700, '16,185,129', 0.22);
+    }
     // map on the left half, faded into the text side
     const rect = { x: 0, y: 0, w: GW * 0.62, h: GH };
-    const cam = { x: g.lon, y: mercY(g.lat), w: g.w };
-    const P = drawGrid(cam, rect, {
-      fine: true, landRGB: [44, 66, 112], seaColor: 'rgba(255,255,255,0.07)',
-      layers: [{ set: new Set(g.ids.map(id => idIndex[id])), kind: 'primary', alpha: 1, elapsed: 99, ox: g.lon, oy: mercY(g.lat) }],
-    });
-    strokeLines(P, MD.borders, 'rgba(255,255,255,0.35)', 2);
-    strokeLines(P, MD.coasts, 'rgba(255,255,255,0.18)', 1.6);
-    for (const pin of g.pins || []) {
-      const [x, y] = P(pin.lon, pin.lat);
-      glowDot(x, y, 70, '16,185,129', 0.8);
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill();
-      if (pin.label) labelPill(x, y + (pin.up ? -62 : 62), pin.label, 40, { bounds: { x: 0, y: 0, w: rect.w, h: GH } });
+    if (mapped) {
+      const cam = { x: g.lon, y: mercY(g.lat), w: g.w };
+      const P = drawGrid(cam, rect, {
+        fine: true, landRGB: [44, 66, 112], seaColor: 'rgba(255,255,255,0.07)',
+        layers: [{ set: new Set(g.ids.map(id => idIndex[id])), kind: 'primary', alpha: 1, elapsed: 99, ox: g.lon, oy: mercY(g.lat) }],
+      });
+      strokeLines(P, MD.borders, 'rgba(255,255,255,0.35)', 2);
+      strokeLines(P, MD.coasts, 'rgba(255,255,255,0.18)', 1.6);
+      for (const pin of g.pins || []) {
+        const [x, y] = P(pin.lon, pin.lat);
+        glowDot(x, y, 70, '16,185,129', 0.8);
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill();
+        if (pin.label) labelPill(x, y + (pin.up ? -62 : 62), pin.label, 40, { bounds: { x: 0, y: 0, w: rect.w, h: GH } });
+      }
+      const fg = ctx.createLinearGradient(GW * 0.36, 0, GW * 0.62, 0);
+      fg.addColorStop(0, 'rgba(14,38,86,0)'); fg.addColorStop(1, 'rgba(14,38,86,1)');
+      ctx.fillStyle = fg; ctx.fillRect(GW * 0.36, 0, GW * 0.26, GH);
+      ctx.fillStyle = 'rgb(14,38,86)'; ctx.fillRect(GW * 0.62, 0, GW * 0.38, GH);
     }
-    const fg = ctx.createLinearGradient(GW * 0.36, 0, GW * 0.62, 0);
-    fg.addColorStop(0, 'rgba(14,38,86,0)'); fg.addColorStop(1, 'rgba(14,38,86,1)');
-    ctx.fillStyle = fg; ctx.fillRect(GW * 0.36, 0, GW * 0.26, GH);
-    ctx.fillStyle = 'rgb(14,38,86)'; ctx.fillRect(GW * 0.62, 0, GW * 0.38, GH);
     // text column (RTL), vertically centred
-    const xr = GW - 170, maxW = GW * 0.46;
+    const xr = GW - 170, maxW = GW * (mapped ? 0.46 : 0.78);
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     const blocks = [];
     if (g.kicker) blocks.push({ kind: 'kicker', h: 80 });
@@ -1224,7 +1234,7 @@
     const files = [...new Set(TL.cards.map(c => c.img).filter(Boolean))];
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
     // poster of each clip (its first frame) for previews without extracted frames
-    for (const c of CARDS) if (c.video && window.CLIP_FRAMES && window.CLIP_FRAMES[c.video]) IMG[c.key] = await loadImage(window.CLIP_FRAMES[c.video].dir + '/f00001.jpg');
+    for (const c of CARDS) if (c.video && window.CLIP_FRAMES && window.CLIP_FRAMES[c.index]) IMG[c.key] = await loadImage(window.CLIP_FRAMES[c.index].dir + '/f00001.jpg');
     for (const c of CARDS) if (c.graphic) IMG[c.key] = makeGraphic(c.graphic);
     const logo = await loadImage('../assets/logo-white.png');
     LOGO = tint(logo, C.navy);
