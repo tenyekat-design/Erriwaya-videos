@@ -28,11 +28,7 @@ class PlatformsScreen extends StatelessWidget {
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            EmbedView(
-              html: _facebookHtml(MediaQuery.sizeOf(context)),
-              externalUrl: AppConfig.facebookUrl,
-              externalLabel: 'فتح الصفحة في فيسبوك',
-            ),
+            const _FacebookCard(),
             EmbedView(
               html: '''
 <!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -187,6 +183,73 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
               label: Text(widget.externalLabel),
             ),
           ),
+        ),
+      ),
+    ]);
+  }
+}
+
+/// فيسبوك لم يعد يعرض منشورات الصفحات داخل التطبيقات بدون تطبيق مطوّر من Meta،
+/// فنعرض بطاقة الصفحة مع زر فتحها.
+class _FacebookCard extends StatelessWidget {
+  const _FacebookCard();
+
+  @override
+  Widget build(BuildContext context) {
+    void open() => launchUrl(Uri.parse(AppConfig.facebookUrl), mode: LaunchMode.externalApplication);
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      Card(
+        clipBehavior: Clip.antiAlias,
+        child: Column(children: [
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [Brand.greenLight, Brand.greenDark]),
+            ),
+            alignment: Alignment.center,
+            child: Image.asset('assets/images/logo_white.png', height: 84),
+          ),
+          const SizedBox(height: 14),
+          const Text('الرواية', style: TextStyle(fontSize: 22, color: Brand.ink)),
+          const SizedBox(height: 4),
+          const Text('الصفحة الرسمية على فيسبوك',
+              style: TextStyle(fontSize: 14, color: Brand.muted)),
+          const SizedBox(height: 4),
+          const Text('facebook.com/ERRIWAYA',
+              textDirection: TextDirection.ltr,
+              style: TextStyle(fontFamily: 'sans-serif', fontSize: 13, color: Brand.muted)),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF1877F2),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: open,
+                icon: const Icon(Icons.facebook),
+                label: const Text('افتح الصفحة وتابعها', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ),
+        ]),
+      ),
+      const SizedBox(height: 14),
+      const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(children: [
+            Icon(Icons.info_outline, color: Brand.green),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'كل تقارير الرواية وموجزاتها تجدها أيضاً في تبويبي «الأخبار» و«فيديوهات» داخل التطبيق.',
+                style: TextStyle(fontSize: 14, height: 1.6, color: Brand.ink),
+              ),
+            ),
+          ]),
         ),
       ),
     ]);
