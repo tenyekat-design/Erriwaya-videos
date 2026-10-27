@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import '../config.dart';
 import '../theme.dart';
@@ -58,7 +59,7 @@ String _facebookHtml(Size size) {
   final h = (size.height * 3).clamp(1200, 4000).round();
   final src = 'https://www.facebook.com/plugins/page.php?href='
       '${Uri.encodeComponent(AppConfig.facebookUrl)}'
-      '&tabs=timeline&width=$w&height=$h&small_header=false'
+      '&tabs=timeline&width=$w&height=$h&small_header=true'
       '&adapt_container_width=true&hide_cover=false&show_facepile=false&locale=ar_AR';
   return '''
 <!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -124,7 +125,20 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
           return NavigationDecision.prevent;
         },
       ));
+    _enableCookies();
     _load();
+  }
+
+  /// فيسبوك يحتاج ملفات تعريف الارتباط داخل الإطار لعرض المنشورات.
+  void _enableCookies() {
+    try {
+      final platform = _web.platform;
+      final cookies = WebViewCookieManager().platform;
+      if (platform is AndroidWebViewController && cookies is AndroidWebViewCookieManager) {
+        cookies.setAcceptThirdPartyCookies(platform, true);
+        platform.setMediaPlaybackRequiresUserGesture(false);
+      }
+    } catch (_) {}
   }
 
   void _load() {
