@@ -26,10 +26,9 @@
       logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
       card: { cx: 540, cy: 360, w: 600, h: 400 },
       side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
-      pill: { cx: 540, y: 560 },
       bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
-      kicker: { cx: 540, y: 678 },
-      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
+      kicker: { cx: 540, y: 560 },        // story label pinned to the photo's bottom edge
+      head: { cx: 540, cy: 752, maxW: 920, lineH: 62 },
       map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
@@ -41,10 +40,9 @@
       logoH: 150, logoY: 54,
       card: { cx: 1344, cy: 486, w: 880, h: 500 },
       side: [550, 880],
-      pill: { cx: 1344, y: 736 },
       bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
-      kicker: { cx: 1344, y: 864 },
-      head: { cx: 1344, cy: 956, maxW: 920, lineH: 62 },
+      kicker: { cx: 1344, y: 736 },
+      head: { cx: 1344, cy: 930, maxW: 920, lineH: 62 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -509,32 +507,7 @@
     ctx.restore();
   }
 
-  // ---------- player controls + progress ----------
-  function drawControls(a, alpha) {
-    if (alpha <= 0) return;
-    const cx = L.pill.cx, cy = L.pill.y, pw = 270, ph = 70;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.shadowColor = 'rgba(11,31,75,0.22)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
-    ctx.fillStyle = 'rgba(255,255,255,0.97)';
-    rrect(cx - pw / 2, cy - ph / 2, pw, ph, ph / 2); ctx.fill();
-    ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = C.navy;
-    const tri = (x, dir) => { ctx.beginPath(); ctx.moveTo(x, cy - 11); ctx.lineTo(x + dir * 16, cy); ctx.lineTo(x, cy + 11); ctx.closePath(); ctx.fill(); };
-    tri(cx - 70, -1); tri(cx - 86, -1);   // rewind
-    tri(cx + 70, 1); tri(cx + 86, 1);     // forward
-    const beat = 1 + 0.06 * Math.sin(a * 5);
-    ctx.save(); ctx.translate(cx, cy); ctx.scale(beat, beat);
-    ctx.fillStyle = C.acc;
-    ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff';
-    rrect(-8, -10, 5.5, 20, 2); ctx.fill();
-    rrect(2.5, -10, 5.5, 20, 2); ctx.fill();
-    ctx.restore();
-    ctx.restore();
-  }
-
+  // ---------- progress ----------
   const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   function drawProgress(a, alpha) {
     if (alpha <= 0) return;
@@ -557,17 +530,12 @@
       ctx.fillRect(tx - 2, y - 6, 4, 12);
     }
     // knob
-    const pulse = (a * 0.8) % 1;
-    ctx.strokeStyle = `rgba(16,185,129,${0.5 * (1 - pulse)})`; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(xk, y, 16 + pulse * 22, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = 'rgba(16,185,129,0.18)';
-    ctx.beginPath(); ctx.arc(xk, y, 20, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowColor = 'rgba(16,185,129,0.6)'; ctx.shadowBlur = 16;
-    ctx.fillStyle = C.acc;
-    ctx.beginPath(); ctx.arc(xk, y, 11, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'rgba(11,31,75,0.25)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
     ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(xk, y, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(xk, y, 12, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = C.acc;
+    ctx.beginPath(); ctx.arc(xk, y, 7, 0, Math.PI * 2); ctx.fill();
     // times (RTL: elapsed on the right)
     ctx.font = font(24); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.gray;
     ctx.textAlign = 'right'; ctx.fillText(mmss(Math.max(0, a - CUT)), L.bar.tr, y + 2);
@@ -658,23 +626,28 @@
     const kIn = HL[start].t;
     const kp = eout(prog(a, kIn, kIn + 0.45)) * (nextSame || !tOut ? 1 : 1 - eio(prog(a, tOut - 0.35, tOut)));
     if (kp > 0) {
-      ctx.font = font(28); ctx.direction = 'rtl';
+      ctx.font = font(32); ctx.direction = 'rtl';
       const tw = ctx.measureText(h.kicker).width;
-      const cw = tw + 64, ch = 46;
-      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2;
+      const cw = tw + 84, ch = 60;
+      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2 + (1 - kp) * 12;
       ctx.globalAlpha = alpha * kp;
-      ctx.fillStyle = 'rgba(16,185,129,0.12)';
+      ctx.save();
+      ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+      ctx.fillStyle = C.navy;
       rrect(x, y, cw, ch, ch / 2); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
+      rrect(x, y, cw, ch, ch / 2); ctx.stroke();
       ctx.fillStyle = C.acc;
-      ctx.beginPath(); ctx.arc(x + cw - 24, L.kicker.y, 5.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#0A8F65';
+      ctx.beginPath(); ctx.arc(x + cw - 30, y + ch / 2, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(h.kicker, x + cw - 40, L.kicker.y + 2);
+      ctx.fillText(h.kicker, x + cw - 50, y + ch / 2 + 2);
     }
     void prevSame;
     ctx.globalAlpha = alpha;
     const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
-    drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.ink, a, h.t, tOut);
+    drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.navy, a, h.t, tOut);
     ctx.restore();
   }
 
@@ -1088,7 +1061,6 @@
       const inA = k => eout(prog(t, 6.45 + k * 0.12, 7.15 + k * 0.12)) * (1 - out);
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
-      drawControls(a, inA(1));
       drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
