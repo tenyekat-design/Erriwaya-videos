@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -40,6 +41,9 @@ class PlatformsScreen extends StatelessWidget {
 </body></html>''',
               externalUrl: AppConfig.tiktokUrl,
               externalLabel: 'فتح الحساب في تيك توك',
+              healthUrl:
+                  'https://www.tiktok.com/oembed?url=${Uri.encodeComponent(AppConfig.tiktokUrl)}',
+              fallback: (retry) => _TikTokFallback(onRetry: retry),
             ),
             const _FollowUs(),
           ],
@@ -71,12 +75,20 @@ class EmbedView extends StatefulWidget {
   final String? html;
   final String externalUrl;
   final String externalLabel;
+
+  /// رابط يُفحص قبل التحميل؛ إن ردّ الخادم بخطأ أو «overload» تظهر البطاقة البديلة.
+  final String? healthUrl;
+
+  /// بطاقة تظهر حين ترفض المنصة التحميل مؤقتاً.
+  final Widget Function(VoidCallback retry)? fallback;
   const EmbedView({
     super.key,
     this.url,
     this.html,
     required this.externalUrl,
     required this.externalLabel,
+    this.healthUrl,
+    this.fallback,
   });
   @override
   State<EmbedView> createState() => _EmbedViewState();
@@ -86,7 +98,40 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
   late final WebViewController _web;
   bool _loading = true;
   bool _failed = false;
+  bool _busyServer = false;
+  int _retries = 0;
   DateTime? _loadedAt;
+
+  static bool _looksOverloaded(String t) {
+    final l = t.toLowerCase();
+    return l.contains('overload') ||
+        l.contains('too many') ||
+        l.contains('something went wrong') ||
+        l.contains('rate limit');
+  }
+
+  /// يفحص النص الظاهر في الصفحة بعد التحميل (للحالات التي يكتب فيها الخادم الخطأ مباشرة).
+  Future<void> _checkPage() async {
+    await Future.delayed(const Duration(seconds: 4));
+    if (!mounted || _failed || _busyServer) return;
+    try {
+      final r = await _web.runJavaScriptReturningResult(
+          "(document.body ? document.body.innerText : '').slice(0, 300)");
+      if (_looksOverloaded(r.toString())) _onOverload();
+    } catch (_) {}
+  }
+
+  void _onOverload() {
+    if (!mounted) return;
+    if (_retries < 2) {
+      _retries++;
+      Future.delayed(Duration(seconds: 3 * _retries), () {
+        if (mounted) _load();
+      });
+    } else {
+      setState(() => _busyServer = true);
+    }
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -101,6 +146,7 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
         onPageFinished: (_) {
           _loadedAt ??= DateTime.now();
           if (mounted) setState(() => _loading = false);
+          _checkPage();
         },
         onWebResourceError: (e) {
           if (e.isForMainFrame == true && mounted) setState(() => _failed = true);
@@ -137,11 +183,31 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
     } catch (_) {}
   }
 
-  void _load() {
+  void _retryFromUser() {
+    _retries = 0;
+    _load();
+  }
+
+  Future<void> _load() async {
     setState(() {
       _loading = true;
       _failed = false;
+      _busyServer = false;
     });
+    if (widget.healthUrl != null) {
+      try {
+        final res = await http
+            .get(Uri.parse(widget.healthUrl!))
+            .timeout(const Duration(seconds: 12));
+        if (res.statusCode >= 400 || _looksOverloaded(res.body.length > 300 ? res.body.substring(0, 300) : res.body)) {
+          _onOverload();
+          return;
+        }
+      } catch (_) {
+        // لا نمنع التحميل إن فشل الفحص نفسه.
+      }
+    }
+    if (!mounted) return;
     if (widget.url != null) {
       _web.loadRequest(Uri.parse(widget.url!));
     } else {
@@ -155,7 +221,8 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
     return Column(children: [
       Expanded(
         child: Stack(children: [
-          if (!_failed) WebViewWidget(controller: _web),
+          if (!_failed && !_busyServer) WebViewWidget(controller: _web),
+          if (_busyServer && widget.fallback != null) widget.fallback!(_retryFromUser),
           if (_failed)
             Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -163,10 +230,10 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
                 const SizedBox(height: 12),
                 const Text('تعذر التحميل', style: TextStyle(color: Brand.muted)),
                 const SizedBox(height: 12),
-                FilledButton(onPressed: _load, child: const Text('إعادة المحاولة')),
+                FilledButton(onPressed: _retryFromUser, child: const Text('إعادة المحاولة')),
               ]),
             ),
-          if (_loading && !_failed)
+          if (_loading && !_failed && !_busyServer)
             const LinearProgressIndicator(color: Brand.green, minHeight: 3),
         ]),
       ),
@@ -174,15 +241,76 @@ class _EmbedViewState extends State<EmbedView> with AutomaticKeepAliveClientMixi
         top: false,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => launchUrl(Uri.parse(widget.externalUrl),
-                  mode: LaunchMode.externalApplication),
-              icon: const Icon(Icons.open_in_new),
-              label: Text(widget.externalLabel),
+          child: Row(children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => launchUrl(Uri.parse(widget.externalUrl),
+                    mode: LaunchMode.externalApplication),
+                icon: const Icon(Icons.open_in_new),
+                label: Text(widget.externalLabel),
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            IconButton.outlined(
+              tooltip: 'إعادة التحميل',
+              onPressed: _retryFromUser,
+              icon: const Icon(Icons.refresh),
+            ),
+          ]),
+        ),
+      ),
+    ]);
+  }
+}
+
+/// بطاقة تيك توك حين يرفض خادمه التحميل مؤقتاً.
+class _TikTokFallback extends StatelessWidget {
+  final VoidCallback onRetry;
+  const _TikTokFallback({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(color: Brand.green, shape: BoxShape.circle),
+              child: Image.asset('assets/images/logo_white.png', height: 64),
+            ),
+            const SizedBox(height: 12),
+            const Text('@${AppConfig.tiktokUser}',
+                textDirection: TextDirection.ltr,
+                style: TextStyle(fontFamily: 'sans-serif', fontSize: 18, color: Brand.ink)),
+            const SizedBox(height: 4),
+            const Text('الأخبار المغاربية والإقليمية', style: TextStyle(color: Brand.muted)),
+            const SizedBox(height: 16),
+            const Text('تيك توك مشغول الآن ولم يعرض الحساب. أعد المحاولة بعد قليل، أو افتحه في تطبيق تيك توك.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14.5, height: 1.6, color: Brand.ink)),
+            const SizedBox(height: 16),
+            Row(children: [
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(backgroundColor: Colors.black),
+                  onPressed: () => launchUrl(Uri.parse(AppConfig.tiktokUrl),
+                      mode: LaunchMode.externalApplication),
+                  icon: const Icon(Icons.music_note),
+                  label: const Text('افتح تيك توك'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('إعادة المحاولة'),
+                ),
+              ),
+            ]),
+          ]),
         ),
       ),
     ]);
