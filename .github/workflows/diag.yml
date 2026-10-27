@@ -7,7 +7,9 @@ jobs:
       - shell: bash {0}
         run: |
           K=AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc
-          r=$(curl -s "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents/articles?key=$K" | head -c 400 | tr '\n|' '  ')
-          w=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"fields":{"title":{"stringValue":"x"}}}' "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents/articles?key=$K" | head -c 300 | tr '\n|' '  ')
-          a=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"email":"probe@example.com","password":"x"}' "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$K" | head -c 300 | tr '\n|' '  ')
-          echo "::notice title=diag::READ: $r | ANON-WRITE: $w | AUTH: $a"
+          B="https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents"
+          m=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"fields":{"name":{"stringValue":"اختبار"},"contact":{"stringValue":""},"text":{"stringValue":"رسالة تجريبية من Claude للتأكد من عمل اتصل بنا. يمكنك حذفها."}}}' "$B/messages?key=$K" | head -c 250 | tr '\n|' '  ')
+          bad=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"fields":{"text":{"stringValue":"x"},"hack":{"stringValue":"y"}}}' "$B/messages?key=$K" | head -c 150 | tr '\n|' '  ')
+          rd=$(curl -s "$B/messages?key=$K" | head -c 150 | tr '\n|' '  ')
+          site=$(curl -s "$B/site/info?key=$K" | head -c 150 | tr '\n|' '  ')
+          echo "::notice title=diag::CREATE: $m | BAD-FIELD: $bad | PUBLIC-READ-MSGS: $rd | SITE: $site"
