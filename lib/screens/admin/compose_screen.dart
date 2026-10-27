@@ -192,8 +192,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
             activeTrackColor: Brand.red,
             title: const Text('خبر عاجل'),
             subtitle: Text(_isEdit
-                ? 'يظهر شريطاً أحمر أعلى الأخبار (لا يُعاد إرسال الإشعار عند التعديل)'
-                : 'يظهر شريطاً أحمر أعلى الأخبار ويُرسل إشعاراً لكل الهواتف'),
+                ? 'شريط أحمر لمدة نصف ساعة من وقت النشر (لا يُعاد إرسال الإشعار)'
+                : 'شريط أحمر أعلى الأخبار لمدة نصف ساعة، وإشعار لكل الهواتف'),
             onChanged: (v) => setState(() => _breaking = v),
           ),
           const SizedBox(height: 8),

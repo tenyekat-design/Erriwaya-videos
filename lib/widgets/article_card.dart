@@ -30,7 +30,7 @@ class ArticleThumb extends StatelessWidget {
               alignment: Alignment.center,
               child: Image.asset('assets/images/logo_white.png', height: 44),
             ),
-          if (article.breaking)
+          if (article.isFreshBreaking)
             Positioned(
               top: 8,
               right: 8,

@@ -22,7 +22,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Widget build(BuildContext context) {
     final a = widget.article;
     return Scaffold(
-      appBar: AppBar(title: Text(a.breaking ? 'عاجل' : 'خبر')),
+      appBar: AppBar(title: Text(a.isFreshBreaking ? 'عاجل' : 'خبر')),
       body: ListView(children: [
         FutureBuilder<List<Uint8List>>(
           future: _images,
@@ -78,7 +78,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              if (a.breaking)
+              if (a.isFreshBreaking)
                 Container(
                   margin: const EdgeInsetsDirectional.only(end: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

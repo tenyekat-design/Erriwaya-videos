@@ -35,6 +35,7 @@ Future<void> main() async {
   unawaited(ArticlesService.instance.start());
   unawaited(SiteService.instance.start());
   unawaited(PushService.init());
+  Timer.periodic(const Duration(minutes: 1), (_) => minuteTick.value++);
 }
 
 class ErriwayaApp extends StatelessWidget {

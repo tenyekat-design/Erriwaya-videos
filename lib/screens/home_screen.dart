@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([_ctrl, ArticlesService.instance]),
+      listenable: Listenable.merge([_ctrl, ArticlesService.instance, minuteTick]),
       builder: (context, _) {
         // الأخبار المكتوبة وفيديوهات يوتيوب في خلاصة واحدة مرتبة بالتاريخ.
         final all = <Object>[
@@ -154,7 +154,7 @@ class _BreakingBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([ArticlesService.instance, PushService.latest]),
+      listenable: Listenable.merge([ArticlesService.instance, PushService.latest, minuteTick]),
       builder: (context, _) {
         Article? art;
         for (final a in ArticlesService.instance.items) {

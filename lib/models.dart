@@ -1,8 +1,16 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
+
 import 'config.dart';
 import 'portals.dart';
+
+/// مدة بقاء صفة «عاجل» على الخبر.
+const breakingWindow = Duration(minutes: 30);
+
+/// يتغير كل دقيقة ليُعاد رسم ما يتعلق بالوقت (انتهاء العاجل، «منذ دقائق»).
+final minuteTick = ValueNotifier<int>(0);
 
 class VideoItem {
   final String id;
@@ -75,7 +83,7 @@ class BreakingNews {
   const BreakingNews(
       {required this.title, required this.body, this.url, this.articleId, required this.time});
 
-  bool get isFresh => DateTime.now().difference(time).inHours < 24;
+  bool get isFresh => DateTime.now().difference(time) < breakingWindow;
 
   Map<String, dynamic> toJson() =>
       {'title': title, 'body': body, 'url': url, 'articleId': articleId, 'time': time.toIso8601String()};
@@ -145,7 +153,8 @@ class Article {
     }
   }
 
-  bool get isFreshBreaking => breaking && DateTime.now().difference(createdAt).inHours < 24;
+  /// «عاجل» لمدة نصف ساعة فقط من النشر، ثم يصبح خبراً عادياً.
+  bool get isFreshBreaking => breaking && DateTime.now().difference(createdAt) < breakingWindow;
 
   String get excerpt {
     final t = body.replaceAll(RegExp(r'\s+'), ' ').trim();
