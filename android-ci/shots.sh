@@ -5,7 +5,7 @@ PKG=mr.erriwaya.erriwaya
 mkdir -p shots
 shot() { sleep "${2:-3}"; adb exec-out screencap -p > "shots/$1.png"; }
 adb shell wm size
-adb install -r erriwaya.apk
+adb install -r erriwaya-x86_64.apk
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS || true
 adb logcat -c
 adb shell monkey -p $PKG -c android.intent.category.LAUNCHER 1
