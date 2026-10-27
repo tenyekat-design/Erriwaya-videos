@@ -7,6 +7,7 @@
   const C = {
     bg: '#FFFFFF',
     navy: '#0B1F4B',
+    brand: '#004A49',  // official Erriwaya logo colour
     ink: '#16233F',
     gray: '#7A8599',
     soft: '#F4F6FA',
@@ -1255,7 +1256,7 @@
     for (const c of CARDS) if (c.video && window.CLIP_FRAMES && window.CLIP_FRAMES[c.index]) IMG[c.key] = await loadImage(window.CLIP_FRAMES[c.index].dir + '/f00001.jpg');
     for (const c of CARDS) if (c.graphic) IMG[c.key] = makeGraphic(c.graphic);
     const logo = await loadImage('../assets/logo-white.png');
-    LOGO = tint(logo, C.navy);
+    LOGO = tint(logo, C.brand);
     LOGO_INK = inkBox(LOGO);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
