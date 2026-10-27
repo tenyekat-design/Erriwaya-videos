@@ -1,0 +1,20 @@
+name: diag
+on: {push: {branches: [android-diag]}}
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36"
+          out=""
+          for h in ERRIWAYA erriwaya Erriwaya erriwaya.mr ERRIWAYA.MR; do
+            code=$(curl -sL -A "$UA" -H 'Cookie: CONSENT=YES+1' -o p.html -w '%{http_code} %{url_effective}' "https://www.youtube.com/@$h")
+            id=$(grep -oE '"externalId":"UC[A-Za-z0-9_-]{22}"' p.html | head -1)
+            t=$(grep -oE '<title>[^<]*' p.html | head -1)
+            out="$out yt@$h: $code $id $t |"
+          done
+          id=$(curl -sL -A "$UA" -H 'Cookie: CONSENT=YES+1' https://www.youtube.com/@ERRIWAYA | grep -oE '"externalId":"UC[A-Za-z0-9_-]{22}"' | head -1 | grep -oE 'UC[A-Za-z0-9_-]{22}')
+          if [ -n "$id" ]; then r=$(curl -sL -o rss.xml -w '%{http_code}' "https://www.youtube.com/feeds/videos.xml?channel_id=$id"); n=$(grep -c '<entry>' rss.xml); tt=$(grep -oE '<title>[^<]*' rss.xml | head -4 | tr '\n' ' '); out="$out RSS $r entries=$n $tt |"; fi
+          for h in erriwaya erriwaya.mr; do code=$(curl -sL -A "$UA" -o t.html -w '%{http_code}' "https://www.tiktok.com/@$h"); ti=$(grep -oE '<title>[^<]*' t.html|head -1); out="$out tt@$h: $code $ti |"; done
+          for h in ERRIWAYA erriwaya.mr; do code=$(curl -sL -A "$UA" -o f.html -w '%{http_code} %{url_effective}' "https://www.facebook.com/$h"); ti=$(grep -oE '<title>[^<]*' f.html|head -1); out="$out fb/$h: $code $ti |"; done
+          echo "::notice title=diag::$out"
