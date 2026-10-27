@@ -26,8 +26,38 @@ const SUFFIX = FORMAT === 'feed' ? '' : '-' + FORMAT;
 const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
 const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT;
 
+// Video cards: frames of each clip are extracted once to frames/<edition>/clips/ (git-ignored) and the
+// page loads the ones it needs before each frame (window.prepareFrame).
+let CLIPS = null;
+function prepareClips() {
+  if (CLIPS) return CLIPS;
+  const TL = loadEdition();
+  CLIPS = {};
+  TL.cards.forEach((c, i) => {
+    if (!c.video) return;
+    const end = i + 1 < TL.cards.length ? TL.cards[i + 1].moves[0].t : TL.audioEnd;
+    const dur = end - c.moves[0].t + 2.0;
+    const name = `${i}-${c.video.replace(/[^\w.-]/g, '_')}`;
+    const dir = path.join(ROOT, 'frames', EDITION, 'clips', name);
+    const src = path.join(EDIR, 'img', c.video);
+    const stamp = `${fs.statSync(src).mtimeMs}|${c.from || 0}|${dur.toFixed(2)}|${FPS}`;
+    const stampFile = path.join(dir, 'stamp.txt');
+    if (!fs.existsSync(stampFile) || fs.readFileSync(stampFile, 'utf8') !== stamp) {
+      fs.rmSync(dir, { recursive: true, force: true });
+      fs.mkdirSync(dir, { recursive: true });
+      execFileSync('ffmpeg', ['-v', 'error', '-y', '-ss', String(c.from || 0), '-t', dur.toFixed(2), '-i', src, '-an',
+        '-vf', `fps=${FPS},scale='min(1600,iw)':-2`, '-q:v', '3', path.join(dir, 'f%05d.jpg')]);
+      fs.writeFileSync(stampFile, stamp);
+    }
+    const n = fs.readdirSync(dir).filter(f => f.endsWith('.jpg')).length;
+    CLIPS[c.video] = { n, fps: FPS, dir: '../frames/' + EDITION + '/clips/' + name };
+  });
+  return CLIPS;
+}
+
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: SIZE[0], height: SIZE[1] } });
+  await page.addInitScript(c => { window.CLIP_FRAMES = c; }, prepareClips());
   page.on('pageerror', e => { console.error('page error:', e.message); process.exit(1); });
   await page.goto(PAGE);
   await page.waitForFunction(() => window.READY === true, null, { timeout: 60000 });
@@ -35,7 +65,7 @@ async function openPage(browser) {
 }
 
 async function grab(page, t, type = 'image/jpeg') {
-  const url = await page.evaluate(([t, type]) => { window.renderFrame(t); return document.getElementById('c').toDataURL(type, 0.95); }, [t, type]);
+  const url = await page.evaluate(async ([t, type]) => { await window.prepareFrame(t); window.renderFrame(t); return document.getElementById('c').toDataURL(type, 0.95); }, [t, type]);
   return Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
 }
 

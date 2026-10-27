@@ -24,13 +24,13 @@
       W: 1080, H: 1350,
       margin: 60,
       logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
-      card: { cx: 540, cy: 360, w: 600, h: 400 },
-      side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
-      pill: { cx: 540, y: 560 },
-      bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
-      kicker: { cx: 540, y: 678 },
-      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
-      map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
+      card: { cx: 540, cy: 410, w: 820, h: 460 },
+      side: [540, 900],                  // horizontal offset of the 1st / 2nd side cards
+      pill: { cx: 540, y: 640 },
+      bar: { x0: 160, x1: 920, y: 706, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 750 },
+      head: { cx: 540, cy: 830, maxW: 940, lineH: 58, sizes: [46, 42, 38, 36] },
+      map: { x: 50, y: 896, w: 980, h: 408, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
       outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
@@ -39,12 +39,12 @@
       W: 1920, H: 1080,
       margin: 96,                        // 5% title-safe area
       logoH: 150, logoY: 54,
-      card: { cx: 1344, cy: 486, w: 880, h: 500 },
-      side: [550, 880],
-      pill: { cx: 1344, y: 736 },
-      bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
-      kicker: { cx: 1344, y: 864 },
-      head: { cx: 1344, cy: 956, maxW: 920, lineH: 62 },
+      card: { cx: 1344, cy: 490, w: 944, h: 531 },
+      side: [600, 900],
+      pill: { cx: 1344, y: 756 },
+      bar: { x0: 980, x1: 1708, y: 822, tl: 864, tr: 1824 },
+      kicker: { cx: 1344, y: 872 },
+      head: { cx: 1344, cy: 960, maxW: 920, lineH: 60, sizes: [48, 44, 40, 36] },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -78,7 +78,7 @@
 
   const cv = document.getElementById('c');
   cv.width = W; cv.height = H;
-  const ctx = cv.getContext('2d');
+  let ctx = cv.getContext('2d');
 
   function rrect(x, y, w, h, r) {
     ctx.beginPath();
@@ -105,8 +105,12 @@
   // ---------- map ----------
   const RAD = Math.PI / 180;
   const mercY = lat => Math.log(Math.tan(Math.PI / 4 + (lat * RAD) / 2)) / RAD;
-  const GRID = Uint8Array.from(atob(MD.grid), ch => ch.charCodeAt(0));
+  const decode = b64 => Uint8Array.from(atob(b64), ch => ch.charCodeAt(0));
+  // grid levels: 0.4 (the template's look) and finer ones used by the map card when it zooms in
+  const LEVELS = [{ cell: MD.cell, cols: MD.cols, rows: MD.rows, grid: decode(MD.grid) },
+    ...(MD.fine || []).map(f => ({ cell: f.cell, cols: f.cols, rows: f.rows, grid: decode(f.grid) }))];
   const GY1 = mercY(MD.box.lat1);
+  const MIN_CELL_PX = 7;  // the map card moves to the next finer grid once its squares pass ~12-14 px
   const idIndex = {};
   MD.ids.forEach((id, i) => { if (id) idIndex[id] = i; });
 
@@ -138,17 +142,37 @@
     return f;
   }
 
-  // Draw the pixel grid. opts: { layers, reveal(cellX, cellMY) -> alpha, landRGB, seaDots }
+  // Grid level(s) for a camera: [[level, alpha], ...]; cross-fades near a switch.
+  function levelsFor(cam, rect) {
+    const k = rect.w / cam.w;
+    const lv = clamp(Math.log2(LEVELS[0].cell * k / MIN_CELL_PX), 0, LEVELS.length - 1);
+    const i = Math.floor(lv), f = lv - i;
+    if (i >= LEVELS.length - 1) return [[LEVELS[LEVELS.length - 1], 1]];
+    const x = eio(clamp((f - 0.7) / 0.3));
+    return x <= 0 ? [[LEVELS[i], 1]] : [[LEVELS[i], 1 - x], [LEVELS[i + 1], x]];
+  }
+
+  // Draw the pixel grid. opts: { layers, reveal(cellX, cellMY) -> alpha, landRGB, seaDots, level, fine }
   function drawGrid(cam, rect, opts = {}) {
+    if (opts.fine) {
+      let P;
+      for (const [lv, al] of levelsFor(cam, rect)) {
+        ctx.save(); ctx.globalAlpha *= al;
+        P = drawGrid(cam, rect, { ...opts, fine: false, level: lv });
+        ctx.restore();
+      }
+      return P;
+    }
+    const LV = opts.level || LEVELS[0];
     const P = projector(cam, rect);
-    const k = P.k, cell = MD.cell;
+    const k = P.k, cell = LV.cell;
     const size = cell * k;
     const sq = Math.max(1, size * (size > 9 ? 0.78 : 0.72));
     const halfW = rect.w / 2 / k, halfH = rect.h / 2 / k;
     const c0 = Math.max(0, Math.floor((cam.x - halfW - MD.box.lon0) / cell) - 1);
-    const c1 = Math.min(MD.cols - 1, Math.ceil((cam.x + halfW - MD.box.lon0) / cell) + 1);
+    const c1 = Math.min(LV.cols - 1, Math.ceil((cam.x + halfW - MD.box.lon0) / cell) + 1);
     const r0 = Math.max(0, Math.floor((GY1 - (cam.y + halfH)) / cell) - 1);
-    const r1 = Math.min(MD.rows - 1, Math.ceil((GY1 - (cam.y - halfH)) / cell) + 1);
+    const r1 = Math.min(LV.rows - 1, Math.ceil((GY1 - (cam.y - halfH)) / cell) + 1);
     const land = opts.landRGB || C.landRGB;
     const layers = opts.layers || [];
     const reveal = opts.reveal;
@@ -160,7 +184,7 @@
     for (let r = r0; r <= r1; r++) {
       const my = GY1 - (r + 0.5) * cell;
       for (let c = c0; c <= c1; c++) {
-        const ci = GRID[r * MD.cols + c];
+        const ci = LV.grid[r * LV.cols + c];
         const x = MD.box.lon0 + (c + 0.5) * cell;
         const [sx, sy] = P.m(x, my);
         if (!ci) {
@@ -379,7 +403,7 @@
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.clip();
     const cam = cameraAt(a);
     cam.w *= CAM_SCALE;
-    const P = drawGrid(cam, R, { layers: layersAt(a, TL.highlights) });
+    const P = drawGrid(cam, R, { layers: layersAt(a, TL.highlights), fine: true });
     strokeLines(P, MD.coasts, 'rgba(11,31,75,0.22)', 1.2);
     strokeLines(P, MD.borders, 'rgba(11,31,75,0.42)', 1.4);
     for (const ln of TL.lines) drawMapLine(P, ln, a);
@@ -408,7 +432,96 @@
   }
 
   // ---------- carousel ----------
-  const CARDS = TL.cards.map((c, i) => ({ ...c, start: c.moves[0].t, end: i + 1 < TL.cards.length ? TL.cards[i + 1].moves[0].t : TL.audioEnd }));
+  // A card shows an image (img), a video clip (video: file in ./img, from: start second in the clip) or a
+  // map graphic (graphic: see makeGraphic). Clips are pre-extracted to frames by tools/render.js.
+  const CARDS = TL.cards.map((c, i) => ({ ...c, key: c.img || c.video || 'graphic:' + i, start: c.moves[0].t, end: i + 1 < TL.cards.length ? TL.cards[i + 1].moves[0].t : TL.audioEnd }));
+  const CLIP_LEAD = 0.6;   // a clip starts playing while its card slides in
+  const FRAME_CACHE = new Map();
+  function clipFrameUrl(card, a) {
+    const info = (window.CLIP_FRAMES || {})[card.video];
+    if (!info) return null;
+    let i = Math.floor((a - card.start + CLIP_LEAD) * info.fps);
+    i = clamp(i, 0, info.n - 1);
+    return `${info.dir}/f${String(i + 1).padStart(5, '0')}.jpg`;
+  }
+  function cardImage(card, a) {
+    if (!card.video) return IMG[card.key];
+    const url = clipFrameUrl(card, a);
+    return (url && FRAME_CACHE.get(url)) || IMG[card.key] || null;
+  }
+  // Loads the clip frames the next renderFrame(t) needs (called by tools/render.js before each frame).
+  async function prepareFrame(t) {
+    const a = Math.max(at(t), CUT);
+    const p = carouselPos(a);
+    const need = CARDS.filter((c, i) => c.video && Math.abs(i - p) <= 2.6).map(c => clipFrameUrl(c, a)).filter(Boolean);
+    await Promise.all(need.filter(u => !FRAME_CACHE.has(u)).map(async u => FRAME_CACHE.set(u, await loadImage(u))));
+    while (FRAME_CACHE.size > 120) FRAME_CACHE.delete(FRAME_CACHE.keys().next().value);
+  }
+
+  // Map graphic for a story without a photo: the country drawn from the fine grid, a pin, and text.
+  // { lon, lat, w (camera), ids: [...], pins: [{ lon, lat, label, up }], kicker, title, sub, figure }
+  function makeGraphic(g) {
+    const GW = 1600, GH = 900;
+    const c = document.createElement('canvas');
+    c.width = GW; c.height = GH;
+    const keep = ctx;
+    ctx = c.getContext('2d');
+    const bg = ctx.createLinearGradient(0, 0, GW, GH);
+    bg.addColorStop(0, '#0B1F4B'); bg.addColorStop(1, '#16336F');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, GW, GH);
+    // map on the left half, faded into the text side
+    const rect = { x: 0, y: 0, w: GW * 0.62, h: GH };
+    const cam = { x: g.lon, y: mercY(g.lat), w: g.w };
+    const P = drawGrid(cam, rect, {
+      fine: true, landRGB: [44, 66, 112], seaColor: 'rgba(255,255,255,0.07)',
+      layers: [{ set: new Set(g.ids.map(id => idIndex[id])), kind: 'primary', alpha: 1, elapsed: 99, ox: g.lon, oy: mercY(g.lat) }],
+    });
+    strokeLines(P, MD.borders, 'rgba(255,255,255,0.35)', 2);
+    strokeLines(P, MD.coasts, 'rgba(255,255,255,0.18)', 1.6);
+    for (const pin of g.pins || []) {
+      const [x, y] = P(pin.lon, pin.lat);
+      glowDot(x, y, 70, '16,185,129', 0.8);
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill();
+      if (pin.label) labelPill(x, y + (pin.up ? -62 : 62), pin.label, 40, { bounds: { x: 0, y: 0, w: rect.w, h: GH } });
+    }
+    const fg = ctx.createLinearGradient(GW * 0.36, 0, GW * 0.62, 0);
+    fg.addColorStop(0, 'rgba(14,38,86,0)'); fg.addColorStop(1, 'rgba(14,38,86,1)');
+    ctx.fillStyle = fg; ctx.fillRect(GW * 0.36, 0, GW * 0.26, GH);
+    ctx.fillStyle = 'rgb(14,38,86)'; ctx.fillRect(GW * 0.62, 0, GW * 0.38, GH);
+    // text column (RTL), vertically centred
+    const xr = GW - 170, maxW = GW * 0.46;
+    ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const blocks = [];
+    if (g.kicker) blocks.push({ kind: 'kicker', h: 80 });
+    const title = layoutText(g.title, maxW, [92, 84, 76, 68], 2);
+    blocks.push({ kind: 'title', lay: title, h: title.lines.length * title.size * 1.35 });
+    if (g.figure) blocks.push({ kind: 'figure', h: 130 });
+    if (g.sub) { const sub = layoutText(g.sub, maxW, [50, 46, 42], 2); blocks.push({ kind: 'sub', lay: sub, h: sub.lines.length * sub.size * 1.45 }); }
+    const gap = 26;
+    let y = GH / 2 - (blocks.reduce((s2, b) => s2 + b.h, 0) + gap * (blocks.length - 1)) / 2;
+    for (const b of blocks) {
+      if (b.kind === 'kicker') {
+        ctx.font = font(40);
+        const tw = ctx.measureText(g.kicker).width;
+        ctx.fillStyle = 'rgba(16,185,129,0.22)';
+        rrect(xr - tw - 80, y + 6, tw + 80, 66, 33); ctx.fill();
+        ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(xr - 30, y + 39, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#7FF0C5'; ctx.fillText(g.kicker, xr - 52, y + 41);
+      } else if (b.kind === 'figure') {
+        ctx.font = font(104); ctx.fillStyle = '#34D399';
+        ctx.fillText(g.figure, xr, y + 68);
+      } else {
+        const lay = b.lay, lh = lay.size * (b.kind === 'title' ? 1.35 : 1.45);
+        ctx.font = font(lay.size); ctx.fillStyle = b.kind === 'title' ? '#fff' : 'rgba(225,232,245,0.82)';
+        lay.lines.forEach((ln, i) => ctx.fillText(ln.words.map(w => w.w).join(' '), xr, y + lh * (i + 0.5)));
+      }
+      y += b.h + gap;
+    }
+    ctx.fillStyle = C.acc; rrect(xr + 40, 120, 6, GH - 240, 3); ctx.fill();
+    ctx = keep;
+    return c;
+  }
   function carouselPos(a) {
     let p = 0;
     for (let i = 1; i < CARDS.length; i++) p += eio(prog(a, CARDS[i].start - 0.55, CARDS[i].start + 0.3));
@@ -424,7 +537,8 @@
   }
 
   function drawCardImage(card, x, y, w, h, a) {
-    const img = IMG[card.img];
+    const img = cardImage(card, a);
+    if (!img) { ctx.fillStyle = C.soft; ctx.fillRect(x, y, w, h); return; }
     const mv = card.moves;
     let m = 0;
     for (let i = 0; i < mv.length; i++) if (a >= mv[i].t - 0.25) m = i;
@@ -673,7 +787,7 @@
     }
     void prevSame;
     ctx.globalAlpha = alpha;
-    const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
+    const lay = layoutText(h.text, L.head.maxW, L.head.sizes, 2);
     drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.ink, a, h.t, tOut);
     ctx.restore();
   }
@@ -1107,12 +1221,16 @@
   async function init() {
     await document.fonts.load(font(48));
     await document.fonts.ready;
-    const files = [...new Set(TL.cards.map(c => c.img))];
+    const files = [...new Set(TL.cards.map(c => c.img).filter(Boolean))];
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
+    // poster of each clip (its first frame) for previews without extracted frames
+    for (const c of CARDS) if (c.video && window.CLIP_FRAMES && window.CLIP_FRAMES[c.video]) IMG[c.key] = await loadImage(window.CLIP_FRAMES[c.video].dir + '/f00001.jpg');
+    for (const c of CARDS) if (c.graphic) IMG[c.key] = makeGraphic(c.graphic);
     const logo = await loadImage('../assets/logo-white.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
+    window.prepareFrame = prepareFrame;
     window.DURATION = DURATION;
     window.SIZE = [W, H];
     window.READY = true;
