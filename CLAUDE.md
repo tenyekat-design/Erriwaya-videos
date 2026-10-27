@@ -26,7 +26,7 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 ## Fixed decisions
 
 - White template, AL-Quds font, the official Erriwaya logo (assets/logo-white.png, extracted from the official
-  white-on-teal artwork) tinted in its teal `#004A49` inside the safe area.
+  white-on-teal artwork) tinted navy `#0B1F4B` (the template's colour) inside the safe area.
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
