@@ -93,11 +93,19 @@ class AdminScreen extends StatelessWidget {
                   Positioned(
                     left: 4,
                     bottom: 4,
-                    child: IconButton(
-                      tooltip: 'حذف',
-                      icon: const Icon(Icons.delete_outline, color: Brand.red),
-                      onPressed: () => _delete(context, a),
-                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      IconButton(
+                        tooltip: 'تعديل',
+                        icon: const Icon(Icons.edit_outlined, color: Brand.green),
+                        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => ComposeScreen(editing: a))),
+                      ),
+                      IconButton(
+                        tooltip: 'حذف',
+                        icon: const Icon(Icons.delete_outline, color: Brand.red),
+                        onPressed: () => _delete(context, a),
+                      ),
+                    ]),
                   ),
                 ]),
               ),

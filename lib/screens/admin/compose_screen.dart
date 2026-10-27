@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../config.dart';
+import '../../models.dart';
 import '../../services/articles_service.dart';
 import '../../services/push_sender.dart';
 import '../../theme.dart';
 
 class ComposeScreen extends StatefulWidget {
-  const ComposeScreen({super.key});
+  /// عند تمرير خبر تُفتح الشاشة لتعديله بدل إنشاء خبر جديد.
+  final Article? editing;
+  const ComposeScreen({super.key, this.editing});
   @override
   State<ComposeScreen> createState() => _ComposeScreenState();
 }
@@ -24,6 +27,31 @@ class _ComposeScreenState extends State<ComposeScreen> {
   final List<Uint8List> _images = [];
   bool _busy = false;
   String _status = '';
+  bool _loadingImages = false;
+
+  bool get _isEdit => widget.editing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final a = widget.editing;
+    if (a != null) {
+      _title.text = a.title;
+      _body.text = a.body;
+      _category = AppConfig.categories.containsKey(a.category) ? a.category : '';
+      _breaking = a.breaking;
+      _loadingImages = a.imageCount > 0;
+      ArticlesService.instance.images(a).then((imgs) {
+        if (!mounted) return;
+        setState(() {
+          _images.addAll(imgs);
+          _loadingImages = false;
+        });
+      }).catchError((_) {
+        if (mounted) setState(() => _loadingImages = false);
+      });
+    }
+  }
 
   Future<void> _pick() async {
     final files = await ImagePicker().pickMultiImage(maxWidth: 1600, imageQuality: 85);
@@ -46,8 +74,30 @@ class _ComposeScreenState extends State<ComposeScreen> {
     }
     setState(() {
       _busy = true;
-      _status = _images.isEmpty ? 'جارٍ النشر…' : 'جارٍ تجهيز الصور ونشر الخبر…';
+      _status = _isEdit
+          ? 'جارٍ حفظ التعديلات…'
+          : (_images.isEmpty ? 'جارٍ النشر…' : 'جارٍ تجهيز الصور ونشر الخبر…');
     });
+    if (_isEdit) {
+      try {
+        await ArticlesService.instance.update(
+          original: widget.editing!,
+          title: title,
+          body: _body.text.trim(),
+          category: _category,
+          breaking: _breaking,
+          images: _images,
+        );
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حُفظت التعديلات.')));
+      } catch (e) {
+        _snack('تعذر الحفظ: $e');
+      } finally {
+        if (mounted) setState(() => _busy = false);
+      }
+      return;
+    }
     try {
       final id = await ArticlesService.instance.publish(
         title: title,
@@ -79,7 +129,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('خبر جديد')),
+      appBar: AppBar(title: Text(_isEdit ? 'تعديل الخبر' : 'خبر جديد')),
       body: AbsorbPointer(
         absorbing: _busy,
         child: ListView(padding: const EdgeInsets.all(16), children: [
@@ -118,7 +168,9 @@ class _ComposeScreenState extends State<ComposeScreen> {
             value: _breaking,
             activeTrackColor: Brand.red,
             title: const Text('خبر عاجل'),
-            subtitle: const Text('يظهر شريطاً أحمر أعلى الأخبار ويُرسل إشعاراً لكل الهواتف'),
+            subtitle: Text(_isEdit
+                ? 'يظهر شريطاً أحمر أعلى الأخبار (لا يُعاد إرسال الإشعار عند التعديل)'
+                : 'يظهر شريطاً أحمر أعلى الأخبار ويُرسل إشعاراً لكل الهواتف'),
             onChanged: (v) => setState(() => _breaking = v),
           ),
           const SizedBox(height: 8),
@@ -132,6 +184,11 @@ class _ComposeScreenState extends State<ComposeScreen> {
             ),
           ]),
           const SizedBox(height: 10),
+          if (_loadingImages)
+            const Padding(
+              padding: EdgeInsets.all(12),
+              child: Center(child: CircularProgressIndicator(color: Brand.green)),
+            ),
           if (_images.isNotEmpty)
             GridView.count(
               crossAxisCount: 3,
@@ -175,7 +232,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
             ),
           const SizedBox(height: 24),
           FilledButton.icon(
-            onPressed: _busy ? null : _publish,
+            onPressed: _busy || _loadingImages ? null : _publish,
             style: FilledButton.styleFrom(
               backgroundColor: _breaking ? Brand.red : Brand.green,
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -186,7 +243,10 @@ class _ComposeScreenState extends State<ComposeScreen> {
                     width: 18,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.send),
-            label: Text(_busy ? _status : (_breaking ? 'نشر عاجل' : 'نشر الخبر'),
+            label: Text(
+                _busy
+                    ? _status
+                    : (_isEdit ? 'حفظ التعديلات' : (_breaking ? 'نشر عاجل' : 'نشر الخبر')),
                 style: const TextStyle(fontSize: 17)),
           ),
         ]),

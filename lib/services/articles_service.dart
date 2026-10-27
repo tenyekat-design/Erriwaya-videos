@@ -103,6 +103,37 @@ class ArticlesService extends ChangeNotifier {
     return doc.id;
   }
 
+  /// يعدّل خبراً منشوراً. الصور تُستبدل بالقائمة الجديدة كاملة.
+  Future<void> update({
+    required Article original,
+    required String title,
+    required String body,
+    required String category,
+    required bool breaking,
+    required List<Uint8List> images,
+  }) async {
+    final prepared = await compute(_prepareImages, images);
+    final doc = _col.doc(original.id);
+    final old = await doc.collection('images').get();
+    final batch = FirebaseFirestore.instance.batch();
+    for (final d in old.docs) {
+      batch.delete(d.reference);
+    }
+    batch.update(doc, {
+      'title': title,
+      'body': body,
+      'category': category,
+      'breaking': breaking,
+      'thumb': prepared.thumb,
+      'imageCount': prepared.full.length,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    for (var i = 0; i < prepared.full.length; i++) {
+      batch.set(doc.collection('images').doc('$i'), {'i': i, 'data': prepared.full[i]});
+    }
+    await batch.commit();
+  }
+
   Future<void> delete(Article a) async {
     final imgs = await _col.doc(a.id).collection('images').get();
     final batch = FirebaseFirestore.instance.batch();
