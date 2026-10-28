@@ -23,14 +23,13 @@
     feed: {
       W: 1080, H: 1350,
       margin: 60,
-      logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
-      card: { cx: 540, cy: 360, w: 600, h: 400 },
-      side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
-      pill: { cx: 540, y: 560 },
-      bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
-      kicker: { cx: 540, y: 678 },
-      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
-      map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
+      logoH: 156, logoY: 32, hdrText: [44, 27],   // logo leads the header; title/date sizes
+      card: { cx: 540, cy: 390, w: 690, h: 460 },
+      side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
+      bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 620 },        // story label pinned to the photo's bottom edge
+      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 150 },
+      map: { x: 50, y: 880, w: 980, h: 412, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
       outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
@@ -38,13 +37,12 @@
     youtube: {
       W: 1920, H: 1080,
       margin: 96,                        // 5% title-safe area
-      logoH: 150, logoY: 54,
-      card: { cx: 1344, cy: 486, w: 880, h: 500 },
-      side: [550, 880],
-      pill: { cx: 1344, y: 736 },
-      bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
-      kicker: { cx: 1344, y: 864 },
-      head: { cx: 1344, cy: 956, maxW: 920, lineH: 62 },
+      logoH: 160, logoY: 38, hdrText: [46, 28],
+      card: { cx: 1344, cy: 482, w: 920, h: 540 },
+      side: [570, 900],
+      bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
+      kicker: { cx: 1344, y: 752 },
+      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 150 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -509,32 +507,7 @@
     ctx.restore();
   }
 
-  // ---------- player controls + progress ----------
-  function drawControls(a, alpha) {
-    if (alpha <= 0) return;
-    const cx = L.pill.cx, cy = L.pill.y, pw = 270, ph = 70;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.shadowColor = 'rgba(11,31,75,0.22)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
-    ctx.fillStyle = 'rgba(255,255,255,0.97)';
-    rrect(cx - pw / 2, cy - ph / 2, pw, ph, ph / 2); ctx.fill();
-    ctx.shadowColor = 'transparent';
-    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.fillStyle = C.navy;
-    const tri = (x, dir) => { ctx.beginPath(); ctx.moveTo(x, cy - 11); ctx.lineTo(x + dir * 16, cy); ctx.lineTo(x, cy + 11); ctx.closePath(); ctx.fill(); };
-    tri(cx - 70, -1); tri(cx - 86, -1);   // rewind
-    tri(cx + 70, 1); tri(cx + 86, 1);     // forward
-    const beat = 1 + 0.06 * Math.sin(a * 5);
-    ctx.save(); ctx.translate(cx, cy); ctx.scale(beat, beat);
-    ctx.fillStyle = C.acc;
-    ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#fff';
-    rrect(-8, -10, 5.5, 20, 2); ctx.fill();
-    rrect(2.5, -10, 5.5, 20, 2); ctx.fill();
-    ctx.restore();
-    ctx.restore();
-  }
-
+  // ---------- progress ----------
   const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   function drawProgress(a, alpha) {
     if (alpha <= 0) return;
@@ -557,17 +530,12 @@
       ctx.fillRect(tx - 2, y - 6, 4, 12);
     }
     // knob
-    const pulse = (a * 0.8) % 1;
-    ctx.strokeStyle = `rgba(16,185,129,${0.5 * (1 - pulse)})`; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(xk, y, 16 + pulse * 22, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = 'rgba(16,185,129,0.18)';
-    ctx.beginPath(); ctx.arc(xk, y, 20, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowColor = 'rgba(16,185,129,0.6)'; ctx.shadowBlur = 16;
-    ctx.fillStyle = C.acc;
-    ctx.beginPath(); ctx.arc(xk, y, 11, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'rgba(11,31,75,0.25)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 3;
     ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(xk, y, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(xk, y, 12, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = C.acc;
+    ctx.beginPath(); ctx.arc(xk, y, 7, 0, Math.PI * 2); ctx.fill();
     // times (RTL: elapsed on the right)
     ctx.font = font(24); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.gray;
     ctx.textAlign = 'right'; ctx.fillText(mmss(Math.max(0, a - CUT)), L.bar.tr, y + 2);
@@ -614,6 +582,70 @@
     return res;
   }
 
+  // Headlines: two balanced lines at a size in step with the rest of the frame; the shorter line is
+  // then stretched to the longer one with tatweel (kashida) in its longest words, spaces taking the rest.
+  const NO_JOIN_AFTER = new Set('اأإآدذرزوؤةىء');
+  const AR_LETTER = /[\u0621-\u064A]/;
+  function kashidaSpot(word) {
+    // last place inside the word where a letter joins the next one (never splitting lam-alif)
+    const ch = [...word];
+    for (let i = ch.length - 2; i >= 1; i--) {
+      const a = ch[i], b = ch[i + 1];
+      if (!AR_LETTER.test(a) || !AR_LETTER.test(b) || NO_JOIN_AFTER.has(a) || a === 'ء') continue;
+      if (a === 'ل' && 'اأإآ'.includes(b)) continue;
+      return i + 1;
+    }
+    return -1;
+  }
+  function stretchWord(word, n) {
+    const i = kashidaSpot(word);
+    if (i < 0 || n <= 0) return word;
+    const ch = [...word];
+    return ch.slice(0, i).join('') + '\u0640'.repeat(n) + ch.slice(i).join('');
+  }
+  function layoutHeadline(text, maxW) {
+    const key = 'H|' + text + '|' + maxW;
+    if (layoutCache[key]) return layoutCache[key];
+    const target = maxW * 0.86;
+    const ref = layoutText(text, 1e6, [48], 1);
+    const words = ref.lines[0].words;
+    const sumW = k0 => words.slice(0, k0).reduce((s, w) => s + w.width, 0);
+    let best = { k: words.length, w: ref.lines[0].width };
+    for (let k = 1; k < words.length; k++) {
+      const w = Math.max(sumW(k) + ref.space * (k - 1), sumW(words.length) - sumW(k) + ref.space * (words.length - k - 1));
+      if (w < best.w) best = { k, w };
+    }
+    const size = clamp(Math.floor(48 * target / best.w), 36, 42);
+    ctx.direction = 'rtl';
+    ctx.font = font(size);
+    const space = ctx.measureText(' ').width;
+    const tw = ctx.measureText('\u0640').width;
+    const raw = words.map(w => w.w);
+    const groups = best.k < raw.length ? [raw.slice(0, best.k), raw.slice(best.k)] : [raw];
+    const measure = ws => ws.reduce((s, w) => s + ctx.measureText(w).width, 0) + space * (ws.length - 1);
+    const goal = Math.max(...groups.map(measure));
+    const lines = groups.map(ws => {
+      const n = ws.map(() => 0);
+      // longest words first, one tatweel at a time, at most 2 per word
+      const order = ws.map((w, i) => i).filter(i => ws[i].length > 3 && kashidaSpot(ws[i]) >= 0)
+        .sort((i, j) => ws[j].length - ws[i].length);
+      let cur = measure(ws);
+      for (let round = 0; round < 2; round++) {
+        for (const i of order) {
+          if (cur + tw > goal) break;
+          n[i]++; cur += tw;
+        }
+      }
+      const out = ws.map((w, i) => stretchWord(w, n[i]));
+      const sized = out.map(w => ({ w, width: ctx.measureText(w).width }));
+      const ink = sized.reduce((s, w) => s + w.width, 0);
+      const gap = sized.length > 1 ? (goal - ink) / (sized.length - 1) : space;
+      const sp = clamp(gap, space, space * 2.2);
+      return { words: sized, width: ink + sp * (sized.length - 1), space: sp };
+    });
+    return (layoutCache[key] = { size, space, lines });
+  }
+
   function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut) {
     const n = lay.lines.length;
     let idx = 0;
@@ -632,7 +664,7 @@
           ctx.fillStyle = color;
           ctx.fillText(wd.w, x, y + (1 - p) * 22 - outP * 16);
         }
-        x -= wd.width + lay.space;
+        x -= wd.width + (ln.space ?? lay.space);
         idx++;
       }
     });
@@ -658,23 +690,43 @@
     const kIn = HL[start].t;
     const kp = eout(prog(a, kIn, kIn + 0.45)) * (nextSame || !tOut ? 1 : 1 - eio(prog(a, tOut - 0.35, tOut)));
     if (kp > 0) {
-      ctx.font = font(28); ctx.direction = 'rtl';
+      ctx.font = font(32); ctx.direction = 'rtl';
       const tw = ctx.measureText(h.kicker).width;
-      const cw = tw + 64, ch = 46;
-      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2;
+      const cw = tw + 84, ch = 60;
+      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2 + (1 - kp) * 12;
       ctx.globalAlpha = alpha * kp;
-      ctx.fillStyle = 'rgba(16,185,129,0.12)';
+      ctx.save();
+      ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+      ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
       rrect(x, y, cw, ch, ch / 2); ctx.fill();
-      ctx.fillStyle = C.acc;
-      ctx.beginPath(); ctx.arc(x + cw - 24, L.kicker.y, 5.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#0A8F65';
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
+      rrect(x, y, cw, ch, ch / 2); ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(x + cw - 30, y + ch / 2, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(h.kicker, x + cw - 40, L.kicker.y + 2);
+      ctx.fillText(h.kicker, x + cw - 50, y + ch / 2 + 2);
     }
     void prevSame;
+    // navy panel behind the headlines: wipes in from the right with the first one, then stays
+    const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
+    const px = L.head.cx - pw / 2, py = L.head.cy - ph / 2;
+    const wipe = eio(prog(a, HL[0].t - 0.45, HL[0].t + 0.1));
     ctx.globalAlpha = alpha;
-    const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
-    drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.ink, a, h.t, tOut);
+    ctx.save();
+    ctx.shadowColor = 'rgba(11,31,75,0.28)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
+    const pg = ctx.createLinearGradient(px + pw, 0, px, 0);
+    pg.addColorStop(0, '#0B1F4B'); pg.addColorStop(1, '#142E66');
+    ctx.fillStyle = pg;
+    rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
+    ctx.restore();
+    if (wipe > 0.2) {
+      ctx.fillStyle = C.acc;
+      rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
+    }
+    const lay = layoutHeadline(h.text, L.head.maxW);
+    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.4), '#FFFFFF', a, h.t, tOut);
     ctx.restore();
   }
 
@@ -696,12 +748,15 @@
     const lb = logoBox();
     ctx.save();
     ctx.globalAlpha = alpha;
-    const tx = lb.x - 26;
+    // title and date span the logo's body so the two read as one block, top and bottom aligned
+    // text block centred on the logo's visual weight (its lower half), set close to it
+    const tx = lb.x - 16;
+    const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(38);
-    ctx.fillText(TL.title, tx, lb.y + lb.h / 2 - 20);
-    ctx.fillStyle = C.gray; ctx.font = font(24);
-    ctx.fillText(TL.date, tx, lb.y + lb.h / 2 + 24);
+    ctx.fillStyle = C.navy; ctx.font = font(L.hdrText[0]);
+    ctx.fillText(TL.title, tx, titleY);
+    ctx.fillStyle = C.gray; ctx.font = font(L.hdrText[1]);
+    ctx.fillText(TL.date, tx, dateY);
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
@@ -710,12 +765,12 @@
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
     ctx.font = font(34); ctx.fillStyle = C.navy;
     const num = String(ch).padStart(2, '0');
-    ctx.fillText(num, L.margin, lb.y + lb.h / 2 - 14);
+    ctx.fillText(num, L.margin, titleY);
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = C.gray;
-    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, lb.y + lb.h / 2 - 11);
+    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
     for (let i = 0; i < n; i++) {
-      const bx = L.margin + i * 30, by = lb.y + lb.h / 2 + 22;
+      const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
       ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
@@ -1088,7 +1143,6 @@
       const inA = k => eout(prog(t, 6.45 + k * 0.12, 7.15 + k * 0.12)) * (1 - out);
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
-      drawControls(a, inA(1));
       drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
@@ -1109,7 +1163,7 @@
     await document.fonts.ready;
     const files = [...new Set(TL.cards.map(c => c.img))];
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
-    const logo = await loadImage('../assets/logo-white.png');
+    const logo = await loadImage('../assets/logo-mark.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
