@@ -1162,7 +1162,7 @@
     await document.fonts.ready;
     const files = [...new Set(TL.cards.map(c => c.img))];
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
-    const logo = await loadImage('../assets/logo-white.png');
+    const logo = await loadImage('../assets/logo-mark.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
