@@ -1,4 +1,4 @@
-# موقع الرواية: يبني البيانات (يوتيوب + الأخبار) وينشر الموقع على GitHub Pages.
+# موقع الرواية: يبني البيانات (يوتيوب + الأخبار) وينشر الموقع في فرع gh-pages (GitHub Pages).
 # يعمل عند كل تعديل على فرع website، ويدوياً، وكل نصف ساعة عبر website-refresh.yml في الفرع الافتراضي.
 name: website
 
@@ -9,15 +9,13 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: website
   cancel-in-progress: false
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,30 +33,12 @@ jobs:
       - name: Fetch videos and news
         run: python3 scripts/build_data.py _site
 
-      - name: Save data snapshot (branch website-data)
+      - name: Publish to gh-pages
         run: |
           cd _site
-          git init -q -b website-data
+          git init -q -b gh-pages
           git config user.name "erriwaya-bot"
           git config user.email "actions@github.com"
-          git add data.json img 2>/dev/null || git add data.json
-          git commit -qm "data $(date -u +%FT%TZ)"
-          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" website-data
-          rm -rf .git
-
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          git add -A
+          git commit -qm "site $(date -u +%FT%TZ)"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
