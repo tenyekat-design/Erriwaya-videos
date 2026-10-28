@@ -16,6 +16,7 @@ window.TIMELINE = {
   cards: [
     // opening teaser
     { kicker: 'الصحراء الغربية', img: 'unsc-vote.jpg', moves: [{ t: 0.0, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.12] }] },
+    { kicker: 'روسيا', img: 'ru-af-sign.jpg', moves: [{ t: 5.92, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.1] }] },
     { kicker: 'المغرب', img: 'ma-parliament.jpg', moves: [{ t: 9.02, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.1] }] },
     { kicker: 'الجزائر', img: 'dz-tebboune-meeting.jpg', moves: [{ t: 11.0, a: [0.5, 0.45, 1.0], b: [0.55, 0.4, 1.1] }] },
     { kicker: 'تونس', img: 'tn-protest.webp', moves: [{ t: 13.04, a: [0.5, 0.45, 1.0], b: [0.55, 0.45, 1.1] }] },
@@ -32,6 +33,10 @@ window.TIMELINE = {
     { img: 'unsc-vote.jpg', moves: [{ t: 48.4, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.14] }] },
     { img: 'minurso.webp', moves: [{ t: 57.22, a: [0.55, 0.5, 1.0], b: [0.65, 0.5, 1.12] }] },
     { img: 'unsc.jpg', moves: [{ t: 62.8, a: [0.45, 0.5, 1.0], b: [0.45, 0.55, 1.14] }] },
+    // Moscow: Russia–Africa summit
+    { img: 'ru-af-sign.jpg', moves: [{ t: 67.62, a: [0.5, 0.4, 1.0], b: [0.55, 0.4, 1.12] }] },
+    { img: 'ru-af-delegates.jpg', moves: [{ t: 72.1, a: [0.5, 0.3, 1.0], b: [0.5, 0.25, 1.12] }] },
+    { img: 'ru-putin.jpg', moves: [{ t: 77.98, a: [0.4, 0.45, 1.0], b: [0.4, 0.4, 1.1] }] },
     // Morocco
     { img: 'ma-parliament.jpg', moves: [{ t: 81.0, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] },
                                         { t: 95.32, a: [0.5, 0.2, 1.5], b: [0.5, 0.22, 1.3] }] },
