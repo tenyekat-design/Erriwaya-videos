@@ -28,7 +28,7 @@
       side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
       bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
       kicker: { cx: 540, y: 620 },        // story label pinned to the photo's bottom edge
-      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 164 },
+      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 150 },
       map: { x: 50, y: 880, w: 980, h: 412, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
@@ -42,7 +42,7 @@
       side: [570, 900],
       bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
       kicker: { cx: 1344, y: 752 },
-      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 164 },
+      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 150 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -582,11 +582,31 @@
     return res;
   }
 
-  // Headlines fill the panel: two balanced lines, the font sized so the wider line spans maxW,
-  // then word gaps widened toward maxW (capped, so a short line never shows holes) and centred.
+  // Headlines: two balanced lines at a size in step with the rest of the frame; the shorter line is
+  // then stretched to the longer one with tatweel (kashida) in its longest words, spaces taking the rest.
+  const NO_JOIN_AFTER = new Set('اأإآدذرزوؤةىء');
+  const AR_LETTER = /[\u0621-\u064A]/;
+  function kashidaSpot(word) {
+    // last place inside the word where a letter joins the next one (never splitting lam-alif)
+    const ch = [...word];
+    for (let i = ch.length - 2; i >= 1; i--) {
+      const a = ch[i], b = ch[i + 1];
+      if (!AR_LETTER.test(a) || !AR_LETTER.test(b) || NO_JOIN_AFTER.has(a) || a === 'ء') continue;
+      if (a === 'ل' && 'اأإآ'.includes(b)) continue;
+      return i + 1;
+    }
+    return -1;
+  }
+  function stretchWord(word, n) {
+    const i = kashidaSpot(word);
+    if (i < 0 || n <= 0) return word;
+    const ch = [...word];
+    return ch.slice(0, i).join('') + '\u0640'.repeat(n) + ch.slice(i).join('');
+  }
   function layoutHeadline(text, maxW) {
     const key = 'H|' + text + '|' + maxW;
     if (layoutCache[key]) return layoutCache[key];
+    const target = maxW * 0.86;
     const ref = layoutText(text, 1e6, [48], 1);
     const words = ref.lines[0].words;
     const sumW = k0 => words.slice(0, k0).reduce((s, w) => s + w.width, 0);
@@ -595,17 +615,33 @@
       const w = Math.max(sumW(k) + ref.space * (k - 1), sumW(words.length) - sumW(k) + ref.space * (words.length - k - 1));
       if (w < best.w) best = { k, w };
     }
-    const size = clamp(Math.floor(48 * maxW / best.w), 34, 58);
+    const size = clamp(Math.floor(48 * target / best.w), 36, 42);
     ctx.direction = 'rtl';
     ctx.font = font(size);
     const space = ctx.measureText(' ').width;
-    const sized = words.map(w => ({ w: w.w, width: ctx.measureText(w.w).width }));
-    const groups = best.k < words.length ? [sized.slice(0, best.k), sized.slice(best.k)] : [sized];
+    const tw = ctx.measureText('\u0640').width;
+    const raw = words.map(w => w.w);
+    const groups = best.k < raw.length ? [raw.slice(0, best.k), raw.slice(best.k)] : [raw];
+    const measure = ws => ws.reduce((s, w) => s + ctx.measureText(w).width, 0) + space * (ws.length - 1);
+    const goal = Math.max(...groups.map(measure));
     const lines = groups.map(ws => {
-      const ink = ws.reduce((s, w) => s + w.width, 0);
-      const gap = ws.length > 1 ? (maxW - ink) / (ws.length - 1) : space;
-      const sp = clamp(gap, space, space + size * 0.32);
-      return { words: ws, width: ink + sp * (ws.length - 1), space: sp };
+      const n = ws.map(() => 0);
+      // longest words first, one tatweel at a time, at most 2 per word
+      const order = ws.map((w, i) => i).filter(i => ws[i].length > 3 && kashidaSpot(ws[i]) >= 0)
+        .sort((i, j) => ws[j].length - ws[i].length);
+      let cur = measure(ws);
+      for (let round = 0; round < 2; round++) {
+        for (const i of order) {
+          if (cur + tw > goal) break;
+          n[i]++; cur += tw;
+        }
+      }
+      const out = ws.map((w, i) => stretchWord(w, n[i]));
+      const sized = out.map(w => ({ w, width: ctx.measureText(w).width }));
+      const ink = sized.reduce((s, w) => s + w.width, 0);
+      const gap = sized.length > 1 ? (goal - ink) / (sized.length - 1) : space;
+      const sp = clamp(gap, space, space * 2.2);
+      return { words: sized, width: ink + sp * (sized.length - 1), space: sp };
     });
     return (layoutCache[key] = { size, space, lines });
   }
@@ -690,7 +726,7 @@
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
-    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.25), '#FFFFFF', a, h.t, tOut);
+    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.4), '#FFFFFF', a, h.t, tOut);
     ctx.restore();
   }
 
