@@ -67,7 +67,7 @@ async function renderRange(browser, f0, f1, file) {
 // music (tools/make-report-music.py) + the clips' own sound, low, while their footage is on screen + whooshes
 function buildAudio(R, file) {
   const music = path.join(FRAMES, 'music.wav');
-  execFileSync('python3', [path.join(ROOT, 'tools', 'make-report-music.py'), music, String(R.duration), String(R.outroHit), ...R.hits.map(String)], { stdio: 'inherit' });
+  execFileSync('python3', [path.join(ROOT, 'tools', 'make-report-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
   const ms = s => Math.max(0, Math.round(s * 1000));
   const shots = R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
   const clips = [...new Set(shots.map(s => s.clip))];
@@ -108,10 +108,10 @@ function buildAudio(R, file) {
     parts[w] = path.join(FRAMES, `part${w}.mp4`);
     return renderRange(browser, a, b, parts[w]);
   }));
-  // cover: the opening title once it has settled
+  // cover: the hook once its line has settled
   const page = await openPage(browser);
   const cover = OUT.replace(/\.mp4$/, '-cover.jpg');
-  fs.writeFileSync(cover, await grab(page, +(args.coverAt || 2.6)));
+  fs.writeFileSync(cover, await grab(page, +(args.coverAt || 2.0)));
   await browser.close();
   fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
   const video = path.join(FRAMES, 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');

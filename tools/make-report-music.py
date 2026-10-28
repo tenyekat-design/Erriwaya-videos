@@ -1,9 +1,9 @@
 """Synthesizes the music bed of a social report (no voice-over), reusing the instruments of make-music.py.
 
-  python3 tools/make-report-music.py out.wav DURATION OUTRO_HIT HIT [HIT ...]
+  python3 tools/make-report-music.py out.wav DURATION OUTRO_HIT CALM_FROM CALM_TO HIT [HIT ...]
 
 96 BPM, D minor (Dm Bb Gm A, two bars each): pulsing bass, ticks and kicks; a riser and a boom on each HIT;
-drums drop out for the calmer middle stretch (the account card); a brass chord on OUTRO_HIT, then decay.
+drums drop out between CALM_FROM and CALM_TO (the account card); a brass chord on OUTRO_HIT, then decay.
 """
 import importlib.util
 import os
@@ -19,15 +19,14 @@ SR = mm.SR
 out = sys.argv[1]
 DUR = float(sys.argv[2])
 OUTRO = float(sys.argv[3])
-HITS = [float(h) for h in sys.argv[4:]]
+CALM = (float(sys.argv[4]), float(sys.argv[5]))
+HITS = [float(h) for h in sys.argv[6:]]
 BEAT = 60 / 96
 mm.reset(DUR + 4)
 place, note = mm.place, mm.note
 
 CHORDS = [(50, [62, 65, 69]), (46, [62, 65, 70]), (43, [62, 67, 70]), (45, [61, 64, 69])]  # Dm Bb Gm A
 BAR = 4 * BEAT
-# calm stretch: from just before the middle hit-free section to the following cut (no drums)
-CALM = (39.0, 45.4)
 
 
 def chord_at(t):
