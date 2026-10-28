@@ -103,7 +103,7 @@
 
   // ---------- assets ----------
   const IMG = {};
-  let LOGO = null, LOGO_ACC = null;
+  let LOGO = null, LOGO_ACC = null, LOGO_W = null;
   function loadImage(src) {
     return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
   }
@@ -1119,6 +1119,74 @@
     }
   }
 
+  // ---------- hook ----------
+  // Optional first seconds (TL.hook): the day's strongest story full-frame with one big line, so the video
+  // opens on news. The map intro then plays faster up to the logo, which keeps its time (and the music's hit).
+  const HOOK = TL.hook ? 2.6 : 0;
+  const MAP_END = 4.15;  // intro time at which the map zooms into Nouakchott; unchanged from here on
+  const introTime = t => (t >= MAP_END || !HOOK ? t : Math.max(0, (t - HOOK) * MAP_END / (MAP_END - HOOK)));
+  const HOOK_LAYOUT = {
+    feed: { cy: 900, maxW: 960, sizes: [92, 84, 76, 70], logoH: 110 },
+    youtube: { cy: 760, maxW: 1500, sizes: [100, 90, 80], logoH: 120 },
+    story: { cy: 1180, maxW: 960, sizes: [96, 86, 78, 70], logoH: 120 },
+  };
+  function drawHook(t) {
+    const hk = TL.hook, HL = HOOK_LAYOUT[FORMAT] || HOOK_LAYOUT.feed;
+    const img = IMG[hk.img];
+    const out = eio(prog(t, HOOK - 0.3, HOOK));
+    ctx.save();
+    ctx.globalAlpha = 1 - out;
+    // photo: punch-in at the start, slow push, a quick zoom as it hands over to the map
+    const f = hk.f || [0.5, 0.5];
+    const z = lerp(1.22, 1.06, eout(prog(t, 0, 0.5))) + 0.05 * prog(t, 0.5, HOOK) + 0.25 * ein(out);
+    coverDraw(img, 0, 0, W, H, f[0], f[1], z);
+    const g = ctx.createLinearGradient(0, H * 0.35, 0, H);
+    g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.45, 'rgba(11,31,75,0.72)'); g.addColorStop(1, 'rgba(11,31,75,0.94)');
+    ctx.fillStyle = g; ctx.fillRect(0, H * 0.35, W, H * 0.65);
+    const gt = ctx.createLinearGradient(0, 0, 0, H * 0.22);
+    gt.addColorStop(0, 'rgba(11,31,75,0.55)'); gt.addColorStop(1, 'rgba(11,31,75,0)');
+    ctx.fillStyle = gt; ctx.fillRect(0, 0, W, H * 0.22);
+    // white flash on the first frame
+    const fl = 1 - prog(t, 0, 0.25);
+    if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${0.7 * fl})`; ctx.fillRect(0, 0, W, H); }
+    // logo, top right in the safe area
+    const lh = HL.logoH, lw = lh * LOGO_W.width / LOGO_W.height;
+    drawLogoAt(W - L.margin - lw / 2, L.logoY + lh / 2 + 10, lh, eout(prog(t, 0.1, 0.5)), LOGO_W);
+    // headline: words rise in one after another
+    const lay = layoutText(hk.text, HL.maxW, HL.sizes, 2);
+    const lineH = Math.round(lay.size * 1.35);
+    const top = HL.cy - (lay.lines.length - 1) * lineH / 2;
+    const kp = eout(prog(t, 0.15, 0.5));
+    if (hk.kicker) {
+      ctx.globalAlpha = (1 - out) * kp;
+      drawChip(hk.kicker, hk.topic, W / 2, top - lineH * 0.5 - 60 + (1 - kp) * 12, 38);
+      ctx.globalAlpha = 1 - out;
+    }
+    ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    let idx = 0;
+    lay.lines.forEach((ln, li) => {
+      let x = W / 2 + ln.width / 2;
+      const y = top + li * lineH;
+      for (const wd of ln.words) {
+        const p = eout(prog(t, 0.3 + idx * 0.07, 0.65 + idx * 0.07));
+        if (p > 0) {
+          ctx.globalAlpha = (1 - out) * p;
+          ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 18;
+          ctx.fillStyle = '#fff';
+          ctx.fillText(wd.w, x, y + (1 - p) * 26);
+          ctx.shadowColor = 'transparent';
+        }
+        x -= wd.width + lay.space;
+        idx++;
+      }
+    });
+    ctx.globalAlpha = 1 - out;
+    const bw = 180 * eout(prog(t, 0.6, 1.1));
+    ctx.fillStyle = C.acc;
+    rrect(W / 2 - bw / 2, top + (lay.lines.length - 0.5) * lineH + 22, bw, 7, 3.5); ctx.fill();
+    ctx.restore();
+  }
+
   // ---------- outro ----------
   const SOCIAL = [
     { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' },
@@ -1301,7 +1369,8 @@
     const a = at(t);
     const bgA = eio(prog(t, 5.6, 6.6));
     ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
-    if (t < INTRO + 0.5) drawIntro(t);
+    if (t < INTRO + 0.5 && t >= HOOK - 0.3) drawIntro(introTime(t));
+    if (t < HOOK) drawHook(t);
     if (bgA > 0) {
       ctx.save(); ctx.globalAlpha = bgA; drawBackground(); ctx.restore();
     }
@@ -1328,11 +1397,12 @@
   async function init() {
     await document.fonts.load(font(48));
     await document.fonts.ready;
-    const files = [...new Set(TL.cards.map(c => c.img))];
+    const files = [...new Set([...TL.cards.map(c => c.img), ...(TL.hook ? [TL.hook.img] : [])])];
     await Promise.all(files.map(async f => { IMG[f] = await loadImage(window.EDITION_DIR + '/img/' + f); }));
     const logo = await loadImage('../assets/logo-mark.png');
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
+    LOGO_W = tint(logo, '#fff');
     window.renderFrame = renderFrame;
     window.renderCover = renderCover;
     window.DURATION = DURATION;
