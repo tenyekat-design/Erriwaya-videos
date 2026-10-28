@@ -24,11 +24,11 @@
       W: 1080, H: 1350,
       margin: 60,
       logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
-      card: { cx: 540, cy: 360, w: 600, h: 400 },
-      side: [445, 760],                  // horizontal offset of the 1st / 2nd side cards
-      bar: { x0: 160, x1: 920, y: 632, tl: 60, tr: 1020 },
-      kicker: { cx: 540, y: 560 },        // story label pinned to the photo's bottom edge
-      head: { cx: 540, cy: 752, maxW: 920, lineH: 62 },
+      card: { cx: 540, cy: 390, w: 690, h: 460 },
+      side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
+      bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 620 },        // story label pinned to the photo's bottom edge
+      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
       map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
@@ -38,11 +38,11 @@
       W: 1920, H: 1080,
       margin: 96,                        // 5% title-safe area
       logoH: 150, logoY: 54,
-      card: { cx: 1344, cy: 486, w: 880, h: 500 },
-      side: [550, 880],
-      bar: { x0: 980, x1: 1708, y: 808, tl: 864, tr: 1824 },
-      kicker: { cx: 1344, y: 736 },
-      head: { cx: 1344, cy: 930, maxW: 920, lineH: 62 },
+      card: { cx: 1344, cy: 482, w: 920, h: 540 },
+      side: [570, 900],
+      bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
+      kicker: { cx: 1344, y: 752 },
+      head: { cx: 1344, cy: 944, maxW: 920, lineH: 62 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
