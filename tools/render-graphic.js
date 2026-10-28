@@ -1,8 +1,8 @@
-// Renders a social report (src/report.html, 1080x1920, no voice-over) to MP4 with music.
+// Renders a graphic video (src/graphic.html, 1080x1920, no voice-over) to MP4 with music.
 // add --format feed for the 1080x1350 Facebook/Instagram feed version (-feed.mp4)
-//   node tools/render-report.js --report 2026-10-28-una-students              -> output/erriwaya-report-<report>.mp4 (+ -cover.jpg)
-//   node tools/render-report.js --report 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
-// Clip frames are extracted once to frames/report-<report>/<clip>/ (git-ignored).
+//   node tools/render-graphic.js --graphic 2026-10-28-una-students              -> output/erriwaya-graphic-<graphic>.mp4 (+ -cover.jpg)
+//   node tools/render-graphic.js --graphic 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
+// Clip frames are extracted once to frames/graphic-<graphic>/<clip>/ (git-ignored).
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -14,18 +14,18 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, v, i, arr) =>
   return acc;
 }, []));
 const FPS = 30, WORKERS = +(args.workers || 4);
-const REPORT = String(args.report || '');
-const RDIR = path.join(ROOT, 'reports', REPORT);
-if (!REPORT || !fs.existsSync(path.join(RDIR, 'report.js'))) { console.error('no report at ' + RDIR); process.exit(1); }
+const NAME = String(args.graphic || '');
+const RDIR = path.join(ROOT, 'graphics', NAME);
+if (!NAME || !fs.existsSync(path.join(RDIR, 'graphic.js'))) { console.error('no graphic at ' + RDIR); process.exit(1); }
 const FEED = args.format === 'feed', HT = FEED ? 1350 : 1920;
-const OUT = path.join(ROOT, 'output', `erriwaya-report-${REPORT}${FEED ? '-feed' : ''}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'report.html') + '?report=' + encodeURIComponent(REPORT) + (FEED ? '&format=feed' : '');
-const FRAMES = path.join(ROOT, 'frames', 'report-' + REPORT);
+const OUT = path.join(ROOT, 'output', `erriwaya-graphic-${NAME}${FEED ? '-feed' : ''}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', 'graphic.html') + '?graphic=' + encodeURIComponent(NAME) + (FEED ? '&format=feed' : '');
+const FRAMES = path.join(ROOT, 'frames', 'graphic-' + NAME);
 
-function loadReport() {
+function loadGraphic() {
   const window = {};
-  new Function('window', fs.readFileSync(path.join(RDIR, 'report.js'), 'utf8'))(window);
-  return window.REPORT;
+  new Function('window', fs.readFileSync(path.join(RDIR, 'graphic.js'), 'utf8'))(window);
+  return window.GRAPHIC;
 }
 
 function extractClips() {
@@ -66,10 +66,10 @@ async function renderRange(browser, f0, f1, file) {
   await page.close();
 }
 
-// music (tools/make-report-music.py) + the clips' own sound, low, while their footage is on screen + whooshes
+// music (tools/make-graphic-music.py) + the clips' own sound, low, while their footage is on screen + whooshes
 function buildAudio(R, file) {
   const music = path.join(FRAMES, 'music.wav');
-  execFileSync('python3', [path.join(ROOT, 'tools', 'make-report-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
+  execFileSync('python3', [path.join(ROOT, 'tools', 'make-graphic-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
   const ms = s => Math.max(0, Math.round(s * 1000));
   const shots = R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
   const clips = [...new Set(shots.map(s => s.clip))];
@@ -89,21 +89,21 @@ function buildAudio(R, file) {
 
 (async () => {
   extractClips();
-  const R = loadReport();
+  const R = loadGraphic();
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   if (args.stills) {
     const page = await openPage(browser);
     const dir = path.join(ROOT, 'output', 'stills');
     fs.mkdirSync(dir, { recursive: true });
     for (const t of String(args.stills).split(',').map(Number)) {
-      const f = path.join(dir, `report-t${String(t).padStart(6, '0')}.png`);
+      const f = path.join(dir, `graphic-t${String(t).padStart(6, '0')}.png`);
       fs.writeFileSync(f, await grab(page, t, 'png'));
       console.log(f);
     }
     return browser.close();
   }
   const F = Math.round(R.duration * FPS), per = Math.ceil(F / WORKERS), parts = [];
-  console.log(`report ${REPORT}: rendering ${F} frames with ${WORKERS} workers`);
+  console.log(`graphic ${NAME}: rendering ${F} frames with ${WORKERS} workers`);
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
     const a = w * per, b = Math.min(F, a + per);
     if (a >= b) return null;

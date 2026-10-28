@@ -1,6 +1,6 @@
-"""Synthesizes the music bed of a social report (no voice-over), reusing the instruments of make-music.py.
+"""Synthesizes the music bed of a graphic video (no voice-over), reusing the instruments of make-music.py.
 
-  python3 tools/make-report-music.py out.wav DURATION OUTRO_HIT CALM_FROM CALM_TO HIT [HIT ...]
+  python3 tools/make-graphic-music.py out.wav DURATION OUTRO_HIT CALM_FROM CALM_TO HIT [HIT ...]
 
 96 BPM, D minor (Dm Bb Gm A, two bars each): pulsing bass, ticks and kicks; a riser and a boom on each HIT;
 drums drop out between CALM_FROM and CALM_TO (the account card); a brass chord on OUTRO_HIT, then decay.

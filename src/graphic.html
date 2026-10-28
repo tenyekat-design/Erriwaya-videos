@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Erriwaya – تقرير</title>
-<!-- Social report (1080x1920, or 1080x1350 with &format=feed; no voice-over): footage + stacked captions in the Erriwaya look.
-     ?report=<folder in reports/>; tools/render-report.js extracts clip frames to frames/report-<folder>/ -->
+<!-- Graphic video (جرافيك) (1080x1920, or 1080x1350 with &format=feed; no voice-over): footage + stacked captions in the Erriwaya look.
+     ?graphic=<folder in graphics/>; tools/render-graphic.js extracts clip frames to frames/graphic-<folder>/ -->
 <style>
   @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
   :root { --navy: #0B1F4B; --green: #0A8F65; --acc: #10B981; }
@@ -89,9 +89,9 @@
 </div>
 <script src="icons.js"></script>
 <script>
-const SLUG = new URLSearchParams(location.search).get('report');
-const DIR = '../reports/' + SLUG + '/';
-const FRAMES = '../frames/report-' + SLUG + '/';
+const SLUG = new URLSearchParams(location.search).get('graphic');
+const DIR = '../graphics/' + SLUG + '/';
+const FRAMES = '../frames/graphic-' + SLUG + '/';
 const FEED = new URLSearchParams(location.search).get('format') === 'feed';
 const W = 1080, H = FEED ? 1350 : 1920, FPS = 30;
 const Y = H / 1920;  // vertical positions are authored for 1920
@@ -289,8 +289,8 @@ window.renderFrame = async t => {
 };
 
 (async () => {
-  await load(DIR + 'report.js');
-  R = window.REPORT;
+  await load(DIR + 'graphic.js');
+  R = window.GRAPHIC;
   window.DURATION = R.duration;
   await document.fonts.load('60px AlQuds', 'العربية');
   await $('logo').decode();

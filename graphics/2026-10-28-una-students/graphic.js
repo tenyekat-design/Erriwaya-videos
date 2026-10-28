@@ -1,7 +1,7 @@
-// Social report (9:16, no voice-over): footage + stacked captions, in the Erriwaya look.
+// Graphic video (جرافيك) (9:16, no voice-over): footage + stacked captions, in the Erriwaya look.
 // Facts: AFP (France 24 / Monte Carlo Doualiya, 27 Oct 2026), Madar, Tawassoul, Alwiam, Elitihad.
 // Times in seconds. Shots: img (fit 'cover' for portrait photos, 'framed' for landscape) or clip + from.
-window.REPORT = {
+window.GRAPHIC = {
   title: 'احتجاجات طلاب جامعة نواكشوط',
   date: '2026-10-28',
   duration: 59.6,
@@ -48,7 +48,7 @@ window.REPORT = {
       source: 'وزارة التعليم العالي والبحث العلمي' },
   ],
   sources: 'المصادر: فرانس برس ووسائل إعلام موريتانية',
-  // music accents (tools/make-report-music.py) and whooshes on the big cuts
+  // music accents (tools/make-graphic-music.py) and whooshes on the big cuts
   calm: [41.6, 48],  // no drums under the account card
   hits: [2.6, 14.8, 22.6, 52.2],
   outroHit: 55.6,

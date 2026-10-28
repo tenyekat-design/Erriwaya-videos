@@ -44,25 +44,27 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
   whose final chord lands on the last word; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.
 
-## Social report (second approved template, 28 Oct 2026)
+## Graphic video (جرافيك) – a separate template, not the news brief
 
-A single-story video without voice-over, in the style of short news reports (full-bleed footage, stacked captions),
-in the Erriwaya look. Use it when the user sends photos/clips (no voice-over) and asks for a report on one topic.
-Reference: `reports/2026-10-28-una-students/report.js` (Nouakchott University student protests).
+The repo holds two templates: the news brief above (voice-over, map, several stories) and the graphic video:
+one topic, no voice-over, full-bleed photos/footage with stacked captions, in the Erriwaya look.
+Use it when the user sends photos/clips without a voice-over and asks for a graphic on one topic.
+Files: `src/graphic.html`, `tools/render-graphic.js`, `tools/make-graphic-music.py`, content in `graphics/<date>-<slug>/`.
+Reference (approved 28 Oct 2026): `graphics/2026-10-28-una-students/graphic.js` (Nouakchott University student protests).
 
-1. Research the topic (web search; several sources, prefer AFP/agency facts; no exaggeration, give the other
-   side's account in a card). Put photos in `reports/<date>-<slug>/img/` and clips in `clips/` with descriptive names.
-2. Fill `report.js`: `shots` (img with `fit: 'cover'` for portrait / `'framed'` for landscape, or `clip` + `from`;
-   `source: 'مشاهد متداولة'` on user footage of unknown origin), `kinetic` (big centred text: first the `hook: true`
+1. Research the topic (web search, several sources, prefer AFP/agency facts; no exaggeration; give the other
+   side's account in a card). Photos in `graphics/<date>-<slug>/img/`, clips in `clips/`, descriptive names.
+2. Fill `graphic.js`: `shots` (img with `fit: 'cover'` for portrait / `'framed'` for landscape, or `clip` + `from`;
+   `source: 'مشاهد متداولة'` on footage of unknown origin), `kinetic` (big centred text: first the `hook: true`
    line over the strongest photo for ~2.6 s, then the title with `chips: true`, a number card, a closing question),
-   `captions` (2–3 lines, first line is the navy lead), `cards` (account of the other side), `sources`, `calm`
+   `captions` (2–3 lines, first line is the navy lead), `cards` (the other side's account), `sources`, `calm`
    (no drums under the card), `hits` (whoosh/boom on the big cuts), `outroHit`. ~55–60 s.
-3. Stills: `node tools/render-report.js --report <folder> --stills 2,9,17` (output/stills/, delete after).
-4. Render: `node tools/render-report.js --report <folder>` (1080x1920, TikTok/Reels/Shorts) and
+3. Stills: `node tools/render-graphic.js --graphic <folder> --stills 2,9,17` (output/stills/, delete after).
+4. Render: `node tools/render-graphic.js --graphic <folder>` (1080x1920, TikTok/Reels/Shorts) and
    `--format feed` (1080x1350, Facebook). ~2.5 min each; each writes a cover (the hook frame).
-   Write `output/erriwaya-report-<folder>-description.txt` (summary, sources, handles, hashtags).
-5. Commit the report folder + outputs, push, send video(s), cover(s), description.
+   Write `output/erriwaya-graphic-<folder>-description.txt` (summary, sources, handles, hashtags).
+5. Commit the graphic folder + outputs, push, send video(s), cover(s), description.
 
 Fixed look: logo top-left; lead caption line and chips navy (no green lead); chips, tags and cards rectangular
 (no rounded pills); green only as accent (side bar, accent words, frame line); AL-Quds font; outro with
-ERRIWAYA handles and the sources line; synthesized music (tools/make-report-music.py) + clips' own sound low.
+ERRIWAYA handles and the sources line; synthesized music + the clips' own sound, low.
