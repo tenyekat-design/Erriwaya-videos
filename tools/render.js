@@ -3,7 +3,7 @@
 //   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
 //   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
 //   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only
-//   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg and -description.txt)
+//   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg, -description.txt and .srt)
 //   add --format youtube for the 1920x1080 layout, --format story for 1080x1920 (default: feed, 1080x1350)
 // Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
@@ -71,7 +71,7 @@ function description() {
   const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const stories = TL.chapters.map(c => {
     const hs = TL.headlines.filter(h => h.t >= c - 0.05);
-    return { t: vt(c), kicker: hs[0].kicker, text: hs[0].text };
+    return { t: vt(c), kicker: hs[0].kicker, topic: hs[0].topic, text: hs[0].text };
   });
   const closing = TL.headlines[TL.headlines.length - 1];
   const marks = [{ t: 0, label: 'المقدمة' }, ...stories.map(s => ({ t: s.t, label: s.kicker }))];
@@ -84,7 +84,7 @@ function description() {
     TL.headlines[0].text,
     '',
     'في هذا الموجز:',
-    ...stories.map(s => `• ${s.kicker}: ${s.text}`),
+    ...stories.map(s => `• ${s.kicker}${s.topic ? ` (${s.topic})` : ''}: ${s.text}`),
     '',
     ...ch.map(m => `${mmss(m.t)} ${m.label}`),
     '',
@@ -96,6 +96,48 @@ function description() {
   const file = path.join(ROOT, 'output', `erriwaya-brief-${EDITION}-description.txt`);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, text);
+  console.log('wrote', file);
+}
+
+// Subtitles (.srt, video time) from editions/<date>/subtitles.txt: transcript.txt with the spelling corrected
+// from the script. Short phrases are joined into cues of at most two lines.
+function subtitles() {
+  const TL = loadEdition();
+  const vt = a => TL.intro + a - TL.audioCut;
+  let src = path.join(EDIR, 'subtitles.txt');
+  if (!fs.existsSync(src)) {
+    src = path.join(EDIR, 'transcript.txt');
+    if (!fs.existsSync(src)) return;
+    console.warn('no subtitles.txt: using transcript.txt as is (copy it to subtitles.txt and correct the spelling)');
+  }
+  const ph = fs.readFileSync(src, 'utf8').split('\n').map(l => l.match(/^\[\s*([\d.]+)\s*-\s*([\d.]+)\]\s*(.+)$/))
+    .filter(Boolean).map(m => ({ t0: +m[1], t1: +m[2], text: m[3].trim() }))
+    .filter(p => p.t0 >= TL.audioCut - 0.05 && p.t0 < TL.audioEnd);
+  const cues = [];
+  for (const p of ph) {
+    const c = cues[cues.length - 1];
+    // join short phrases, but never across a story or a new sentence ("وفي ...", "نبدأ ...")
+    const fresh = /^(وفي|وعلى|نبدأ|إلى هنا|ومن المقرر)\s/.test(p.text) || TL.chapters.some(ch => ch > (c ? c.t0 : 0) && ch <= p.t0 + 0.05);
+    if (c && !fresh && p.t0 - c.t1 < 0.6 && c.text.length + p.text.length < 56 && p.t1 - c.t0 < 6) { c.text += ' ' + p.text; c.t1 = p.t1; }
+    else cues.push({ ...p });
+  }
+  const split = t => {
+    if (t.length <= 36) return t;
+    let best = -1;
+    for (let i = 0; i < t.length; i++) if (t[i] === ' ' && (best < 0 || Math.abs(i - t.length / 2) < Math.abs(best - t.length / 2))) best = i;
+    return best < 0 ? t : t.slice(0, best) + '\n' + t.slice(best + 1);
+  };
+  const ts = s => {
+    const ms = Math.max(0, Math.round(s * 1000));
+    const p = (n, w = 2) => String(n).padStart(w, '0');
+    return `${p(Math.floor(ms / 3600000))}:${p(Math.floor(ms / 60000) % 60)}:${p(Math.floor(ms / 1000) % 60)},${p(ms % 1000, 3)}`;
+  };
+  const out = cues.map((c, i) => {
+    const end = Math.min(c.t1 + 0.35, cues[i + 1] ? cues[i + 1].t0 - 0.05 : c.t1 + 1);
+    return `${i + 1}\n${ts(vt(c.t0))} --> ${ts(vt(end))}\n${split(c.text)}\n`;
+  }).join('\n');
+  const file = path.join(ROOT, 'output', `erriwaya-brief-${EDITION}.srt`);
+  fs.writeFileSync(file, out);
   console.log('wrote', file);
 }
 
@@ -172,7 +214,7 @@ function buildAudio(duration, file) {
   if (args.stills) return stills(String(args.stills).split(',').map(Number));
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  if (args.cover) { await cover(browser); await browser.close(); return description(); }
+  if (args.cover) { await cover(browser); await browser.close(); description(); return subtitles(); }
   const probe = await openPage(browser);
   const duration = await probe.evaluate(() => window.DURATION);
   await probe.close();
@@ -203,6 +245,7 @@ function buildAudio(duration, file) {
     await cover(b2);
     await b2.close();
     description();
+    subtitles();
   } else {
     fs.copyFileSync(video, OUT);
   }

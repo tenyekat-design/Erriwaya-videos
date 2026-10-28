@@ -383,7 +383,8 @@
     ctx.font = font(22);
     const w2 = ctx.measureText(st.note).width;
     const w = Math.max(w1, w2) + 48, h = 100;
-    const x = rect.x + 22 + (1 - p) * -30, y = rect.y + 22;
+    // top-left corner of the map by default; pos: 'right' when a pin sits there
+    const x = st.pos === 'right' ? rect.x + rect.w - 22 - w + (1 - p) * 30 : rect.x + 22 + (1 - p) * -30, y = rect.y + 22;
     ctx.shadowColor = 'rgba(11,31,75,0.18)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
     ctx.fillStyle = '#fff';
     rrect(x, y, w, h, 22); ctx.fill();
@@ -531,6 +532,18 @@
         const gb = ctx.createLinearGradient(0, y + ch * 0.6, 0, y + ch);
         gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(1, 'rgba(11,31,75,0.35)');
         ctx.fillStyle = gb; ctx.fillRect(x, y + ch * 0.6, cw, ch * 0.4);
+        // photo credit, top-left corner, small
+        if (card.credit) {
+          ctx.globalAlpha = alpha * (1 - it.ar * 2);
+          ctx.font = font(19); ctx.direction = 'rtl'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+          const ct = 'الصورة: ' + card.credit;
+          const tw = ctx.measureText(ct).width;
+          ctx.fillStyle = 'rgba(11,31,75,0.45)';
+          rrect(x + 16, y + 16, tw + 24, 32, 16); ctx.fill();
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.fillText(ct, x + 28, y + 33);
+          ctx.globalAlpha = alpha;
+        }
       }
       ctx.restore();
       ctx.save();
@@ -588,6 +601,60 @@
   }
 
   // ---------- headline ----------
+  // Topic colours for the second part of the story label (headline `topic`).
+  const TOPICS = { 'سياسة': '#2B4FA8', 'اقتصاد': '#B7640A', 'أمن': '#C0392B', 'دبلوماسية': '#6D3FB5', 'مناخ': '#0B7FA3', 'مجتمع': '#B03A7A' };
+  // The label follows the headline; a card with its own `kicker` (the opening teaser) overrides it.
+  const CHIP_SEGS = (() => {
+    const times = [...new Set([...TL.headlines.map(h => h.t), ...TL.cards.map(c => c.moves[0].t)])].sort((x, y) => x - y);
+    const segs = [];
+    for (const t of times) {
+      let h = null, card = null;
+      for (const x of TL.headlines) if (x.t <= t) h = x;
+      for (const c of TL.cards) if (c.moves[0].t <= t) card = c;
+      if (!h) continue;
+      const kicker = (card && card.kicker) || h.kicker, topic = card && card.kicker ? card.topic : h.topic;
+      const last = segs[segs.length - 1];
+      if (last && last.kicker === kicker && last.topic === topic) continue;
+      if (last) last.t1 = t - 0.05;
+      segs.push({ t0: t, t1: null, kicker, topic });
+    }
+    return segs;
+  })();
+  function chipSegment(a) {
+    let s = null;
+    for (const x of CHIP_SEGS) if (a >= x.t0 - 0.05) s = x;
+    return s;
+  }
+  function drawChip(kicker, topic, cx, cy, size) {
+    ctx.font = font(size); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width;
+    const ts = Math.round(size * 0.8);
+    ctx.font = font(ts);
+    const tw = topic ? ctx.measureText(topic).width + ts * 1.4 : 0;
+    const ch = size * 1.875, pad = size * 0.25;
+    const cw = kw + size * 2.6 + (topic ? tw + pad : 0);
+    const x = cx - cw / 2, y = cy - ch / 2;
+    ctx.save();
+    ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
+    rrect(x, y, cw, ch, ch / 2); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
+    rrect(x, y, cw, ch, ch / 2); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x + cw - size * 0.94, y + ch / 2, size * 0.22, 0, Math.PI * 2); ctx.fill();
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.font = font(size);
+    ctx.fillText(kicker, x + cw - size * 1.56, y + ch / 2 + 2);
+    if (topic) {
+      const th = ch - pad * 2;
+      ctx.fillStyle = '#fff';
+      rrect(x + pad, y + pad, tw, th, th / 2); ctx.fill();
+      ctx.fillStyle = TOPICS[topic] || C.navy;
+      ctx.font = font(ts); ctx.textAlign = 'center';
+      ctx.fillText(topic, x + pad + tw / 2, y + ch / 2 + 2);
+    }
+  }
   const layoutCache = {};
   function layoutText(text, maxW, sizes, maxLines) {
     const key = text + '|' + maxW + '|' + sizes.join(',');
@@ -725,33 +792,13 @@
     const tOut = next ? next.t - 0.05 : null;
     ctx.save();
     ctx.globalAlpha = alpha;
-    // kicker chip; stays put when the kicker does not change
-    const prevSame = i > 0 && HL[i - 1].kicker === h.kicker;
-    const nextSame = next && next.kicker === h.kicker;
-    let start = i;
-    while (start > 0 && HL[start - 1].kicker === h.kicker) start--;
-    const kIn = HL[start].t;
-    const kp = eout(prog(a, kIn, kIn + 0.45)) * (nextSame || !tOut ? 1 : 1 - eio(prog(a, tOut - 0.35, tOut)));
+    // story label (country + optional topic); stays put while it does not change
+    const seg = chipSegment(a);
+    const kp = seg ? eout(prog(a, seg.t0, seg.t0 + 0.45)) * (seg.t1 == null ? 1 : 1 - eio(prog(a, seg.t1 - 0.35, seg.t1))) : 0;
     if (kp > 0) {
-      ctx.font = font(32); ctx.direction = 'rtl';
-      const tw = ctx.measureText(h.kicker).width;
-      const cw = tw + 84, ch = 60;
-      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2 + (1 - kp) * 12;
       ctx.globalAlpha = alpha * kp;
-      ctx.save();
-      ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
-      ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
-      rrect(x, y, cw, ch, ch / 2); ctx.fill();
-      ctx.restore();
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
-      rrect(x, y, cw, ch, ch / 2); ctx.stroke();
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(x + cw - 30, y + ch / 2, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(h.kicker, x + cw - 50, y + ch / 2 + 2);
+      drawChip(seg.kicker, seg.topic, L.kicker.cx, L.kicker.y + (1 - kp) * 12, 32);
     }
-    void prevSame;
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
     const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
     const px = L.head.cx - pw / 2, py = L.head.cy - ph / 2;

@@ -14,16 +14,21 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 3. Fill `editions/<date>/edition.js`. `editions/2026-10-25/edition.js` is the reference: one chapter per story,
    2 headlines per story (≤ 2 lines), each photo on the sentence it illustrates, camera/highlights/pins per story
    (an area label `dot: false` gets a `side` when it would cover the highlighted territory),
-   date/number chips in `stats`. Avoid «» quotes in headlines (RTL word layout breaks them).
+   date/number chips in `stats` (`pos: 'right'` when a pin sits in the map's top-left). Each headline gets a
+   `topic` (سياسة / اقتصاد / أمن / دبلوماسية / مناخ / مجتمع); the opening teaser cards get the `kicker` of their
+   story; a card gets `credit` when the user gives the photo's source (never guess one).
+   Avoid «» quotes in headlines (RTL word layout breaks them).
+   Copy transcript.txt to `subtitles.txt` and correct names/spelling from the script (timings unchanged).
 4. Check a few stills: `node tools/render.js --edition <date> --stills 40,100,150` (output/stills/, delete after).
 5. Render: `node tools/render.js --edition <date>` (1080x1350) and, if asked, `--format youtube` (1920x1080)
    or `--format story` (1080x1920, TikTok/Reels/Shorts). ~3–5 min each. YouTube and story videos are git-ignored (> 100 MB).
    Each render also writes `output/erriwaya-brief-<date>[-format]-cover.jpg` (thumbnail: first three stories'
    photos + all countries; `cover: { imgs: [...] }` in edition.js overrides the photos) and
-   `output/erriwaya-brief-<date>-description.txt` (stories, YouTube chapter timestamps, handles, hashtags).
-   `--cover` writes only these two, in seconds.
-6. Commit `editions/<date>/` + `output/erriwaya-brief-<date>.mp4` + covers + description, push to the session
-   branch, send the video(s), cover(s) and description.
+   `output/erriwaya-brief-<date>-description.txt` (stories, YouTube chapter timestamps, handles, hashtags)
+   and `output/erriwaya-brief-<date>.srt` (subtitles for YouTube/Facebook, from subtitles.txt).
+   `--cover` writes only these, in seconds.
+6. Commit `editions/<date>/` + `output/erriwaya-brief-<date>.mp4` + covers + description + .srt, push to the session
+   branch, send the video(s), cover(s), description and .srt.
 
 ## Fixed decisions
 
