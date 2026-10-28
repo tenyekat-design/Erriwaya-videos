@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Erriwaya – تقرير</title>
-<!-- Social report (1080x1920, no voice-over): footage + stacked captions in the Erriwaya look.
+<!-- Social report (1080x1920, or 1080x1350 with &format=feed; no voice-over): footage + stacked captions in the Erriwaya look.
      ?report=<folder in reports/>; tools/render-report.js extracts clip frames to frames/report-<folder>/ -->
 <style>
   @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
@@ -62,6 +62,14 @@
   #outro .h { font-family: 'DejaVu Sans', Arial, sans-serif; font-weight: bold; font-size: 54px; letter-spacing: 3px; margin-left: 14px; }
   #outro .srcs { position: absolute; left: 0; right: 0; bottom: 120px; font-size: 34px; color: rgba(255,255,255,.65); }
   #flash { inset: 0; background: #fff; opacity: 0; }
+  /* 4:5 feed (Facebook) */
+  .feed #logo { top: 54px; left: 54px; height: 120px; }
+  .feed #source { top: 74px; right: 54px; }
+  .feed #outro img { top: 200px; height: 380px; }
+  .feed #outro .tag { top: 650px; }
+  .feed #outro .rule { top: 760px; }
+  .feed #outro .rows { top: 820px; }
+  .feed #outro .srcs { bottom: 60px; }
 </style>
 </head>
 <body>
@@ -84,7 +92,10 @@
 const SLUG = new URLSearchParams(location.search).get('report');
 const DIR = '../reports/' + SLUG + '/';
 const FRAMES = '../frames/report-' + SLUG + '/';
-const W = 1080, H = 1920, FPS = 30;
+const FEED = new URLSearchParams(location.search).get('format') === 'feed';
+const W = 1080, H = FEED ? 1350 : 1920, FPS = 30;
+const Y = H / 1920;  // vertical positions are authored for 1920
+if (FEED) { document.documentElement.classList.add('feed'); document.getElementById('stage').style.height = H + 'px'; }
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, b) => clamp((t - a) / (b - a));
@@ -123,7 +134,7 @@ function shotAt(t) {
   return { s, i, dt: t - s.t, p: (t - s.t) / (end - s.t) };
 }
 
-let frameBottom = 1180;
+let frameBottom = 1180 * Y;
 async function drawShot(t) {
   const { s, i, dt, p } = shotAt(t);
   const outro = !!s.outro;
@@ -142,8 +153,8 @@ async function drawShot(t) {
     bg.style.filter = 'blur(38px) brightness(.55) saturate(1.1)';
     cover(bg, wh, W, H, 1.15);
     await setSrc(fg, src);
-    const fh = Math.min(980, Math.round(W * wh[1] / wh[0]));
-    const top = Math.round(800 - fh / 2);
+    const fh = Math.min(FEED ? 720 : 980, Math.round(W * wh[1] / wh[0]));
+    const top = Math.round(800 * Y - fh / 2);
     fr.style.display = 'block'; fr.style.top = top + 'px'; fr.style.height = fh + 'px';
     cover(fg, wh, W, fh, 1.03 + 0.08 * p + punch, s.fx ?? 0.5, s.fy ?? 0.5);
     frameBottom = top + fh;
@@ -152,7 +163,7 @@ async function drawShot(t) {
     fr.style.display = 'none';
     const k = s.clip ? 1.0 + punch + 0.03 * p : 1.04 + 0.09 * p + punch;
     cover(bg, wh, W, H, k, s.fx ?? 0.5, s.fy ?? 0.5);
-    frameBottom = 1180;
+    frameBottom = 1180 * Y;
   }
   $('tint').style.opacity = s.tint || 0;
   const so = $('source');
@@ -207,7 +218,7 @@ function drawKinetic(t) {
       k.lines.map(l => `<div class="kl"><span class="bx">${l.split(' ').map(w => `<span class="w${acc.has(w) ? ' acc' : ''}">${w}</span>`).join('<span class="w"> </span>')}</span></div>`).join('') +
       (k.sub ? `<div><span class="sub">${k.sub}</span></div>` : '');
   }
-  el.style.top = ((k.y || 900) - el.offsetHeight / 2) + 'px';
+  el.style.top = ((k.y || 900) * Y - el.offsetHeight / 2) + 'px';
   const dt = t - k.t, out = eio(prog(t, k.end - 0.3, k.end));
   el.style.opacity = 1 - out;
   el.style.transform = `scale(${1 + out * 0.06})`;
@@ -236,7 +247,7 @@ function drawCard(t) {
     el.dataset.key = key;
     el.innerHTML = `<div class="q">”</div><span class="label">${c.label}</span><div class="txt">${words(c.text)}</div><div class="src">${c.source}</div>`;
   }
-  el.style.top = Math.min(H - 380 - el.offsetHeight, frameBottom - 120) + 'px';
+  el.style.top = Math.min(H - 380 * Y - el.offsetHeight, frameBottom - 120) + 'px';
   const dt = t - c.t, out = eio(prog(t, c.end - 0.35, c.end));
   const q = eout(prog(dt, 0, 0.45));
   el.style.opacity = q * (1 - out);

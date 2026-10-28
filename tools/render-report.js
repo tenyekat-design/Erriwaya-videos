@@ -1,4 +1,5 @@
 // Renders a social report (src/report.html, 1080x1920, no voice-over) to MP4 with music.
+// add --format feed for the 1080x1350 Facebook/Instagram feed version (-feed.mp4)
 //   node tools/render-report.js --report 2026-10-28-una-students              -> output/erriwaya-report-<report>.mp4 (+ -cover.jpg)
 //   node tools/render-report.js --report 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
 // Clip frames are extracted once to frames/report-<report>/<clip>/ (git-ignored).
@@ -16,8 +17,9 @@ const FPS = 30, WORKERS = +(args.workers || 4);
 const REPORT = String(args.report || '');
 const RDIR = path.join(ROOT, 'reports', REPORT);
 if (!REPORT || !fs.existsSync(path.join(RDIR, 'report.js'))) { console.error('no report at ' + RDIR); process.exit(1); }
-const OUT = path.join(ROOT, 'output', `erriwaya-report-${REPORT}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'report.html') + '?report=' + encodeURIComponent(REPORT);
+const FEED = args.format === 'feed', HT = FEED ? 1350 : 1920;
+const OUT = path.join(ROOT, 'output', `erriwaya-report-${REPORT}${FEED ? '-feed' : ''}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', 'report.html') + '?report=' + encodeURIComponent(REPORT) + (FEED ? '&format=feed' : '');
 const FRAMES = path.join(ROOT, 'frames', 'report-' + REPORT);
 
 function loadReport() {
@@ -38,7 +40,7 @@ function extractClips() {
 }
 
 async function openPage(browser) {
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
+  const page = await browser.newPage({ viewport: { width: 1080, height: HT } });
   page.on('pageerror', e => { console.error('page error:', e.message); process.exit(1); });
   await page.goto(PAGE);
   await page.waitForFunction(() => window.READY === true, null, { timeout: 60000 });
@@ -46,7 +48,7 @@ async function openPage(browser) {
 }
 async function grab(page, t, type = 'jpeg') {
   await page.evaluate(t => window.renderFrame(t), t);
-  return page.screenshot({ type, ...(type === 'jpeg' ? { quality: 92 } : {}), clip: { x: 0, y: 0, width: 1080, height: 1920 } });
+  return page.screenshot({ type, ...(type === 'jpeg' ? { quality: 92 } : {}), clip: { x: 0, y: 0, width: 1080, height: HT } });
 }
 
 async function renderRange(browser, f0, f1, file) {
@@ -105,7 +107,7 @@ function buildAudio(R, file) {
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
     const a = w * per, b = Math.min(F, a + per);
     if (a >= b) return null;
-    parts[w] = path.join(FRAMES, `part${w}.mp4`);
+    parts[w] = path.join(FRAMES, `part${w}${FEED ? '-feed' : ''}.mp4`);
     return renderRange(browser, a, b, parts[w]);
   }));
   // cover: the hook once its line has settled
@@ -114,7 +116,7 @@ function buildAudio(R, file) {
   fs.writeFileSync(cover, await grab(page, +(args.coverAt || 2.0)));
   await browser.close();
   fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
-  const video = path.join(FRAMES, 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
+  const video = path.join(FRAMES, FEED ? 'video-feed.mp4' : 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(FRAMES, 'list.txt'), '-c', 'copy', video]);
   buildAudio(R, audio);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
