@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>الرواية</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="الرواية: منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.">
@@ -38,6 +39,7 @@
   --link: #6CC5C0; --chip: #15302E; --brand-deep: #002423; --shadow: none; color-scheme: dark }
 
 * { box-sizing: border-box }
+[hidden] { display: none !important }
 html { scroll-behavior: smooth }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.75 var(--f-body); direction: rtl; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--brand); }
@@ -76,7 +78,8 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 .breaking .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.4s infinite; flex-shrink: 0 }
 @keyframes pulse { 50% { opacity: .25 } }
 
-main { padding-block: 24px 48px; display: grid; gap: 44px }
+main { padding-block: 24px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 44px }
+main > * { min-width: 0 }
 .sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 6px }
 .sec-h h2 { font: 28px/1.2 var(--f-display) }
 .sec-h a, .sec-h span { color: var(--link); font-size: 14px; font-weight: 500 }
@@ -121,7 +124,7 @@ main { padding-block: 24px 48px; display: grid; gap: 44px }
 .btn.solid { background: var(--brand); color: var(--on-brand) }
 .empty { color: var(--muted); padding: 24px 0 }
 .ph { width: 100%; height: 100%; display: grid; place-items: center; background: var(--brand); }
-.ph img { width: 28%; height: auto !important; object-fit: contain !important; opacity: .9 }
+.media .ph img, .th .ph img { width: 30%; height: auto; object-fit: contain; opacity: .9 }
 
 /* ── portals ── */
 .regions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px }
@@ -345,10 +348,17 @@ function feed() {
 const playIcon = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>`;
 function media(it, big) {
   const src = big ? bigThumbOf(it) : thumbOf(it);
-  const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;${it.kind === "v" ? `this.src='https://i.ytimg.com/vi/${it.id}/hqdefault.jpg'` : "this.replaceWith(Object.assign(document.createElement('div'),{className:'ph',innerHTML:'<img src=&quot;" + LOGO + "&quot; alt=&quot;&quot;>'}))"}">`
+  const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" ${it.kind === "v" ? `data-alt="https://i.ytimg.com/vi/${it.id}/hqdefault.jpg"` : ""} onerror="imgErr(this)">`
     : `<div class="ph"><img src="${LOGO}" alt=""></div>`;
   return `<div class="media">${img}${it.kind === "v" ? `<span class="play">${playIcon}فيديو</span>` : ""}${isFreshBreaking(it) ? `<span class="badge-br">عاجل</span>` : ""}</div>`;
 }
+// صورة بديلة ثم شعار الرواية إن تعذّر تحميل الصورة
+window.imgErr = el => {
+  if (el.dataset.alt && el.src !== el.dataset.alt) { el.src = el.dataset.alt; delete el.dataset.alt; return; }
+  el.onerror = null;
+  const ph = document.createElement("div"); ph.className = "ph"; ph.innerHTML = `<img src="${LOGO}" alt="">`;
+  el.replaceWith(ph);
+};
 function metaLine(it) {
   const c = cats(it)[0];
   const k = isFreshBreaking(it) ? `<span class="kicker red">عاجل</span>` : c ? `<span class="kicker">${esc(c)}</span>` : "";
@@ -370,12 +380,12 @@ function homeView() {
   const lead = items.find(isFreshBreaking) || items.find(i => i.kind === "a" && thumbOf(i)) || items[0];
   const rail = items.filter(i => i !== lead).slice(0, 5);
   const filters = ["الكل", ...CATEGORIES.map(c => c[0])];
-  const filtered = state.filter === "all" ? items : items.filter(i => cats(i).includes(state.filter));
+  const filtered = state.filter === "all" ? items.filter(i => i !== lead) : items.filter(i => cats(i).includes(state.filter));
   const shorts = state.videos.filter(v => v.short).slice(0, 16);
   return `
   <section class="lead" aria-label="الأبرز">
     <a class="lead-main" href="${hrefOf(lead)}">${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
-    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"><div class="th">${it.kind === "v" ? `<img src="${thumbOf(it)}" alt="" loading="lazy">` : thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
+    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
 
   <section id="latest" aria-label="آخر الأخبار">
@@ -389,7 +399,7 @@ function homeView() {
 
   ${shorts.length ? `<section aria-label="مقاطع قصيرة">
     <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
-    <div class="shorts">${shorts.map(s => `<a class="short" href="#v-${s.id}"><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${s.id}/hqdefault.jpg'"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
+    <div class="shorts">${shorts.map(s => `<a class="short" href="#v-${s.id}"><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" data-alt="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" onerror="imgErr(this)"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
   </section>` : ""}
 
   ${appBand()}
