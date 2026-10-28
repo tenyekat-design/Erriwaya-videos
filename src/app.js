@@ -23,7 +23,7 @@
     feed: {
       W: 1080, H: 1350,
       margin: 60,
-      logoH: 136, logoY: 40,              // logo inside the safe area (60px sides, 40px top)
+      logoH: 118, logoY: 42,              // logo inside the safe area (60px sides, 40px top)
       card: { cx: 540, cy: 390, w: 690, h: 460 },
       side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
       bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
@@ -37,7 +37,7 @@
     youtube: {
       W: 1920, H: 1080,
       margin: 96,                        // 5% title-safe area
-      logoH: 150, logoY: 54,
+      logoH: 132, logoY: 58,
       card: { cx: 1344, cy: 482, w: 920, h: 540 },
       side: [570, 900],
       bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
@@ -749,12 +749,12 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     // title and date span the logo's body so the two read as one block, top and bottom aligned
-    const tx = lb.x - 28, k = lb.h / 136;
-    const titleY = lb.y + lb.h * 0.36, dateY = lb.y + lb.h * 0.80;
+    const tx = lb.x - 24, k = lb.h / 118;
+    const titleY = lb.y + lb.h * 0.37, dateY = lb.y + lb.h * 0.80;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(Math.round(46 * k));
+    ctx.fillStyle = C.navy; ctx.font = font(Math.round(42 * k));
     ctx.fillText(TL.title, tx, titleY);
-    ctx.fillStyle = C.gray; ctx.font = font(Math.round(28 * k));
+    ctx.fillStyle = C.gray; ctx.font = font(Math.round(26 * k));
     ctx.fillText(TL.date, tx, dateY);
     // story counter on the left
     let ch = 0;
