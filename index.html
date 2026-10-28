@@ -1,0 +1,632 @@
+<title>الرواية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="الرواية: منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.">
+<meta property="og:title" content="الرواية">
+<meta property="og:description" content="أخبار موريتانيا والمغرب العربي والساحل: الموجز، التقارير، التحقيقات.">
+<meta property="og:image" content="assets/icon.png">
+<meta name="theme-color" content="#004A49">
+<link rel="icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a green masthead band, then a newsroom page — lead story beside a "latest" rail, a filterable feed,
+   country portals as a regional index, shorts strip, app band, about/contact. Article opens as its own view. */
+@font-face { font-family: "Al Quds"; src: url("assets/al-quds.otf") format("opentype"); font-display: swap; }
+:root {
+  --brand: #004A49;        /* Erriwaya green */
+  --brand-deep: #00302F;
+  --on-brand: #F2F7F6;
+  --breaking: #C8102E;     /* breaking-news red */
+  --paper: #F4F7F6;
+  --surface: #FFFFFF;
+  --ink: #0F1E1D;
+  --muted: #586A68;
+  --line: #DAE3E1;
+  --link: #00605E;
+  --chip: #E6EEEC;
+  --shadow: 0 1px 2px rgb(0 40 39 / .06), 0 6px 18px rgb(0 40 39 / .06);
+  --f-display: "Al Quds", "IBM Plex Sans Arabic", "Noto Naskh Arabic", Tahoma, sans-serif;
+  --f-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --wrap: 1180px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #071514; --surface: #0D201F; --ink: #E6EFED; --muted: #93A7A4; --line: #1D3432;
+  --link: #6CC5C0; --chip: #15302E; --brand-deep: #002423; --shadow: none; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #071514; --surface: #0D201F; --ink: #E6EFED; --muted: #93A7A4; --line: #1D3432;
+  --link: #6CC5C0; --chip: #15302E; --brand-deep: #002423; --shadow: none; color-scheme: dark }
+
+* { box-sizing: border-box }
+html { scroll-behavior: smooth }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.75 var(--f-body); direction: rtl; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--brand); }
+a { color: inherit; text-decoration: none }
+img { max-width: 100%; display: block }
+button { font: inherit; cursor: pointer }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { text-wrap: balance; margin: 0 }
+
+/* ── masthead ── */
+.top { background: var(--brand-deep); color: var(--on-brand); font-size: 13px }
+.top .wrap { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px; flex-wrap: wrap }
+.top .socials { display: flex; gap: 14px }
+.top .socials a { opacity: .85 } .top .socials a:hover { opacity: 1 }
+.mast { background: var(--brand); color: var(--on-brand); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9 }
+.mast .wrap { display: flex; align-items: center; gap: 20px; padding-block: 10px }
+.brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
+.brand img { height: 46px; width: auto }
+.brand b { font: 34px/1 var(--f-display); letter-spacing: 0 }
+.nav { display: flex; gap: 4px; margin-inline-start: auto; overflow-x: auto; scrollbar-width: none }
+.nav::-webkit-scrollbar { display: none }
+.nav a { padding: 6px 12px; border-radius: 999px; font-weight: 500; white-space: nowrap; font-size: 15px }
+.nav a:hover, .nav a[aria-current="page"] { background: rgb(255 255 255 / .14) }
+@media (max-width: 700px) {
+  .mast .wrap { flex-wrap: wrap; gap: 6px 12px }
+  .brand img { height: 38px } .brand b { font-size: 28px }
+  .nav { margin-inline-start: 0; width: 100% }
+}
+
+/* ── breaking ── */
+.breaking { background: var(--breaking); color: #fff }
+.breaking .wrap { display: flex; align-items: center; gap: 12px; padding-block: 8px }
+.breaking .tag { font: 18px/1 var(--f-display); background: #fff; color: var(--breaking); padding: 5px 10px 3px; border-radius: 4px; flex-shrink: 0 }
+.breaking a { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.breaking .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.4s infinite; flex-shrink: 0 }
+@keyframes pulse { 50% { opacity: .25 } }
+
+main { padding-block: 24px 48px; display: grid; gap: 44px }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 6px }
+.sec-h h2 { font: 28px/1.2 var(--f-display) }
+.sec-h a, .sec-h span { color: var(--link); font-size: 14px; font-weight: 500 }
+
+/* ── lead ── */
+.lead { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px }
+.lead-main { display: grid; gap: 14px; align-content: start }
+.lead-main .media { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; background: var(--chip); position: relative }
+.lead-main .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s }
+.lead-main:hover .media img { transform: scale(1.02) }
+.lead-main h1 { font: 38px/1.35 var(--f-display) }
+.lead-main p { color: var(--muted); margin: 0; font-size: 17px }
+.rail { display: grid; gap: 0; align-content: start }
+.rail h3 { font: 20px/1.2 var(--f-display); color: var(--muted); margin-bottom: 4px }
+.rail a { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--line); align-items: center }
+.rail a:last-child { border-bottom: 0 }
+.rail .th { aspect-ratio: 16/10; border-radius: 4px; overflow: hidden; background: var(--chip); position: relative }
+.rail .th img { width: 100%; height: 100%; object-fit: cover }
+.rail strong { font-weight: 600; font-size: 15px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden }
+@media (max-width: 860px) { .lead { grid-template-columns: minmax(0, 1fr) } .lead-main h1 { font-size: 30px } }
+
+.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; color: var(--muted); align-items: center }
+.kicker { color: var(--link); font-weight: 600 }
+.kicker.red { color: var(--breaking) }
+.play { position: absolute; inset-inline-start: 10px; bottom: 10px; background: rgb(0 0 0 / .65); color: #fff; border-radius: 999px; font-size: 12px; padding: 3px 10px 3px 8px; display: flex; gap: 5px; align-items: center }
+.play svg { width: 12px; height: 12px }
+.badge-br { position: absolute; inset-inline-start: 10px; top: 10px; background: var(--breaking); color: #fff; font: 15px/1 var(--f-display); padding: 5px 9px 3px; border-radius: 3px }
+
+/* ── filters + feed ── */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: thin }
+.chips button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 6px 14px; border-radius: 999px; white-space: nowrap; font-size: 14px }
+.chips button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand) }
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 26px 22px }
+.card { display: grid; gap: 10px; align-content: start }
+.card .media { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; background: var(--chip); position: relative }
+.card .media img { width: 100%; height: 100%; object-fit: cover }
+.card h3 { font-weight: 600; font-size: 17px; line-height: 1.6 }
+.card:hover h3 { color: var(--link) }
+.card p { margin: 0; color: var(--muted); font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.more { display: flex; justify-content: center; margin-top: 22px }
+.btn { border: 1.5px solid var(--brand); background: transparent; color: var(--link); padding: 9px 22px; border-radius: 999px; font-weight: 600 }
+.btn.solid { background: var(--brand); color: var(--on-brand) }
+.empty { color: var(--muted); padding: 24px 0 }
+.ph { width: 100%; height: 100%; display: grid; place-items: center; background: var(--brand); }
+.ph img { width: 28%; height: auto !important; object-fit: contain !important; opacity: .9 }
+
+/* ── portals ── */
+.regions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px }
+.region h3 { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .02em; margin-bottom: 8px }
+.region ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line) }
+.region li a { display: flex; align-items: baseline; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line) }
+.region li a:hover { background: var(--chip) }
+.region .ar { font: 22px/1.2 var(--f-display) }
+.region .lat { font-size: 12px; color: var(--muted); direction: ltr; letter-spacing: .04em; text-transform: uppercase }
+.region .n { margin-inline-start: auto; font-size: 13px; color: var(--link); font-variant-numeric: tabular-nums }
+@media (max-width: 760px) { .regions { grid-template-columns: minmax(0, 1fr) } }
+
+/* ── shorts ── */
+.shorts { display: grid; grid-auto-flow: column; grid-auto-columns: 168px; gap: 14px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory }
+.short { scroll-snap-align: start; display: grid; gap: 8px }
+.short .media { aspect-ratio: 9/16; border-radius: 8px; overflow: hidden; background: var(--chip); position: relative }
+.short .media img { width: 100%; height: 100%; object-fit: cover }
+.short strong { font-size: 14px; font-weight: 600; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+
+/* ── app band ── */
+.app { background: var(--brand); color: var(--on-brand); border-radius: 10px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center; padding: 26px 28px }
+.app img { width: 72px; height: 72px; border-radius: 16px; border: 1px solid rgb(255 255 255 / .25) }
+.app h2 { font: 30px/1.2 var(--f-display) }
+.app p { margin: 4px 0 0; opacity: .85 }
+.app .btn { border-color: #fff; color: var(--brand); background: #fff; white-space: nowrap }
+@media (max-width: 640px) { .app { grid-template-columns: minmax(0, 1fr); text-align: center; justify-items: center } }
+
+/* ── about ── */
+.about { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px }
+.about .txt { white-space: pre-line; max-width: 62ch; font-size: 17px }
+.contacts { display: grid; gap: 8px; margin-top: 16px }
+.contacts div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+.contacts span { color: var(--muted); font-size: 14px; min-width: 64px }
+.contacts code { font: 15px var(--f-body); direction: ltr; user-select: all; background: var(--chip); padding: 2px 8px; border-radius: 4px }
+.copy { border: 0; background: none; color: var(--link); font-size: 13px; padding: 2px 4px }
+form { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px }
+form h3 { font: 22px/1.2 var(--f-display) }
+label { display: grid; gap: 4px; font-size: 14px; color: var(--muted) }
+input, textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; width: 100% }
+textarea { min-height: 110px; resize: vertical }
+.status { font-size: 14px; min-height: 1.4em; margin: 0 }
+.status.ok { color: var(--link) } .status.err { color: var(--breaking) }
+@media (max-width: 800px) { .about { grid-template-columns: minmax(0, 1fr) } }
+
+footer { background: var(--brand-deep); color: var(--on-brand); padding-block: 28px; font-size: 14px }
+footer .wrap { display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap }
+footer img { height: 40px; width: auto }
+footer .socials { display: flex; gap: 16px; flex-wrap: wrap }
+footer small { opacity: .7 }
+
+/* ── article view ── */
+.article { max-width: 760px; margin-inline: auto; display: grid; gap: 18px }
+.article .back { justify-self: start; color: var(--link); font-weight: 500; background: none; border: 0; padding: 0 }
+.article h1 { font: 40px/1.4 var(--f-display) }
+.article .gallery { display: grid; gap: 10px }
+.article .gallery img { width: 100%; border-radius: 6px }
+.article .body { font-size: 19px; line-height: 2 }
+.article .body p { margin: 0 0 1em }
+.article .tools { display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 14px }
+@media (max-width: 600px) { .article h1 { font-size: 30px } .article .body { font-size: 18px } }
+
+/* ── video modal ── */
+.modal { position: fixed; inset: 0; background: rgb(0 0 0 / .82); z-index: 20; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)) }
+.modal .box { width: min(960px, 100%); display: grid; gap: 10px }
+.modal .frame { aspect-ratio: 16/9; background: #000; border-radius: 6px; overflow: hidden }
+.modal .frame.tall { aspect-ratio: 9/16; max-height: 78vh; justify-self: center; width: auto; height: 78vh }
+.modal iframe { width: 100%; height: 100%; border: 0 }
+.modal .row { display: flex; justify-content: space-between; gap: 12px; color: #fff; align-items: center }
+.modal button { background: #fff; color: #000; border: 0; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
+.modal a { color: #fff; text-decoration: underline }
+
+.skeleton { background: linear-gradient(90deg, var(--chip), var(--line), var(--chip)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px }
+@keyframes sk { to { background-position: -200% 0 } }
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } }
+</style>
+
+<div class="top"><div class="wrap">
+  <span id="clock">نواكشوط</span>
+  <nav class="socials" aria-label="منصات الرواية">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">يوتيوب</a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">فيسبوك</a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">تيك توك</a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">إنستغرام</a>
+  </nav>
+</div></div>
+
+<header class="mast"><div class="wrap">
+  <a class="brand" href="#home" aria-label="الرواية — الصفحة الرئيسية"><img src="assets/logo.png" alt=""><b>الرواية</b></a>
+  <nav class="nav" id="nav">
+    <a href="#home">الرئيسية</a>
+    <a href="#cat-1">الموجز</a>
+    <a href="#cat-2">تحقيقات</a>
+    <a href="#cat-3">تقارير</a>
+    <a href="#portals">البوابات</a>
+    <a href="#videos">فيديو</a>
+    <a href="#about">من نحن</a>
+  </nav>
+</div></header>
+
+<div class="breaking" id="breaking" hidden><div class="wrap">
+  <span class="tag">عاجل</span><span class="dot"></span><a id="breakingLink" href="#home"></a>
+</div></div>
+
+<main class="wrap" id="main"></main>
+
+<footer><div class="wrap">
+  <img src="assets/logo.png" alt="الرواية">
+  <nav class="socials" aria-label="المنصات">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">YouTube · ERRIWAYA</a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">Facebook · ERRIWAYA</a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">TikTok · ERRIWAYA</a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">Instagram · ERRIWAYA.MR</a>
+  </nav>
+  <small>© <span id="yr"></span> الرواية</small>
+</div></footer>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="مشغّل الفيديو"></div>
+
+<script>
+(() => {
+"use strict";
+const PROJECT = "erriwaya-68022";
+const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+const APK = "https://github.com/tenyekat-design/erriwaya-videos/releases/latest/download/erriwaya.apk";
+const BREAKING_MS = 30 * 60 * 1000;   // «عاجل» لنصف ساعة فقط، كما في التطبيق
+const LOGO = "assets/logo.png";
+const CAN_EMBED = !/claude/i.test(location.hostname);
+
+const DEFAULT_ABOUT = "الرواية منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.\n\nنقدّم الموجز الإخباري والتقارير والتحقيقات بأسلوب بصري حديث يعتمد الخرائط والإنفوغراف والفيديو، وننشر محتوانا على يوتيوب وفيسبوك وتيك توك وإنستغرام، وفي تطبيق الرواية.";
+
+// التصنيفات والبوابات منقولة من التطبيق (config.dart و portals.dart)
+const W = "(?<![\\p{L}])", WE = "(?![\\p{L}])";
+const CATEGORIES = [
+  ["الموجز", ["موجز"]],
+  ["تحقيقات", ["تحقيق", "استقصائي", "استقصاء", "وثائقي"]],
+  ["تقارير", ["تقرير"]],
+  ["موريتانيا", ["موريتاني", "نواكشوط", "نواذيبو", "انواكشوط"]],
+  ["المغرب العربي", ["مغارب", "المغرب", "الجزائر", "تونس", "ليبيا", "السنغال", `re:${W}(و|ب|ل)?مالي${WE}`]],
+];
+const PORTALS = [
+  ["mr", "موريتانيا", "Mauritanie", "المغرب العربي", ["موريتاني", "نواكشوط", "انواكشوط", "نواذيبو", "انواذيبو", "ولد الغزواني", "روصو", "كيفة"]],
+  ["ma", "المغرب", "Maroc", "المغرب العربي", [`re:${W}(و|ب|ل)?المغرب${WE}(?!\\s*(العربي|الكبير))`, "مغربي", "مغربية", "المغاربة", "الرباط", "الدار البيضاء", "مراكش", "طنجة"]],
+  ["dz", "الجزائر", "Algérie", "المغرب العربي", ["الجزائر", "جزائري", "تبون", "وهران", "قسنطينة"]],
+  ["tn", "تونس", "Tunisie", "المغرب العربي", ["تونس", "تونسي", "قيس سعيد", "صفاقس"]],
+  ["ly", "ليبيا", "Libye", "المغرب العربي", ["ليبيا", "ليبي", "بنغازي", "مصراتة", "الدبيبة", "حفتر", "المنفي"]],
+  ["eh", "الصحراء", "Sahara", "الصحراء وأزواد", ["الصحراء الغربية", "البوليساريو", "بوليساريو", "تندوف", "العيون", "الداخلة", "الكركرات", "المينورسو", "الصحراوي"]],
+  ["az", "أزواد", "Azawad", "الصحراء وأزواد", ["أزواد", "ازواد", "كيدال", "تمبكتو", "تينبكتو", "غاو", "الطوارق", "الأزواد"]],
+  ["sn", "السنغال", "Sénégal", "الجوار", ["السنغال", "السنگال", "السينغال", "سنغالي", "داكار", "دكار", "سونكو", "فاي"]],
+  ["ml", "مالي", "Mali", "الجوار", [`re:${W}(و|ب|ل)?مالي${WE}`, "باماكو", "غويتا", "ماليين"]],
+  ["ne", "النيجر", "Niger", "الجوار", [`re:${W}(و|ب|ل)?النيجر${WE}(?!يا)`, "نيامي", "تياني"]],
+  ["td", "تشاد", "Tchad", "الجوار", ["تشاد", "انجامينا", "نجامينا"]],
+  ["gm", "غامبيا", "Gambie", "الجوار", ["غامبيا", "بانجول"]],
+];
+const reCache = new Map();
+function matchesAny(text, kws) {
+  return kws.some(k => {
+    if (!k.startsWith("re:")) return text.includes(k);
+    let r = reCache.get(k);
+    if (!r) { try { r = new RegExp(k.slice(3), "u"); } catch { r = /$^/; } reCache.set(k, r); }
+    return r.test(text);
+  });
+}
+
+const state = { articles: [], videos: [], site: {}, filter: "all", shown: 12 };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cleanTitle = t => (t || "").replace(/[#_]/g, " ").replace(/\s+/g, " ").trim() || "الرواية";
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+// ── الوقت ──
+function timeAgo(d) {
+  if (!d) return "";
+  const t = new Date(d); if (isNaN(t) || t.getFullYear() <= 2000) return "";
+  const m = Math.floor((Date.now() - t) / 60000);
+  const pl = (n, one, two, few) => n === 1 ? `منذ ${one}` : n === 2 ? `منذ ${two}` : n <= 10 ? `منذ ${n} ${few}` : `منذ ${n} ${one}`;
+  if (m < 1) return "الآن";
+  if (m < 60) return pl(m, "دقيقة", "دقيقتين", "دقائق");
+  if (m < 1440) return pl(Math.floor(m / 60), "ساعة", "ساعتين", "ساعات");
+  if (m < 43200) return pl(Math.floor(m / 1440), "يوم", "يومين", "أيام");
+  return new Intl.DateTimeFormat("ar-MA", { day: "numeric", month: "long", year: "numeric" }).format(t);
+}
+function tickClock() {
+  const now = new Date();
+  const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+  $("#clock").textContent = "نواكشوط · " + f.format(now);
+}
+
+// ── تطبيع البيانات ──
+function normArticle(a) {
+  return { kind: "a", id: a.id, title: a.title || "", body: a.body || "", category: a.category || "",
+    breaking: !!a.breaking, thumb: a.thumb || "", images: a.images || [], imageCount: a.imageCount ?? (a.images || []).length,
+    portals: a.portals || [], date: a.createdAt || null };
+}
+function normVideo(v) {
+  return { kind: "v", id: v.id, title: cleanTitle(v.title), rawTitle: v.title || "", short: !!v.short, views: v.views || 0, date: v.published || null };
+}
+const text = it => (it.kind === "a" ? `${it.title} ${it.body}` : it.rawTitle).replace(/_/g, " ");
+function cats(it) {
+  const s = new Set(); if (it.kind === "a" && it.category) s.add(it.category);
+  for (const [name, kws] of CATEGORIES) if (matchesAny(text(it), kws)) s.add(name);
+  return [...s];
+}
+const inPortal = (p, it) => (it.kind === "a" && it.portals.includes(p[0])) || matchesAny(text(it), p[4]);
+const isFreshBreaking = it => it.kind === "a" && it.breaking && it.date && Date.now() - new Date(it.date) < BREAKING_MS;
+const thumbOf = it => it.kind === "v" ? `https://i.ytimg.com/vi/${it.id}/${it.short ? "oar2" : "hqdefault"}.jpg`
+  : it.thumb ? `data:image/jpeg;base64,${it.thumb}` : (it.images[0] || "");
+const bigThumbOf = it => it.kind === "v" && !it.short ? `https://i.ytimg.com/vi/${it.id}/maxresdefault.jpg` : thumbOf(it);
+const hrefOf = it => it.kind === "a" ? `#a-${it.id}` : `#v-${it.id}`;
+const excerpt = b => { const t = b.replace(/\s+/g, " ").trim(); return t.length > 170 ? t.slice(0, 170) + "…" : t; };
+const fmtViews = n => n >= 1e6 ? (n / 1e6).toFixed(1) + " مليون مشاهدة" : n >= 1e3 ? Math.round(n / 1e3) + " ألف مشاهدة" : n ? n + " مشاهدة" : "";
+
+function feed() {
+  const all = [...state.articles, ...state.videos.filter(v => !v.short)];
+  return all.sort((a, b) => (new Date(b.date || 0)) - (new Date(a.date || 0)));
+}
+
+// ── عناصر العرض ──
+const playIcon = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>`;
+function media(it, big) {
+  const src = big ? bigThumbOf(it) : thumbOf(it);
+  const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;${it.kind === "v" ? `this.src='https://i.ytimg.com/vi/${it.id}/hqdefault.jpg'` : "this.replaceWith(Object.assign(document.createElement('div'),{className:'ph',innerHTML:'<img src=&quot;" + LOGO + "&quot; alt=&quot;&quot;>'}))"}">`
+    : `<div class="ph"><img src="${LOGO}" alt=""></div>`;
+  return `<div class="media">${img}${it.kind === "v" ? `<span class="play">${playIcon}فيديو</span>` : ""}${isFreshBreaking(it) ? `<span class="badge-br">عاجل</span>` : ""}</div>`;
+}
+function metaLine(it) {
+  const c = cats(it)[0];
+  const k = isFreshBreaking(it) ? `<span class="kicker red">عاجل</span>` : c ? `<span class="kicker">${esc(c)}</span>` : "";
+  return `<div class="meta">${k}<span>${timeAgo(it.date)}</span>${it.kind === "v" && it.views ? `<span>${fmtViews(it.views)}</span>` : ""}</div>`;
+}
+function card(it) {
+  return `<a class="card" href="${hrefOf(it)}">${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
+}
+
+function renderBreaking() {
+  const b = state.articles.find(isFreshBreaking);
+  $("#breaking").hidden = !b;
+  if (b) { $("#breakingLink").textContent = b.title; $("#breakingLink").href = hrefOf(b); }
+}
+
+function homeView() {
+  const items = feed();
+  if (!items.length) return `<p class="empty">جارٍ تحميل الأخبار…</p>`;
+  const lead = items.find(isFreshBreaking) || items.find(i => i.kind === "a" && thumbOf(i)) || items[0];
+  const rail = items.filter(i => i !== lead).slice(0, 5);
+  const filters = ["الكل", ...CATEGORIES.map(c => c[0])];
+  const filtered = state.filter === "all" ? items : items.filter(i => cats(i).includes(state.filter));
+  const shorts = state.videos.filter(v => v.short).slice(0, 16);
+  return `
+  <section class="lead" aria-label="الأبرز">
+    <a class="lead-main" href="${hrefOf(lead)}">${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
+    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"><div class="th">${it.kind === "v" ? `<img src="${thumbOf(it)}" alt="" loading="lazy">` : thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
+  </section>
+
+  <section id="latest" aria-label="آخر الأخبار">
+    <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
+    <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map((f, i) => `<button type="button" data-f="${i ? esc(f) : "all"}" aria-pressed="${(i ? f : "all") === state.filter}">${esc(f)}</button>`).join("")}</div>
+    <div class="feed">${filtered.slice(0, state.shown).map(card).join("") || `<p class="empty">لا مواد في هذا التصنيف بعد.</p>`}</div>
+    ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">المزيد من الأخبار</button></div>` : ""}
+  </section>
+
+  ${portalsSection()}
+
+  ${shorts.length ? `<section aria-label="مقاطع قصيرة">
+    <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
+    <div class="shorts">${shorts.map(s => `<a class="short" href="#v-${s.id}"><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${s.id}/hqdefault.jpg'"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
+  </section>` : ""}
+
+  ${appBand()}
+  ${aboutSection()}`;
+}
+
+function portalsSection() {
+  const items = feed();
+  const groups = [...new Set(PORTALS.map(p => p[3]))];
+  return `<section id="portals" aria-label="البوابات">
+    <div class="sec-h"><h2>البوابات</h2><span>12 دولة ومنطقة</span></div>
+    <div class="regions">${groups.map(g => `<div class="region"><h3>${esc(g)}</h3><ul>${PORTALS.filter(p => p[3] === g).map(p => {
+      const n = items.filter(it => inPortal(p, it)).length;
+      return `<li><a href="#p-${p[0]}"><span class="ar">${p[1]}</span><span class="lat">${p[2]}</span><span class="n">${n ? n + " مادة" : ""}</span></a></li>`;
+    }).join("")}</ul></div>`).join("")}</div>
+  </section>`;
+}
+
+function appBand() {
+  return `<section class="app" aria-label="تطبيق الرواية">
+    <img src="assets/icon.png" alt="">
+    <div><h2>تطبيق الرواية</h2><p>الأخبار العاجلة لحظة صدورها، والبوابات والفيديو في جيبك. متاح لأجهزة أندرويد.</p></div>
+    <a class="btn" href="${APK}" target="_blank" rel="noopener">تحميل التطبيق</a>
+  </section>`;
+}
+
+function aboutSection() {
+  const s = state.site || {};
+  const about = (s.about || "").trim() || DEFAULT_ABOUT;
+  const rows = [["البريد", s.email], ["واتساب", s.whatsapp], ["الهاتف", s.phone]].filter(r => r[1]);
+  return `<section id="about" class="about" aria-label="من نحن">
+    <div>
+      <div class="sec-h"><h2>من نحن</h2></div>
+      <div class="txt">${esc(about)}</div>
+      ${rows.length ? `<div class="contacts">${rows.map(([k, v]) => `<div><span>${k}</span><code>${esc(v)}</code><button class="copy" type="button" data-copy="${esc(v)}">نسخ</button></div>`).join("")}</div>` : ""}
+    </div>
+    <form id="contact" novalidate>
+      <h3>راسل الرواية</h3>
+      <label for="cName">الاسم<input id="cName" name="name" maxlength="80" required autocomplete="name"></label>
+      <label for="cContact">بريدك أو رقمك (اختياري)<input id="cContact" name="contact" maxlength="120" dir="auto"></label>
+      <label for="cText">رسالتك أو معلومتك<textarea id="cText" name="text" maxlength="2000" required></textarea></label>
+      <button class="btn solid" type="submit">إرسال</button>
+      <p class="status" id="cStatus" role="status"></p>
+    </form>
+  </section>`;
+}
+
+function listView(title, sub, items, back = true) {
+  return `<section>
+    ${back ? `<button class="btn" type="button" data-back style="margin-bottom:16px">← الرئيسية</button>` : ""}
+    <div class="sec-h"><h2>${esc(title)}</h2><span>${esc(sub)}</span></div>
+    <div class="feed">${items.map(card).join("") || `<p class="empty">لا مواد هنا بعد.</p>`}</div>
+  </section>`;
+}
+
+function articleView(a) {
+  const imgs = a.images.length ? a.images : [];
+  const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
+  const c = cats(a);
+  return `<article class="article">
+    <button class="back" type="button" data-back>← الرئيسية</button>
+    <div class="meta">${isFreshBreaking(a) ? `<span class="kicker red">عاجل</span>` : ""}${c.map(x => `<span class="kicker">${esc(x)}</span>`).join("")}<span>${timeAgo(a.date)}</span></div>
+    <h1>${esc(a.title)}</h1>
+    <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
+    <div class="body">${paras}</div>
+    <div class="tools">
+      <button class="btn" type="button" data-copy="${esc(location.href.split("#")[0] + "#a-" + a.id)}">نسخ رابط الخبر</button>
+      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + location.href.split("#")[0] + "#a-" + a.id)}">مشاركة على واتساب</a>
+    </div>
+  </article>`;
+}
+
+// ── التوجيه ──
+function route() {
+  const h = location.hash.slice(1) || "home";
+  document.querySelectorAll("#nav a").forEach(a => a.setAttribute("aria-current", a.getAttribute("href") === "#" + h ? "page" : "false"));
+  const main = $("#main");
+  let m;
+  if ((m = h.match(/^a-([\w-]+)$/))) {
+    const a = state.articles.find(x => x.id === m[1]);
+    main.innerHTML = a ? articleView(a) : `<p class="empty">جارٍ تحميل الخبر…</p>`;
+    if (a) { document.title = a.title + " | الرواية"; loadImages(a); }
+    window.scrollTo(0, 0); return;
+  }
+  document.title = "الرواية";
+  if ((m = h.match(/^v-([\w-]{11})$/))) { openVideo(m[1]); if (!$("#main").children.length) main.innerHTML = homeView(); return; }
+  if ((m = h.match(/^p-(\w\w)$/))) {
+    const p = PORTALS.find(x => x[0] === m[1]);
+    if (p) { main.innerHTML = listView(`بوابة ${p[1]}`, p[2], feed().filter(it => inPortal(p, it))); window.scrollTo(0, 0); return; }
+  }
+  if ((m = h.match(/^cat-(\d)$/))) {
+    const c = CATEGORIES[+m[1] - 1];
+    if (c) { main.innerHTML = listView(c[0], "", feed().filter(it => cats(it).includes(c[0]))); window.scrollTo(0, 0); return; }
+  }
+  if (h === "videos") {
+    main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
+  }
+  main.innerHTML = homeView();
+  if (h === "portals" || h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
+  else if (h === "home") window.scrollTo(0, 0);
+}
+
+let lastHash = "";
+function onHash() {
+  const h = location.hash;
+  if (/^#v-/.test(h)) { const id = h.slice(3); openVideo(id); return; }
+  closeVideo(false);
+  if (h !== lastHash) { lastHash = h; route(); }
+}
+
+// ── الفيديو ──
+function openVideo(id) {
+  const v = state.videos.find(x => x.id === id) || { id, title: "", short: false };
+  const url = v.short ? `https://www.youtube.com/shorts/${id}` : `https://www.youtube.com/watch?v=${id}`;
+  if (!CAN_EMBED) { window.open(url, "_blank", "noopener") || (location.href = url); history.replaceState(null, "", lastHash || "#home"); return; }
+  const m = $("#modal");
+  m.innerHTML = `<div class="box">
+    <div class="row"><strong>${esc(v.title)}</strong><button type="button" id="closeV">إغلاق</button></div>
+    <div class="frame${v.short ? " tall" : ""}"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${esc(v.title || "فيديو الرواية")}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+    <div class="row"><a href="${url}" target="_blank" rel="noopener">شاهد على يوتيوب</a></div></div>`;
+  m.hidden = false; $("#closeV").focus();
+}
+function closeVideo(restore = true) {
+  const m = $("#modal"); if (m.hidden) return;
+  m.hidden = true; m.innerHTML = "";
+  if (restore) history.replaceState(null, "", lastHash || "#home");
+}
+
+// ── صور الخبر من Firestore عند الحاجة ──
+async function loadImages(a) {
+  if (a.images.length || !a.imageCount) return;
+  try {
+    const r = await fetch(`${FS}/articles/${a.id}/images?pageSize=20`);
+    if (!r.ok) return;
+    const j = await r.json();
+    const docs = (j.documents || []).map(fsDoc).sort((x, y) => (x.i || 0) - (y.i || 0));
+    a.images = docs.map(d => `data:image/jpeg;base64,${d.data}`);
+    const g = document.getElementById("gallery");
+    if (g && location.hash === `#a-${a.id}`) g.innerHTML = a.images.map(s => `<img src="${s}" alt="">`).join("");
+  } catch {}
+}
+
+// ── Firestore REST ──
+function fsVal(v) {
+  if ("stringValue" in v) return v.stringValue;
+  if ("booleanValue" in v) return v.booleanValue;
+  if ("integerValue" in v) return +v.integerValue;
+  if ("doubleValue" in v) return v.doubleValue;
+  if ("timestampValue" in v) return v.timestampValue;
+  if ("arrayValue" in v) return (v.arrayValue.values || []).map(fsVal);
+  if ("mapValue" in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, fsVal(x)]));
+  return null;
+}
+function fsDoc(d) { const o = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, fsVal(v)])); o.id = d.name.split("/").pop(); return o; }
+async function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]); }
+
+async function loadLive() {
+  try {
+    const r = await withTimeout(fetch(`${FS}/articles?pageSize=60&orderBy=createdAt%20desc`), 8000);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    const snapImgs = new Map(state.articles.map(a => [a.id, a.images]));
+    state.articles = (j.documents || []).map(fsDoc).map(a => { const n = normArticle(a); if (snapImgs.get(n.id)?.length) n.images = snapImgs.get(n.id); return n; });
+    refresh();
+  } catch {}
+  try {
+    const r = await withTimeout(fetch(`${FS}/site/info`), 8000);
+    if (r.ok) { state.site = fsDoc(await r.json()); refresh(); }
+  } catch {}
+}
+
+async function loadSnapshot() {
+  try {
+    const r = await fetch("data.json", { cache: "no-cache" });
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    state.articles = (d.articles || []).map(normArticle);
+    state.videos = (d.videos || []).map(normVideo);
+    state.site = d.site || {};
+    store.set("erriwaya-snap", d);
+  } catch {
+    const d = store.get("erriwaya-snap");
+    if (d) { state.articles = (d.articles || []).map(normArticle); state.videos = (d.videos || []).map(normVideo); state.site = d.site || {}; }
+  }
+  refresh();
+}
+
+function refresh() {
+  renderBreaking();
+  const typing = document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if (typing) return;
+  const y = window.scrollY; lastHash = location.hash; route(); window.scrollTo(0, y);
+}
+
+// ── نموذج المراسلة ──
+async function sendMessage(form) {
+  const st = $("#cStatus");
+  const name = form.name.value.trim(), contact = form.contact.value.trim(), text = form.text.value.trim();
+  if (!name || !text) { st.className = "status err"; st.textContent = "اكتب اسمك ورسالتك قبل الإرسال."; return; }
+  st.className = "status"; st.textContent = "جارٍ الإرسال…";
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(10)), b => b.toString(16).padStart(2, "0")).join("");
+  const body = { writes: [{
+    update: { name: `projects/${PROJECT}/databases/(default)/documents/messages/${id}`,
+      fields: { name: { stringValue: name }, contact: { stringValue: contact }, text: { stringValue: text } } },
+    currentDocument: { exists: false },
+    updateTransforms: [{ fieldPath: "createdAt", setToServerValue: "REQUEST_TIME" }] }] };
+  try {
+    const r = await withTimeout(fetch(`${FS.replace(/\/documents$/, "")}/documents:commit`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }), 10000);
+    if (!r.ok) throw new Error(r.status);
+    form.reset(); st.className = "status ok"; st.textContent = "وصلت رسالتك إلى فريق الرواية. شكراً لك.";
+  } catch {
+    st.className = "status err";
+    st.textContent = "تعذّر الإرسال الآن. أعد المحاولة بعد قليل" + (state.site?.email ? `، أو راسلنا على ${state.site.email}.` : ".");
+  }
+}
+
+// ── الأحداث ──
+document.addEventListener("click", e => {
+  const f = e.target.closest("[data-f]");
+  if (f) { state.filter = f.dataset.f; state.shown = 12; const y = scrollY; route(); scrollTo(0, y); return; }
+  if (e.target.id === "moreBtn") { state.shown += 12; const y = scrollY; route(); scrollTo(0, y); return; }
+  if (e.target.closest("[data-back]")) { location.hash = "home"; return; }
+  if (e.target.id === "closeV" || e.target.id === "modal") { closeVideo(); return; }
+  const c = e.target.closest("[data-copy]");
+  if (c) {
+    const done = () => { const t = c.textContent; c.textContent = "نُسخ"; setTimeout(() => c.textContent = t, 1400); };
+    navigator.clipboard?.writeText(c.dataset.copy).then(done, () => {}) ;
+  }
+});
+document.addEventListener("submit", e => { if (e.target.id === "contact") { e.preventDefault(); sendMessage(e.target); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeVideo(); });
+window.addEventListener("hashchange", onHash);
+
+$("#yr").textContent = new Date().getFullYear();
+tickClock(); setInterval(() => { tickClock(); renderBreaking(); }, 30000);
+lastHash = /^#v-/.test(location.hash) ? "#home" : location.hash;
+loadSnapshot().then(() => { if (/^#v-/.test(location.hash)) openVideo(location.hash.slice(3)); loadLive(); });
+setInterval(loadLive, 3 * 60 * 1000);
+})();
+</script>
