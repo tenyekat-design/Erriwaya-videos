@@ -33,6 +33,7 @@
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
       outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
+      cover: { logo: { cx: 540, cy: 160, h: 190 }, title: [540, 335, 80], date: [540, 440, 36], photos: [[60, 495, 960, 400], [60, 915, 468, 220], [552, 915, 468, 220]], chips: { cx: 540, y: 1160, maxW: 960 } },
     },
     youtube: {
       W: 1920, H: 1080,
@@ -47,6 +48,23 @@
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
       outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
+      cover: { logo: { cx: 1440, cy: 200, h: 230 }, title: [1440, 420, 92], date: [1440, 535, 42], photos: [[80, 80, 900, 560], [80, 670, 435, 330], [545, 670, 435, 330]], chips: { cx: 1440, y: 600, maxW: 760 } },
+    },
+    // TikTok / Reels / Shorts: content kept clear of the top bar and the caption/buttons at the bottom
+    story: {
+      W: 1080, H: 1920,
+      margin: 60,
+      logoH: 156, logoY: 150, hdrText: [44, 27],
+      card: { cx: 540, cy: 600, w: 760, h: 520 },
+      side: [520, 840],
+      bar: { x0: 160, x1: 920, y: 940, tl: 60, tr: 1020 },
+      kicker: { cx: 540, y: 860 },
+      head: { cx: 540, cy: 1050, maxW: 880, lineH: 62, panelH: 150 },
+      map: { x: 50, y: 1150, w: 980, h: 460, r: 34 },
+      dotsH: 1120,
+      intro: { lon: -2.5, w: [40, 37], logo: { cx: 540, cy: 840, h: 400 }, titleY: 1140 },
+      outro: { lon: -2, w: [36, 33], logo: { cx: 540, cy: 780, h: 320 }, titleY: 1010, followY: 1150, rowsY: 1220 },
+      cover: { logo: { cx: 540, cy: 330, h: 230 }, title: [540, 545, 86], date: [540, 650, 40], photos: [[60, 710, 960, 520], [60, 1255, 468, 300], [552, 1255, 468, 300]], chips: { cx: 540, y: 1590, maxW: 960 } },
     },
   };
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
@@ -306,6 +324,22 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     if (pin.dot === false) {
+      // area label; with a side it sits beside the area on a short leader line so the highlight stays visible
+      if (pin.side) {
+        const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[pin.side];
+        const len = d[0] ? 170 : 90;
+        const lp = eout(prog(a, pin.t, pin.t + 0.5));
+        ctx.strokeStyle = C.navy; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + d[0] * (len - 60) * lp, y + d[1] * (len - 40) * lp); ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.navy;
+        ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = alpha * lp;
+        labelPill(x + d[0] * len, y + d[1] * len, pin.label, 30, { bounds: rect, fill: C.navy, color: '#fff' });
+        ctx.restore();
+        return;
+      }
       ctx.translate(x, y); ctx.scale(pop, pop);
       labelPill(0, 0, pin.label, 30, { fill: C.navy, color: '#fff' });
       ctx.restore();
@@ -349,7 +383,8 @@
     ctx.font = font(22);
     const w2 = ctx.measureText(st.note).width;
     const w = Math.max(w1, w2) + 48, h = 100;
-    const x = rect.x + 22 + (1 - p) * -30, y = rect.y + 22;
+    // top-left corner of the map by default; pos: 'right' when a pin sits there
+    const x = st.pos === 'right' ? rect.x + rect.w - 22 - w + (1 - p) * 30 : rect.x + 22 + (1 - p) * -30, y = rect.y + 22;
     ctx.shadowColor = 'rgba(11,31,75,0.18)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
     ctx.fillStyle = '#fff';
     rrect(x, y, w, h, 22); ctx.fill();
@@ -497,6 +532,18 @@
         const gb = ctx.createLinearGradient(0, y + ch * 0.6, 0, y + ch);
         gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(1, 'rgba(11,31,75,0.35)');
         ctx.fillStyle = gb; ctx.fillRect(x, y + ch * 0.6, cw, ch * 0.4);
+        // photo credit, top-left corner, small
+        if (card.credit) {
+          ctx.globalAlpha = alpha * (1 - it.ar * 2);
+          ctx.font = font(19); ctx.direction = 'rtl'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+          const ct = 'الصورة: ' + card.credit;
+          const tw = ctx.measureText(ct).width;
+          ctx.fillStyle = 'rgba(11,31,75,0.45)';
+          rrect(x + 16, y + 16, tw + 24, 32, 16); ctx.fill();
+          ctx.fillStyle = 'rgba(255,255,255,0.95)';
+          ctx.fillText(ct, x + 28, y + 33);
+          ctx.globalAlpha = alpha;
+        }
       }
       ctx.restore();
       ctx.save();
@@ -537,13 +584,77 @@
     ctx.fillStyle = C.acc;
     ctx.beginPath(); ctx.arc(xk, y, 7, 0, Math.PI * 2); ctx.fill();
     // times (RTL: elapsed on the right)
-    ctx.font = font(24); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.gray;
-    ctx.textAlign = 'right'; ctx.fillText(mmss(Math.max(0, a - CUT)), L.bar.tr, y + 2);
-    ctx.textAlign = 'left'; ctx.fillText(mmss(TL.audioEnd - CUT), L.bar.tl, y + 2);
+    drawTime(mmss(Math.max(0, a - CUT)), L.bar.tr, y + 2, 'right');
+    drawTime(mmss(TL.audioEnd - CUT), L.bar.tl, y + 2, 'left');
     ctx.restore();
+  }
+  // AL-Quds draws ':' as a small Arabic-style mark; draw the clock colon as two round dots instead
+  function drawTime(text, x, y, align, size = 24) {
+    const [m, s] = text.split(':');
+    ctx.font = font(size); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillStyle = C.gray;
+    const wm = ctx.measureText(m).width, ws = ctx.measureText(s).width, wc = size * 0.36;
+    const x0 = align === 'right' ? x - wm - wc - ws : x;
+    ctx.fillText(m, x0, y);
+    ctx.fillText(s, x0 + wm + wc, y);
+    const r = size * 0.075;
+    for (const dy of [-0.17, 0.17]) { ctx.beginPath(); ctx.arc(x0 + wm + wc / 2, y + dy * size - size * 0.13, r, 0, Math.PI * 2); ctx.fill(); }
   }
 
   // ---------- headline ----------
+  // Topic colours for the second part of the story label (headline `topic`).
+  const TOPICS = { 'سياسة': '#2B4FA8', 'اقتصاد': '#B7640A', 'أمن': '#C0392B', 'دبلوماسية': '#6D3FB5', 'مناخ': '#0B7FA3', 'مجتمع': '#B03A7A' };
+  // The label follows the headline; a card with its own `kicker` (the opening teaser) overrides it.
+  const CHIP_SEGS = (() => {
+    const times = [...new Set([...TL.headlines.map(h => h.t), ...TL.cards.map(c => c.moves[0].t)])].sort((x, y) => x - y);
+    const segs = [];
+    for (const t of times) {
+      let h = null, card = null;
+      for (const x of TL.headlines) if (x.t <= t) h = x;
+      for (const c of TL.cards) if (c.moves[0].t <= t) card = c;
+      if (!h) continue;
+      const kicker = (card && card.kicker) || h.kicker, topic = card && card.kicker ? card.topic : h.topic;
+      const last = segs[segs.length - 1];
+      if (last && last.kicker === kicker && last.topic === topic) continue;
+      if (last) last.t1 = t - 0.05;
+      segs.push({ t0: t, t1: null, kicker, topic });
+    }
+    return segs;
+  })();
+  function chipSegment(a) {
+    let s = null;
+    for (const x of CHIP_SEGS) if (a >= x.t0 - 0.05) s = x;
+    return s;
+  }
+  function drawChip(kicker, topic, cx, cy, size) {
+    ctx.font = font(size); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width;
+    const ts = Math.round(size * 0.8);
+    ctx.font = font(ts);
+    const tw = topic ? ctx.measureText(topic).width + ts * 1.4 : 0;
+    const ch = size * 1.875, pad = size * 0.25;
+    const cw = kw + size * 2.6 + (topic ? tw + pad : 0);
+    const x = cx - cw / 2, y = cy - ch / 2;
+    ctx.save();
+    ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
+    rrect(x, y, cw, ch, ch / 2); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
+    rrect(x, y, cw, ch, ch / 2); ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x + cw - size * 0.94, y + ch / 2, size * 0.22, 0, Math.PI * 2); ctx.fill();
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.font = font(size);
+    ctx.fillText(kicker, x + cw - size * 1.56, y + ch / 2 + 2);
+    if (topic) {
+      const th = ch - pad * 2;
+      ctx.fillStyle = '#fff';
+      rrect(x + pad, y + pad, tw, th, th / 2); ctx.fill();
+      ctx.fillStyle = TOPICS[topic] || C.navy;
+      ctx.font = font(ts); ctx.textAlign = 'center';
+      ctx.fillText(topic, x + pad + tw / 2, y + ch / 2 + 2);
+    }
+  }
   const layoutCache = {};
   function layoutText(text, maxW, sizes, maxLines) {
     const key = text + '|' + maxW + '|' + sizes.join(',');
@@ -583,7 +694,8 @@
   }
 
   // Headlines: two balanced lines at a size in step with the rest of the frame; the shorter line is
-  // then stretched to the longer one with tatweel (kashida) in its longest words, spaces taking the rest.
+  // then stretched toward the longer one with tatweel (kashida) in its longest words and slightly wider
+  // spaces. Both are capped so a much shorter line stays shorter (centred) instead of looking torn apart.
   const NO_JOIN_AFTER = new Set('اأإآدذرزوؤةىء');
   const AR_LETTER = /[\u0621-\u064A]/;
   function kashidaSpot(word) {
@@ -626,21 +738,19 @@
     const goal = Math.max(...groups.map(measure));
     const lines = groups.map(ws => {
       const n = ws.map(() => 0);
-      // longest words first, one tatweel at a time, at most 2 per word
+      // longest words first, at most one tatweel per word
       const order = ws.map((w, i) => i).filter(i => ws[i].length > 3 && kashidaSpot(ws[i]) >= 0)
         .sort((i, j) => ws[j].length - ws[i].length);
       let cur = measure(ws);
-      for (let round = 0; round < 2; round++) {
-        for (const i of order) {
-          if (cur + tw > goal) break;
-          n[i]++; cur += tw;
-        }
+      for (const i of order) {
+        if (cur + tw > goal) break;
+        n[i]++; cur += tw;
       }
       const out = ws.map((w, i) => stretchWord(w, n[i]));
       const sized = out.map(w => ({ w, width: ctx.measureText(w).width }));
       const ink = sized.reduce((s, w) => s + w.width, 0);
       const gap = sized.length > 1 ? (goal - ink) / (sized.length - 1) : space;
-      const sp = clamp(gap, space, space * 2.2);
+      const sp = clamp(gap, space, space * 1.45);
       return { words: sized, width: ink + sp * (sized.length - 1), space: sp };
     });
     return (layoutCache[key] = { size, space, lines });
@@ -682,33 +792,13 @@
     const tOut = next ? next.t - 0.05 : null;
     ctx.save();
     ctx.globalAlpha = alpha;
-    // kicker chip; stays put when the kicker does not change
-    const prevSame = i > 0 && HL[i - 1].kicker === h.kicker;
-    const nextSame = next && next.kicker === h.kicker;
-    let start = i;
-    while (start > 0 && HL[start - 1].kicker === h.kicker) start--;
-    const kIn = HL[start].t;
-    const kp = eout(prog(a, kIn, kIn + 0.45)) * (nextSame || !tOut ? 1 : 1 - eio(prog(a, tOut - 0.35, tOut)));
+    // story label (country + optional topic); stays put while it does not change
+    const seg = chipSegment(a);
+    const kp = seg ? eout(prog(a, seg.t0, seg.t0 + 0.45)) * (seg.t1 == null ? 1 : 1 - eio(prog(a, seg.t1 - 0.35, seg.t1))) : 0;
     if (kp > 0) {
-      ctx.font = font(32); ctx.direction = 'rtl';
-      const tw = ctx.measureText(h.kicker).width;
-      const cw = tw + 84, ch = 60;
-      const x = L.kicker.cx - cw / 2, y = L.kicker.y - ch / 2 + (1 - kp) * 12;
       ctx.globalAlpha = alpha * kp;
-      ctx.save();
-      ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
-      ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
-      rrect(x, y, cw, ch, ch / 2); ctx.fill();
-      ctx.restore();
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
-      rrect(x, y, cw, ch, ch / 2); ctx.stroke();
-      ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.arc(x + cw - 30, y + ch / 2, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-      ctx.fillText(h.kicker, x + cw - 50, y + ch / 2 + 2);
+      drawChip(seg.kicker, seg.topic, L.kicker.cx, L.kicker.y + (1 - kp) * 12, 32);
     }
-    void prevSame;
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
     const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
     const px = L.head.cx - pw / 2, py = L.head.cy - ph / 2;
@@ -749,8 +839,8 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     // title and date span the logo's body so the two read as one block, top and bottom aligned
-    // text block centred on the logo's visual weight (its lower half), set close to it
-    const tx = lb.x - 16;
+    // text block centred on the logo's visual weight (its lower half), with a clear gap from it
+    const tx = lb.x - 52;
     const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     ctx.fillStyle = C.navy; ctx.font = font(L.hdrText[0]);
@@ -1126,6 +1216,83 @@
     });
   }
 
+  // ---------- cover (thumbnail) ----------
+  // Logo, title and date, the photos of the first three stories (or TL.cover.imgs) and every country covered.
+  function coverPhotos() {
+    if (TL.cover && TL.cover.imgs) return TL.cover.imgs.map(img => ({ img, f: [0.5, 0.5, 1], kicker: null }));
+    const kickerAt = a => { let k = null; for (const h of TL.headlines) if (h.t <= a + 0.05) k = h.kicker; return k; };
+    return TL.chapters.slice(0, 3).map(c => {
+      const card = CARDS.find(cd => cd.start >= c - 0.05) || CARDS[0];
+      return { img: card.img, f: card.moves[0].a, kicker: kickerAt(c) };
+    });
+  }
+  function renderCover() {
+    const V = L.cover;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    drawBackground();
+    drawLogoAt(V.logo.cx, V.logo.cy, V.logo.h);
+    ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = C.navy; ctx.font = font(V.title[2]);
+    ctx.fillText(TL.title, V.title[0], V.title[1]);
+    ctx.fillStyle = C.acc;
+    rrect(V.title[0] - 80, V.title[1] + V.title[2] * 0.58, 160, 6, 3); ctx.fill();
+    ctx.fillStyle = C.gray; ctx.font = font(V.date[2]);
+    ctx.fillText(TL.date, V.date[0], V.date[1]);
+    coverPhotos().forEach((ph, i) => {
+      const [x, y, w, h] = V.photos[i] || [];
+      if (w == null || !IMG[ph.img]) return;
+      ctx.save();
+      ctx.shadowColor = 'rgba(11,31,75,0.22)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 16;
+      ctx.fillStyle = '#fff';
+      rrect(x, y, w, h, 28); ctx.fill();
+      ctx.shadowColor = 'transparent';
+      rrect(x, y, w, h, 28); ctx.clip();
+      coverDraw(IMG[ph.img], x, y, w, h, ph.f[0], ph.f[1], ph.f[2]);
+      const gb = ctx.createLinearGradient(0, y + h * 0.55, 0, y + h);
+      gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(1, 'rgba(11,31,75,0.45)');
+      ctx.fillStyle = gb; ctx.fillRect(x, y + h * 0.55, w, h * 0.45);
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 4;
+      rrect(x + 2, y + 2, w - 4, h - 4, 26); ctx.stroke();
+      if (ph.kicker) {
+        const sz = i ? 28 : 34;
+        ctx.font = font(sz); ctx.direction = 'rtl';
+        const pw = ctx.measureText(ph.kicker).width + sz * 1.6, phh = sz * 1.7;
+        ctx.fillStyle = '#0A8F65';
+        rrect(x + w - pw - 18, y + h - phh - 18, pw, phh, phh / 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(ph.kicker, x + w - 18 - pw / 2, y + h - 18 - phh / 2 + 2);
+      }
+    });
+    // every country covered, as chips in reading order (right to left), centred line by line
+    const names = [...new Set(TL.headlines.map(h => h.kicker).filter(k => k && k !== TL.title))];
+    const sz = 34, ch = 66, gap = 14;
+    ctx.font = font(sz); ctx.direction = 'rtl';
+    const chips = names.map(n => ({ n, w: ctx.measureText(n).width + sz * 1.4 }));
+    const rows = [[]];
+    let rw = 0;
+    for (const c of chips) {
+      if (rw && rw + gap + c.w > V.chips.maxW) { rows.push([]); rw = 0; }
+      rows[rows.length - 1].push(c); rw += (rw ? gap : 0) + c.w;
+    }
+    rows.forEach((row, ri) => {
+      const total = row.reduce((s, c) => s + c.w, 0) + gap * (row.length - 1);
+      let x = V.chips.cx + total / 2;
+      const y = V.chips.y + ri * (ch + gap);
+      for (const c of row) {
+        ctx.save();
+        ctx.shadowColor = 'rgba(11,31,75,0.14)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
+        ctx.fillStyle = C.navy;
+        rrect(x - c.w, y, c.w, ch, ch / 2); ctx.fill();
+        ctx.restore();
+        ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(c.n, x - c.w / 2, y + ch / 2 + 2);
+        x -= c.w + gap;
+      }
+    });
+  }
+
   // ---------- frame ----------
   function renderFrame(t) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1167,6 +1334,7 @@
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     window.renderFrame = renderFrame;
+    window.renderCover = renderCover;
     window.DURATION = DURATION;
     window.SIZE = [W, H];
     window.READY = true;

@@ -16,12 +16,15 @@ window.TIMELINE = {
   tail: 3.0,
 
   // Carousel cards. A card shows one image; give it several moves to re-frame it without changing card.
+  // Optional: credit: 'المصدر' (shown as الصورة: ... on the photo); kicker: 'الدولة' on the opening teaser
+  // cards so the label names each story's country as its photo passes.
   // a/b = [focusX, focusY, zoom] at the start/end of the move (focus 0..1 in the image, zoom >= 1).
   cards: [
     { img: 'example.jpg', moves: [{ t: 0, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.12] }] },
   ],
 
   // Kicker (country) + headline under the progress bar; at most two lines are shown.
+  // topic: 'سياسة' | 'اقتصاد' | 'أمن' | 'دبلوماسية' | 'مناخ' | 'مجتمع' (coloured part of the story label).
   headlines: [
     { t: 0, kicker: 'الموجز الإخباري', text: 'أبرز التطورات السياسية والأمنية والاقتصادية في المنطقة المغاربية ومحيطها' },
   ],
@@ -40,7 +43,8 @@ window.TIMELINE = {
     // { t: 20.6, end: 40.7, kind: 'primary', ids: ['478'], origin: [-15.98, 18.09] },
   ],
 
-  // Map pins. side: 'up' | 'down' | 'left' | 'right'; main: true for the story's city; dot: false for an area label.
+  // Map pins. side: 'up' | 'down' | 'left' | 'right'; main: true for the story's city; dot: false for an area label
+  // (add a side to set it beside the area on a leader line, so it does not cover the highlight).
   pins: [
     // { t: 21.0, end: 40.6, lon: -15.98, lat: 18.09, label: 'نواكشوط', side: 'down', main: true },
   ],
@@ -50,7 +54,8 @@ window.TIMELINE = {
     // { t: 28.0, dur: 2.6, end: 40.6, from: [-8.15, 27.67], to: [-12.47, 22.73], curve: 0.06, style: 'route' },
   ],
 
-  // Figure chips in the map corner: either value (counts up) + unit, or plain text.
+  // Figure chips in the map corner: either value (counts up) + unit, or plain text; pos: 'right' for the
+  // top-right corner when a pin sits in the top-left.
   stats: [
     // { t: 97.6, end: 109.8, value: 400, unit: 'مليار درهم', note: 'للاستثمار العمومي' },
   ],
