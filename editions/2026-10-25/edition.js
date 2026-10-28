@@ -9,6 +9,10 @@ window.TIMELINE = {
   outroAt: 186.30,    // "في تغطيات جديدة..." -> closing logo
   tail: 3.0,
 
+  // opening hook: the strongest story, full-frame, before the map intro
+  hook: { img: 'unsc-vote.jpg', f: [0.5, 0.5], kicker: 'الصحراء الغربية', topic: 'دبلوماسية',
+          text: 'مجلس الأمن يصوّت على مصير بعثة مينورسو قبل 31 أكتوبر' },
+
   cards: [
     // opening teaser
     { kicker: 'موريتانيا', img: 'mr-dust.webp', moves: [{ t: 0.0, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.1] }] },

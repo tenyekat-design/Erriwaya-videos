@@ -15,6 +15,10 @@ window.TIMELINE = {
   outroAt: 0,         // "شكرا لمتابعتكم"
   tail: 3.0,
 
+  // Opening hook (first 2.6 s, before the map intro): the day's strongest story full-frame with one short,
+  // factual line (≤ 2 lines). f = focus [x, y] in the photo. Leave it out for the classic opening.
+  hook: { img: 'example.jpg', f: [0.5, 0.5], kicker: 'الدولة', topic: 'سياسة', text: 'جملة قصيرة عن أبرز خبر' },
+
   // Carousel cards. A card shows one image; give it several moves to re-frame it without changing card.
   // Optional: credit: 'المصدر' (shown as الصورة: ... on the photo); kicker: 'الدولة' on the opening teaser
   // cards so the label names each story's country as its photo passes.

@@ -17,6 +17,8 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
    date/number chips in `stats` (`pos: 'right'` when a pin sits in the map's top-left). Each headline gets a
    `topic` (سياسة / اقتصاد / أمن / دبلوماسية / مناخ / مجتمع); the opening teaser cards get the `kicker` of their
    story; a card gets `credit` when the user gives the photo's source (never guess one).
+   `hook` = the opening 2.6 s: pick the strongest story, its best photo and one short factual line (≤ 2 lines,
+   no exaggeration); the map intro then plays faster so the logo, music and voice keep their times.
    Avoid «» quotes in headlines (RTL word layout breaks them).
    Copy transcript.txt to `subtitles.txt` and correct names/spelling from the script (timings unchanged).
 4. Check a few stills: `node tools/render.js --edition <date> --stills 40,100,150` (output/stills/, delete after).
@@ -34,7 +36,7 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 
 - White template, AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork) tinted navy, inside the safe area.
 - Approved 28 Oct 2026 (current reference): header title and date set apart from the logo by a clear gap; story label
-  = green country chip + coloured topic; teaser labels per country; three formats (feed, youtube, story) with a cover
+  = green country chip + coloured topic; teaser labels per country; opening hook (top story full-frame) before a faster map intro; three formats (feed, youtube, story) with a cover
   each; description, chapters and .srt with every edition. Re-render 2026-10-25 to compare when changing the look.
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
