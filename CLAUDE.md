@@ -33,6 +33,9 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 ## Fixed decisions
 
 - White template, AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork) tinted navy, inside the safe area.
+- Approved 28 Oct 2026 (current reference): header title and date set apart from the logo by a clear gap; story label
+  = green country chip + coloured topic; teaser labels per country; three formats (feed, youtube, story) with a cover
+  each; description, chapters and .srt with every edition. Re-render 2026-10-25 to compare when changing the look.
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
