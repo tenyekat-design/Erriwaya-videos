@@ -1,0 +1,16 @@
+# يحدّث موقع الرواية (فرع website) كل نصف ساعة: فيديوهات يوتيوب الجديدة ونسخة الأخبار.
+# الجدولة في GitHub لا تعمل إلا من الفرع الافتراضي، لذلك هذا الملف هنا.
+name: website-refresh
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+permissions:
+  actions: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run website.yml --ref website -R "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
