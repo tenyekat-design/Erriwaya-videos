@@ -28,8 +28,8 @@
       side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
       bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
       kicker: { cx: 540, y: 620 },        // story label pinned to the photo's bottom edge
-      head: { cx: 540, cy: 782, maxW: 920, lineH: 62 },
-      map: { x: 50, y: 868, w: 980, h: 422, r: 34 },
+      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 156 },
+      map: { x: 50, y: 880, w: 980, h: 412, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
       outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
@@ -42,7 +42,7 @@
       side: [570, 900],
       bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
       kicker: { cx: 1344, y: 752 },
-      head: { cx: 1344, cy: 944, maxW: 920, lineH: 62 },
+      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 156 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -645,9 +645,24 @@
       ctx.fillText(h.kicker, x + cw - 50, y + ch / 2 + 2);
     }
     void prevSame;
+    // navy panel behind the headlines: wipes in from the right with the first one, then stays
+    const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
+    const px = L.head.cx - pw / 2, py = L.head.cy - ph / 2;
+    const wipe = eio(prog(a, HL[0].t - 0.45, HL[0].t + 0.1));
     ctx.globalAlpha = alpha;
+    ctx.save();
+    ctx.shadowColor = 'rgba(11,31,75,0.28)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
+    const pg = ctx.createLinearGradient(px + pw, 0, px, 0);
+    pg.addColorStop(0, '#0B1F4B'); pg.addColorStop(1, '#142E66');
+    ctx.fillStyle = pg;
+    rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
+    ctx.restore();
+    if (wipe > 0.2) {
+      ctx.fillStyle = C.acc;
+      rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
+    }
     const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
-    drawWords(lay, L.head.cx, L.head.cy, L.head.lineH, C.navy, a, h.t, tOut);
+    drawWords(lay, L.head.cx - 6, L.head.cy, L.head.lineH, '#FFFFFF', a, h.t, tOut);
     ctx.restore();
   }
 
