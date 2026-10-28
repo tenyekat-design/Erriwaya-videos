@@ -633,12 +633,12 @@
       ctx.globalAlpha = alpha * kp;
       ctx.save();
       ctx.shadowColor = 'rgba(11,31,75,0.30)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
-      ctx.fillStyle = C.navy;
+      ctx.fillStyle = '#0A8F65';  // deep green: stands apart from the navy headline panel, keeps white text legible
       rrect(x, y, cw, ch, ch / 2); ctx.fill();
       ctx.restore();
       ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
       rrect(x, y, cw, ch, ch / 2); ctx.stroke();
-      ctx.fillStyle = C.acc;
+      ctx.fillStyle = '#fff';
       ctx.beginPath(); ctx.arc(x + cw - 30, y + ch / 2, 7, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#fff';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
@@ -684,12 +684,14 @@
     const lb = logoBox();
     ctx.save();
     ctx.globalAlpha = alpha;
-    const tx = lb.x - 26;
+    // title and date span the logo's body so the two read as one block, top and bottom aligned
+    const tx = lb.x - 28, k = lb.h / 136;
+    const titleY = lb.y + lb.h * 0.36, dateY = lb.y + lb.h * 0.80;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(38);
-    ctx.fillText(TL.title, tx, lb.y + lb.h / 2 - 20);
-    ctx.fillStyle = C.gray; ctx.font = font(24);
-    ctx.fillText(TL.date, tx, lb.y + lb.h / 2 + 24);
+    ctx.fillStyle = C.navy; ctx.font = font(Math.round(46 * k));
+    ctx.fillText(TL.title, tx, titleY);
+    ctx.fillStyle = C.gray; ctx.font = font(Math.round(28 * k));
+    ctx.fillText(TL.date, tx, dateY);
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
@@ -698,12 +700,12 @@
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
     ctx.font = font(34); ctx.fillStyle = C.navy;
     const num = String(ch).padStart(2, '0');
-    ctx.fillText(num, L.margin, lb.y + lb.h / 2 - 14);
+    ctx.fillText(num, L.margin, titleY);
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = C.gray;
-    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, lb.y + lb.h / 2 - 11);
+    ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
     for (let i = 0; i < n; i++) {
-      const bx = L.margin + i * 30, by = lb.y + lb.h / 2 + 22;
+      const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
       ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
