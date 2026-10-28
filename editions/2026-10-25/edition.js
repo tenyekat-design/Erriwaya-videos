@@ -132,7 +132,7 @@ window.TIMELINE = {
     { t: 94.4, end: 104.4, lon: 32.86, lat: 39.93, label: 'أنقرة', side: 'down' },
     { t: 105.6, end: 129.6, lon: -8.0, lat: 12.64, label: 'باماكو', side: 'right', main: true },
     { t: 123.6, end: 129.6, lon: -6.84, lat: 34.02, label: 'الرباط', side: 'left' },
-    { t: 130.8, end: 146.8, lon: -12.9, lat: 24.6, label: 'الصحراء الغربية', dot: false },
+    { t: 130.8, end: 146.8, lon: -12.9, lat: 24.6, label: 'الصحراء الغربية', side: 'left', dot: false },
     { t: 148.0, end: 161.8, lon: 2.11, lat: 13.51, label: 'نيامي', side: 'right', main: true },
     { t: 153.0, end: 161.8, lon: 3.06, lat: 36.75, label: 'الجزائر العاصمة', side: 'left' },
     { t: 163.0, end: 181.0, lon: 10.45, lat: 36.95, label: 'خليج تونس', side: 'left', main: true },

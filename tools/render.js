@@ -2,7 +2,9 @@
 //   node tools/render.js --edition 2026-10-24                 full video -> output/erriwaya-brief-2026-10-24.mp4
 //   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
 //   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
-//   add --format youtube for the 1920x1080 layout (default: feed, 1080x1350)
+//   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only
+//   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg and -description.txt)
+//   add --format youtube for the 1920x1080 layout, --format story for 1080x1920 (default: feed, 1080x1350)
 // Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -20,7 +22,7 @@ const EDITION = String(args.edition || fs.readdirSync(path.join(ROOT, 'editions'
 const EDIR = path.join(ROOT, 'editions', EDITION);
 if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition at ' + EDIR); process.exit(1); }
 const FORMAT = String(args.format || 'feed');
-const SIZE = { feed: [1080, 1350], youtube: [1920, 1080] }[FORMAT];
+const SIZE = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
 if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
 const SUFFIX = FORMAT === 'feed' ? '' : '-' + FORMAT;
 const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
@@ -50,6 +52,51 @@ async function stills(list) {
     console.log(f);
   }
   await browser.close();
+}
+
+const COVER = OUT.replace(/\.mp4$/, '-cover.jpg');
+async function cover(browser) {
+  const page = await openPage(browser);
+  const url = await page.evaluate(() => { window.renderCover(); return document.getElementById('c').toDataURL('image/jpeg', 0.92); });
+  fs.writeFileSync(COVER, Buffer.from(url.slice(url.indexOf(',') + 1), 'base64'));
+  await page.close();
+  console.log('wrote', COVER);
+}
+
+// YouTube / Facebook description: the stories in order, chapter timestamps (video time) and the handles.
+function description() {
+  const TL = loadEdition();
+  const vt = a => TL.intro + a - TL.audioCut;
+  const end = vt(TL.audioEnd) + TL.tail;
+  const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const stories = TL.chapters.map(c => {
+    const hs = TL.headlines.filter(h => h.t >= c - 0.05);
+    return { t: vt(c), kicker: hs[0].kicker, text: hs[0].text };
+  });
+  const closing = TL.headlines[TL.headlines.length - 1];
+  const marks = [{ t: 0, label: 'المقدمة' }, ...stories.map(s => ({ t: s.t, label: s.kicker }))];
+  if (closing.kicker === TL.title && closing.t > TL.chapters[TL.chapters.length - 1]) marks.push({ t: vt(closing.t), label: 'الختام' });
+  // YouTube needs chapters of at least 10 s: fold a short one into the one before it
+  const ch = marks.filter((m, i) => i === 0 || ((marks[i + 1] ? marks[i + 1].t : end) - m.t >= 10));
+  const tags = ['الرواية', 'الموجز_الإخباري', ...new Set(stories.map(s => s.kicker.replace(/\s+/g, '_')))];
+  const text = [
+    `${TL.title} – الرواية | ${TL.date}`,
+    TL.headlines[0].text,
+    '',
+    'في هذا الموجز:',
+    ...stories.map(s => `• ${s.kicker}: ${s.text}`),
+    '',
+    ...ch.map(m => `${mmss(m.t)} ${m.label}`),
+    '',
+    'تابعونا على فيسبوك وتيك توك ويوتيوب: ERRIWAYA',
+    'وعلى إنستغرام: ERRIWAYA.MR',
+    '',
+    tags.map(t => '#' + t).join(' '),
+  ].join('\n') + '\n';
+  const file = path.join(ROOT, 'output', `erriwaya-brief-${EDITION}-description.txt`);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, text);
+  console.log('wrote', file);
 }
 
 async function renderRange(browser, f0, f1, file) {
@@ -124,6 +171,8 @@ function buildAudio(duration, file) {
 (async () => {
   if (args.stills) return stills(String(args.stills).split(',').map(Number));
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  if (args.cover) { await cover(browser); await browser.close(); return description(); }
   const probe = await openPage(browser);
   const duration = await probe.evaluate(() => window.DURATION);
   await probe.close();
@@ -150,6 +199,10 @@ function buildAudio(duration, file) {
     const audio = path.join(tmp, 'audio.m4a');
     buildAudio(duration, audio);
     execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', video, '-i', audio, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-movflags', '+faststart', '-shortest', OUT]);
+    const b2 = await chromium.launch({ args: ['--allow-file-access-from-files'] });
+    await cover(b2);
+    await b2.close();
+    description();
   } else {
     fs.copyFileSync(video, OUT);
   }

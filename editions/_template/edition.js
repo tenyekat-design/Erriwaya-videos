@@ -40,7 +40,8 @@ window.TIMELINE = {
     // { t: 20.6, end: 40.7, kind: 'primary', ids: ['478'], origin: [-15.98, 18.09] },
   ],
 
-  // Map pins. side: 'up' | 'down' | 'left' | 'right'; main: true for the story's city; dot: false for an area label.
+  // Map pins. side: 'up' | 'down' | 'left' | 'right'; main: true for the story's city; dot: false for an area label
+  // (add a side to set it beside the area on a leader line, so it does not cover the highlight).
   pins: [
     // { t: 21.0, end: 40.6, lon: -15.98, lat: 18.09, label: 'نواكشوط', side: 'down', main: true },
   ],
