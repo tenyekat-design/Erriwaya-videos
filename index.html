@@ -50,8 +50,15 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 /* ── masthead ── */
 .top { background: var(--brand-deep); color: var(--on-brand); font-size: 13px }
 .top .wrap { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px; flex-wrap: wrap }
-.top .socials { display: flex; gap: 14px }
-.top .socials a { opacity: .85 } .top .socials a:hover { opacity: 1 }
+.socials { display: flex; gap: 8px; align-items: center }
+.si { width: 1em; height: 1em; fill: currentColor }
+.socials a { display: grid; place-items: center; border-radius: 50%; transition: background .2s, opacity .2s }
+.top-soc a { width: 26px; height: 26px; font-size: 13px; opacity: .85 }
+.top-soc a:hover { opacity: 1; background: rgb(255 255 255 / .14) }
+.foot-soc { gap: 12px }
+.foot-soc a { width: 42px; height: 42px; font-size: 18px; border: 1px solid rgb(255 255 255 / .3) }
+.foot-soc a:hover { background: var(--on-brand); color: var(--brand-deep) }
+.top .wrap { align-items: center }
 .mast { background: var(--brand); color: var(--on-brand); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9 }
 .mast .wrap { display: flex; align-items: center; gap: 20px; padding-block: 10px }
 .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
@@ -77,7 +84,6 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 .pchain .node { position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); border: 1.5px solid rgb(255 255 255 / .55); display: grid; place-items: center; flex-shrink: 0; margin-inline-start: 5px }
 .pchain .node .ic { width: 12px; height: 12px }
 .pchain .ar { font-size: 19px }
-.pchain .lat { font-size: 11px; direction: ltr; letter-spacing: .05em; text-transform: uppercase; opacity: .6 }
 .pchain .n { margin-inline-start: auto; font-size: 12px; background: rgb(255 255 255 / .14); border-radius: 999px; padding: 1px 8px; font-variant-numeric: tabular-nums }
 @keyframes link-in { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
 @media (max-width: 760px) { .portals-panel .wrap { grid-template-columns: minmax(0, 1fr) } }
@@ -181,6 +187,10 @@ main > * { min-width: 0 }
 .contacts code { font: 15px var(--f-body); direction: ltr; user-select: all; background: var(--chip); padding: 2px 8px; border-radius: 4px }
 .copy { border: 0; background: none; color: var(--link); padding: 4px; display: inline-flex; border-radius: 6px }
 .copy:hover { background: var(--chip) }
+.about-soc { display: flex; align-items: center; gap: 10px; margin-top: 18px; flex-wrap: wrap }
+.about-soc span { color: var(--muted); font-size: 14px; margin-inline-end: 4px }
+.about-soc a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--brand); color: var(--on-brand); font-size: 17px }
+.about-soc a:hover { background: var(--brand-deep) }
 form { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px }
 form h3 { font: 22px/1.2 var(--f-display) }
 label { display: grid; gap: 4px; font-size: 14px; color: var(--muted) }
@@ -193,7 +203,6 @@ textarea { min-height: 110px; resize: vertical }
 footer { background: var(--brand-deep); color: var(--on-brand); padding-block: 28px; font-size: 14px }
 footer .wrap { display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap }
 footer img { height: 40px; width: auto }
-footer .socials { display: flex; gap: 16px; flex-wrap: wrap }
 footer small { opacity: .7 }
 
 /* ── article view ── */
@@ -246,16 +255,21 @@ footer small { opacity: .7 }
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m10 13 4.5-4.5"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <!-- social icons: Font Awesome Free 6.5.2 brands, CC BY 4.0, fontawesome.com -->
+    <symbol id="s-youtube" viewBox="0 0 576 512"><path fill="currentColor" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></symbol>
+    <symbol id="s-facebook" viewBox="0 0 320 512"><path fill="currentColor" d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></symbol>
+    <symbol id="s-tiktok" viewBox="0 0 448 512"><path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol>
+    <symbol id="s-instagram" viewBox="0 0 448 512"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol>
   </defs>
 </svg>
 
 <div class="top"><div class="wrap">
   <span class="clock"><svg class="ic"><use href="#i-clock"/></svg><span id="clock">نواكشوط</span></span>
-  <nav class="socials" aria-label="منصات الرواية">
-    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">يوتيوب</a>
-    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">فيسبوك</a>
-    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">تيك توك</a>
-    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">إنستغرام</a>
+  <nav class="socials top-soc" aria-label="منصات الرواية">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener" aria-label="يوتيوب" title="يوتيوب"><svg class="si"><use href="#s-youtube"/></svg></a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener" aria-label="فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener" aria-label="تيك توك" title="تيك توك"><svg class="si"><use href="#s-tiktok"/></svg></a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener" aria-label="إنستغرام" title="إنستغرام"><svg class="si"><use href="#s-instagram"/></svg></a>
   </nav>
 </div></div>
 
@@ -282,11 +296,11 @@ footer small { opacity: .7 }
 
 <footer><div class="wrap">
   <img src="assets/logo.png" alt="الرواية">
-  <nav class="socials" aria-label="المنصات">
-    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">YouTube | ERRIWAYA</a>
-    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">Facebook | ERRIWAYA</a>
-    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">TikTok | ERRIWAYA</a>
-    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">Instagram | ERRIWAYA.MR</a>
+  <nav class="socials foot-soc" aria-label="منصات الرواية">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener" aria-label="يوتيوب" title="يوتيوب"><svg class="si"><use href="#s-youtube"/></svg></a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener" aria-label="فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener" aria-label="تيك توك" title="تيك توك"><svg class="si"><use href="#s-tiktok"/></svg></a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener" aria-label="إنستغرام" title="إنستغرام"><svg class="si"><use href="#s-instagram"/></svg></a>
   </nav>
   <small>© <span id="yr"></span> الرواية</small>
 </div></footer>
@@ -464,7 +478,7 @@ function renderPortals() {
   let i = 0;
   $("#portalsList").innerHTML = groups.map(g => `<div class="pgroup"><h4>${esc(g)}</h4><ul class="pchain">${PORTALS.filter(p => p[3] === g).map(p => {
     const n = items.filter(it => inPortal(p, it)).length;
-    return `<li><a href="#p-${p[0]}" style="--i:${i++}" ${cur === "p-" + p[0] ? 'aria-current="page"' : ""}><span class="node">${ic("pin")}</span><span class="ar">${p[1]}</span><span class="lat">${p[2]}</span>${n ? `<span class="n">${n}</span>` : ""}</a></li>`;
+    return `<li><a href="#p-${p[0]}" style="--i:${i++}" ${cur === "p-" + p[0] ? 'aria-current="page"' : ""}><span class="node">${ic("pin")}</span><span class="ar">${p[1]}</span>${n ? `<span class="n">${n}</span>` : ""}</a></li>`;
   }).join("")}</ul></div>`).join("");
 }
 function togglePortals(open) {
@@ -490,6 +504,7 @@ function aboutSection() {
     <div>
       <div class="sec-h"><h2>من نحن</h2></div>
       <div class="txt">${esc(about)}</div>
+      <div class="about-soc"><span>تابعونا</span>${document.querySelector(".foot-soc").innerHTML}</div>
       ${rows.length ? `<div class="contacts">${rows.map(([i, k, v]) => `<div><span class="m">${ic(i)}${k}</span><code>${esc(v)}</code><button class="copy" type="button" data-copy="${esc(v)}" aria-label="نسخ">${ic("copy")}</button></div>`).join("")}</div>` : ""}
     </div>
     <form id="contact" novalidate>
@@ -544,7 +559,7 @@ function route() {
   if ((m = h.match(/^v-([\w-]{11})$/))) { openVideo(m[1]); if (!$("#main").children.length) main.innerHTML = homeView(); return; }
   if ((m = h.match(/^p-(\w\w)$/))) {
     const p = PORTALS.find(x => x[0] === m[1]);
-    if (p) { main.innerHTML = listView(`بوابة ${p[1]}`, p[2], feed().filter(it => inPortal(p, it))); window.scrollTo(0, 0); return; }
+    if (p) { main.innerHTML = listView(`بوابة ${p[1]}`, "", feed().filter(it => inPortal(p, it))); window.scrollTo(0, 0); return; }
   }
   if ((m = h.match(/^cat-(\d)$/))) {
     const c = CATEGORIES[+m[1] - 1];
