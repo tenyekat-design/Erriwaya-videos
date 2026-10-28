@@ -7,9 +7,6 @@
 <meta property="og:image" content="assets/icon.png">
 <meta name="theme-color" content="#004A49">
 <link rel="icon" href="assets/icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a green masthead band, then a newsroom page — lead story beside a "latest" rail, a filterable feed,
    country portals as a regional index, shorts strip, app band, about/contact. Article opens as its own view. */
@@ -27,8 +24,8 @@
   --link: #00605E;
   --chip: #E6EEEC;
   --shadow: 0 1px 2px rgb(0 40 39 / .06), 0 6px 18px rgb(0 40 39 / .06);
-  --f-display: "Al Quds", "IBM Plex Sans Arabic", "Noto Naskh Arabic", Tahoma, sans-serif;
-  --f-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --f-display: "Al Quds", "Segoe UI", Tahoma, sans-serif;
+  --f-body: "Al Quds", "Segoe UI", Tahoma, sans-serif;
   --wrap: 1180px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
@@ -233,10 +230,10 @@ footer small { opacity: .7 }
 <footer><div class="wrap">
   <img src="assets/logo.png" alt="الرواية">
   <nav class="socials" aria-label="المنصات">
-    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">YouTube · ERRIWAYA</a>
-    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">Facebook · ERRIWAYA</a>
-    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">TikTok · ERRIWAYA</a>
-    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">Instagram · ERRIWAYA.MR</a>
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">YouTube | ERRIWAYA</a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">Facebook | ERRIWAYA</a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener">TikTok | ERRIWAYA</a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener">Instagram | ERRIWAYA.MR</a>
   </nav>
   <small>© <span id="yr"></span> الرواية</small>
 </div></footer>
@@ -312,7 +309,7 @@ function timeAgo(d) {
 function tickClock() {
   const now = new Date();
   const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
-  $("#clock").textContent = "نواكشوط · " + f.format(now);
+  $("#clock").textContent = "نواكشوط | " + f.format(now);
 }
 
 // ── تطبيع البيانات ──
