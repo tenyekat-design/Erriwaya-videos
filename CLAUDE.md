@@ -10,7 +10,7 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 2. Transcription: `tools/setup-asr.sh` once per container (Whisper small via npm; huggingface is blocked),
    then `python3 tools/transcribe.py <date>` → phrase timings + suggested `audioCut` / `audioEnd`.
    Prefer the script text the user sends for names and spelling; use the transcript only for timings.
-   `outroAt` = start of the closing sentence that follows "إلى هنا نصل إلى ختام..." (~6–7 s before the end).
+   `outroAt` = just after the last word (the closing screen never covers the voice), with `tail: 6.0`.
 3. Fill `editions/<date>/edition.js`. `editions/2026-10-25/edition.js` is the reference: one chapter per story,
    2 headlines per story (≤ 2 lines), each photo on the sentence it illustrates, camera/highlights/pins per story
    (an area label `dot: false` gets a `side` when it would cover the highlighted territory),
@@ -41,5 +41,5 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
-  whose final chord lands on the last word; all music ducks under the voice. Western Sahara is drawn as in the
+  whose final chord lands as the social icons appear on the closing screen, after the voice; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.

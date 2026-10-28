@@ -12,8 +12,8 @@ window.TIMELINE = {
   audioCut: 0,        // silence just before "أهلا بكم"
   audioEnd: 0,        // length of voiceover.mp3
   intro: 7.0,         // opening length; keep at 7.0 (the music and animation are built for it)
-  outroAt: 0,         // "شكرا لمتابعتكم"
-  tail: 3.0,
+  outroAt: 0,         // just after the last word: the closing screen never covers the voice
+  tail: 6.0,          // closing screen after the voice; the music's final chord lands with the social icons
 
   // Opening hook (first 2.6 s, before the map intro): the day's strongest story full-frame with one short,
   // factual line (≤ 2 lines). f = focus [x, y] in the photo. Leave it out for the classic opening.

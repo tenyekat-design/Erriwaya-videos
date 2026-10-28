@@ -6,8 +6,8 @@ window.TIMELINE = {
   audioCut: 0.0,      // keeps the opening teaser ("من أروقة مجلس الأمن...")
   audioEnd: 199.889,
   intro: 7.0,
-  outroAt: 190.82,    // "كان هذا موجز أبرز أخبار اليوم..." -> closing logo
-  tail: 3.0,
+  outroAt: 199.75,    // just after the last word ("والحدث بكل أبعاده") -> closing logo
+  tail: 6.0,          // the outro music's final chord lands with the social icons, then rings out
 
   // opening hook: the strongest story, full-frame, before the map intro
   hook: { img: 'unsc-vote.jpg', f: [0.5, 0.5], kicker: 'الصحراء الغربية', topic: 'دبلوماسية',
@@ -38,8 +38,8 @@ window.TIMELINE = {
     { img: 'ru-af-delegates.jpg', moves: [{ t: 72.1, a: [0.5, 0.3, 1.0], b: [0.5, 0.25, 1.12] }] },
     { img: 'ru-putin.jpg', moves: [{ t: 77.98, a: [0.4, 0.45, 1.0], b: [0.4, 0.4, 1.1] }] },
     // Morocco
-    { img: 'ma-parliament.jpg', moves: [{ t: 81.0, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] },
-                                        { t: 95.32, a: [0.5, 0.2, 1.5], b: [0.5, 0.22, 1.3] }] },
+    { img: 'ma-parliament.jpg', moves: [{ t: 81.0, a: [0.5, 0.45, 1.0], b: [0.5, 0.5, 1.14] }] },
+    { img: 'ma-king.webp', moves: [{ t: 95.32, a: [0.45, 0.4, 1.0], b: [0.45, 0.38, 1.12] }] },
     // Algeria
     { img: 'dz-tebboune-meeting.jpg', moves: [{ t: 104.24, a: [0.5, 0.5, 1.0], b: [0.55, 0.45, 1.1] },
                                               { t: 110.3, a: [0.6, 0.35, 1.5], b: [0.6, 0.35, 1.3] }] },
@@ -47,8 +47,8 @@ window.TIMELINE = {
     { img: 'tn-parliament.jpg', moves: [{ t: 118.8, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.12] }] },
     { img: 'tn-protest.webp', moves: [{ t: 126.36, a: [0.5, 0.45, 1.0], b: [0.6, 0.45, 1.14] }] },
     // Libya
-    { img: 'ly-flood.jpg', moves: [{ t: 136.06, a: [0.5, 0.5, 1.0], b: [0.6, 0.55, 1.14] },
-                                   { t: 142.6, a: [0.35, 0.4, 1.35], b: [0.55, 0.4, 1.35] }] },
+    { img: 'ly-flood.jpg', moves: [{ t: 136.06, a: [0.5, 0.5, 1.0], b: [0.6, 0.55, 1.14] }] },
+    { img: 'ly-flood-car.jpg', moves: [{ t: 142.6, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.04] }] },
     // Mali
     { img: 'ml-army.jpg', moves: [{ t: 148.2, a: [0.55, 0.45, 1.0], b: [0.62, 0.4, 1.14] },
                                   { t: 157.7, a: [0.62, 0.35, 1.4], b: [0.6, 0.35, 1.25] }] },
@@ -117,7 +117,7 @@ window.TIMELINE = {
     { t: 136.3, end: 148.0, kind: 'primary', ids: ['434'], origin: [20.07, 32.12] },
     { t: 148.4, end: 160.9, kind: 'primary', ids: ['466'], origin: [-8.0, 12.64] },
     { t: 161.3, end: 174.6, kind: 'primary', ids: ['686'], origin: [-17.44, 14.69] },
-    { t: 175.4, end: 192.0, kind: 'primary', ids: ['478', '504', '732', '012', '788', '434', '466', '686'], origin: [-15.98, 18.09] },
+    { t: 175.4, end: 199.6, kind: 'primary', ids: ['478', '504', '732', '012', '788', '434', '466', '686'], origin: [-15.98, 18.09] },
   ],
 
   pins: [
