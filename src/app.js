@@ -28,7 +28,7 @@
       side: [480, 800],                  // horizontal offset of the 1st / 2nd side cards
       bar: { x0: 160, x1: 920, y: 682, tl: 60, tr: 1020 },
       kicker: { cx: 540, y: 620 },        // story label pinned to the photo's bottom edge
-      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 156 },
+      head: { cx: 540, cy: 784, maxW: 880, lineH: 62, panelH: 164 },
       map: { x: 50, y: 880, w: 980, h: 412, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
@@ -42,7 +42,7 @@
       side: [570, 900],
       bar: { x0: 980, x1: 1708, y: 826, tl: 864, tr: 1824 },
       kicker: { cx: 1344, y: 752 },
-      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 156 },
+      head: { cx: 1344, cy: 944, maxW: 880, lineH: 62, panelH: 164 },
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
@@ -582,6 +582,34 @@
     return res;
   }
 
+  // Headlines fill the panel: two balanced lines, the font sized so the wider line spans maxW,
+  // then word gaps widened toward maxW (capped, so a short line never shows holes) and centred.
+  function layoutHeadline(text, maxW) {
+    const key = 'H|' + text + '|' + maxW;
+    if (layoutCache[key]) return layoutCache[key];
+    const ref = layoutText(text, 1e6, [48], 1);
+    const words = ref.lines[0].words;
+    const sumW = k0 => words.slice(0, k0).reduce((s, w) => s + w.width, 0);
+    let best = { k: words.length, w: ref.lines[0].width };
+    for (let k = 1; k < words.length; k++) {
+      const w = Math.max(sumW(k) + ref.space * (k - 1), sumW(words.length) - sumW(k) + ref.space * (words.length - k - 1));
+      if (w < best.w) best = { k, w };
+    }
+    const size = clamp(Math.floor(48 * maxW / best.w), 34, 58);
+    ctx.direction = 'rtl';
+    ctx.font = font(size);
+    const space = ctx.measureText(' ').width;
+    const sized = words.map(w => ({ w: w.w, width: ctx.measureText(w.w).width }));
+    const groups = best.k < words.length ? [sized.slice(0, best.k), sized.slice(best.k)] : [sized];
+    const lines = groups.map(ws => {
+      const ink = ws.reduce((s, w) => s + w.width, 0);
+      const gap = ws.length > 1 ? (maxW - ink) / (ws.length - 1) : space;
+      const sp = clamp(gap, space, space + size * 0.32);
+      return { words: ws, width: ink + sp * (ws.length - 1), space: sp };
+    });
+    return (layoutCache[key] = { size, space, lines });
+  }
+
   function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut) {
     const n = lay.lines.length;
     let idx = 0;
@@ -600,7 +628,7 @@
           ctx.fillStyle = color;
           ctx.fillText(wd.w, x, y + (1 - p) * 22 - outP * 16);
         }
-        x -= wd.width + lay.space;
+        x -= wd.width + (ln.space ?? lay.space);
         idx++;
       }
     });
@@ -661,8 +689,8 @@
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
-    const lay = layoutText(h.text, L.head.maxW, [48, 44, 40, 36], 2);
-    drawWords(lay, L.head.cx - 6, L.head.cy, L.head.lineH, '#FFFFFF', a, h.t, tOut);
+    const lay = layoutHeadline(h.text, L.head.maxW);
+    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.25), '#FFFFFF', a, h.t, tOut);
     ctx.restore();
   }
 
