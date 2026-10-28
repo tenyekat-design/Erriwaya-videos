@@ -59,8 +59,28 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 .brand b { font: 34px/1 var(--f-display); letter-spacing: 0 }
 .nav { display: flex; gap: 4px; margin-inline-start: auto; overflow-x: auto; scrollbar-width: none }
 .nav::-webkit-scrollbar { display: none }
-.nav a { padding: 6px 12px; border-radius: 999px; font-weight: 500; white-space: nowrap; font-size: 15px }
-.nav a:hover, .nav a[aria-current="page"] { background: rgb(255 255 255 / .14) }
+.nav a, .nav button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; white-space: nowrap; font-size: 16px; background: none; border: 0; color: inherit }
+.nav a:hover, .nav button:hover, .nav a[aria-current="page"], .nav button[aria-expanded="true"] { background: rgb(255 255 255 / .15) }
+.nav .chev { width: 15px; height: 15px; transition: transform .25s }
+.nav button[aria-expanded="true"] .chev { transform: rotate(180deg) }
+.ic { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle }
+.clock { display: inline-flex; align-items: center; gap: 6px } .clock .ic { width: 15px; height: 15px; opacity: .8 }
+
+/* portals dropdown: a chain of country links that unfolds one by one */
+.portals-panel { background: var(--brand-deep); border-top: 1px solid rgb(255 255 255 / .12); max-height: calc(100vh - 120px); overflow-y: auto; box-shadow: 0 14px 30px rgb(0 0 0 / .25) }
+.portals-panel .wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 280px)); justify-content: start; gap: 8px 48px; padding-block: 16px 20px }
+.pgroup h4 { margin: 0 0 6px; font-size: 13px; font-weight: 400; opacity: .7; letter-spacing: .02em }
+.pchain { list-style: none; margin: 0; padding: 0; position: relative }
+.pchain::before { content: ""; position: absolute; inset-block: 18px; inset-inline-start: 20px; border-inline-start: 1.5px dashed rgb(255 255 255 / .3) }
+.pchain a { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 6px; border-radius: 8px; animation: link-in .32s both; animation-delay: calc(var(--i) * 45ms) }
+.pchain a:hover, .pchain a[aria-current="page"] { background: rgb(255 255 255 / .1) }
+.pchain .node { position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); border: 1.5px solid rgb(255 255 255 / .55); display: grid; place-items: center; flex-shrink: 0; margin-inline-start: 5px }
+.pchain .node .ic { width: 12px; height: 12px }
+.pchain .ar { font-size: 19px }
+.pchain .lat { font-size: 11px; direction: ltr; letter-spacing: .05em; text-transform: uppercase; opacity: .6 }
+.pchain .n { margin-inline-start: auto; font-size: 12px; background: rgb(255 255 255 / .14); border-radius: 999px; padding: 1px 8px; font-variant-numeric: tabular-nums }
+@keyframes link-in { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+@media (max-width: 760px) { .portals-panel .wrap { grid-template-columns: minmax(0, 1fr) } }
 @media (max-width: 700px) {
   .mast .wrap { flex-wrap: wrap; gap: 6px 12px }
   .brand img { height: 38px } .brand b { font-size: 28px }
@@ -70,8 +90,9 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 /* ── breaking ── */
 .breaking { background: var(--breaking); color: #fff }
 .breaking .wrap { display: flex; align-items: center; gap: 12px; padding-block: 8px }
-.breaking .tag { font: 18px/1 var(--f-display); background: #fff; color: var(--breaking); padding: 5px 10px 3px; border-radius: 4px; flex-shrink: 0 }
+.breaking .tag { display: inline-flex; align-items: center; font: 18px/1 var(--f-display); background: #fff; color: var(--breaking); padding: 5px 10px 3px; border-radius: 4px; flex-shrink: 0 }
 .breaking a { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.breaking .tag .ic { width: 14px; height: 14px; margin-inline-end: 2px }
 .breaking .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.4s infinite; flex-shrink: 0 }
 @keyframes pulse { 50% { opacity: .25 } }
 
@@ -98,7 +119,8 @@ main > * { min-width: 0 }
 .rail strong { font-weight: 600; font-size: 15px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden }
 @media (max-width: 860px) { .lead { grid-template-columns: minmax(0, 1fr) } .lead-main h1 { font-size: 30px } }
 
-.meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; color: var(--muted); align-items: center }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); align-items: center }
+.meta .m { display: inline-flex; align-items: center; gap: 4px } .meta .ic { width: 14px; height: 14px }
 .kicker { color: var(--link); font-weight: 600 }
 .kicker.red { color: var(--breaking) }
 .play { position: absolute; inset-inline-start: 10px; bottom: 10px; background: rgb(0 0 0 / .65); color: #fff; border-radius: 999px; font-size: 12px; padding: 3px 10px 3px 8px; display: flex; gap: 5px; align-items: center }
@@ -117,7 +139,8 @@ main > * { min-width: 0 }
 .card:hover h3 { color: var(--link) }
 .card p { margin: 0; color: var(--muted); font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
 .more { display: flex; justify-content: center; margin-top: 22px }
-.btn { border: 1.5px solid var(--brand); background: transparent; color: var(--link); padding: 9px 22px; border-radius: 999px; font-weight: 600 }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--brand); background: transparent; color: var(--link); padding: 9px 22px; border-radius: 999px; font-weight: 600 }
+.btn .ic { width: 18px; height: 18px }
 .btn.solid { background: var(--brand); color: var(--on-brand) }
 .empty { color: var(--muted); padding: 24px 0 }
 .ph { width: 100%; height: 100%; display: grid; place-items: center; background: var(--brand); }
@@ -154,9 +177,10 @@ main > * { min-width: 0 }
 .about .txt { white-space: pre-line; max-width: 62ch; font-size: 17px }
 .contacts { display: grid; gap: 8px; margin-top: 16px }
 .contacts div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
-.contacts span { color: var(--muted); font-size: 14px; min-width: 64px }
+.contacts .m { color: var(--muted); font-size: 14px; min-width: 84px; display: inline-flex; align-items: center; gap: 6px }
 .contacts code { font: 15px var(--f-body); direction: ltr; user-select: all; background: var(--chip); padding: 2px 8px; border-radius: 4px }
-.copy { border: 0; background: none; color: var(--link); font-size: 13px; padding: 2px 4px }
+.copy { border: 0; background: none; color: var(--link); padding: 4px; display: inline-flex; border-radius: 6px }
+.copy:hover { background: var(--chip) }
 form { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px }
 form h3 { font: 22px/1.2 var(--f-display) }
 label { display: grid; gap: 4px; font-size: 14px; color: var(--muted) }
@@ -174,7 +198,7 @@ footer small { opacity: .7 }
 
 /* ── article view ── */
 .article { max-width: 760px; margin-inline: auto; display: grid; gap: 18px }
-.article .back { justify-self: start; color: var(--link); font-weight: 500; background: none; border: 0; padding: 0 }
+.article .back { display: inline-flex; align-items: center; gap: 6px; justify-self: start; color: var(--link); font-weight: 500; background: none; border: 0; padding: 0 }
 .article h1 { font: 40px/1.4 var(--f-display) }
 .article .gallery { display: grid; gap: 10px }
 .article .gallery img { width: 100%; border-radius: 6px }
@@ -190,7 +214,7 @@ footer small { opacity: .7 }
 .modal .frame.tall { aspect-ratio: 9/16; max-height: 78vh; justify-self: center; width: auto; height: 78vh }
 .modal iframe { width: 100%; height: 100%; border: 0 }
 .modal .row { display: flex; justify-content: space-between; gap: 12px; color: #fff; align-items: center }
-.modal button { background: #fff; color: #000; border: 0; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
+.modal button { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #000; border: 0; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
 .modal a { color: #fff; text-decoration: underline }
 
 .skeleton { background: linear-gradient(90deg, var(--chip), var(--line), var(--chip)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px }
@@ -198,8 +222,35 @@ footer small { opacity: .7 }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } }
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></symbol>
+    <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-6M15 17v-2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L20 15.5V19a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m10 13 4.5-4.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  </defs>
+</svg>
+
 <div class="top"><div class="wrap">
-  <span id="clock">نواكشوط</span>
+  <span class="clock"><svg class="ic"><use href="#i-clock"/></svg><span id="clock">نواكشوط</span></span>
   <nav class="socials" aria-label="منصات الرواية">
     <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener">يوتيوب</a>
     <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener">فيسبوك</a>
@@ -211,18 +262,20 @@ footer small { opacity: .7 }
 <header class="mast"><div class="wrap">
   <a class="brand" href="#home" aria-label="الرواية — الصفحة الرئيسية"><img src="assets/logo.png" alt=""><b>الرواية</b></a>
   <nav class="nav" id="nav">
-    <a href="#home">الرئيسية</a>
-    <a href="#cat-1">الموجز</a>
-    <a href="#cat-2">تحقيقات</a>
-    <a href="#cat-3">تقارير</a>
-    <a href="#portals">البوابات</a>
-    <a href="#videos">فيديو</a>
-    <a href="#about">من نحن</a>
+    <a href="#home"><svg class="ic"><use href="#i-home"/></svg>الرئيسية</a>
+    <button type="button" id="portalsBtn" aria-expanded="false" aria-controls="portalsPanel"><svg class="ic"><use href="#i-globe"/></svg>البوابات<svg class="ic chev"><use href="#i-chev"/></svg></button>
+    <a href="#cat-1"><svg class="ic"><use href="#i-brief"/></svg>الموجز</a>
+    <a href="#cat-2"><svg class="ic"><use href="#i-search"/></svg>تحقيقات</a>
+    <a href="#cat-3"><svg class="ic"><use href="#i-report"/></svg>تقارير</a>
+    <a href="#videos"><svg class="ic"><use href="#i-play"/></svg>فيديو</a>
+    <a href="#about"><svg class="ic"><use href="#i-info"/></svg>من نحن</a>
   </nav>
-</div></header>
+</div>
+<div class="portals-panel" id="portalsPanel" hidden><div class="wrap" id="portalsList"></div></div>
+</header>
 
 <div class="breaking" id="breaking" hidden><div class="wrap">
-  <span class="tag">عاجل</span><span class="dot"></span><a id="breakingLink" href="#home"></a>
+  <span class="tag"><svg class="ic"><use href="#i-bolt"/></svg>عاجل</span><span class="dot"></span><a id="breakingLink" href="#home"></a>
 </div></div>
 
 <main class="wrap" id="main"></main>
@@ -343,6 +396,7 @@ function feed() {
 
 // ── عناصر العرض ──
 const playIcon = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>`;
+const ic = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
 function media(it, big) {
   const src = big ? bigThumbOf(it) : thumbOf(it);
   const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" ${it.kind === "v" ? `data-alt="https://i.ytimg.com/vi/${it.id}/hqdefault.jpg"` : ""} onerror="imgErr(this)">`
@@ -359,7 +413,8 @@ window.imgErr = el => {
 function metaLine(it) {
   const c = cats(it)[0];
   const k = isFreshBreaking(it) ? `<span class="kicker red">عاجل</span>` : c ? `<span class="kicker">${esc(c)}</span>` : "";
-  return `<div class="meta">${k}<span>${timeAgo(it.date)}</span>${it.kind === "v" && it.views ? `<span>${fmtViews(it.views)}</span>` : ""}</div>`;
+  const t = timeAgo(it.date);
+  return `<div class="meta">${k}${t ? `<span class="m"><svg class="ic"><use href="#i-clock"/></svg>${t}</span>` : ""}${it.kind === "v" && it.views ? `<span class="m"><svg class="ic"><use href="#i-eye"/></svg>${fmtViews(it.views)}</span>` : ""}</div>`;
 }
 function card(it) {
   return `<a class="card" href="${hrefOf(it)}">${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
@@ -389,10 +444,9 @@ function homeView() {
     <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
     <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map((f, i) => `<button type="button" data-f="${i ? esc(f) : "all"}" aria-pressed="${(i ? f : "all") === state.filter}">${esc(f)}</button>`).join("")}</div>
     <div class="feed">${filtered.slice(0, state.shown).map(card).join("") || `<p class="empty">لا مواد في هذا التصنيف بعد.</p>`}</div>
-    ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">المزيد من الأخبار</button></div>` : ""}
+    ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">${ic("plus")}المزيد من الأخبار</button></div>` : ""}
   </section>
 
-  ${portalsSection()}
 
   ${shorts.length ? `<section aria-label="مقاطع قصيرة">
     <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
@@ -403,42 +457,47 @@ function homeView() {
   ${aboutSection()}`;
 }
 
-function portalsSection() {
+function renderPortals() {
   const items = feed();
   const groups = [...new Set(PORTALS.map(p => p[3]))];
-  return `<section id="portals" aria-label="البوابات">
-    <div class="sec-h"><h2>البوابات</h2><span>12 دولة ومنطقة</span></div>
-    <div class="regions">${groups.map(g => `<div class="region"><h3>${esc(g)}</h3><ul>${PORTALS.filter(p => p[3] === g).map(p => {
-      const n = items.filter(it => inPortal(p, it)).length;
-      return `<li><a href="#p-${p[0]}"><span class="ar">${p[1]}</span><span class="lat">${p[2]}</span><span class="n">${n ? n + " مادة" : ""}</span></a></li>`;
-    }).join("")}</ul></div>`).join("")}</div>
-  </section>`;
+  const cur = location.hash.slice(1);
+  let i = 0;
+  $("#portalsList").innerHTML = groups.map(g => `<div class="pgroup"><h4>${esc(g)}</h4><ul class="pchain">${PORTALS.filter(p => p[3] === g).map(p => {
+    const n = items.filter(it => inPortal(p, it)).length;
+    return `<li><a href="#p-${p[0]}" style="--i:${i++}" ${cur === "p-" + p[0] ? 'aria-current="page"' : ""}><span class="node">${ic("pin")}</span><span class="ar">${p[1]}</span><span class="lat">${p[2]}</span>${n ? `<span class="n">${n}</span>` : ""}</a></li>`;
+  }).join("")}</ul></div>`).join("");
+}
+function togglePortals(open) {
+  const panel = $("#portalsPanel"), btn = $("#portalsBtn");
+  open = open ?? panel.hidden;
+  if (open) renderPortals();
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open));
 }
 
 function appBand() {
   return `<section class="app" aria-label="تطبيق الرواية">
     <img src="assets/icon.png" alt="">
     <div><h2>تطبيق الرواية</h2><p>الأخبار العاجلة لحظة صدورها، والبوابات والفيديو في جيبك. متاح لأجهزة أندرويد.</p></div>
-    <a class="btn" href="${APK}" target="_blank" rel="noopener">تحميل التطبيق</a>
+    <a class="btn" href="${APK}" target="_blank" rel="noopener">${ic("download")}تحميل التطبيق</a>
   </section>`;
 }
 
 function aboutSection() {
   const s = state.site || {};
   const about = (s.about || "").trim() || DEFAULT_ABOUT;
-  const rows = [["البريد", s.email], ["واتساب", s.whatsapp], ["الهاتف", s.phone]].filter(r => r[1]);
+  const rows = [["mail", "البريد", s.email], ["chat", "واتساب", s.whatsapp], ["phone", "الهاتف", s.phone]].filter(r => r[2]);
   return `<section id="about" class="about" aria-label="من نحن">
     <div>
       <div class="sec-h"><h2>من نحن</h2></div>
       <div class="txt">${esc(about)}</div>
-      ${rows.length ? `<div class="contacts">${rows.map(([k, v]) => `<div><span>${k}</span><code>${esc(v)}</code><button class="copy" type="button" data-copy="${esc(v)}">نسخ</button></div>`).join("")}</div>` : ""}
+      ${rows.length ? `<div class="contacts">${rows.map(([i, k, v]) => `<div><span class="m">${ic(i)}${k}</span><code>${esc(v)}</code><button class="copy" type="button" data-copy="${esc(v)}" aria-label="نسخ">${ic("copy")}</button></div>`).join("")}</div>` : ""}
     </div>
     <form id="contact" novalidate>
       <h3>راسل الرواية</h3>
       <label for="cName">الاسم<input id="cName" name="name" maxlength="80" required autocomplete="name"></label>
       <label for="cContact">بريدك أو رقمك (اختياري)<input id="cContact" name="contact" maxlength="120" dir="auto"></label>
       <label for="cText">رسالتك أو معلومتك<textarea id="cText" name="text" maxlength="2000" required></textarea></label>
-      <button class="btn solid" type="submit">إرسال</button>
+      <button class="btn solid" type="submit">${ic("send")}إرسال</button>
       <p class="status" id="cStatus" role="status"></p>
     </form>
   </section>`;
@@ -446,7 +505,7 @@ function aboutSection() {
 
 function listView(title, sub, items, back = true) {
   return `<section>
-    ${back ? `<button class="btn" type="button" data-back style="margin-bottom:16px">← الرئيسية</button>` : ""}
+    ${back ? `<button class="btn" type="button" data-back style="margin-bottom:16px">${ic("back")}الرئيسية</button>` : ""}
     <div class="sec-h"><h2>${esc(title)}</h2><span>${esc(sub)}</span></div>
     <div class="feed">${items.map(card).join("") || `<p class="empty">لا مواد هنا بعد.</p>`}</div>
   </section>`;
@@ -457,14 +516,14 @@ function articleView(a) {
   const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
   const c = cats(a);
   return `<article class="article">
-    <button class="back" type="button" data-back>← الرئيسية</button>
-    <div class="meta">${isFreshBreaking(a) ? `<span class="kicker red">عاجل</span>` : ""}${c.map(x => `<span class="kicker">${esc(x)}</span>`).join("")}<span>${timeAgo(a.date)}</span></div>
+    <button class="back" type="button" data-back>${ic("back")}الرئيسية</button>
+    <div class="meta">${isFreshBreaking(a) ? `<span class="kicker red">عاجل</span>` : ""}${c.map(x => `<span class="kicker">${esc(x)}</span>`).join("")}<span class="m">${ic("clock")}${timeAgo(a.date)}</span></div>
     <h1>${esc(a.title)}</h1>
     <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
     <div class="body">${paras}</div>
     <div class="tools">
-      <button class="btn" type="button" data-copy="${esc(location.href.split("#")[0] + "#a-" + a.id)}">نسخ رابط الخبر</button>
-      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + location.href.split("#")[0] + "#a-" + a.id)}">مشاركة على واتساب</a>
+      <button class="btn" type="button" data-copy="${esc(location.href.split("#")[0] + "#a-" + a.id)}">${ic("link")}نسخ رابط الخبر</button>
+      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + location.href.split("#")[0] + "#a-" + a.id)}">${ic("chat")}مشاركة على واتساب</a>
     </div>
   </article>`;
 }
@@ -495,7 +554,8 @@ function route() {
     main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
   }
   main.innerHTML = homeView();
-  if (h === "portals" || h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
+  if (h === "portals") { togglePortals(true); window.scrollTo(0, 0); }
+  else if (h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
   else if (h === "home") window.scrollTo(0, 0);
 }
 
@@ -504,7 +564,7 @@ function onHash() {
   const h = location.hash;
   if (/^#v-/.test(h)) { const id = h.slice(3); openVideo(id); return; }
   closeVideo(false);
-  if (h !== lastHash) { lastHash = h; route(); }
+  if (h !== lastHash) { lastHash = h; if (h !== "#portals") togglePortals(false); route(); }
 }
 
 // ── الفيديو ──
@@ -514,7 +574,7 @@ function openVideo(id) {
   if (!CAN_EMBED) { window.open(url, "_blank", "noopener") || (location.href = url); history.replaceState(null, "", lastHash || "#home"); return; }
   const m = $("#modal");
   m.innerHTML = `<div class="box">
-    <div class="row"><strong>${esc(v.title)}</strong><button type="button" id="closeV">إغلاق</button></div>
+    <div class="row"><strong>${esc(v.title)}</strong><button type="button" id="closeV">${ic("x")}إغلاق</button></div>
     <div class="frame${v.short ? " tall" : ""}"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${esc(v.title || "فيديو الرواية")}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
     <div class="row"><a href="${url}" target="_blank" rel="noopener">شاهد على يوتيوب</a></div></div>`;
   m.hidden = false; $("#closeV").focus();
@@ -615,6 +675,8 @@ async function sendMessage(form) {
 
 // ── الأحداث ──
 document.addEventListener("click", e => {
+  if (e.target.closest("#portalsBtn")) { togglePortals(); return; }
+  if (!$("#portalsPanel").hidden && !e.target.closest("#portalsPanel")) togglePortals(false);
   const f = e.target.closest("[data-f]");
   if (f) { state.filter = f.dataset.f; state.shown = 12; const y = scrollY; route(); scrollTo(0, y); return; }
   if (e.target.id === "moreBtn") { state.shown += 12; const y = scrollY; route(); scrollTo(0, y); return; }
@@ -627,7 +689,7 @@ document.addEventListener("click", e => {
   }
 });
 document.addEventListener("submit", e => { if (e.target.id === "contact") { e.preventDefault(); sendMessage(e.target); } });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeVideo(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVideo(); togglePortals(false); } });
 window.addEventListener("hashchange", onHash);
 
 $("#yr").textContent = new Date().getFullYear();
