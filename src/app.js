@@ -839,8 +839,8 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     // title and date span the logo's body so the two read as one block, top and bottom aligned
-    // text block centred on the logo's visual weight (its lower half), set close to it
-    const tx = lb.x - 16;
+    // text block centred on the logo's visual weight (its lower half), with a clear gap from it
+    const tx = lb.x - 52;
     const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     ctx.fillStyle = C.navy; ctx.font = font(L.hdrText[0]);
