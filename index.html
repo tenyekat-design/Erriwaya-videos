@@ -224,7 +224,8 @@ footer small { opacity: .7 }
 .modal iframe { width: 100%; height: 100%; border: 0 }
 .modal .row { display: flex; justify-content: space-between; gap: 12px; color: #fff; align-items: center }
 .modal button { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #000; border: 0; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
-.modal a { color: #fff; text-decoration: underline }
+.modal a.yt { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #000; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
+.modal .row span { opacity: .75; font-size: 14px }
 
 .skeleton { background: linear-gradient(90deg, var(--chip), var(--line), var(--chip)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px }
 @keyframes sk { to { background-position: -200% 0 } }
@@ -399,7 +400,10 @@ const isFreshBreaking = it => it.kind === "a" && it.breaking && it.date && Date.
 const thumbOf = it => it.kind === "v" ? `https://i.ytimg.com/vi/${it.id}/${it.short ? "oar2" : "hqdefault"}.jpg`
   : it.thumb ? `data:image/jpeg;base64,${it.thumb}` : (it.images[0] || "");
 const bigThumbOf = it => it.kind === "v" && !it.short ? `https://i.ytimg.com/vi/${it.id}/maxresdefault.jpg` : thumbOf(it);
-const hrefOf = it => it.kind === "a" ? `#a-${it.id}` : `#v-${it.id}`;
+const ytUrl = v => v.short ? `https://www.youtube.com/shorts/${v.id}` : `https://www.youtube.com/watch?v=${v.id}`;
+// حيث لا يمكن تشغيل يوتيوب داخل الصفحة، يفتح الفيديو مباشرة في يوتيوب
+const hrefOf = it => it.kind === "a" ? `#a-${it.id}` : CAN_EMBED ? `#v-${it.id}` : ytUrl(it);
+const tgt = it => it.kind === "v" && !CAN_EMBED ? ' target="_blank" rel="noopener"' : "";
 const excerpt = b => { const t = b.replace(/\s+/g, " ").trim(); return t.length > 170 ? t.slice(0, 170) + "…" : t; };
 const fmtViews = n => n >= 1e6 ? (n / 1e6).toFixed(1) + " مليون مشاهدة" : n >= 1e3 ? Math.round(n / 1e3) + " ألف مشاهدة" : n ? n + " مشاهدة" : "";
 
@@ -431,7 +435,7 @@ function metaLine(it) {
   return `<div class="meta">${k}${t ? `<span class="m"><svg class="ic"><use href="#i-clock"/></svg>${t}</span>` : ""}${it.kind === "v" && it.views ? `<span class="m"><svg class="ic"><use href="#i-eye"/></svg>${fmtViews(it.views)}</span>` : ""}</div>`;
 }
 function card(it) {
-  return `<a class="card" href="${hrefOf(it)}">${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
+  return `<a class="card" href="${hrefOf(it)}"${tgt(it)}>${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
 }
 
 function renderBreaking() {
@@ -450,8 +454,8 @@ function homeView() {
   const shorts = state.videos.filter(v => v.short).slice(0, 16);
   return `
   <section class="lead" aria-label="الأبرز">
-    <a class="lead-main" href="${hrefOf(lead)}">${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
-    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
+    <a class="lead-main" href="${hrefOf(lead)}"${tgt(lead)}>${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
+    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
 
   <section id="latest" aria-label="آخر الأخبار">
@@ -464,7 +468,7 @@ function homeView() {
 
   ${shorts.length ? `<section aria-label="مقاطع قصيرة">
     <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
-    <div class="shorts">${shorts.map(s => `<a class="short" href="#v-${s.id}"><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" data-alt="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" onerror="imgErr(this)"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
+    <div class="shorts">${shorts.map(s => `<a class="short" href="${hrefOf(s)}"${tgt(s)}><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" data-alt="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" onerror="imgErr(this)"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
   </section>` : ""}
 
   ${appBand()}
@@ -590,8 +594,8 @@ function openVideo(id) {
   const m = $("#modal");
   m.innerHTML = `<div class="box">
     <div class="row"><strong>${esc(v.title)}</strong><button type="button" id="closeV">${ic("x")}إغلاق</button></div>
-    <div class="frame${v.short ? " tall" : ""}"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${esc(v.title || "فيديو الرواية")}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
-    <div class="row"><a href="${url}" target="_blank" rel="noopener">شاهد على يوتيوب</a></div></div>`;
+    <div class="frame${v.short ? " tall" : ""}"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" title="${esc(v.title || "فيديو الرواية")}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+    <div class="row"><span>إذا لم يعمل الفيديو هنا:</span><a class="yt" href="${url}" target="_blank" rel="noopener">${ic("play")}شاهد على يوتيوب</a></div></div>`;
   m.hidden = false; $("#closeV").focus();
 }
 function closeVideo(restore = true) {
