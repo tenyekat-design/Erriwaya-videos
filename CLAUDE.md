@@ -27,7 +27,7 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
    or `--format story` (1080x1920, TikTok/Reels/Shorts). ~3–5 min each. YouTube and story videos are git-ignored (> 100 MB).
    Each render also writes `output/erriwaya-brief-<date>[-format]-cover.jpg` (thumbnail in the broadcast look: the
    hook's photo full-frame, its tag and line on the white bar, all countries in the strip below; `cover: { imgs: [...] }`
-   in edition.js overrides the photo) and
+   in edition.js overrides the photo; it is also embedded in that video file as its picture) and
    `output/erriwaya-brief-<date>-description.txt` (stories, YouTube chapter timestamps, handles, hashtags)
    and `output/erriwaya-brief-<date>.srt` (subtitles for YouTube/Facebook, from subtitles.txt).
    `--cover` writes only these, in seconds.

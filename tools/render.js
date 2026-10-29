@@ -2,7 +2,8 @@
 //   node tools/render.js --edition 2026-10-24                 full video -> output/erriwaya-brief-2026-10-24.mp4
 //   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
 //   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
-//   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only
+//   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only (and the cover
+//                                                             embedded in an existing video of that format)
 //   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg, -description.txt and .srt)
 //   add --format youtube for the 1920x1080 layout, --format story for 1080x1920 (default: feed, 1080x1350)
 //   add --look classic for the white layout approved before 29 Oct 2026 (default: broadcast)
@@ -145,6 +146,16 @@ function subtitles() {
   console.log('wrote', file);
 }
 
+// The cover is also embedded in the video file as its picture (shown by phones, file browsers and players).
+function embedCover() {
+  if (!fs.existsSync(OUT) || !fs.existsSync(COVER)) return;
+  const tmpOut = OUT.replace(/\.mp4$/, '.cover-tmp.mp4');
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', OUT, '-i', COVER, '-map', '0', '-map', '1', '-c', 'copy',
+    '-disposition:v:1', 'attached_pic', '-movflags', '+faststart', tmpOut]);
+  fs.renameSync(tmpOut, OUT);
+  console.log('cover embedded in', OUT);
+}
+
 async function renderRange(browser, f0, f1, file) {
   const page = await openPage(browser);
   const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
@@ -219,7 +230,7 @@ function buildAudio(duration, file) {
   if (args.stills) return stills(String(args.stills).split(',').map(Number));
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  if (args.cover) { await cover(browser); await browser.close(); description(); return subtitles(); }
+  if (args.cover) { await cover(browser); await browser.close(); embedCover(); description(); return subtitles(); }
   const probe = await openPage(browser);
   const duration = await probe.evaluate(() => window.DURATION);
   await probe.close();
@@ -249,6 +260,7 @@ function buildAudio(duration, file) {
     const b2 = await chromium.launch({ args: ['--allow-file-access-from-files'] });
     await cover(b2);
     await b2.close();
+    embedCover();
     description();
     subtitles();
   } else {
