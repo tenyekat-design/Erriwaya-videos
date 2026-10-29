@@ -97,13 +97,24 @@
   // modern: full-frame photo, story segments along the top, frosted panel with a big right-aligned headline
   // and the spoken words, a round locator map, and a coloured wipe with the story number at each new story
   if (LOOK === 'pro') Object.assign(L, {
-    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, pro: true,
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, pro: true, segments: true, wipe: true,
     logoH: 132, logoY: 58, hdrText: [38, 24],
     glass: { x: 30, y: 884, w: 1020, h: 430, r: 38 },
     kicker: { cx: 540, right: 1006, y: 930 },
     head: { cx: 540, right: 1006, cy: 1068, maxW: 930, lineH: 62, panelH: 150, size: [50, 58] },
     caption: { right: 1006, cy: 1252, maxW: 930, sizes: [38, 35], style: 'text' },
     inset: { S: 700, round: true, big: null, small: { x: 36, y: 214, s: 0.27 } },
+  });
+  // bold: blurred photo as the backdrop, the photo itself framed and tilted, headline lines in solid boxes,
+  // the country's name drifting large behind, spoken words below
+  if (LOOK === 'bold') Object.assign(L, {
+    card: { cx: 540, cy: 492, w: 920, h: 556 }, slide: true, photoR: 26, dark: true, noPanel: true, segments: true,
+    frame: { border: 10, tilt: -1.6 }, blurBg: true, boxed: true, marquee: { y: 1245, size: 170 },
+    logoH: 132, logoY: 58, hdrText: [38, 24],
+    kicker: { cx: 540, right: 1010, y: 826 },
+    head: { cx: 540, right: 1010, cy: 952, maxW: 900, lineH: 62, panelH: 150, size: [46, 54] },
+    caption: { right: 1010, cy: 1128, maxW: 920, sizes: [36, 33], style: 'text' },
+    inset: { S: 700, round: true, big: null, small: { x: 96, y: 236, s: 0.21 } },
   });
   if (LOOK === 'captions') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
@@ -564,11 +575,41 @@
     items.sort((A, B) => B.ar - A.ar);
     ctx.save();
     ctx.globalAlpha = alpha;
+    if (L.blurBg) {
+      // the current photo, blurred and darkened, fills the frame; cross-fades with the next one
+      const i0 = clamp(base, 0, CARDS.length - 1), fr = p - base;
+      ctx.filter = 'blur(36px)';
+      coverDraw(IMG[CARDS[i0].img], -60, -60, W + 120, H + 120, 0.5, 0.5, 1);
+      if (fr > 0 && i0 + 1 < CARDS.length) { ctx.globalAlpha = alpha * fr; coverDraw(IMG[CARDS[i0 + 1].img], -60, -60, W + 120, H + 120, 0.5, 0.5, 1); }
+      ctx.filter = 'none';
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = 'rgba(11,31,75,0.5)'; ctx.fillRect(0, 0, W, H);
+    }
+    if (L.marquee) {
+      const seg = chipSegment(Math.max(a, CUT));
+      if (seg) {
+        const M = L.marquee;
+        ctx.font = font(M.size); ctx.direction = 'rtl'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        const unit = seg.kicker + '  •  ', uw = ctx.measureText(unit).width;
+        const off = ((a - seg.t0) * 70) % uw;
+        ctx.fillStyle = 'rgba(255,255,255,0.17)';
+        for (let x = -uw + off; x < W; x += uw) ctx.fillText(unit, x, M.y);
+      }
+    }
     for (const it of items) {
       const cw = w * it.sc, ch = h * it.sc;
       const x = it.x - cw / 2, y = cy - ch / 2 + outP * 60;
       const card = CARDS[it.i];
       ctx.save();
+      if (L.frame) {
+        // white frame, slightly tilted; lands straighter as it settles
+        const tl = L.frame.tilt * RAD * (1 + 0.6 * Math.min(1, it.ar)) * (it.r < 0 ? -1 : 1);
+        ctx.translate(it.x, y + ch / 2); ctx.rotate(tl); ctx.translate(-it.x, -(y + ch / 2));
+        const b = L.frame.border;
+        ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 60; ctx.shadowOffsetY = 26;
+        ctx.fillStyle = '#fff';
+        rrect(x - b, y - b, cw + 2 * b, ch + 2 * b, L.photoR + b); ctx.fill();
+      }
       ctx.shadowColor = `rgba(11,31,75,${0.22 * (1 - Math.min(1, it.ar) * 0.5)})`;
       ctx.shadowBlur = 50; ctx.shadowOffsetY = 22;
       ctx.fillStyle = '#fff';
@@ -615,13 +656,13 @@
     }
     if (L.dark) {
       // full-frame photo: navy shade at the top (header) and bottom (headline)
-      const th = L.caption ? 480 : 320;
+      const th = LOOK === 'captions' ? 480 : 320;
       const gt = ctx.createLinearGradient(0, 0, 0, th);
-      gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(L.caption ? 0.6 : 0, `rgba(11,31,75,${L.caption ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
+      gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(LOOK === 'captions' ? 0.6 : 0, `rgba(11,31,75,${LOOK === 'captions' ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
       ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th);
       const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
       gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, `rgba(11,31,75,${L.pro ? 0.45 : 0.8})`); gb.addColorStop(1, `rgba(11,31,75,${L.pro ? 0.7 : 0.96})`);
-      ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5);
+      if (!L.blurBg) { ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5); }
     }
     ctx.restore();
   }
@@ -899,6 +940,7 @@
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
+    if (L.boxed) { drawBoxed(lay, a, h.t, tOut); ctx.restore(); return; }
     if (L.dark) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }
     drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut, L.head.right);
     ctx.restore();
@@ -961,6 +1003,28 @@
   }
 
   // ---------- modern look extras ----------
+  // headline lines on solid boxes (white, then green) that wipe in from the right and out to the left
+  function drawBoxed(lay, a, tIn, tOut) {
+    const n = lay.lines.length, lineH = Math.round(lay.size * 1.62), R = L.head.right + 24;
+    const outP = tOut == null ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    lay.lines.forEach((ln, li) => {
+      const y = L.head.cy + (li - (n - 1) / 2) * lineH;
+      const p = eio(prog(a, tIn + li * 0.12, tIn + li * 0.12 + 0.4));
+      const bw = ln.width + 48, bh = lay.size * 1.4;
+      const left = R - bw * p, right = R - bw * eio(prog(outP, li * 0.15, 0.85 + li * 0.15));
+      if (right - left <= 1) return;
+      ctx.save();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = li === 1 ? '#0A8F65' : '#fff';
+      rrect(left, y - bh / 2, right - left, bh, 12); ctx.fill();
+      ctx.clip();
+      ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = li === 1 ? '#fff' : C.navy;
+      let x = R - 24;
+      for (const wd of ln.words) { ctx.fillText(wd.w, x, y + lay.size * 0.06); x -= wd.width + (ln.space ?? lay.space); }
+      ctx.restore();
+    });
+  }
   function drawGlass(alpha) {
     const G = L.glass;
     ctx.save();
@@ -1077,7 +1141,7 @@
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = dim;
     ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
-    for (let i = 0; i < (L.pro ? 0 : n); i++) {
+    for (let i = 0; i < (L.segments ? 0 : n); i++) {
       const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
@@ -1598,15 +1662,15 @@
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
       if (L.glass) drawGlass(inA(1));
-      if (!L.pro) drawProgress(Math.max(a, CUT), inA(2));
+      if (!L.segments) drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
       drawCaptions(a, inA(3));
-      if (L.pro) drawStoryWipe(a);
+      if (L.wipe) drawStoryWipe(a);
       if (t >= OUTRO) ctx.restore();
       const hdr = eout(prog(t, 6.8, 7.4)) * (1 - eio(prog(t, OUTRO, OUTRO + 0.4)));
       drawHeader(a, hdr);
-      if (L.pro) drawSegments(a, hdr);
+      if (L.segments) drawSegments(a, hdr);
       if (t >= 6.85 && t < OUTRO + 0.15) {
         const lb = logoBox();
         ctx.drawImage(L.dark ? LOGO_W : LOGO, lb.x, lb.y, lb.w, lb.h);
