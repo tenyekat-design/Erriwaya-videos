@@ -120,11 +120,11 @@
   // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
   if (LOOK === 'broadcast') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
-    broadcast: true, sting: true,
+    broadcast: true, sting: true, staticText: true, titleInBar: true,
     logoH: 132, logoY: 58, hdrText: [38, 24],
     kicker: { cx: 540, right: 1050, y: 912 },
     lower: { x: 30, y: 950, w: 1020, h: 178 },
-    head: { cx: 540, right: 1004, cy: 1039, maxW: 920, lineH: 62, panelH: 150, size: [46, 54], color: C.navy },
+    head: { cx: 540, right: 1004, cy: 1039, maxW: 700, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
     caption: { right: 1004, cy: 1166, maxW: 950, sizes: [31, 28, 25], lines: 1, style: 'text' },
     ticker: { y: 1236, h: 78 },
     inset: { S: 700, big: null, small: { x: 40, y: 214, s: 0.3 } },
@@ -898,12 +898,12 @@
     ctx.direction = 'rtl';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    const outP = tOut == null ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    const outP = tOut == null || L.staticText ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
       const y = cy + (li - (n - 1) / 2) * lineH;
       let x = right != null ? right : cx + ln.width / 2;
       for (const wd of ln.words) {
-        const p = eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
+        const p = L.staticText ? 1 : eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
         if (p > 0) {
           ctx.globalAlpha = p * (1 - outP);
           ctx.fillStyle = color;
@@ -988,7 +988,7 @@
     const C2 = L.caption;
     const lay = layoutText(p.text, C2.maxW, C2.sizes, C2.lines || 2);
     const lineH = Math.round(lay.size * 1.45);
-    const pin = eout(prog(a, p.t0 - 0.05, p.t0 + 0.2));
+    const pin = L.staticText ? 1 : eout(prog(a, p.t0 - 0.05, p.t0 + 0.2));
     ctx.save();
     ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     let idx = 0;
@@ -1027,12 +1027,22 @@
     ctx.beginPath(); ctx.moveTo(xr, B.y); ctx.lineTo(xr - w, B.y); ctx.lineTo(xr - w + 26 * wipe, B.y + B.h); ctx.lineTo(xr, B.y + B.h); ctx.closePath(); ctx.fill();
     ctx.shadowColor = 'transparent';
     ctx.fillStyle = '#0A8F65'; ctx.fillRect(xr - 16, B.y, 16, B.h);
+    if (L.titleInBar && wipe > 0.98) {
+      // programme name and date at the bar's left end, apart from the headline by a thin rule
+      const bx = B.x + 46, bw = 230, cy = B.y + B.h / 2;
+      ctx.fillStyle = '#E2E7EF'; ctx.fillRect(bx + bw + 14, B.y + 30, 2, B.h - 60);
+      ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.navy; ctx.font = font(34);
+      ctx.fillText(TL.title, bx + bw / 2, cy - 18);
+      ctx.fillStyle = C.gray; ctx.font = font(22);
+      ctx.fillText(TL.date, bx + bw / 2, cy + 26);
+    }
     const sw = (B.w - 26) * eio(clamp(wipe * 1.2 - 0.2));
     ctx.fillStyle = 'rgba(11,31,75,0.94)';
     ctx.fillRect(xr - sw, B.y + B.h, sw, 76);
     ctx.restore();
   }
-  // broadcast story tag in the lower third's style: green block (country) and white block (topic), square
+  // broadcast story tag in the lower third's style: one chip, green (country) then white (topic), square
   // corners and the same slanted left edge, sitting on the headline bar; wipes in from the right
   function drawTag(kicker, topic, p) {
     const B = L.lower, xr = B.x + B.w, th = 58, y = B.y - th, sl = 9;
@@ -1043,15 +1053,13 @@
     ctx.font = font(27);
     const tw = topic ? ctx.measureText(topic).width + 44 : 0;
     const full = kw + tw + sl, vis = full * eio(p);
-    ctx.beginPath(); ctx.rect(xr - vis - sl, y - 4, vis + sl, th + 8); ctx.clip();
-    const poly = (x0, x1, col) => {
-      ctx.fillStyle = col;
-      ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x0, y); ctx.lineTo(x0 + sl, y + th); ctx.lineTo(x1, y + th); ctx.closePath(); ctx.fill();
-    };
+    ctx.beginPath(); ctx.rect(xr - vis - sl, y - 30, vis + sl, th + 30); ctx.clip();
+    const x0 = xr - full;
+    ctx.beginPath(); ctx.moveTo(xr, y); ctx.lineTo(x0, y); ctx.lineTo(x0 + sl, y + th); ctx.lineTo(xr, y + th); ctx.closePath();
     ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
-    if (topic) poly(xr - kw - tw - sl, xr - kw + 1, '#fff');
-    poly(xr - kw - (topic ? 0 : sl), xr, '#0A8F65');
+    ctx.fillStyle = topic ? '#fff' : '#0A8F65'; ctx.fill();
     ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#0A8F65'; ctx.fillRect(xr - kw, y, kw, th);
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.font = font(32); ctx.fillStyle = '#fff';
     ctx.fillText(kicker, xr - kw / 2, y + th / 2 + 2);
@@ -1104,7 +1112,7 @@
       ctx.shadowColor = 'transparent';
       ctx.clip();
       ctx.fillStyle = '#34D399'; ctx.fillRect(0, cy + bh / 2 - 5, W, 5);
-      const ta = eout(prog(p, 0.2, 0.42)), tx = (1 - ta) * 50;
+      const ta = L.staticText ? 1 : eout(prog(p, 0.2, 0.42)), tx = (1 - ta) * 50;
       ctx.globalAlpha = ta;
       ctx.textBaseline = 'middle';
       ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.font = font(92); ctx.fillStyle = '#34D399';
@@ -1123,7 +1131,7 @@
   // headline lines on solid boxes (white, then green) that wipe in from the right and out to the left
   function drawBoxed(lay, a, tIn, tOut) {
     const n = lay.lines.length, lineH = Math.round(lay.size * 1.62), R = L.head.right + 24;
-    const outP = tOut == null ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    const outP = tOut == null || L.staticText ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
       const y = L.head.cy + (li - (n - 1) / 2) * lineH;
       const p = eio(prog(a, tIn + li * 0.12, tIn + li * 0.12 + 0.4));
@@ -1242,10 +1250,12 @@
     const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     const ink = L.dark ? '#fff' : C.navy, dim = L.dark ? 'rgba(255,255,255,0.8)' : C.gray;
-    ctx.fillStyle = ink; ctx.font = font(L.hdrText[0]);
-    ctx.fillText(TL.title, tx, titleY);
-    ctx.fillStyle = dim; ctx.font = font(L.hdrText[1]);
-    ctx.fillText(TL.date, tx, dateY);
+    if (!L.titleInBar) {
+      ctx.fillStyle = ink; ctx.font = font(L.hdrText[0]);
+      ctx.fillText(TL.title, tx, titleY);
+      ctx.fillStyle = dim; ctx.font = font(L.hdrText[1]);
+      ctx.fillText(TL.date, tx, dateY);
+    }
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
