@@ -116,6 +116,19 @@
     caption: { right: 1010, cy: 1128, maxW: 920, sizes: [36, 33], style: 'text' },
     inset: { S: 700, round: true, big: null, small: { x: 96, y: 236, s: 0.21 } },
   });
+  // broadcast: TV news style. Full-frame photo, a lower third (story tag, white headline bar, spoken words
+  // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
+  if (LOOK === 'broadcast') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
+    broadcast: true, sting: true,
+    logoH: 132, logoY: 58, hdrText: [38, 24],
+    kicker: { cx: 540, right: 1050, y: 912 },
+    lower: { x: 30, y: 950, w: 1020, h: 178 },
+    head: { cx: 540, right: 1004, cy: 1039, maxW: 920, lineH: 62, panelH: 150, size: [46, 54], color: C.navy },
+    caption: { right: 1004, cy: 1166, maxW: 950, sizes: [31, 28, 25], lines: 1, style: 'text' },
+    ticker: { y: 1236, h: 78 },
+    inset: { S: 700, big: null, small: { x: 40, y: 214, s: 0.3 } },
+  });
   if (LOOK === 'captions') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
     kicker: { cx: 540, y: 262 },
@@ -935,6 +948,7 @@
     ctx.fillStyle = pg;
     rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
     ctx.restore();
+    if (L.lower) drawLower(a, wipe);
     if (wipe > 0.2 && !L.noPanel) {
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
@@ -971,7 +985,7 @@
     const end = next && next.t0 - p.t1 < 0.8 ? next.t0 : p.t1 + 0.4;
     if (a > end) return;
     const C2 = L.caption;
-    const lay = layoutText(p.text, C2.maxW, C2.sizes, 2);
+    const lay = layoutText(p.text, C2.maxW, C2.sizes, C2.lines || 2);
     const lineH = Math.round(lay.size * 1.45);
     const pin = eout(prog(a, p.t0 - 0.05, p.t0 + 0.2));
     ctx.save();
@@ -1003,6 +1017,77 @@
   }
 
   // ---------- modern look extras ----------
+  // broadcast lower third: white headline bar with a green edge, navy strip for the spoken words below
+  function drawLower(a, wipe) {
+    const B = L.lower, xr = B.x + B.w, w = B.w * wipe;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.moveTo(xr, B.y); ctx.lineTo(xr - w, B.y); ctx.lineTo(xr - w + 26 * wipe, B.y + B.h); ctx.lineTo(xr, B.y + B.h); ctx.closePath(); ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#0A8F65'; ctx.fillRect(xr - 16, B.y, 16, B.h);
+    const sw = (B.w - 26) * eio(clamp(wipe * 1.2 - 0.2));
+    ctx.fillStyle = 'rgba(11,31,75,0.94)';
+    ctx.fillRect(xr - sw, B.y + B.h, sw, 76);
+    ctx.restore();
+  }
+  // ticker: the coming stories crawl along the bottom (left to right, as Arabic tickers run)
+  let TICKS = null;
+  function drawTicker(a, alpha) {
+    if (alpha <= 0) return;
+    const T = L.ticker;
+    if (!TICKS) TICKS = TL.chapters.map(c => TL.headlines.find(h => h.t >= c - 0.05)).filter(Boolean);
+    let cur = -1;
+    TL.chapters.forEach((c, i) => { if (a >= c - 0.05) cur = i; });
+    const order = TICKS.slice(cur + 1).concat(TICKS.slice(0, cur + 1));
+    const text = order.map(h => h.kicker + ': ' + h.text).join('     ◆     ') + '     ◆     ';
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'rgba(11,31,75,0.96)'; ctx.fillRect(0, T.y, W, T.h);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(0, T.y, W, 2);
+    const lw = 190;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, T.y, W - lw, T.h); ctx.clip();
+    ctx.font = font(30); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(text).width;
+    const off = ((a - (cur >= 0 ? TL.chapters[cur] : 0)) * 85) % tw;
+    ctx.fillStyle = '#fff';
+    for (let x = W - lw - 30 + off - tw; x < W + tw; x += tw) if (x > -tw && x - tw < W) ctx.fillText(text, x, T.y + T.h / 2 + 2);
+    ctx.restore();
+    ctx.fillStyle = '#0A8F65';
+    ctx.beginPath(); ctx.moveTo(W, T.y); ctx.lineTo(W - lw, T.y); ctx.lineTo(W - lw - 22, T.y + T.h); ctx.lineTo(W, T.y + T.h); ctx.closePath(); ctx.fill();
+    ctx.font = font(32); ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.fillText('التالي', W - lw / 2 + 4, T.y + T.h / 2 + 2);
+    ctx.restore();
+  }
+  // band sting: a navy band with green rules sweeps across the middle with the story number and country
+  function drawSting(a) {
+    TL.chapters.forEach((c, i) => {
+      const p = prog(a, c - 0.6, c + 0.9);
+      if (p <= 0 || p >= 1) return;
+      const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
+      const inP = eio(prog(p, 0, 0.25)), outP = eio(prog(p, 0.75, 1));
+      const bh = 300 * inP * (1 - outP) + 0.001, cy = H * 0.44;
+      ctx.save();
+      // flash/darken the frame a little behind the band
+      ctx.fillStyle = `rgba(11,31,75,${0.45 * inP * (1 - outP)})`; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(11,31,75,0.97)'; ctx.fillRect(0, cy - bh / 2, W, bh);
+      const lw = W * eio(prog(p, 0.05, 0.4)) * (1 - outP);
+      ctx.fillStyle = '#34D399';
+      ctx.fillRect(W - lw, cy - bh / 2 - 6, lw, 6);
+      ctx.fillRect(0, cy + bh / 2, lw, 6);
+      ctx.beginPath(); ctx.rect(0, cy - bh / 2, W, bh); ctx.clip();
+      const tp = eout(prog(p, 0.12, 0.45)), tx = (1 - tp) * 120 - eio(prog(p, 0.7, 0.95)) * 160;
+      ctx.textBaseline = 'middle';
+      ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.font = font(200); ctx.fillStyle = '#34D399';
+      ctx.fillText(String(i + 1).padStart(2, '0'), 80 - tx, cy + 10);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(360 - tx * 0.5, cy - 80, 3, 160);
+      ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(92);
+      ctx.fillText(h.kicker || '', 1000 + tx, cy - 20);
+      if (h.topic) { ctx.font = font(40); ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fillText(h.topic, 1000 + tx * 1.4, cy + 75); }
+      ctx.restore();
+    });
+  }
   // headline lines on solid boxes (white, then green) that wipe in from the right and out to the left
   function drawBoxed(lay, a, tIn, tOut) {
     const n = lay.lines.length, lineH = Math.round(lay.size * 1.62), R = L.head.right + 24;
@@ -1662,11 +1747,13 @@
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
       if (L.glass) drawGlass(inA(1));
-      if (!L.segments) drawProgress(Math.max(a, CUT), inA(2));
+      if (!L.segments && !L.noBar) drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
       drawCaptions(a, inA(3));
       if (L.wipe) drawStoryWipe(a);
+      if (L.ticker) drawTicker(a, inA(3));
+      if (L.sting) drawSting(a);
       if (t >= OUTRO) ctx.restore();
       const hdr = eout(prog(t, 6.8, 7.4)) * (1 - eio(prog(t, OUTRO, OUTRO + 0.4)));
       drawHeader(a, hdr);
