@@ -1107,18 +1107,23 @@
   // sting: a navy square in the middle with the story number, country and topic, at each new story
   function drawSting(a) {
     TL.chapters.forEach((c, i) => {
-      const p = prog(a, c - 0.45, c + 0.6);
+      const p = prog(a, c - 0.5, c + 0.75);
       if (p <= 0 || p >= 1) return;
       const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
-      const inP = eout(prog(p, 0, 0.25)), outP = eio(prog(p, 0.75, 1));
-      const S = 440, cx = W / 2, cy = H * 0.42, sc = 0.9 + 0.1 * inP;
+      // slides in from the right with a slight turn and a small overshoot, then leaves to the left;
+      // the green rule draws itself once the square has landed
+      const inP = prog(p, 0, 0.32), outP = ein(prog(p, 0.72, 1));
+      const S = 440, cy = H * 0.42;
+      const cx = W / 2 + (1 - eback(inP)) * (W / 2 + S) - outP * (W / 2 + S);
+      const rot = (1 - eout(inP)) * 8 * RAD - outP * 6 * RAD;
       ctx.save();
-      ctx.globalAlpha = inP * (1 - outP);
-      ctx.translate(cx, cy); ctx.scale(sc, sc);
+      ctx.globalAlpha = Math.min(1, inP * 3);
+      ctx.translate(cx, cy); ctx.rotate(rot);
       ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
       ctx.fillStyle = 'rgba(11,31,75,0.93)'; ctx.fillRect(-S / 2, -S / 2, S, S);
       ctx.shadowColor = 'transparent';
-      ctx.fillStyle = '#34D399'; ctx.fillRect(-S / 2, S / 2 - 8, S, 8);
+      const gl = S * eout(prog(p, 0.25, 0.55));
+      ctx.fillStyle = '#34D399'; ctx.fillRect(S / 2 - gl, S / 2 - 8, gl, 8);
       ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
       ctx.direction = 'ltr'; ctx.font = font(150); ctx.fillStyle = '#34D399';
       ctx.fillText(String(i + 1).padStart(2, '0'), 0, -78);
