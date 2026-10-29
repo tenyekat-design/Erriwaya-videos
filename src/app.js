@@ -125,7 +125,7 @@
     Object.assign(L, {
       card: { cx: W0 / 2, cy: H0 / 2, w: W0, h: H0 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
       broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
-      noStats: true, noSegBar: true,   // no date/number chips, no progress dashes under the story counter
+      noStats: true, noSegBar: true, noCounter: true,   // no date/number chips, no story counter or its progress dashes
       logoH: 132, hdrText: [38, 24],
     });
     // per format: the lower third (lower, with the headline, spoken-words strip and tag placed from it),
@@ -137,7 +137,7 @@
                inset: { x: 40, y: 330 }, stingY: 0.42 },
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
       youtube: { logoY: 44, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
-                 inset: { x: 96, y: 224 }, stingY: 0.39 },
+                 inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
     Object.assign(L, {
@@ -1288,6 +1288,7 @@
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
     if (a >= TL.headlines[TL.headlines.length - 1].t) ch = TL.chapters.length;
     const n = TL.chapters.length;
+    if (L.noCounter) { ctx.restore(); return; }  // broadcast: the sting and the ticker carry the story number
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
     if (L.broadcast) { ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 1; }
     ctx.font = font(34); ctx.fillStyle = ink;
