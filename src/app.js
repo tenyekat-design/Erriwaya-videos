@@ -1095,36 +1095,28 @@
     ctx.fillText('الأخبار', W - lw / 2 + 4, T.y + T.h / 2 + 2);
     ctx.restore();
   }
-  // band sting: a slim navy band slides across the middle with the story number, country and topic
+  // sting: a navy square in the middle with the story number, country and topic, at each new story
   function drawSting(a) {
     TL.chapters.forEach((c, i) => {
       const p = prog(a, c - 0.45, c + 0.6);
       if (p <= 0 || p >= 1) return;
       const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
-      const inP = eio(prog(p, 0, 0.3)), outP = eio(prog(p, 0.72, 1));
-      const bh = 132, cy = H * 0.44, sl = 30;
-      const xr = W + sl - (W + sl) * 0 , x0 = W + sl - (W + 2 * sl) * inP, x1 = W + sl - (W + 2 * sl) * outP;
-      if (x1 <= x0) return;
+      const inP = eout(prog(p, 0, 0.25)), outP = eio(prog(p, 0.75, 1));
+      const S = 440, cx = W / 2, cy = H * 0.42, sc = 0.9 + 0.1 * inP;
       ctx.save();
-      ctx.beginPath(); ctx.moveTo(x1, cy - bh / 2); ctx.lineTo(x0, cy - bh / 2); ctx.lineTo(x0 - sl, cy + bh / 2); ctx.lineTo(x1 - sl, cy + bh / 2); ctx.closePath();
-      ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 8;
-      ctx.fillStyle = 'rgba(11,31,75,0.9)'; ctx.fill();
+      ctx.globalAlpha = inP * (1 - outP);
+      ctx.translate(cx, cy); ctx.scale(sc, sc);
+      ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
+      ctx.fillStyle = 'rgba(11,31,75,0.93)'; ctx.fillRect(-S / 2, -S / 2, S, S);
       ctx.shadowColor = 'transparent';
-      ctx.clip();
-      ctx.fillStyle = '#34D399'; ctx.fillRect(0, cy + bh / 2 - 5, W, 5);
-      const ta = L.staticText ? 1 : eout(prog(p, 0.2, 0.42)), tx = (1 - ta) * 50;
-      ctx.globalAlpha = ta;
-      ctx.textBaseline = 'middle';
-      ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.font = font(92); ctx.fillStyle = '#34D399';
-      ctx.fillText(String(i + 1).padStart(2, '0'), 90 + tx, cy + 4);
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(250 + tx, cy - 36, 3, 72);
-      ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.font = font(64); ctx.fillStyle = '#fff';
-      ctx.fillText(h.kicker || '', 990 - tx, cy + 2);
-      if (h.topic) {
-        const kw = ctx.measureText(h.kicker || '').width;
-        ctx.font = font(34); ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        ctx.fillText(h.topic, 990 - tx - kw - 30, cy + 6);
-      }
+      ctx.fillStyle = '#34D399'; ctx.fillRect(-S / 2, S / 2 - 8, S, 8);
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      ctx.direction = 'ltr'; ctx.font = font(150); ctx.fillStyle = '#34D399';
+      ctx.fillText(String(i + 1).padStart(2, '0'), 0, -78);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(-60, 18, 120, 3);
+      ctx.direction = 'rtl'; ctx.font = font(h.kicker && h.kicker.length > 10 ? 50 : 62); ctx.fillStyle = '#fff';
+      ctx.fillText(h.kicker || '', 0, 82);
+      if (h.topic) { ctx.font = font(34); ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillText(h.topic, 0, 152); }
       ctx.restore();
     });
   }
