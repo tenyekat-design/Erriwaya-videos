@@ -69,8 +69,9 @@
   };
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
   const L = LAYOUTS[FORMAT] || LAYOUTS.feed;
-  // Trial looks for the feed (?look=wide|full): edge-to-edge photo, map as a small inset that opens full
-  // for a moment at the start of each story. Without ?look the approved layout is unchanged.
+  // Trial looks for the feed (?look=wide|full|card|captions): edge-to-edge photo, map as a small inset (wide,
+  // full: it opens full for a moment at the start of each story), big headline on white (card), large spoken
+  // captions word by word (captions). Without ?look the approved layout is unchanged.
   const LOOK = FORMAT === 'feed' ? new URLSearchParams(location.search).get('look') : null;
   if (LOOK === 'wide') Object.assign(L, {
     card: { cx: 540, cy: 595, w: 1080, h: 780 }, slide: true, photoR: 0,
@@ -80,11 +81,25 @@
     inset: { S: 700, big: { cx: 540, cy: 595, s: 1 }, small: { x: 36, y: 228, s: 0.4 } },
   });
   if (LOOK === 'full') Object.assign(L, {
-    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true,
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true,
     kicker: { cx: 540, y: 930 },
     head: { cx: 540, cy: 1045, maxW: 900, lineH: 62, panelH: 150 },
     bar: { x0: 160, x1: 920, y: 1185, tl: 60, tr: 1020 },
     inset: { S: 700, big: { cx: 540, cy: 540, s: 0.86 }, small: { x: 36, y: 228, s: 0.4 } },
+  });
+  if (LOOK === 'card') Object.assign(L, {
+    card: { cx: 540, cy: 555, w: 1080, h: 700 }, slide: true, photoR: 0, noPanel: true,
+    kicker: { cx: 540, y: 905 },
+    head: { cx: 540, cy: 1055, maxW: 960, lineH: 62, panelH: 150, size: [52, 64], color: C.navy },
+    bar: { x0: 160, x1: 920, y: 1232, tl: 60, tr: 1020 },
+    inset: { S: 700, big: null, small: { x: 36, y: 228, s: 0.3 } },
+  });
+  if (LOOK === 'captions') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
+    kicker: { cx: 540, y: 262 },
+    head: { cx: 540, cy: 345, maxW: 900, lineH: 62, panelH: 150, size: [34, 38] },
+    caption: { cx: 540, cy: 930, maxW: 940, sizes: [68, 62, 56] },
+    bar: { x0: 160, x1: 920, y: 1225, tl: 60, tr: 1020 },
   });
   const W = L.W, H = L.H;
   // edition cameras are framed for the feed map (980x422); keep the same visible area on other map shapes
@@ -418,7 +433,7 @@
   }
 
   function drawMapCard(a, alpha) {
-    if (alpha <= 0) return;
+    if (alpha <= 0 || L.noMap) return;
     const R = L.map;
     ctx.save();
     ctx.globalAlpha = alpha;
@@ -426,9 +441,10 @@
       // full size for a moment at each story's start (where it is), then a small locator in the photo's corner
       const I = L.inset;
       let big = 0;
-      for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
-      const s = lerp(I.small.s, I.big.s, big);
-      const x = lerp(I.small.x, I.big.cx - I.S * I.big.s / 2, big), y = lerp(I.small.y, I.big.cy - I.S * I.big.s / 2, big);
+      if (I.big) for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
+      const B = I.big || { cx: 0, cy: 0, s: I.small.s };
+      const s = lerp(I.small.s, B.s, big);
+      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(I.small.y, B.cy - I.S * B.s / 2, big);
       ctx.translate(x, y); ctx.scale(s, s);
     }
     ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
@@ -588,9 +604,10 @@
     }
     if (L.dark) {
       // full-frame photo: navy shade at the top (header) and bottom (headline)
-      const gt = ctx.createLinearGradient(0, 0, 0, 320);
-      gt.addColorStop(0, 'rgba(11,31,75,0.85)'); gt.addColorStop(1, 'rgba(11,31,75,0)');
-      ctx.fillStyle = gt; ctx.fillRect(0, 0, W, 320);
+      const th = L.caption ? 480 : 320;
+      const gt = ctx.createLinearGradient(0, 0, 0, th);
+      gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(L.caption ? 0.6 : 0, `rgba(11,31,75,${L.caption ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
+      ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th);
       const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
       gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, 'rgba(11,31,75,0.8)'); gb.addColorStop(1, 'rgba(11,31,75,0.96)');
       ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5);
@@ -771,7 +788,8 @@
       const w = Math.max(sumW(k) + ref.space * (k - 1), sumW(words.length) - sumW(k) + ref.space * (words.length - k - 1));
       if (w < best.w) best = { k, w };
     }
-    const size = clamp(Math.floor(48 * target / best.w), 36, 42);
+    const [s0, s1] = L.head.size || [36, 42];
+    const size = clamp(Math.floor(48 * target / best.w), s0, s1);
     ctx.direction = 'rtl';
     ctx.font = font(size);
     const space = ctx.measureText(' ').width;
@@ -849,20 +867,76 @@
     const wipe = eio(prog(a, HL[0].t - 0.45, HL[0].t + 0.1));
     ctx.globalAlpha = alpha;
     ctx.save();
-    if (L.dark) ctx.globalAlpha = 0;  // full-frame look: white words straight on the shaded photo
+    if (L.noPanel) ctx.globalAlpha = 0;  // trial looks: words straight on the photo or the white page
     ctx.shadowColor = 'rgba(11,31,75,0.28)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
     const pg = ctx.createLinearGradient(px + pw, 0, px, 0);
     pg.addColorStop(0, '#0B1F4B'); pg.addColorStop(1, '#142E66');
     ctx.fillStyle = pg;
     rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
     ctx.restore();
-    if (wipe > 0.2 && !L.dark) {
+    if (wipe > 0.2 && !L.noPanel) {
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
     if (L.dark) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }
-    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.4), '#FFFFFF', a, h.t, tOut);
+    drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut);
+    ctx.restore();
+  }
+
+  // ---------- spoken captions (look 'captions') ----------
+  // Phrases from subtitles.txt; word times spread over each phrase by word length.
+  let CAPS = [];
+  function loadCaptions() {
+    try {
+      const x = new XMLHttpRequest();
+      x.open('GET', window.EDITION_DIR + '/subtitles.txt', false); x.send();
+      CAPS = x.responseText.split('\n').map(l => l.match(/^\[\s*([\d.]+)\s*-\s*([\d.]+)\]\s*(.+)$/)).filter(Boolean)
+        .map(m => ({ t0: +m[1], t1: +m[2], text: m[3].trim() })).filter(p => p.t0 < TL.outroAt);
+      for (const p of CAPS) {
+        const ws = p.text.split(/\s+/), tot = ws.reduce((n, w) => n + w.length + 1, 0);
+        let acc = 0;
+        p.words = ws.map(w => { const t = p.t0 + (p.t1 - p.t0) * acc / tot; acc += w.length + 1; return { w, t }; });
+      }
+    } catch (e) { CAPS = []; }
+  }
+  function drawCaptions(a, alpha) {
+    if (!L.caption || alpha <= 0) return;
+    let i = -1;
+    for (let k = 0; k < CAPS.length; k++) if (a >= CAPS[k].t0 - 0.05) i = k;
+    if (i < 0) return;
+    const p = CAPS[i], next = CAPS[i + 1];
+    const end = next && next.t0 - p.t1 < 0.8 ? next.t0 : p.t1 + 0.4;
+    if (a > end) return;
+    const C2 = L.caption;
+    const lay = layoutText(p.text, C2.maxW, C2.sizes, 2);
+    const lineH = Math.round(lay.size * 1.45);
+    const pin = eout(prog(a, p.t0 - 0.05, p.t0 + 0.2));
+    ctx.save();
+    ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    let idx = 0;
+    const top = C2.cy - (lay.lines.length - 1) * lineH / 2 + (1 - pin) * 14;
+    lay.lines.forEach((ln, li) => {
+      let x = C2.cx + ln.width / 2;
+      const y = top + li * lineH;
+      for (const wd of ln.words) {
+        const w = p.words[idx];
+        const nx = p.words[idx + 1];
+        const on = w && a >= w.t - 0.03 && (!nx || a < nx.t - 0.03);
+        const said = w && a >= w.t - 0.03;
+        ctx.globalAlpha = alpha * pin;
+        if (on) {
+          ctx.fillStyle = '#0A8F65';
+          rrect(x - wd.width - 12, y - lay.size * 0.62, wd.width + 24, lay.size * 1.3, 14); ctx.fill();
+        }
+        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = on ? 0 : 14;
+        ctx.fillStyle = said ? '#fff' : 'rgba(255,255,255,0.6)';
+        ctx.fillText(wd.w, x, y + lay.size * 0.05);
+        ctx.shadowColor = 'transparent';
+        x -= wd.width + lay.space;
+        idx++;
+      }
+    });
     ctx.restore();
   }
 
@@ -1429,6 +1503,7 @@
       drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
+      drawCaptions(a, inA(3));
       if (t >= OUTRO) ctx.restore();
       const hdr = eout(prog(t, 6.8, 7.4)) * (1 - eio(prog(t, OUTRO, OUTRO + 0.4)));
       drawHeader(a, hdr);
@@ -1450,6 +1525,7 @@
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     LOGO_W = tint(logo, '#fff');
+    if (L.caption) loadCaptions();
     window.renderFrame = renderFrame;
     window.renderCover = renderCover;
     window.DURATION = DURATION;
