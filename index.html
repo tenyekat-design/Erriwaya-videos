@@ -20,7 +20,11 @@ if (!/^(localhost|127\.|$)|claude/i.test(location.hostname)) {
 <style>
 /* Layout: a green masthead band, then a newsroom page — lead story beside a "latest" rail, a filterable feed,
    country portals as a regional index, shorts strip, app band, about/contact. Article opens as its own view. */
-@font-face { font-family: "Al Quds"; src: url("assets/al-quds.otf") format("opentype"); font-display: swap; }
+/* Al Quds only for Arabic, digits, Latin letters and the punctuation it draws right: it maps : ! + [ ] { } < > # * & « »
+   to Arabic-style or ornamental glyphs (": " as "؛", "[" as a calligraphic seal), so those fall back to the system font */
+@font-face { font-family: "Al Quds"; src: url("assets/al-quds.otf") format("opentype"); font-display: swap;
+  unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0, U+00B0,
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015, U+2212; }
 :root {
   --brand: #004A49;        /* Erriwaya green */
   --brand-deep: #00302F;
