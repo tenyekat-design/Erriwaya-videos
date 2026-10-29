@@ -30,16 +30,26 @@ async function openPage(browser) {
 const grab = async (page, t, type = 'jpeg') => { await page.evaluate(t => window.renderFrame(t), t); return page.screenshot({ type, quality: type === 'jpeg' ? 92 : undefined }); };
 
 // Music from assets/audio: intro theme, quiet bed, a whoosh on every cut, outro whose final chord lands at the end.
-function mixAudio(dur, cuts, file) {
+// voiceover.mp3 (if present) starts at voStart and the music ducks under it.
+function mixAudio(dur, cuts, voStart, file) {
+  const VO = path.join(__dirname, 'voiceover.mp3'), vo = voStart != null && fs.existsSync(VO);
   const A = f => path.join(ROOT, 'assets', 'audio', f);
   const outro = 12.5, os = dur - outro + 0.4;
-  const inputs = ['-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), ...cuts.flatMap(() => ['-i', A('whoosh.wav')])];
+  const inputs = ['-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), ...cuts.flatMap(() => ['-i', A('whoosh.wav')]), ...(vo ? ['-i', VO] : [])];
+  const nv = 3 + cuts.length, d = Math.round((voStart || 0) * 1000);
   const f = [
     `[0]atrim=0:${cuts[1] + 1},afade=t=out:st=${cuts[1] - 0.6}:d=1.6,volume=0.9[a0]`,
     `[1]atrim=0:${dur},afade=t=in:st=0:d=${cuts[1]},afade=t=out:st=${os}:d=1.5,volume=0.55[a1]`,
     `[2]adelay=${Math.round(os * 1000)}|${Math.round(os * 1000)},volume=0.95[a2]`,
     ...cuts.map((c, i) => `[${3 + i}]adelay=${Math.max(0, Math.round((c - 0.45) * 1000))}|${Math.max(0, Math.round((c - 0.45) * 1000))},volume=0.6[w${i}]`),
-    `[a0][a1][a2]${cuts.map((_, i) => `[w${i}]`).join('')}amix=inputs=${3 + cuts.length}:normalize=0,atrim=0:${dur},afade=t=out:st=${dur - 0.8}:d=0.8,alimiter=limit=0.9[out]`,
+    `[a0][a1][a2]${cuts.map((_, i) => `[w${i}]`).join('')}amix=inputs=${3 + cuts.length}:normalize=0,atrim=0:${dur}[mus]`,
+    ...(vo ? [
+      `[${nv}]aresample=48000,aformat=channel_layouts=stereo,adelay=${d}|${d},apad,atrim=0:${dur},asplit[v1][v2]`,
+      `[mus]aresample=48000,aformat=channel_layouts=stereo[m]`,
+      `[m][v1]sidechaincompress=threshold=0.02:ratio=6:attack=30:release=450[duck]`,
+      `[duck][v2]amix=inputs=2:normalize=0:weights=0.8 1.25[mix]`,
+    ] : ['[mus]anull[mix]']),
+    `[mix]afade=t=out:st=${dur - 0.8}:d=0.8,alimiter=limit=0.9[out]`,
   ].join(';');
   execFileSync('ffmpeg', ['-y', '-v', 'error', ...inputs, '-filter_complex', f, '-map', '[out]', '-ar', '48000', file]);
 }
@@ -57,7 +67,7 @@ function mixAudio(dur, cuts, file) {
     return browser.close();
   }
   const page0 = await openPage(browser);
-  const { dur, cuts } = await page0.evaluate(() => ({ dur: window.DURATION, cuts: window.SCENES.slice(1) }));
+  const { dur, cuts, voStart } = await page0.evaluate(() => ({ dur: window.DURATION, cuts: window.SCENES.slice(1), voStart: (window.PROMO_TIMING || {}).voStart }));
   await page0.close();
   const N = Math.round(dur * FPS), tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), 'promo-'));
   const frames = new Array(N);
@@ -73,7 +83,7 @@ function mixAudio(dur, cuts, file) {
   }));
   await browser.close();
   const wav = path.join(tmp, 'mix.wav');
-  mixAudio(dur, cuts, wav);
+  mixAudio(dur, cuts, voStart, wav);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-', '-i', wav,
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', OUT],
