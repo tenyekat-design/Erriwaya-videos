@@ -120,7 +120,7 @@
   // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
   if (LOOK === 'broadcast') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
-    broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true,
+    broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
     logoH: 132, logoY: 58, hdrText: [38, 24],
     kicker: { cx: 540, right: 1050, y: 912 },
     lower: { x: 30, y: 950, w: 1020, h: 178 },
@@ -898,16 +898,17 @@
     ctx.direction = 'rtl';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    const outP = tOut == null || L.staticText ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    // smoothText: the whole headline fades out and the next fades in, without moving
+    const outP = tOut == null || (L.staticText && !L.smoothText) ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
       const y = cy + (li - (n - 1) / 2) * lineH;
       let x = right != null ? right : cx + ln.width / 2;
       for (const wd of ln.words) {
-        const p = L.staticText ? 1 : eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
+        const p = L.smoothText ? eio(prog(a, tIn - 0.05, tIn + 0.4)) : L.staticText ? 1 : eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
         if (p > 0) {
           ctx.globalAlpha = p * (1 - outP);
           ctx.fillStyle = color;
-          ctx.fillText(wd.w, x, y + (1 - p) * 22 - outP * 16);
+          ctx.fillText(wd.w, x, L.staticText ? y : y + (1 - p) * 22 - outP * 16);
         }
         x -= wd.width + (ln.space ?? lay.space);
         idx++;
@@ -949,7 +950,12 @@
     ctx.fillStyle = pg;
     rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
     ctx.restore();
-    if (L.lower) drawLower(a, wipe);
+    let lw = wipe;
+    if (L.lower) {
+      // the bar slides out to the right before each new story and back in with it
+      for (const c of TL.chapters) lw = Math.min(lw, 1 - eio(prog(a, c - 0.5, c - 0.15)) * (1 - eio(prog(a, c + 0.05, c + 0.45))));
+      drawLower(a, lw);
+    }
     if (wipe > 0.2 && !L.noPanel) {
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
@@ -957,6 +963,7 @@
     const lay = layoutHeadline(h.text, L.head.maxW);
     if (L.boxed) { drawBoxed(lay, a, h.t, tOut); ctx.restore(); return; }
     if (L.dark && !L.lower) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }  // no halo on the white bar
+    if (L.lower) { const B = L.lower; ctx.beginPath(); ctx.rect(B.x + B.w * (1 - lw), B.y, B.w * lw, B.h); ctx.clip(); }
     drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut, L.head.right);
     ctx.restore();
   }
