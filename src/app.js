@@ -693,7 +693,7 @@
       const th = LOOK === 'captions' ? 480 : 320;
       const gt = ctx.createLinearGradient(0, 0, 0, th);
       gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(LOOK === 'captions' ? 0.6 : 0, `rgba(11,31,75,${LOOK === 'captions' ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
-      ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th);
+      if (!L.broadcast) { ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th); }  // broadcast: no shade at the top
       const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
       gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, `rgba(11,31,75,${L.pro ? 0.45 : 0.8})`); gb.addColorStop(1, `rgba(11,31,75,${L.pro ? 0.7 : 0.96})`);
       if (!L.blurBg) { ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5); }
@@ -1289,6 +1289,7 @@
     if (a >= TL.headlines[TL.headlines.length - 1].t) ch = TL.chapters.length;
     const n = TL.chapters.length;
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
+    if (L.broadcast) { ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 1; }
     ctx.font = font(34); ctx.fillStyle = ink;
     const num = String(ch).padStart(2, '0');
     ctx.fillText(num, L.margin, titleY);
@@ -1830,7 +1831,10 @@
       if (L.segments) drawSegments(a, hdr);
       if (t >= 6.85 && t < OUTRO + 0.15) {
         const lb = logoBox();
+        // broadcast: a soft shadow keeps the white logo readable on bright photos (no shade at the top)
+        if (L.broadcast) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2; }
         ctx.drawImage(L.dark ? LOGO_W : LOGO, lb.x, lb.y, lb.w, lb.h);
+        if (L.broadcast) ctx.restore();
       }
       drawOutro(t);
     }
