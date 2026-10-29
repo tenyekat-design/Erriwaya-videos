@@ -69,15 +69,104 @@
   };
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
   const L = LAYOUTS[FORMAT] || LAYOUTS.feed;
+  const W0 = L.W, H0 = L.H;
+  // Looks (?look=): 'broadcast' is the approved look (29 Oct 2026) in every format and the default; 'classic'
+  // is the white layout approved before it. The other looks were trials, feed only: edge-to-edge photo with
+  // a small inset map (wide, full), big headline on white (card), large spoken captions (captions), frosted
+  // panel and story wipes (pro), blurred backdrop with boxed headlines (bold).
+  const LOOK_Q = new URLSearchParams(location.search).get('look') || 'broadcast';
+  const LOOK = LOOK_Q === 'broadcast' || FORMAT === 'feed' ? LOOK_Q : 'classic';
+  if (LOOK === 'wide') Object.assign(L, {
+    card: { cx: 540, cy: 595, w: 1080, h: 780 }, slide: true, photoR: 0,
+    kicker: { cx: 540, y: 985 },
+    head: { cx: 540, cy: 1095, maxW: 880, lineH: 62, panelH: 150 },
+    bar: { x0: 160, x1: 920, y: 1222, tl: 60, tr: 1020 },
+    inset: { S: 700, big: { cx: 540, cy: 595, s: 1 }, small: { x: 36, y: 228, s: 0.4 } },
+  });
+  if (LOOK === 'full') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true,
+    kicker: { cx: 540, y: 930 },
+    head: { cx: 540, cy: 1045, maxW: 900, lineH: 62, panelH: 150 },
+    bar: { x0: 160, x1: 920, y: 1185, tl: 60, tr: 1020 },
+    inset: { S: 700, big: { cx: 540, cy: 540, s: 0.86 }, small: { x: 36, y: 228, s: 0.4 } },
+  });
+  if (LOOK === 'card') Object.assign(L, {
+    card: { cx: 540, cy: 555, w: 1080, h: 700 }, slide: true, photoR: 0, noPanel: true,
+    kicker: { cx: 540, y: 905 },
+    head: { cx: 540, cy: 1055, maxW: 960, lineH: 62, panelH: 150, size: [52, 64], color: C.navy },
+    bar: { x0: 160, x1: 920, y: 1232, tl: 60, tr: 1020 },
+    inset: { S: 700, big: null, small: { x: 36, y: 228, s: 0.3 } },
+  });
+  // modern: full-frame photo, story segments along the top, frosted panel with a big right-aligned headline
+  // and the spoken words, a round locator map, and a coloured wipe with the story number at each new story
+  if (LOOK === 'pro') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, pro: true, segments: true, wipe: true,
+    logoH: 132, logoY: 58, hdrText: [38, 24],
+    glass: { x: 30, y: 884, w: 1020, h: 430, r: 38 },
+    kicker: { cx: 540, right: 1006, y: 930 },
+    head: { cx: 540, right: 1006, cy: 1068, maxW: 930, lineH: 62, panelH: 150, size: [50, 58] },
+    caption: { right: 1006, cy: 1252, maxW: 930, sizes: [38, 35], style: 'text' },
+    inset: { S: 700, round: true, big: null, small: { x: 36, y: 214, s: 0.27 } },
+  });
+  // bold: blurred photo as the backdrop, the photo itself framed and tilted, headline lines in solid boxes,
+  // the country's name drifting large behind, spoken words below, the story-number wipe from 'pro'
+  if (LOOK === 'bold') Object.assign(L, {
+    card: { cx: 540, cy: 492, w: 920, h: 556 }, slide: true, photoR: 26, dark: true, noPanel: true, segments: true, wipe: true,
+    frame: { border: 10, tilt: -1.6 }, blurBg: true, boxed: true, marquee: { y: 1245, size: 170 },
+    logoH: 132, logoY: 58, hdrText: [38, 24],
+    kicker: { cx: 540, right: 1010, y: 826 },
+    head: { cx: 540, right: 1010, cy: 952, maxW: 900, lineH: 62, panelH: 150, size: [46, 54] },
+    caption: { right: 1010, cy: 1128, maxW: 920, sizes: [36, 33], style: 'text' },
+    inset: { S: 700, round: true, big: null, small: { x: 96, y: 236, s: 0.21 } },
+  });
+  // broadcast: TV news style. Full-frame photo, a lower third (story tag, white headline bar, spoken words
+  // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
+  if (LOOK === 'broadcast') {
+    Object.assign(L, {
+      card: { cx: W0 / 2, cy: H0 / 2, w: W0, h: H0 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
+      broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
+      noStats: true, noSegBar: true, noCounter: true,   // no date/number chips, no story counter or its progress dashes
+      logoH: 132, hdrText: [38, 24],
+    });
+    // per format: the lower third (lower, with the headline, spoken-words strip and tag placed from it),
+    // the ticker, the inset map and the sting's height
+    const BL = {
+      feed: { logoY: 58, lower: { x: 30, y: 950, w: 1020, h: 178 }, maxW: 700, capW: 950, ticker: { y: 1236, h: 78 },
+              inset: { x: 40, y: 214 }, stingY: 0.42 },
+      story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
+               inset: { x: 40, y: 330 }, stingY: 0.42 },
+      // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
+      youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
+                 inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
+    }[FORMAT] || null;
+    const B = BL.lower, xr = B.x + B.w;
+    Object.assign(L, {
+      logoY: BL.logoY, logoH: BL.logoH || L.logoH, lower: B, ticker: BL.ticker, stingY: BL.stingY,
+      kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
+      head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
+      caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
+      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 } },
+    });
+  }
+  if (LOOK === 'captions') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
+    kicker: { cx: 540, y: 262 },
+    head: { cx: 540, cy: 345, maxW: 900, lineH: 62, panelH: 150, size: [34, 38] },
+    caption: { cx: 540, cy: 930, maxW: 940, sizes: [68, 62, 56] },
+    bar: { x0: 160, x1: 920, y: 1225, tl: 60, tr: 1020 },
+  });
   const W = L.W, H = L.H;
   // edition cameras are framed for the feed map (980x422); keep the same visible area on other map shapes
+  if (L.inset) L.map = { x: 0, y: 0, w: L.inset.S, h: L.inset.S, r: L.inset.round ? L.inset.S / 2 : 34 };
   const CAM_SCALE = Math.sqrt((422 / 980) / (L.map.h / L.map.w));
 
   const INTRO = TL.intro, CUT = TL.audioCut;
   const vt = a => INTRO + (a - CUT);          // voice-over time -> video time
   const at = t => t - INTRO + CUT;            // video time -> voice-over time
-  const OUTRO = vt(TL.outroAt);
-  const DURATION = vt(TL.audioEnd) + TL.tail;
+  // the closing logo comes after the last word; the outro music's final chord lands as the logo and the
+  // social icons appear (OUTRO + 2.1, tools/render.js), and its ring is held for a few seconds
+  const OUTRO = vt(TL.audioEnd) + 0.2;
+  const DURATION = Math.max(vt(TL.audioEnd) + TL.tail, OUTRO + 6.0);
 
   // ---------- helpers ----------
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -400,10 +489,20 @@
   }
 
   function drawMapCard(a, alpha) {
-    if (alpha <= 0) return;
+    if (alpha <= 0 || L.noMap) return;
     const R = L.map;
     ctx.save();
     ctx.globalAlpha = alpha;
+    if (L.inset) {
+      // full size for a moment at each story's start (where it is), then a small locator in the photo's corner
+      const I = L.inset;
+      let big = 0;
+      if (I.big) for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
+      const B = I.big || { cx: 0, cy: 0, s: I.small.s };
+      const s = lerp(I.small.s, B.s, big);
+      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(I.small.y, B.cy - I.S * B.s / 2, big);
+      ctx.translate(x, y); ctx.scale(s, s);
+    }
     ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
     ctx.fillStyle = C.soft;
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.fill();
@@ -424,20 +523,27 @@
     const g2 = ctx.createLinearGradient(R.x + R.w, 0, R.x + R.w - 60, 0);
     g2.addColorStop(0, 'rgba(244,246,250,1)'); g2.addColorStop(1, 'rgba(244,246,250,0)');
     ctx.fillStyle = g2; ctx.fillRect(R.x + R.w - 60, R.y, 60, R.h);
-    for (const st of TL.stats) drawStat(st, a, R);
+    if (!L.inset) for (const st of TL.stats) drawStat(st, a, R);
     // coordinates HUD
     const lat = (2 * Math.atan(Math.exp(cam.y * RAD)) - Math.PI / 2) / RAD;
     const hud = `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}   ${Math.abs(cam.x).toFixed(2)}°${cam.x >= 0 ? 'E' : 'W'}`;
     ctx.direction = 'ltr'; ctx.font = font(20); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-    const hw = ctx.measureText(hud).width;
+    const hw = L.inset && L.inset.round ? -1e4 : ctx.measureText(hud).width;
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     rrect(R.x + 18, R.y + R.h - 50, hw + 24, 34, 17); ctx.fill();
     ctx.fillStyle = 'rgba(11,31,75,0.55)';
     ctx.fillText(hud, R.x + 30, R.y + R.h - 26);
     ctx.restore();
-    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = L.inset ? '#fff' : C.line; ctx.lineWidth = L.inset ? 6 : 1.5;
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.stroke();
     ctx.restore();
+    if (L.inset && !L.noStats) {
+      // date/number chips stay full size, beside the inset
+      const I = L.inset, Rs = { x: I.small.x + I.S * I.small.s + 4, y: I.small.y - 22, w: 600, h: 100 };
+      ctx.save(); ctx.globalAlpha = alpha;
+      for (const st of TL.stats) drawStat({ ...st, pos: 'left' }, a, Rs);
+      ctx.restore();
+    }
   }
 
   // ---------- carousel ----------
@@ -496,27 +602,57 @@
       if (ar > 2.6) continue;
       const sgn = Math.sign(r);
       // next cards sit on the left (RTL reading order)
-      const off = ar <= 1 ? lerp(0, L.side[0], ar) : lerp(L.side[0], L.side[1], ar - 1);
-      const sc = ar <= 1 ? lerp(1, 0.7, ar) : lerp(0.7, 0.5, ar - 1);
+      const off = L.slide ? ar * W : ar <= 1 ? lerp(0, L.side[0], ar) : lerp(L.side[0], L.side[1], ar - 1);
+      const sc = L.slide ? 1 : ar <= 1 ? lerp(1, 0.7, ar) : lerp(0.7, 0.5, ar - 1);
       items.push({ i, r, ar, x: cx - sgn * off, sc });
     }
     items.sort((A, B) => B.ar - A.ar);
     ctx.save();
     ctx.globalAlpha = alpha;
+    if (L.blurBg) {
+      // the current photo, blurred and darkened, fills the frame; cross-fades with the next one
+      const i0 = clamp(base, 0, CARDS.length - 1), fr = p - base;
+      ctx.filter = 'blur(36px)';
+      coverDraw(IMG[CARDS[i0].img], -60, -60, W + 120, H + 120, 0.5, 0.5, 1);
+      if (fr > 0 && i0 + 1 < CARDS.length) { ctx.globalAlpha = alpha * fr; coverDraw(IMG[CARDS[i0 + 1].img], -60, -60, W + 120, H + 120, 0.5, 0.5, 1); }
+      ctx.filter = 'none';
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = 'rgba(11,31,75,0.5)'; ctx.fillRect(0, 0, W, H);
+    }
+    if (L.marquee) {
+      const seg = chipSegment(Math.max(a, CUT));
+      if (seg) {
+        const M = L.marquee;
+        ctx.font = font(M.size); ctx.direction = 'rtl'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        const unit = seg.kicker + '  •  ', uw = ctx.measureText(unit).width;
+        const off = ((a - seg.t0) * 70) % uw;
+        ctx.fillStyle = 'rgba(255,255,255,0.17)';
+        for (let x = -uw + off; x < W; x += uw) ctx.fillText(unit, x, M.y);
+      }
+    }
     for (const it of items) {
       const cw = w * it.sc, ch = h * it.sc;
       const x = it.x - cw / 2, y = cy - ch / 2 + outP * 60;
       const card = CARDS[it.i];
       ctx.save();
+      if (L.frame) {
+        // white frame, slightly tilted; lands straighter as it settles
+        const tl = L.frame.tilt * RAD * (1 + 0.6 * Math.min(1, it.ar)) * (it.r < 0 ? -1 : 1);
+        ctx.translate(it.x, y + ch / 2); ctx.rotate(tl); ctx.translate(-it.x, -(y + ch / 2));
+        const b = L.frame.border;
+        ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 60; ctx.shadowOffsetY = 26;
+        ctx.fillStyle = '#fff';
+        rrect(x - b, y - b, cw + 2 * b, ch + 2 * b, L.photoR + b); ctx.fill();
+      }
       ctx.shadowColor = `rgba(11,31,75,${0.22 * (1 - Math.min(1, it.ar) * 0.5)})`;
       ctx.shadowBlur = 50; ctx.shadowOffsetY = 22;
       ctx.fillStyle = '#fff';
-      rrect(x, y, cw, ch, 30 * it.sc); ctx.fill();
+      rrect(x, y, cw, ch, (L.photoR ?? 30) * it.sc); ctx.fill();
       ctx.shadowColor = 'transparent';
-      rrect(x, y, cw, ch, 30 * it.sc); ctx.clip();
+      rrect(x, y, cw, ch, (L.photoR ?? 30) * it.sc); ctx.clip();
       drawCardImage(card, x, y, cw, ch, a);
       // depth: fade side cards toward the white background
-      const dim = Math.min(1, it.ar) * 0.55 + Math.max(0, it.ar - 1) * 0.3;
+      const dim = L.slide ? 0 : Math.min(1, it.ar) * 0.55 + Math.max(0, it.ar - 1) * 0.3;
       if (dim > 0) { ctx.fillStyle = `rgba(255,255,255,${dim})`; ctx.fillRect(x, y, cw, ch); }
       if (it.ar < 0.5) {
         // light sweep when a card lands
@@ -546,10 +682,21 @@
         }
       }
       ctx.restore();
+      if (L.slide) continue;
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
-      rrect(x + 1.5, y + 1.5, cw - 3, ch - 3, 30 * it.sc - 1.5); ctx.stroke();
+      rrect(x + 1.5, y + 1.5, cw - 3, ch - 3, (L.photoR ?? 30) * it.sc - 1.5); ctx.stroke();
       ctx.restore();
+    }
+    if (L.dark) {
+      // full-frame photo: navy shade at the top (header) and bottom (headline)
+      const th = LOOK === 'captions' ? 480 : 320;
+      const gt = ctx.createLinearGradient(0, 0, 0, th);
+      gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(LOOK === 'captions' ? 0.6 : 0, `rgba(11,31,75,${LOOK === 'captions' ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
+      if (!L.broadcast) { ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th); }  // broadcast: no shade at the top
+      const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
+      gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, `rgba(11,31,75,${L.pro ? 0.45 : 0.8})`); gb.addColorStop(1, `rgba(11,31,75,${L.pro ? 0.7 : 0.96})`);
+      if (!L.blurBg) { ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5); }
     }
     ctx.restore();
   }
@@ -559,15 +706,15 @@
   function drawProgress(a, alpha) {
     if (alpha <= 0) return;
     const { x0, x1, y } = L.bar;
-    const total = TL.outroAt - CUT;
+    const total = TL.audioEnd - CUT;
     const p = clamp((a - CUT) / total);
     const xr = x1, xk = x1 - (x1 - x0) * p;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#E7EBF2';
+    ctx.fillStyle = L.dark ? 'rgba(255,255,255,0.28)' : '#E7EBF2';
     rrect(x0, y - 4, x1 - x0, 8, 4); ctx.fill();
     const g = ctx.createLinearGradient(x1, 0, x0, 0);
-    g.addColorStop(0, '#0B1F4B'); g.addColorStop(1, C.acc);
+    g.addColorStop(0, L.dark ? '#fff' : '#0B1F4B'); g.addColorStop(1, C.acc);
     ctx.fillStyle = g;
     rrect(xk, y - 4, xr - xk, 8, 4); ctx.fill();
     // chapter ticks
@@ -591,7 +738,7 @@
   // AL-Quds draws ':' as a small Arabic-style mark; draw the clock colon as two round dots instead
   function drawTime(text, x, y, align, size = 24) {
     const [m, s] = text.split(':');
-    ctx.font = font(size); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillStyle = C.gray;
+    ctx.font = font(size); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillStyle = L.dark ? 'rgba(255,255,255,0.8)' : C.gray;
     const wm = ctx.measureText(m).width, ws = ctx.measureText(s).width, wc = size * 0.36;
     const x0 = align === 'right' ? x - wm - wc - ws : x;
     ctx.fillText(m, x0, y);
@@ -624,6 +771,14 @@
     let s = null;
     for (const x of CHIP_SEGS) if (a >= x.t0 - 0.05) s = x;
     return s;
+  }
+  function chipWidth(kicker, topic, size) {
+    ctx.font = font(size); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width;
+    const ts = Math.round(size * 0.8);
+    ctx.font = font(ts);
+    const tw = topic ? ctx.measureText(topic).width + ts * 1.4 : 0;
+    return kw + size * 2.6 + (topic ? tw + size * 0.25 : 0);
   }
   function drawChip(kicker, topic, cx, cy, size) {
     ctx.font = font(size); ctx.direction = 'rtl';
@@ -727,7 +882,8 @@
       const w = Math.max(sumW(k) + ref.space * (k - 1), sumW(words.length) - sumW(k) + ref.space * (words.length - k - 1));
       if (w < best.w) best = { k, w };
     }
-    const size = clamp(Math.floor(48 * target / best.w), 36, 42);
+    const [s0, s1] = L.head.size || [36, 42];
+    const size = clamp(Math.floor(48 * target / best.w), s0, s1);
     ctx.direction = 'rtl';
     ctx.font = font(size);
     const space = ctx.measureText(' ').width;
@@ -743,36 +899,38 @@
         .sort((i, j) => ws[j].length - ws[i].length);
       let cur = measure(ws);
       for (const i of order) {
-        if (cur + tw > goal) break;
+        if (L.plainHead || cur + tw > goal) break;   // plainHead: no tatweel
         n[i]++; cur += tw;
       }
       const out = ws.map((w, i) => stretchWord(w, n[i]));
       const sized = out.map(w => ({ w, width: ctx.measureText(w).width }));
       const ink = sized.reduce((s, w) => s + w.width, 0);
       const gap = sized.length > 1 ? (goal - ink) / (sized.length - 1) : space;
-      const sp = clamp(gap, space, space * 1.45);
+      const sp = L.plainHead ? space : clamp(gap, space, space * 1.45);
       return { words: sized, width: ink + sp * (sized.length - 1), space: sp };
     });
     return (layoutCache[key] = { size, space, lines });
   }
 
-  function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut) {
+  function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut, right) {
     const n = lay.lines.length;
     let idx = 0;
     ctx.font = font(lay.size);
     ctx.direction = 'rtl';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    const outP = tOut == null ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    const base = L.lower ? ctx.globalAlpha : 1;  // broadcast: follow the frame's fade (outro)
+    // smoothText: the whole headline fades out and the next fades in, without moving
+    const outP = tOut == null || (L.staticText && !L.smoothText) ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
       const y = cy + (li - (n - 1) / 2) * lineH;
-      let x = cx + ln.width / 2;
+      let x = right != null ? right : cx + ln.width / 2;
       for (const wd of ln.words) {
-        const p = eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
+        const p = L.smoothText ? eio(prog(a, tIn - 0.05, tIn + 0.4)) : L.staticText ? 1 : eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
         if (p > 0) {
-          ctx.globalAlpha = p * (1 - outP);
+          ctx.globalAlpha = base * p * (1 - outP);
           ctx.fillStyle = color;
-          ctx.fillText(wd.w, x, y + (1 - p) * 22 - outP * 16);
+          ctx.fillText(wd.w, x, L.staticText ? y : y + (1 - p) * 22 - outP * 16);
         }
         x -= wd.width + (ln.space ?? lay.space);
         idx++;
@@ -797,7 +955,9 @@
     const kp = seg ? eout(prog(a, seg.t0, seg.t0 + 0.45)) * (seg.t1 == null ? 1 : 1 - eio(prog(a, seg.t1 - 0.35, seg.t1))) : 0;
     if (kp > 0) {
       ctx.globalAlpha = alpha * kp;
-      drawChip(seg.kicker, seg.topic, L.kicker.cx, L.kicker.y + (1 - kp) * 12, 32);
+      const kx = L.kicker.right ? L.kicker.right - chipWidth(seg.kicker, seg.topic, 32) / 2 : L.kicker.cx;
+      if (L.lower) { ctx.globalAlpha = alpha; drawTag(seg.kicker, seg.topic, kp); }
+      else drawChip(seg.kicker, seg.topic, kx, L.kicker.y + (1 - kp) * 12, 32);
     }
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
     const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
@@ -805,19 +965,292 @@
     const wipe = eio(prog(a, HL[0].t - 0.45, HL[0].t + 0.1));
     ctx.globalAlpha = alpha;
     ctx.save();
+    if (L.noPanel) ctx.globalAlpha = 0;  // trial looks: words straight on the photo or the white page
     ctx.shadowColor = 'rgba(11,31,75,0.28)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
     const pg = ctx.createLinearGradient(px + pw, 0, px, 0);
     pg.addColorStop(0, '#0B1F4B'); pg.addColorStop(1, '#142E66');
     ctx.fillStyle = pg;
     rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
     ctx.restore();
-    if (wipe > 0.2) {
+    let lw = wipe;
+    if (L.lower) {
+      // the bar slides out to the right before each new story and back in with it
+      for (const c of TL.chapters) lw = Math.min(lw, 1 - eio(prog(a, c - 0.5, c - 0.15)) * (1 - eio(prog(a, c + 0.05, c + 0.45))));
+      drawLower(a, lw);
+    }
+    if (wipe > 0.2 && !L.noPanel) {
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
-    drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.4), '#FFFFFF', a, h.t, tOut);
+    if (L.boxed) { drawBoxed(lay, a, h.t, tOut); ctx.restore(); return; }
+    if (L.dark && !L.lower) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }  // no halo on the white bar
+    if (L.lower) { const B = L.lower; ctx.beginPath(); ctx.rect(B.x + B.w * (1 - lw), B.y, B.w * lw, B.h); ctx.clip(); }
+    drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut, L.head.right);
     ctx.restore();
+  }
+
+  // ---------- spoken captions (look 'captions') ----------
+  // Phrases from subtitles.txt; word times spread over each phrase by word length.
+  let CAPS = [];
+  function loadCaptions() {
+    try {
+      const x = new XMLHttpRequest();
+      x.open('GET', window.EDITION_DIR + '/subtitles.txt', false); x.send();
+      CAPS = x.responseText.split('\n').map(l => l.match(/^\[\s*([\d.]+)\s*-\s*([\d.]+)\]\s*(.+)$/)).filter(Boolean)
+        .map(m => ({ t0: +m[1], t1: +m[2], text: m[3].trim() })).filter(p => p.t0 < TL.audioEnd);
+      for (const p of CAPS) {
+        const ws = p.text.split(/\s+/), tot = ws.reduce((n, w) => n + w.length + 1, 0);
+        let acc = 0;
+        p.words = ws.map(w => { const t = p.t0 + (p.t1 - p.t0) * acc / tot; acc += w.length + 1; return { w, t }; });
+      }
+    } catch (e) { CAPS = []; }
+  }
+  function drawCaptions(a, alpha) {
+    if (!L.caption || alpha <= 0) return;
+    let i = -1;
+    for (let k = 0; k < CAPS.length; k++) if (a >= CAPS[k].t0 - 0.05) i = k;
+    if (i < 0) return;
+    const p = CAPS[i], next = CAPS[i + 1];
+    const end = next && next.t0 - p.t1 < 0.8 ? next.t0 : p.t1 + 0.4;
+    if (a > end) return;
+    const C2 = L.caption;
+    const lay = layoutText(p.text, C2.maxW, C2.sizes, C2.lines || 2);
+    const lineH = Math.round(lay.size * 1.45);
+    const pin = L.staticText ? 1 : eout(prog(a, p.t0 - 0.05, p.t0 + 0.2));
+    ctx.save();
+    ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    let idx = 0;
+    const top = C2.cy - (lay.lines.length - 1) * lineH / 2 + (1 - pin) * 14;
+    lay.lines.forEach((ln, li) => {
+      let x = C2.right != null ? C2.right : C2.cx + ln.width / 2;
+      const y = top + li * lineH;
+      for (const wd of ln.words) {
+        const w = p.words[idx];
+        const nx = p.words[idx + 1];
+        const on = w && a >= w.t - 0.03 && (!nx || a < nx.t - 0.03);
+        const said = w && a >= w.t - 0.03;
+        ctx.globalAlpha = alpha * pin;
+        if (on && C2.style !== 'text') {
+          ctx.fillStyle = '#0A8F65';
+          rrect(x - wd.width - 12, y - lay.size * 0.62, wd.width + 24, lay.size * 1.3, 14); ctx.fill();
+        }
+        ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = on ? 0 : 14;
+        ctx.fillStyle = on && C2.style === 'text' ? '#34D399' : said ? '#fff' : 'rgba(255,255,255,0.6)';
+        ctx.fillText(wd.w, x, y + lay.size * 0.05);
+        ctx.shadowColor = 'transparent';
+        x -= wd.width + lay.space;
+        idx++;
+      }
+    });
+    ctx.restore();
+  }
+
+  // ---------- modern look extras ----------
+  // broadcast lower third: white headline bar with a green edge, navy strip for the spoken words below
+  function drawLower(a, wipe) {
+    const B = L.lower, xr = B.x + B.w, w = B.w * wipe;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.moveTo(xr, B.y); ctx.lineTo(xr - w, B.y); ctx.lineTo(xr - w + 26 * wipe, B.y + B.h); ctx.lineTo(xr, B.y + B.h); ctx.closePath(); ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#0A8F65'; ctx.fillRect(xr - 16, B.y, 16, B.h);
+    if (L.titleInBar && wipe > 0.98) {
+      // programme name and date at the bar's left end, apart from the headline by a thin rule
+      const bx = B.x + 46, bw = 230, cy = B.y + B.h / 2;
+      ctx.fillStyle = '#E2E7EF'; ctx.fillRect(bx + bw + 14, B.y + 30, 2, B.h - 60);
+      ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.navy; ctx.font = font(34);
+      ctx.fillText(TL.title, bx + bw / 2, cy - 18);
+      ctx.fillStyle = C.gray; ctx.font = font(22);
+      ctx.fillText(TL.date, bx + bw / 2, cy + 26);
+    }
+    const sw = (B.w - 26) * eio(clamp(wipe * 1.2 - 0.2));
+    ctx.fillStyle = 'rgba(11,31,75,0.94)';
+    ctx.fillRect(xr - sw, B.y + B.h, sw, 76);
+    ctx.restore();
+  }
+  // broadcast story tag in the lower third's style: one chip, green (country) then white (topic), square
+  // corners and the same slanted left edge, sitting on the headline bar; wipes in from the right
+  function drawTag(kicker, topic, p, centre) {
+    const B = L.lower, th = 58, sl = 9;
+    ctx.save();
+    ctx.font = font(32); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width + 56;
+    ctx.font = font(27);
+    const tw = topic ? ctx.measureText(topic).width + 44 : 0;
+    const full = kw + tw + sl, vis = full * eio(p);
+    // on the headline bar, or centred on a given point (the opening hook)
+    const xr = centre ? centre[0] + full / 2 : B.x + B.w, y = centre ? centre[1] - th / 2 : B.y - th;
+    ctx.beginPath(); ctx.rect(xr - vis - sl, y - 30, vis + sl, th + 30); ctx.clip();
+    const x0 = xr - full;
+    ctx.beginPath(); ctx.moveTo(xr, y); ctx.lineTo(x0, y); ctx.lineTo(x0 + sl, y + th); ctx.lineTo(xr, y + th); ctx.closePath();
+    ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+    ctx.fillStyle = topic ? '#fff' : '#0A8F65'; ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#0A8F65'; ctx.fillRect(xr - kw, y, kw, th);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = font(32); ctx.fillStyle = '#fff';
+    ctx.fillText(kicker, xr - kw / 2, y + th / 2 + 2);
+    if (topic) { ctx.font = font(27); ctx.fillStyle = TOPICS[topic] || C.navy; ctx.fillText(topic, xr - kw - tw / 2 + sl / 2, y + th / 2 + 2); }
+    ctx.restore();
+  }
+  // ticker: the coming stories crawl along the bottom (left to right, as Arabic tickers run)
+  let TICKS = null;
+  function drawTicker(a, alpha) {
+    if (alpha <= 0) return;
+    const T = L.ticker;
+    if (!TICKS) TICKS = TL.chapters.map(c => TL.headlines.find(h => h.t >= c - 0.05)).filter(Boolean);
+    let cur = -1;
+    TL.chapters.forEach((c, i) => { if (a >= c - 0.05) cur = i; });
+    // one fixed list crawling at a steady pace: nothing jumps when a new story starts
+    const text = TICKS.map(h => h.kicker + ': ' + h.text).join('     ◆     ') + '     ◆     ';
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'rgba(11,31,75,0.96)'; ctx.fillRect(0, T.y, W, T.h);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.fillRect(0, T.y, W, 2);
+    const lw = 190;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, T.y, W - lw, T.h); ctx.clip();
+    ctx.font = font(30); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(text).width;
+    const off = (Math.max(0, a - CUT) * 85) % tw;
+    ctx.fillStyle = '#fff';
+    for (let x = W - lw - 30 + off - tw; x < W + tw; x += tw) if (x > -tw && x - tw < W) ctx.fillText(text, x, T.y + T.h / 2 + 2);
+    ctx.restore();
+    ctx.fillStyle = '#0A8F65';
+    ctx.beginPath(); ctx.moveTo(W, T.y); ctx.lineTo(W - lw, T.y); ctx.lineTo(W - lw - 22, T.y + T.h); ctx.lineTo(W, T.y + T.h); ctx.closePath(); ctx.fill();
+    ctx.font = font(32); ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.fillText('الأخبار', W - lw / 2 + 4, T.y + T.h / 2 + 2);
+    ctx.restore();
+  }
+  // sting: a navy square in the middle with the story number, country and topic, at each new story
+  function drawSting(a) {
+    TL.chapters.forEach((c, i) => {
+      const p = prog(a, c - 0.5, c + 0.75);
+      if (p <= 0 || p >= 1) return;
+      const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
+      // slides in from the right with a slight turn and a small overshoot, then leaves to the left;
+      // the green rule draws itself once the square has landed
+      const inP = prog(p, 0, 0.32), outP = ein(prog(p, 0.72, 1));
+      const S = 440, cy = H * (L.stingY || 0.42);
+      const cx = W / 2 + (1 - eback(inP)) * (W / 2 + S) - outP * (W / 2 + S);
+      const rot = (1 - eout(inP)) * 8 * RAD - outP * 6 * RAD;
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, inP * 3);
+      ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
+      ctx.fillStyle = 'rgba(11,31,75,0.93)'; ctx.fillRect(-S / 2, -S / 2, S, S);
+      ctx.shadowColor = 'transparent';
+      const gl = S * eout(prog(p, 0.25, 0.55));
+      ctx.fillStyle = '#34D399'; ctx.fillRect(S / 2 - gl, S / 2 - 8, gl, 8);
+      ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      ctx.direction = 'ltr'; ctx.font = font(150); ctx.fillStyle = '#34D399';
+      ctx.fillText(String(i + 1).padStart(2, '0'), 0, -78);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(-60, 18, 120, 3);
+      ctx.direction = 'rtl'; ctx.font = font(h.kicker && h.kicker.length > 10 ? 50 : 62); ctx.fillStyle = '#fff';
+      ctx.fillText(h.kicker || '', 0, 82);
+      if (h.topic) { ctx.font = font(34); ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.fillText(h.topic, 0, 152); }
+      ctx.restore();
+    });
+  }
+  // headline lines on solid boxes (white, then green) that wipe in from the right and out to the left
+  function drawBoxed(lay, a, tIn, tOut) {
+    const n = lay.lines.length, lineH = Math.round(lay.size * 1.62), R = L.head.right + 24;
+    const outP = tOut == null || L.staticText ? 0 : eio(prog(a, tOut - 0.35, tOut));
+    lay.lines.forEach((ln, li) => {
+      const y = L.head.cy + (li - (n - 1) / 2) * lineH;
+      const p = eio(prog(a, tIn + li * 0.12, tIn + li * 0.12 + 0.4));
+      const bw = ln.width + 48, bh = lay.size * 1.4;
+      const left = R - bw * p, right = R - bw * eio(prog(outP, li * 0.15, 0.85 + li * 0.15));
+      if (right - left <= 1) return;
+      ctx.save();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = li === 1 ? '#0A8F65' : '#fff';
+      rrect(left, y - bh / 2, right - left, bh, 12); ctx.fill();
+      ctx.clip();
+      ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = li === 1 ? '#fff' : C.navy;
+      let x = R - 24;
+      for (const wd of ln.words) { ctx.fillText(wd.w, x, y + lay.size * 0.06); x -= wd.width + (ln.space ?? lay.space); }
+      ctx.restore();
+    });
+  }
+  function drawGlass(alpha) {
+    const G = L.glass;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    rrect(G.x, G.y, G.w, G.h, G.r); ctx.clip();
+    ctx.filter = 'blur(26px)';
+    ctx.drawImage(cv, G.x - 40, G.y - 40, G.w + 80, G.h + 80, G.x - 40, G.y - 40, G.w + 80, G.h + 80);
+    ctx.filter = 'none';
+    ctx.fillStyle = 'rgba(11,31,75,0.62)'; ctx.fillRect(G.x, G.y, G.w, G.h);
+    const g = ctx.createLinearGradient(0, G.y, 0, G.y + G.h);
+    g.addColorStop(0, 'rgba(255,255,255,0.08)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(G.x, G.y, G.w, G.h);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 2;
+    rrect(G.x + 1, G.y + 1, G.w - 2, G.h - 2, G.r); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.14)';
+    ctx.fillRect(G.x + 44, G.y + 312, G.w - 88, 2);  // rule between headline and spoken words
+    ctx.restore();
+  }
+  // story segments along the top, filling right to left
+  function drawSegments(a, alpha) {
+    const n = TL.chapters.length, gap = 10, x0 = L.margin, x1 = W - L.margin, sw = (x1 - x0 - gap * (n - 1)) / n, y = 30;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    for (let i = 0; i < n; i++) {
+      const c0 = TL.chapters[i], c1 = i + 1 < n ? TL.chapters[i + 1] : TL.audioEnd;
+      const f = clamp((a - c0) / (c1 - c0));
+      const x = x1 - (i + 1) * sw - i * gap;
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      rrect(x, y, sw, 7, 3.5); ctx.fill();
+      if (f > 0) { ctx.fillStyle = f < 1 ? '#34D399' : '#fff'; rrect(x + sw * (1 - f), y, sw * f, 7, 3.5); ctx.fill(); }
+    }
+    ctx.restore();
+  }
+  // at each new story: a green and a navy panel sweep across with the story number and the country
+  function drawStoryWipe(a) {
+    TL.chapters.forEach((c, i) => {
+      const p = prog(a, c - 0.55, c + 0.75);
+      if (p <= 0 || p >= 1) return;
+      const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
+      const enter = eio(prog(p, 0, 0.32)), leave = eio(prog(p, 0.62, 1));
+      const sk = 220;  // slant
+      const panel = (d, col) => {
+        const e = eio(prog(p, d, 0.32 + d)), l = eio(prog(p, 0.62 - d, 1 - d));
+        const xr = W + sk - (W + 2 * sk) * e * 0 - (W + sk) * l;   // right edge moves left on leave
+        const xl = W + sk - (W + 2 * sk) * e;                       // left edge moves left on enter
+        if (xr <= xl) return;
+        ctx.beginPath();
+        ctx.moveTo(xl, 0); ctx.lineTo(xr, 0); ctx.lineTo(xr - sk, H); ctx.lineTo(xl - sk, H); ctx.closePath();
+        ctx.fillStyle = col; ctx.fill();
+      };
+      ctx.save();
+      panel(0, '#0A8F65');
+      panel(0.06, C.navy);
+      // number + country, visible while the navy panel covers the frame
+      const ta = eout(prog(p, 0.22, 0.36)) * (1 - ein(prog(p, 0.56, 0.7)));
+      if (ta > 0) {
+        const dx = (1 - eout(prog(p, 0.22, 0.4))) * 60 - eio(prog(p, 0.56, 0.7)) * 60;
+        ctx.globalAlpha = ta;
+        ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = font(300); ctx.fillStyle = 'rgba(52,211,153,0.95)';
+        ctx.fillText(String(i + 1).padStart(2, '0'), W / 2 + dx, H * 0.42);
+        ctx.direction = 'rtl';
+        ctx.font = font(96); ctx.fillStyle = '#fff';
+        ctx.fillText(h.kicker || '', W / 2 + dx * 1.5, H * 0.42 + 210);
+        if (h.topic) {
+          ctx.font = font(44); ctx.fillStyle = 'rgba(255,255,255,0.7)';
+          ctx.fillText(h.topic, W / 2 + dx * 2, H * 0.42 + 300);
+        }
+      }
+      ctx.restore();
+    });
   }
 
   // ---------- header ----------
@@ -843,27 +1276,32 @@
     const tx = lb.x - 52;
     const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(L.hdrText[0]);
-    ctx.fillText(TL.title, tx, titleY);
-    ctx.fillStyle = C.gray; ctx.font = font(L.hdrText[1]);
-    ctx.fillText(TL.date, tx, dateY);
+    const ink = L.dark ? '#fff' : C.navy, dim = L.dark ? 'rgba(255,255,255,0.8)' : C.gray;
+    if (!L.titleInBar) {
+      ctx.fillStyle = ink; ctx.font = font(L.hdrText[0]);
+      ctx.fillText(TL.title, tx, titleY);
+      ctx.fillStyle = dim; ctx.font = font(L.hdrText[1]);
+      ctx.fillText(TL.date, tx, dateY);
+    }
     // story counter on the left
     let ch = 0;
     TL.chapters.forEach((c, i) => { if (a >= c) ch = i + 1; });
     if (a >= TL.headlines[TL.headlines.length - 1].t) ch = TL.chapters.length;
     const n = TL.chapters.length;
+    if (L.noCounter) { ctx.restore(); return; }  // broadcast: the sting and the ticker carry the story number
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
-    ctx.font = font(34); ctx.fillStyle = C.navy;
+    if (L.broadcast) { ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 1; }
+    ctx.font = font(34); ctx.fillStyle = ink;
     const num = String(ch).padStart(2, '0');
     ctx.fillText(num, L.margin, titleY);
     const nw = ctx.measureText(num).width;
-    ctx.font = font(24); ctx.fillStyle = C.gray;
+    ctx.font = font(24); ctx.fillStyle = dim;
     ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < (L.segments || L.noSegBar ? 0 : n); i++) {
       const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
-      ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
+      ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : ink) : (L.dark ? 'rgba(255,255,255,0.3)' : '#E1E6EE');
       rrect(bx, by, 24, 6, 3); ctx.fill();
     }
     ctx.restore();
@@ -1150,8 +1588,16 @@
     const fl = 1 - prog(t, 0, 0.25);
     if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${0.7 * fl})`; ctx.fillRect(0, 0, W, H); }
     // logo, top right in the safe area
-    const lh = HL.logoH, lw = lh * LOGO_W.width / LOGO_W.height;
-    drawLogoAt(W - L.margin - lw / 2, L.logoY + lh / 2 + 10, lh, eout(prog(t, 0.1, 0.5)), LOGO_W);
+    if (L.broadcast) {
+      // broadcast: the same size and place as the logo in the stories, with its soft shadow
+      const lb = logoBox();
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2;
+      drawLogoAt(lb.x + lb.w / 2, lb.y + lb.h / 2, lb.h, eout(prog(t, 0.1, 0.5)), LOGO_W);
+      ctx.restore();
+    } else {
+      const lh = HL.logoH, lw = lh * LOGO_W.width / LOGO_W.height;
+      drawLogoAt(W - L.margin - lw / 2, L.logoY + lh / 2 + 10, lh, eout(prog(t, 0.1, 0.5)), LOGO_W);
+    }
     // headline: words rise in one after another
     const lay = layoutText(hk.text, HL.maxW, HL.sizes, 2);
     const lineH = Math.round(lay.size * 1.35);
@@ -1159,7 +1605,8 @@
     const kp = eout(prog(t, 0.15, 0.5));
     if (hk.kicker) {
       ctx.globalAlpha = (1 - out) * kp;
-      drawChip(hk.kicker, hk.topic, W / 2, top - lineH * 0.5 - 60 + (1 - kp) * 12, 38);
+      if (L.lower) drawTag(hk.kicker, hk.topic, kp, [W / 2, top - lineH * 0.5 - 60]);
+      else drawChip(hk.kicker, hk.topic, W / 2, top - lineH * 0.5 - 60 + (1 - kp) * 12, 38);
       ctx.globalAlpha = 1 - out;
     }
     ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
@@ -1168,12 +1615,12 @@
       let x = W / 2 + ln.width / 2;
       const y = top + li * lineH;
       for (const wd of ln.words) {
-        const p = eout(prog(t, 0.3 + idx * 0.07, 0.65 + idx * 0.07));
+        const p = L.staticText ? eio(prog(t, 0.3, 0.7)) : eout(prog(t, 0.3 + idx * 0.07, 0.65 + idx * 0.07));
         if (p > 0) {
           ctx.globalAlpha = (1 - out) * p;
           ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 18;
           ctx.fillStyle = '#fff';
-          ctx.fillText(wd.w, x, y + (1 - p) * 26);
+          ctx.fillText(wd.w, x, L.staticText ? y : y + (1 - p) * 26);
           ctx.shadowColor = 'transparent';
         }
         x -= wd.width + lay.space;
@@ -1294,7 +1741,46 @@
       return { img: card.img, f: card.moves[0].a, kicker: kickerAt(c) };
     });
   }
+  // broadcast cover: the hook's photo full-frame (or cover.imgs[0]), the logo, the lower third with the hook's
+  // tag and line on the white bar (programme name and date at its left end), every country in the strip below
+  function renderCoverBroadcast() {
+    const hk = TL.hook || {};
+    const h0 = TL.headlines.find(h => h.t >= TL.chapters[0] - 0.05) || TL.headlines[0];
+    const first = coverPhotos()[0];
+    const ph = TL.cover && TL.cover.imgs ? { img: TL.cover.imgs[0], f: [0.5, 0.5] } : hk.img ? { img: hk.img, f: hk.f || [0.5, 0.5] } : first;
+    const kicker = hk.kicker || h0.kicker, topic = hk.text ? hk.topic : h0.topic, text = hk.text || h0.text;
+    const B = L.lower;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
+    if (IMG[ph.img]) coverDraw(IMG[ph.img], 0, 0, W, H, ph.f[0], ph.f[1], 1.04);
+    const g = ctx.createLinearGradient(0, B.y - H * 0.3, 0, H);
+    g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.5, 'rgba(11,31,75,0.55)'); g.addColorStop(1, 'rgba(11,31,75,0.92)');
+    ctx.fillStyle = g; ctx.fillRect(0, B.y - H * 0.3, W, H - B.y + H * 0.3);
+    const lb = logoBox();
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2;
+    drawLogoAt(lb.x + lb.w / 2, lb.y + lb.h / 2, lb.h, 1, LOGO_W);
+    ctx.restore();
+    drawLower(1e9, 1);
+    drawTag(kicker, topic, 1);
+    const lay = layoutHeadline(text, L.head.maxW);
+    drawWords(lay, L.head.cx, L.head.cy, Math.round(lay.size * 1.4), C.navy, 1e9, 0, null, L.head.right);
+    // every country covered, in the navy strip under the bar
+    const names = [...new Set(TL.headlines.map(h => h.kicker).filter(k => k && k !== TL.title))];
+    const maxW = B.w - 26 - 70;
+    let size = 31;
+    ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const sep = '  •  ', line = names.join(sep);
+    do { ctx.font = font(size); } while (ctx.measureText(line).width > maxW && --size > 20);
+    let x = L.head.right;
+    const y = B.y + B.h + 40;
+    names.forEach((n, i) => {
+      ctx.fillStyle = '#fff'; ctx.fillText(n, x, y); x -= ctx.measureText(n).width;
+      if (i < names.length - 1) { ctx.fillStyle = '#34D399'; ctx.fillText(sep, x, y); x -= ctx.measureText(sep).width; }
+    });
+  }
   function renderCover() {
+    if (L.broadcast) return renderCoverBroadcast();
     const V = L.cover;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
@@ -1379,15 +1865,24 @@
       const inA = k => eout(prog(t, 6.45 + k * 0.12, 7.15 + k * 0.12)) * (1 - out);
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
-      drawProgress(Math.max(a, CUT), inA(2));
+      if (L.glass) drawGlass(inA(1));
+      if (!L.segments && !L.noBar) drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
+      drawCaptions(a, inA(3));
+      if (L.wipe) drawStoryWipe(a);
+      if (L.ticker) drawTicker(a, inA(3));
+      if (L.sting) drawSting(a);
       if (t >= OUTRO) ctx.restore();
       const hdr = eout(prog(t, 6.8, 7.4)) * (1 - eio(prog(t, OUTRO, OUTRO + 0.4)));
       drawHeader(a, hdr);
+      if (L.segments) drawSegments(a, hdr);
       if (t >= 6.85 && t < OUTRO + 0.15) {
         const lb = logoBox();
-        ctx.drawImage(LOGO, lb.x, lb.y, lb.w, lb.h);
+        // broadcast: a soft shadow keeps the white logo readable on bright photos (no shade at the top)
+        if (L.broadcast) { ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2; }
+        ctx.drawImage(L.dark ? LOGO_W : LOGO, lb.x, lb.y, lb.w, lb.h);
+        if (L.broadcast) ctx.restore();
       }
       drawOutro(t);
     }
@@ -1403,6 +1898,7 @@
     LOGO = tint(logo, C.navy);
     LOGO_ACC = tint(logo, C.acc);
     LOGO_W = tint(logo, '#fff');
+    if (L.caption) loadCaptions();
     window.renderFrame = renderFrame;
     window.renderCover = renderCover;
     window.DURATION = DURATION;

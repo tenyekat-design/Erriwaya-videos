@@ -10,7 +10,8 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 2. Transcription: `tools/setup-asr.sh` once per container (Whisper small via npm; huggingface is blocked),
    then `python3 tools/transcribe.py <date>` → phrase timings + suggested `audioCut` / `audioEnd`.
    Prefer the script text the user sends for names and spelling; use the transcript only for timings.
-   `outroAt` = start of the closing sentence that follows "إلى هنا نصل إلى ختام..." (~6–7 s before the end).
+   `outroAt` = start of the closing sentence that follows "إلى هنا نصل إلى ختام..." (~6–7 s before the end); kept for
+   reference: the closing logo now starts after the voice-over ends (`audioEnd`).
 3. Fill `editions/<date>/edition.js`. `editions/2026-10-25/edition.js` is the reference: one chapter per story,
    2 headlines per story (≤ 2 lines), each photo on the sentence it illustrates, camera/highlights/pins per story
    (an area label `dot: false` gets a `side` when it would cover the highlighted territory),
@@ -24,8 +25,9 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 4. Check a few stills: `node tools/render.js --edition <date> --stills 40,100,150` (output/stills/, delete after).
 5. Render: `node tools/render.js --edition <date>` (1080x1350) and, if asked, `--format youtube` (1920x1080)
    or `--format story` (1080x1920, TikTok/Reels/Shorts). ~3–5 min each. YouTube and story videos are git-ignored (> 100 MB).
-   Each render also writes `output/erriwaya-brief-<date>[-format]-cover.jpg` (thumbnail: first three stories'
-   photos + all countries; `cover: { imgs: [...] }` in edition.js overrides the photos) and
+   Each render also writes `output/erriwaya-brief-<date>[-format]-cover.jpg` (thumbnail in the broadcast look: the
+   hook's photo full-frame, its tag and line on the white bar, all countries in the strip below; `cover: { imgs: [...] }`
+   in edition.js overrides the photo; it is also embedded in that video file as its picture) and
    `output/erriwaya-brief-<date>-description.txt` (stories, YouTube chapter timestamps, handles, hashtags)
    and `output/erriwaya-brief-<date>.srt` (subtitles for YouTube/Facebook, from subtitles.txt).
    `--cover` writes only these, in seconds.
@@ -34,12 +36,20 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 
 ## Fixed decisions
 
-- White template, AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork) tinted navy, inside the safe area.
-- Approved 28 Oct 2026 (current reference): header title and date set apart from the logo by a clear gap; story label
-  = green country chip + coloured topic; teaser labels per country; opening hook (top story full-frame) before a faster map intro; three formats (feed, youtube, story) with a cover
-  each; description, chapters and .srt with every edition. Re-render 2026-10-25 to compare when changing the look.
+- AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork), inside the safe area.
+- Approved 29 Oct 2026 (current reference, all formats, the default): the "broadcast" look. Full-frame photo; logo
+  at the top (white, soft shadow, no shade, no story counter); lower third = one two-colour story tag (green country, white topic, square
+  corners, slanted left edge) on a white headline bar (navy text, no tatweel, no halo) that carries «الموجز الإخباري»
+  and the date at its left end, then a navy strip with the spoken words (from subtitles.txt, the spoken word in
+  green); a navy ticker titled «الأخبار» crawling all the stories at a steady pace; small inset map in the top corner
+  (YouTube: bottom-left, level with the headline bar); no date/number chips.
+  Text has no motion: headlines cross-fade; the bar slides out and back in between stories while a navy square with
+  the story number, country and topic slides in from the right and leaves to the left. The opening hook uses the
+  same tag. Three formats (feed, youtube, story) with a cover each; description, chapters and .srt with every
+  edition. Re-render 2026-10-25 to compare when changing the look. `--look classic` renders the white layout
+  approved on 28 Oct; the other `--look` values in src/app.js were trials (feed only).
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
-  whose final chord lands on the last word; all music ducks under the voice. Western Sahara is drawn as in the
+  whose final chord lands as the closing logo and social icons appear; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.

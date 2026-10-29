@@ -2,9 +2,11 @@
 //   node tools/render.js --edition 2026-10-24                 full video -> output/erriwaya-brief-2026-10-24.mp4
 //   node tools/render.js --edition 2026-10-24 --stills 3,30   PNG stills -> output/stills/
 //   node tools/render.js --edition 2026-10-24 --from 0 --to 10   partial render (no audio mix)
-//   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only
+//   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only (and the cover
+//                                                             embedded in an existing video of that format)
 //   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg, -description.txt and .srt)
 //   add --format youtube for the 1920x1080 layout, --format story for 1080x1920 (default: feed, 1080x1350)
+//   add --look classic for the white layout approved before 29 Oct 2026 (default: broadcast)
 // Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -24,9 +26,12 @@ if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition a
 const FORMAT = String(args.format || 'feed');
 const SIZE = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
 if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
-const SUFFIX = FORMAT === 'feed' ? '' : '-' + FORMAT;
+// look: broadcast (approved, the default), classic (the earlier white layout) or a feed trial look
+// (wide | full | card | captions | pro | bold); a look other than the default is added to the file names
+const LOOK = args.look && args.look !== 'broadcast' ? String(args.look) : '';
+const SUFFIX = (FORMAT === 'feed' ? '' : '-' + FORMAT) + (LOOK ? '-' + LOOK : '');
 const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT;
+const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT + (LOOK ? '&look=' + LOOK : '');
 
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: SIZE[0], height: SIZE[1] } });
@@ -47,7 +52,7 @@ async function stills(list) {
   const dir = path.join(ROOT, 'output', 'stills');
   fs.mkdirSync(dir, { recursive: true });
   for (const t of list) {
-    const f = path.join(dir, `t${String(t).padStart(6, '0')}.png`);
+    const f = path.join(dir, `${LOOK ? LOOK + '-' : ''}t${String(t).padStart(6, '0')}.png`);
     fs.writeFileSync(f, await grab(page, t, 'image/png'));
     console.log(f);
   }
@@ -67,7 +72,7 @@ async function cover(browser) {
 function description() {
   const TL = loadEdition();
   const vt = a => TL.intro + a - TL.audioCut;
-  const end = vt(TL.audioEnd) + TL.tail;
+  const end = Math.max(vt(TL.audioEnd) + TL.tail, vt(TL.audioEnd) + 6.2);  // as DURATION in src/app.js
   const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const stories = TL.chapters.map(c => {
     const hs = TL.headlines.filter(h => h.t >= c - 0.05);
@@ -141,6 +146,16 @@ function subtitles() {
   console.log('wrote', file);
 }
 
+// The cover is also embedded in the video file as its picture (shown by phones, file browsers and players).
+function embedCover() {
+  if (!fs.existsSync(OUT) || !fs.existsSync(COVER)) return;
+  const tmpOut = OUT.replace(/\.mp4$/, '.cover-tmp.mp4');
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', OUT, '-i', COVER, '-map', '0', '-map', '1', '-c', 'copy',
+    '-disposition:v:1', 'attached_pic', '-movflags', '+faststart', tmpOut]);
+  fs.renameSync(tmpOut, OUT);
+  console.log('cover embedded in', OUT);
+}
+
 async function renderRange(browser, f0, f1, file) {
   const page = await openPage(browser);
   const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
@@ -185,11 +200,12 @@ function buildAudio(duration, file) {
   const intro = TL.intro, cut = TL.audioCut;
   const vt = a => intro + a - cut;
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const outro = vt(TL.outroAt), voiceEnd = vt(TL.audioEnd);
+  const voiceEnd = vt(TL.audioEnd), outro = voiceEnd + 0.2;  // closing logo after the last word (OUTRO in src/app.js)
   // story transitions: the whoosh peaks (0.55s into the file) in the pause just before each story
   const energy = voiceEnergy(voice);
   const hits = TL.chapters.map(c => vt(quietest(energy, c - cut - 1.0, c - cut + 0.4)));
-  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav, placed on the last word
+  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav
+  const OUTRO_LAND = outro + 2.1;  // ...lands as the closing logo settles and the social icons appear (src/app.js drawOutro)
   const inputs = ['-i', voice, '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav')];
   const f = [
     `[0:a]atrim=start=${cut},asetpts=PTS-STARTPTS,adelay=${ms(intro)}|${ms(intro)},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[v][vk0]`,
@@ -198,7 +214,7 @@ function buildAudio(duration, file) {
     `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume='if(lt(t,${intro - 0.1}),0.75,0.75*max(0.2,1-(t-${intro - 0.1})*1.6))':eval=frame[m]`,
     // quiet bed under the stories, handing over to the closing music
     `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration - intro + 1},volume=0.16,afade=t=in:st=0:d=2.5,afade=t=out:st=${outro - intro - 1}:d=2,adelay=${ms(intro - 0.6)}|${ms(intro - 0.6)}[bed]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(voiceEnd - OUTRO_HIT + 0.25)}|${ms(voiceEnd - OUTRO_HIT + 0.25)}[out]`,
+    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(OUTRO_LAND - OUTRO_HIT)}|${ms(OUTRO_LAND - OUTRO_HIT)}[out]`,
     // music ducks a further ~8 dB whenever the voice speaks
     `[bed][out]amix=inputs=2:normalize=0:duration=longest[bus]`,
     `[bus][vk]sidechaincompress=threshold=0.015:ratio=6:attack=20:release=450:knee=4[duck]`,
@@ -214,7 +230,7 @@ function buildAudio(duration, file) {
   if (args.stills) return stills(String(args.stills).split(',').map(Number));
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  if (args.cover) { await cover(browser); await browser.close(); description(); return subtitles(); }
+  if (args.cover) { await cover(browser); await browser.close(); embedCover(); description(); return subtitles(); }
   const probe = await openPage(browser);
   const duration = await probe.evaluate(() => window.DURATION);
   await probe.close();
@@ -244,6 +260,7 @@ function buildAudio(duration, file) {
     const b2 = await chromium.launch({ args: ['--allow-file-access-from-files'] });
     await cover(b2);
     await b2.close();
+    embedCover();
     description();
     subtitles();
   } else {
