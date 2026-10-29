@@ -1741,7 +1741,46 @@
       return { img: card.img, f: card.moves[0].a, kicker: kickerAt(c) };
     });
   }
+  // broadcast cover: the hook's photo full-frame (or cover.imgs[0]), the logo, the lower third with the hook's
+  // tag and line on the white bar (programme name and date at its left end), every country in the strip below
+  function renderCoverBroadcast() {
+    const hk = TL.hook || {};
+    const h0 = TL.headlines.find(h => h.t >= TL.chapters[0] - 0.05) || TL.headlines[0];
+    const first = coverPhotos()[0];
+    const ph = TL.cover && TL.cover.imgs ? { img: TL.cover.imgs[0], f: [0.5, 0.5] } : hk.img ? { img: hk.img, f: hk.f || [0.5, 0.5] } : first;
+    const kicker = hk.kicker || h0.kicker, topic = hk.text ? hk.topic : h0.topic, text = hk.text || h0.text;
+    const B = L.lower;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
+    if (IMG[ph.img]) coverDraw(IMG[ph.img], 0, 0, W, H, ph.f[0], ph.f[1], 1.04);
+    const g = ctx.createLinearGradient(0, B.y - H * 0.3, 0, H);
+    g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.5, 'rgba(11,31,75,0.55)'); g.addColorStop(1, 'rgba(11,31,75,0.92)');
+    ctx.fillStyle = g; ctx.fillRect(0, B.y - H * 0.3, W, H - B.y + H * 0.3);
+    const lb = logoBox();
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2;
+    drawLogoAt(lb.x + lb.w / 2, lb.y + lb.h / 2, lb.h, 1, LOGO_W);
+    ctx.restore();
+    drawLower(1e9, 1);
+    drawTag(kicker, topic, 1);
+    const lay = layoutHeadline(text, L.head.maxW);
+    drawWords(lay, L.head.cx, L.head.cy, Math.round(lay.size * 1.4), C.navy, 1e9, 0, null, L.head.right);
+    // every country covered, in the navy strip under the bar
+    const names = [...new Set(TL.headlines.map(h => h.kicker).filter(k => k && k !== TL.title))];
+    const maxW = B.w - 26 - 70;
+    let size = 31;
+    ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    const sep = '  •  ', line = names.join(sep);
+    do { ctx.font = font(size); } while (ctx.measureText(line).width > maxW && --size > 20);
+    let x = L.head.right;
+    const y = B.y + B.h + 40;
+    names.forEach((n, i) => {
+      ctx.fillStyle = '#fff'; ctx.fillText(n, x, y); x -= ctx.measureText(n).width;
+      if (i < names.length - 1) { ctx.fillStyle = '#34D399'; ctx.fillText(sep, x, y); x -= ctx.measureText(sep).width; }
+    });
+  }
   function renderCover() {
+    if (L.broadcast) return renderCoverBroadcast();
     const V = L.cover;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
