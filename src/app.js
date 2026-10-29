@@ -933,7 +933,8 @@
     if (kp > 0) {
       ctx.globalAlpha = alpha * kp;
       const kx = L.kicker.right ? L.kicker.right - chipWidth(seg.kicker, seg.topic, 32) / 2 : L.kicker.cx;
-      drawChip(seg.kicker, seg.topic, kx, L.kicker.y + (1 - kp) * 12, 32);
+      if (L.lower) drawTag(seg.kicker, seg.topic, kp);
+      else drawChip(seg.kicker, seg.topic, kx, L.kicker.y + (1 - kp) * 12, 32);
     }
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
     const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
@@ -1031,6 +1032,32 @@
     ctx.fillRect(xr - sw, B.y + B.h, sw, 76);
     ctx.restore();
   }
+  // broadcast story tag in the lower third's style: green block (country) and white block (topic), square
+  // corners and the same slanted left edge, sitting on the headline bar; wipes in from the right
+  function drawTag(kicker, topic, p) {
+    const B = L.lower, xr = B.x + B.w, th = 58, y = B.y - th, sl = 9;
+    ctx.save();
+    ctx.globalAlpha = 1;
+    ctx.font = font(32); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width + 56;
+    ctx.font = font(27);
+    const tw = topic ? ctx.measureText(topic).width + 44 : 0;
+    const full = kw + tw + sl, vis = full * eio(p);
+    ctx.beginPath(); ctx.rect(xr - vis - sl, y - 4, vis + sl, th + 8); ctx.clip();
+    const poly = (x0, x1, col) => {
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x0, y); ctx.lineTo(x0 + sl, y + th); ctx.lineTo(x1, y + th); ctx.closePath(); ctx.fill();
+    };
+    ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 6;
+    if (topic) poly(xr - kw - tw - sl, xr - kw + 1, '#fff');
+    poly(xr - kw - (topic ? 0 : sl), xr, '#0A8F65');
+    ctx.shadowColor = 'transparent';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = font(32); ctx.fillStyle = '#fff';
+    ctx.fillText(kicker, xr - kw / 2, y + th / 2 + 2);
+    if (topic) { ctx.font = font(27); ctx.fillStyle = TOPICS[topic] || C.navy; ctx.fillText(topic, xr - kw - tw / 2 + sl / 2, y + th / 2 + 2); }
+    ctx.restore();
+  }
   // ticker: the coming stories crawl along the bottom (left to right, as Arabic tickers run)
   let TICKS = null;
   function drawTicker(a, alpha) {
@@ -1057,34 +1084,39 @@
     ctx.fillStyle = '#0A8F65';
     ctx.beginPath(); ctx.moveTo(W, T.y); ctx.lineTo(W - lw, T.y); ctx.lineTo(W - lw - 22, T.y + T.h); ctx.lineTo(W, T.y + T.h); ctx.closePath(); ctx.fill();
     ctx.font = font(32); ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
-    ctx.fillText('التالي', W - lw / 2 + 4, T.y + T.h / 2 + 2);
+    ctx.fillText('الأخبار', W - lw / 2 + 4, T.y + T.h / 2 + 2);
     ctx.restore();
   }
-  // band sting: a navy band with green rules sweeps across the middle with the story number and country
+  // band sting: a slim navy band slides across the middle with the story number, country and topic
   function drawSting(a) {
     TL.chapters.forEach((c, i) => {
-      const p = prog(a, c - 0.6, c + 0.9);
+      const p = prog(a, c - 0.45, c + 0.6);
       if (p <= 0 || p >= 1) return;
       const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
-      const inP = eio(prog(p, 0, 0.25)), outP = eio(prog(p, 0.75, 1));
-      const bh = 300 * inP * (1 - outP) + 0.001, cy = H * 0.44;
+      const inP = eio(prog(p, 0, 0.3)), outP = eio(prog(p, 0.72, 1));
+      const bh = 132, cy = H * 0.44, sl = 30;
+      const xr = W + sl - (W + sl) * 0 , x0 = W + sl - (W + 2 * sl) * inP, x1 = W + sl - (W + 2 * sl) * outP;
+      if (x1 <= x0) return;
       ctx.save();
-      // flash/darken the frame a little behind the band
-      ctx.fillStyle = `rgba(11,31,75,${0.45 * inP * (1 - outP)})`; ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = 'rgba(11,31,75,0.97)'; ctx.fillRect(0, cy - bh / 2, W, bh);
-      const lw = W * eio(prog(p, 0.05, 0.4)) * (1 - outP);
-      ctx.fillStyle = '#34D399';
-      ctx.fillRect(W - lw, cy - bh / 2 - 6, lw, 6);
-      ctx.fillRect(0, cy + bh / 2, lw, 6);
-      ctx.beginPath(); ctx.rect(0, cy - bh / 2, W, bh); ctx.clip();
-      const tp = eout(prog(p, 0.12, 0.45)), tx = (1 - tp) * 120 - eio(prog(p, 0.7, 0.95)) * 160;
+      ctx.beginPath(); ctx.moveTo(x1, cy - bh / 2); ctx.lineTo(x0, cy - bh / 2); ctx.lineTo(x0 - sl, cy + bh / 2); ctx.lineTo(x1 - sl, cy + bh / 2); ctx.closePath();
+      ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 8;
+      ctx.fillStyle = 'rgba(11,31,75,0.9)'; ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.clip();
+      ctx.fillStyle = '#34D399'; ctx.fillRect(0, cy + bh / 2 - 5, W, 5);
+      const ta = eout(prog(p, 0.2, 0.42)), tx = (1 - ta) * 50;
+      ctx.globalAlpha = ta;
       ctx.textBaseline = 'middle';
-      ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.font = font(200); ctx.fillStyle = '#34D399';
-      ctx.fillText(String(i + 1).padStart(2, '0'), 80 - tx, cy + 10);
-      ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fillRect(360 - tx * 0.5, cy - 80, 3, 160);
-      ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.fillStyle = '#fff'; ctx.font = font(92);
-      ctx.fillText(h.kicker || '', 1000 + tx, cy - 20);
-      if (h.topic) { ctx.font = font(40); ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fillText(h.topic, 1000 + tx * 1.4, cy + 75); }
+      ctx.direction = 'ltr'; ctx.textAlign = 'left'; ctx.font = font(92); ctx.fillStyle = '#34D399';
+      ctx.fillText(String(i + 1).padStart(2, '0'), 90 + tx, cy + 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(250 + tx, cy - 36, 3, 72);
+      ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.font = font(64); ctx.fillStyle = '#fff';
+      ctx.fillText(h.kicker || '', 990 - tx, cy + 2);
+      if (h.topic) {
+        const kw = ctx.measureText(h.kicker || '').width;
+        ctx.font = font(34); ctx.fillStyle = 'rgba(255,255,255,0.65)';
+        ctx.fillText(h.topic, 990 - tx - kw - 30, cy + 6);
+      }
       ctx.restore();
     });
   }
