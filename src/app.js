@@ -145,7 +145,9 @@
       kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
       head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
       caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
-      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 } },
+      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 },
+               // map: 'low' (edition-wide or per card) puts the map just above the headline bar, off the faces
+               lowY: FORMAT === 'youtube' ? null : B.y - 70 - 700 * 0.3 },
     });
   }
   if (LOOK === 'captions') Object.assign(L, {
@@ -488,6 +490,14 @@
     ctx.restore();
   }
 
+  // inset map height for the card on screen: top corner, or 'low' (TL.map / card.map), gliding between cards
+  function insetY(a) {
+    const I = L.inset, yOf = c => (I.lowY != null && ((c && c.map) || TL.map) === 'low') ? I.lowY : I.small.y;
+    let y = yOf(CARDS[0]);
+    for (let i = 1; i < CARDS.length; i++) y = lerp(y, yOf(CARDS[i]), eio(prog(a, CARDS[i].start - 0.55, CARDS[i].start + 0.3)));
+    return y;
+  }
+
   function drawMapCard(a, alpha) {
     if (alpha <= 0 || L.noMap) return;
     const R = L.map;
@@ -500,7 +510,7 @@
       if (I.big) for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
       const B = I.big || { cx: 0, cy: 0, s: I.small.s };
       const s = lerp(I.small.s, B.s, big);
-      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(I.small.y, B.cy - I.S * B.s / 2, big);
+      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(insetY(a), B.cy - I.S * B.s / 2, big);
       ctx.translate(x, y); ctx.scale(s, s);
     }
     ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
