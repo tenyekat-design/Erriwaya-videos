@@ -220,7 +220,7 @@
 <!-- 9 · outro -->
 <section class="slide tall">
   <div class="photo" style="height:860px"><img src="img/unsc-vote.jpg" style="object-position:30% 60%"></div>
-  <div class="body" style="top:640px">
+  <div class="body" style="top:700px;bottom:80px">
     <span class="kick">تابعونا</span>
     <h1 style="font-size:84px">نتيجة التصويت وتداعياته في <span class="red">الموجز الإخباري</span></h1>
     <div class="big" id="big"></div>
@@ -239,8 +239,10 @@
   const slides = document.querySelectorAll('.slide');
   slides.forEach((s, i) => {
     const dots = Array.from(slides, (_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).reverse().join('');
-    s.insertAdjacentHTML('beforeend', `<div class="logo"></div><div class="page">${dots}</div>
-      <div class="footbar"><div class="rule"></div><div class="foot"><div class="grp">${nets()}<span>ERRIWAYA</span></div><div class="sep"></div><div class="grp">${ig()}<span>ERRIWAYA.MR</span></div></div></div>`);
+    // the last slide carries the handles itself, without the footer bar
+    const last = i === slides.length - 1;
+    s.insertAdjacentHTML('beforeend', `<div class="logo"></div><div class="page">${dots}</div>` + (last ? '' : `
+      <div class="footbar"><div class="rule"></div><div class="foot"><div class="grp">${nets()}<span>ERRIWAYA</span></div><div class="sep"></div><div class="grp">${ig()}<span>ERRIWAYA.MR</span></div></div></div>`));
   });
   document.getElementById('big').innerHTML = `<div>${nets()}ERRIWAYA</div><div>${ig()}ERRIWAYA.MR</div>`;
 </script>
