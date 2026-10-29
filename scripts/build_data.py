@@ -1,4 +1,4 @@
-"""يبني data.json لموقع الرواية: فيديوهات يوتيوب + نسخة من الأخبار المكتوبة (Firestore).
+"""يبني data.json لموقع الرواية: فيديوهات يوتيوب + نسخة من الأخبار المكتوبة (Firestore) + طقس العواصم.
 
 يعمل داخل GitHub Actions كل نصف ساعة. المتصفح لا يستطيع قراءة يوتيوب مباشرة،
 فهذا السكربت يقرأ صفحة القناة العامة (بلا مفاتيح) ويحفظ النتيجة مع الموقع.
@@ -184,6 +184,40 @@ def articles(out_dir):
     return out
 
 
+# ───────────── الطقس ─────────────
+# Open-Meteo (مجاني، بلا مفتاح): الطقس الحالي وأعلى/أدنى حرارة اليوم في عواصم البوابات.
+# طلب واحد لكل المدن كل نصف ساعة، فلا يتصل المتصفح بالخدمة.
+CITIES = [  # رمز البوابة، المدينة، خط العرض، خط الطول
+    ("mr", "نواكشوط", 18.0858, -15.9785), ("ma", "الرباط", 34.0209, -6.8416),
+    ("dz", "الجزائر", 36.7538, 3.0588), ("tn", "تونس", 36.8065, 10.1815),
+    ("ly", "طرابلس", 32.8872, 13.1913), ("eh", "العيون", 27.1536, -13.2033),
+    ("sn", "داكار", 14.7167, -17.4677), ("ml", "باماكو", 12.6392, -8.0029),
+    ("ne", "نيامي", 13.5116, 2.1254), ("td", "انجامينا", 12.1348, 15.0557),
+    ("gm", "بانجول", 13.4549, -16.5790),
+]
+
+
+def weather():
+    q = ("latitude=" + ",".join(str(c[2]) for c in CITIES)
+         + "&longitude=" + ",".join(str(c[3]) for c in CITIES)
+         + "&current=temperature_2m,weather_code,is_day,wind_speed_10m,relative_humidity_2m"
+         + "&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1")
+    raw = json.loads(get("https://api.open-meteo.com/v1/forecast?" + q))
+    if isinstance(raw, dict):
+        raw = [raw]
+    out = []
+    for (code, name, _, _), w in zip(CITIES, raw):
+        cur, day = w["current"], w.get("daily", {})
+        out.append({
+            "portal": code, "city": name,
+            "temp": round(cur["temperature_2m"]), "wmo": cur["weather_code"], "day": bool(cur.get("is_day", 1)),
+            "wind": round(cur.get("wind_speed_10m", 0)), "hum": cur.get("relative_humidity_2m"),
+            "max": round(day["temperature_2m_max"][0]) if day.get("temperature_2m_max") else None,
+            "min": round(day["temperature_2m_min"][0]) if day.get("temperature_2m_min") else None,
+        })
+    return {"updated": NOW.isoformat(), "cities": out}
+
+
 def site_info():
     try:
         return fs_doc(json.loads(get(f"{FS}/site/info")))
@@ -216,10 +250,16 @@ def main():
         print("articles:", e)
         data["articles"] = prev.get("articles", [])
     data["site"] = site_info() or prev.get("site", {})
+    try:
+        data["weather"] = weather()
+    except Exception as e:  # noqa: BLE001
+        print("weather:", e)
+        data["weather"] = prev.get("weather", {})
 
     with open(os.path.join(out_dir, "data.json"), "w", encoding="utf-8") as fh:
         json.dump(data, fh, ensure_ascii=False)
-    print(f"videos={len(data['videos'])} articles={len(data['articles'])}")
+    print(f"videos={len(data['videos'])} articles={len(data['articles'])} "
+          f"weather={len(data['weather'].get('cities', []))}")
 
 
 if __name__ == "__main__":

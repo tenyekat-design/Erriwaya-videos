@@ -202,6 +202,23 @@ main > * { min-width: 0 }
 .region .n { margin-inline-start: auto; font-size: 13px; color: var(--link); font-variant-numeric: tabular-nums }
 @media (max-width: 760px) { .regions { grid-template-columns: minmax(0, 1fr) } }
 
+/* ── weather in the capitals (data.json → weather, Open-Meteo every 30 min) ── */
+.wx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px }
+.wx-c { display: grid; gap: 2px; justify-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; transition: border-color .2s }
+.wx-c:hover { border-color: var(--link) }
+.wx-c .city { font: 20px/1.2 var(--f-display) }
+.wx-c .cty { font-size: 12px; color: var(--muted) }
+.wx-c .row { display: flex; align-items: center; gap: 8px; margin-top: 6px }
+.wx-c .t { font: 34px/1 var(--f-display); font-variant-numeric: tabular-nums }
+.wx-c .lbl { font-size: 14px; font-weight: 600 }
+.wx-c .mm { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 10px }
+.wx-i { width: 36px; height: 36px; flex-shrink: 0; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; stroke: var(--muted) }
+.wx-i.sun { stroke: #E0A100 } .wx-i.moon { stroke: #7C8DB5 } .wx-i.rain { stroke: #2F7FD1 } .wx-i.storm { stroke: #7B5AA6 }
+@media (max-width: 700px) {
+  .wx-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 148px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px }
+  .wx-c { scroll-snap-align: start }
+}
+
 /* ── shorts ── */
 .shorts { display: grid; grid-auto-flow: column; grid-auto-columns: 168px; gap: 14px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory }
 .short { scroll-snap-align: start; display: grid; gap: 8px }
@@ -290,6 +307,15 @@ footer small { opacity: .7 }
     <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L20 15.5V19a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
     <symbol id="i-back" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="w-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></symbol>
+    <symbol id="w-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+    <symbol id="w-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 18.5z"/></symbol>
+    <symbol id="w-sun-cloud" viewBox="0 0 24 24"><path d="M8.5 3v1.5M3 8.5h1.5M4.6 4.6l1 1M12.4 4.6l-1 1"/><path d="M5.6 10.6A3.5 3.5 0 0 1 12 7.2"/><path d="M8 20h9a3.5 3.5 0 0 0 .3-7 4.8 4.8 0 0 0-9.2 1.2A2.9 2.9 0 0 0 8 20z"/></symbol>
+    <symbol id="w-moon-cloud" viewBox="0 0 24 24"><path d="M12.5 7.2A4.6 4.6 0 0 1 6.6 3a4.6 4.6 0 0 0-1.4 7.6"/><path d="M8 20h9a3.5 3.5 0 0 0 .3-7 4.8 4.8 0 0 0-9.2 1.2A2.9 2.9 0 0 0 8 20z"/></symbol>
+    <symbol id="w-fog" viewBox="0 0 24 24"><path d="M7 13h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 13z"/><path d="M4 17h16M6 20.5h12"/></symbol>
+    <symbol id="w-rain" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/></symbol>
+    <symbol id="w-storm" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M12.5 14.5l-2 3.5h3l-2 3.5"/></symbol>
+    <symbol id="w-snow" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M8.5 18.5h.01M12 18.5h.01M15.5 18.5h.01M10.2 21h.01M13.8 21h.01" stroke-width="2.4"/></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
     <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z" fill="currentColor" stroke="none"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m10 13 4.5-4.5"/></symbol>
@@ -398,7 +424,7 @@ function matchesAny(text, kws) {
   });
 }
 
-const state = { articles: [], videos: [], site: {}, filter: "all", shown: 12 };
+const state = { articles: [], videos: [], site: {}, weather: {}, filter: "all", shown: 12 };
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const cleanTitle = t => (t || "").replace(/[#_]/g, " ").replace(/\s+/g, " ").trim() || "الرواية";
@@ -427,7 +453,8 @@ const hourIn = (tz, now) => +new Intl.DateTimeFormat("en-GB", { timeZone: tz, ho
 function tickClock() {
   const now = new Date();
   const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
-  $("#clock").textContent = "نواكشوط | " + f.format(now);
+  const nkc = wxCities().find(c => c.portal === "mr");
+  $("#clock").textContent = "نواكشوط | " + f.format(now) + (nkc ? ` | ${nkc.temp}°` : "");
   // فارق الساعة عن نواكشوط بجانب كل بلد (+1، +2)
   const base = hourIn("Africa/Nouakchott", now);
   $("#zones").innerHTML = ZONES.map(([code, tz], i) => {
@@ -536,6 +563,7 @@ function homeView() {
     ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">${ic("plus")}المزيد من الأخبار</button></div>` : ""}
   </section>
 
+  ${weatherSection()}
 
   ${shorts.length ? `<section aria-label="مقاطع قصيرة">
     <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
@@ -544,6 +572,44 @@ function homeView() {
 
   ${appBand()}
   ${aboutSection()}`;
+}
+
+// ── الطقس ──
+// رموز WMO من Open-Meteo → [أيقونة، لون، وصف]
+function wxInfo(c, day) {
+  if (c <= 1) return [day ? "sun" : "moon", day ? "sun" : "moon", c ? (day ? "مشمس غالباً" : "صافٍ غالباً") : (day ? "مشمس" : "صافٍ")];
+  if (c === 2) return [day ? "sun-cloud" : "moon-cloud", day ? "sun" : "moon", "غائم جزئياً"];
+  if (c === 3) return ["cloud", "", "غائم"];
+  if (c === 45 || c === 48) return ["fog", "", "ضباب"];
+  if (c >= 51 && c <= 57) return ["rain", "rain", "رذاذ"];
+  if (c === 61 || c === 80) return ["rain", "rain", "أمطار خفيفة"];
+  if (c === 65 || c === 82) return ["rain", "rain", "أمطار غزيرة"];
+  if ((c >= 61 && c <= 67) || c === 81) return ["rain", "rain", "أمطار"];
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return ["snow", "", "ثلوج"];
+  if (c >= 95) return ["storm", "storm", c === 95 ? "عاصفة رعدية" : "عاصفة رعدية وبرَد"];
+  return ["cloud", "", "—"];
+}
+// لا نعرض طقساً أقدم من 3 ساعات
+function wxCities() {
+  const w = state.weather || {};
+  return w.cities && Date.now() - new Date(w.updated) < 3 * 3600e3 ? w.cities : [];
+}
+function weatherSection() {
+  const cs = wxCities();
+  if (!cs.length) return "";
+  const at = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(state.weather.updated));
+  return `<section aria-label="الطقس في العواصم">
+    <div class="sec-h"><h2>الطقس في العواصم</h2><span>آخر تحديث ${at} بتوقيت نواكشوط</span></div>
+    <div class="wx-grid">${cs.map(c => {
+      const p = PORTALS.find(x => x[0] === c.portal), [icon, tone, label] = wxInfo(c.wmo, c.day);
+      return `<a class="wx-c" href="#p-${c.portal}" title="${esc(`${label}، الرطوبة ${c.hum ?? "–"}٪، الرياح ${c.wind} كم/س`)}">
+        <span class="city">${esc(c.city)}</span><span class="cty">${esc(p ? p[1] : "")}</span>
+        <span class="row"><svg class="wx-i ${tone}"><use href="#w-${icon}"/></svg><span class="t">${c.temp}°</span></span>
+        <span class="lbl">${label}</span>
+        ${c.max != null ? `<span class="mm"><span>العظمى ${c.max}°</span><span>الصغرى ${c.min}°</span></span>` : ""}
+      </a>`;
+    }).join("")}</div>
+  </section>`;
 }
 
 function renderPortals() {
@@ -726,12 +792,13 @@ async function loadSnapshot() {
     state.articles = (d.articles || []).map(normArticle);
     state.videos = (d.videos || []).map(normVideo);
     state.site = d.site || {};
+    state.weather = d.weather || {};
     store.set("erriwaya-snap", d);
   } catch {
     const d = store.get("erriwaya-snap");
-    if (d) { state.articles = (d.articles || []).map(normArticle); state.videos = (d.videos || []).map(normVideo); state.site = d.site || {}; }
+    if (d) { state.articles = (d.articles || []).map(normArticle); state.videos = (d.videos || []).map(normVideo); state.site = d.site || {}; state.weather = d.weather || {}; }
   }
-  refresh();
+  tickClock(); refresh();
 }
 
 function refresh() {
