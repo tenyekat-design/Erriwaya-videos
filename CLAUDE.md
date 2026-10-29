@@ -32,6 +32,14 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 6. Commit `editions/<date>/` + `output/erriwaya-brief-<date>.mp4` + covers + description + .srt, push to the session
    branch, send the video(s), cover(s), description and .srt.
 
+## Carousels (Instagram/Facebook, 1080x1350)
+
+Template «كاروسيل» in `carousels/` (approved 29 Oct 2026, reference `carousels/2026-10-29-minurso/`; see carousels/README.md):
+`node carousels/new.js <date-topic>`, photos in `img/` (one that matches each slide's text), fill `carousel.html`,
+`node carousels/render.js <date-topic>` → `slides/NN.png`; add `caption.txt`, commit, push, send the slides + caption.
+Shared look in `carousels/carousel.css` + `carousel.js` (white, photo fading to white, white logo, red label + big AL-Quds headline,
+white cards, footer bar with the handles except on the last slide). No [ ] in texts (AL-Quds draws them as ornaments); write «البوليساريو».
+
 ## Fixed decisions
 
 - White template, AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork) tinted navy, inside the safe area.
