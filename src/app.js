@@ -125,6 +125,7 @@
     Object.assign(L, {
       card: { cx: W0 / 2, cy: H0 / 2, w: W0, h: H0 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
       broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
+      noStats: true, noSegBar: true,   // no date/number chips, no progress dashes under the story counter
       logoH: 132, hdrText: [38, 24],
     });
     // per format: the lower third (lower, with the headline, spoken-words strip and tag placed from it),
@@ -536,7 +537,7 @@
     ctx.strokeStyle = L.inset ? '#fff' : C.line; ctx.lineWidth = L.inset ? 6 : 1.5;
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.stroke();
     ctx.restore();
-    if (L.inset) {
+    if (L.inset && !L.noStats) {
       // date/number chips stay full size, beside the inset
       const I = L.inset, Rs = { x: I.small.x + I.S * I.small.s + 4, y: I.small.y - 22, w: 600, h: 100 };
       ctx.save(); ctx.globalAlpha = alpha;
@@ -1294,7 +1295,7 @@
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = dim;
     ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
-    for (let i = 0; i < (L.segments ? 0 : n); i++) {
+    for (let i = 0; i < (L.segments || L.noSegBar ? 0 : n); i++) {
       const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;

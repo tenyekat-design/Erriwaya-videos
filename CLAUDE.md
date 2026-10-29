@@ -40,7 +40,8 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
   and story counter at the top (white); lower third = one two-colour story tag (green country, white topic, square
   corners, slanted left edge) on a white headline bar (navy text, no tatweel, no halo) that carries «الموجز الإخباري»
   and the date at its left end, then a navy strip with the spoken words (from subtitles.txt, the spoken word in
-  green); a navy ticker titled «الأخبار» crawling all the stories at a steady pace; small inset map in the top corner.
+  green); a navy ticker titled «الأخبار» crawling all the stories at a steady pace; small inset map in the top corner
+  (no date/number chips, no progress dashes: the counter alone).
   Text has no motion: headlines cross-fade; the bar slides out and back in between stories while a navy square with
   the story number, country and topic slides in from the right and leaves to the left. The opening hook uses the
   same tag. Three formats (feed, youtube, story) with a cover each; description, chapters and .srt with every
