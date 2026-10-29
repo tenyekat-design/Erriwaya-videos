@@ -82,18 +82,26 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 .nav button[aria-expanded="true"] .chev { transform: rotate(180deg) }
 .ic { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle }
 .clock { display: inline-flex; align-items: center; gap: 6px } .clock .ic { width: 15px; height: 15px; opacity: .8 }
-/* the time in each country of the portals, next to the Nouakchott clock; scrolls sideways on narrow screens */
-.zones { order: 3; flex-basis: 100%; display: flex; gap: 4px; min-width: 0; justify-content: center; overflow-x: auto; scrollbar-width: none;
-  border-top: 1px solid rgb(255 255 255 / .08); padding-top: 4px }
-.zones::-webkit-scrollbar { display: none }
-.zones a { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; padding: 2px 8px; border-radius: 999px; opacity: .85 }
-.zones a:hover { opacity: 1; background: rgb(255 255 255 / .12) }
-.zones b { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em }
-.zones .n { opacity: .6; font: 11px/1 "Segoe UI", Tahoma, Arial, sans-serif; unicode-bidi: isolate; direction: ltr }
-@media (max-width: 900px) {
-  .zones { justify-content: flex-start; margin-inline: -8px;
-    -webkit-mask-image: linear-gradient(to left, #000 88%, transparent); mask-image: linear-gradient(to left, #000 88%, transparent) }
-}
+/* flip board under the Nouakchott clock: each tile flips between a capital's time and its weather, then moves on */
+.flaps { order: 3; flex-basis: 100%; display: flex; justify-content: center; gap: 10px; border-top: 1px solid rgb(255 255 255 / .08); padding-top: 6px; padding-bottom: 1px }
+.flap { position: relative; width: 236px; height: 32px; perspective: 500px; flex-shrink: 0 }
+.flap a { position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 6px; color: #F2F7F6;
+  background: linear-gradient(#0C4544 0 50%, #093A39 50% 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .07), 0 1px 3px rgb(0 0 0 / .35);
+  backface-visibility: hidden; transform-origin: 50% 50%; white-space: nowrap; overflow: hidden }
+.flap a::after { content: ""; position: absolute; inset-inline: 0; top: 50%; height: 1px; background: rgb(0 0 0 / .45); box-shadow: 0 1px 0 rgb(255 255 255 / .05) }
+.flap a:hover { filter: brightness(1.12) }
+.flap .c { font: 16px/1 var(--f-display); min-width: 62px }
+.flap b { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .05em }
+.flap .n { opacity: .6; font: 11px/1 "Segoe UI", Tahoma, Arial, sans-serif; unicode-bidi: isolate; direction: ltr }
+.flap .s { opacity: .8; font-size: 13px; overflow: hidden; text-overflow: ellipsis }
+.flap .k { margin-inline-start: auto; opacity: .55; display: inline-flex }
+.flap .k .ic, .flap .wx-i { width: 18px; height: 18px }
+.flap .wx-i { stroke: #F2F7F6 } .flap .wx-i.sun { stroke: #FFC93C } .flap .wx-i.moon { stroke: #C9D3EE } .flap .wx-i.rain { stroke: #7CC0FF } .flap .wx-i.storm { stroke: #C7A6F0 }
+.flap a.out { animation: flap-out .22s ease-in forwards }
+.flap a.in { animation: flap-in .26s .2s ease-out both }
+@keyframes flap-out { to { transform: rotateX(90deg); filter: brightness(.6) } }
+@keyframes flap-in { from { transform: rotateX(-90deg); filter: brightness(.6) } to { transform: none } }
+@media (max-width: 700px) { .flap { width: 100% } .flaps { padding-inline: 0 } }
 
 /* portals dropdown: a chain of country links that unfolds one by one */
 .portals-panel { background: var(--brand-deep); border-top: 1px solid rgb(255 255 255 / .12); max-height: calc(100vh - 120px); overflow-y: auto; box-shadow: 0 14px 30px rgb(0 0 0 / .25) }
@@ -331,7 +339,7 @@ footer small { opacity: .7 }
 
 <div class="top"><div class="wrap">
   <span class="clock"><svg class="ic"><use href="#i-clock"/></svg><span id="clock">نواكشوط</span></span>
-  <nav class="zones" id="zones" aria-label="التوقيت في دول المنطقة"></nav>
+  <nav class="flaps" id="flaps" aria-label="أوقات العواصم وطقسها"></nav>
   <nav class="socials top-soc" aria-label="منصات الرواية">
     <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener" aria-label="يوتيوب" title="يوتيوب"><svg class="si"><use href="#s-youtube"/></svg></a>
     <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener" aria-label="فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
@@ -445,24 +453,59 @@ function timeAgo(d) {
   if (m < 43200) return pl(Math.floor(m / 1440), "يوم", "يومين", "أيام");
   return new Intl.DateTimeFormat("ar-MA", { day: "numeric", month: "long", year: "numeric" }).format(t);
 }
-// أوقات دول البوابات (أزواد على توقيت مالي)، وكل بلد يفتح بوابته
-const ZONES = [["ma", "Africa/Casablanca"], ["dz", "Africa/Algiers"], ["tn", "Africa/Tunis"], ["ly", "Africa/Tripoli"], ["eh", "Africa/El_Aaiun"],
-  ["sn", "Africa/Dakar"], ["ml", "Africa/Bamako"], ["ne", "Africa/Niamey"], ["td", "Africa/Ndjamena"], ["gm", "Africa/Banjul"]];
-const zoneFmt = ZONES.map(([, tz]) => new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false }));
+// العواصم: البوابة، المدينة، المنطقة الزمنية. المغرب عاد إلى توقيت غرينتش (والعيون معه)، وبيانات المتصفحات
+// ما زالت تعطيه +1، فنثبّته على UTC هنا.
+const CAPITALS = [["mr", "نواكشوط", "Africa/Nouakchott"], ["ma", "الرباط", "UTC"], ["dz", "الجزائر", "Africa/Algiers"],
+  ["tn", "تونس", "Africa/Tunis"], ["ly", "طرابلس", "Africa/Tripoli"], ["eh", "العيون", "UTC"], ["sn", "داكار", "Africa/Dakar"],
+  ["ml", "باماكو", "Africa/Bamako"], ["ne", "نيامي", "Africa/Niamey"], ["td", "انجامينا", "Africa/Ndjamena"], ["gm", "بانجول", "Africa/Banjul"]];
+const capFmt = Object.fromEntries(CAPITALS.map(([c, , tz]) => [c, new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false })]));
 const hourIn = (tz, now) => +new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(now);
 function tickClock() {
   const now = new Date();
   const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
   const nkc = wxCities().find(c => c.portal === "mr");
   $("#clock").textContent = "نواكشوط | " + f.format(now) + (nkc ? ` | ${nkc.temp}°` : "");
-  // فارق الساعة عن نواكشوط بجانب كل بلد (+1، +2)
-  const base = hourIn("Africa/Nouakchott", now);
-  $("#zones").innerHTML = ZONES.map(([code, tz], i) => {
-    const name = PORTALS.find(p => p[0] === code)[1];
-    const d = (hourIn(tz, now) - base + 36) % 24 - 12;
-    return `<a href="#p-${code}" title="التوقيت في ${name}">${name} <b>${zoneFmt[i].format(now)}</b>${d ? `<bdi class="n" dir="ltr">${d > 0 ? "+" : "−"}${Math.abs(d)}</bdi>` : ""}</a>`;
-  }).join("");
 }
+
+// ── لوحة التقليب: كل لوحة تعرض عاصمة بوقتها، ثم تنقلب إلى طقسها، ثم إلى العاصمة التالية ──
+const flaps = { boards: [], timer: 0, n: 0 };
+function flapFace([code, city, tz], phase) {
+  const now = new Date();
+  if (phase === "time") {
+    const d = (hourIn(tz, now) - hourIn("Africa/Nouakchott", now) + 36) % 24 - 12;   // الفارق عن نواكشوط
+    return `<a href="#p-${code}" title="الساعة في ${city}"><span class="c">${city}</span><b>${capFmt[code].format(now)}</b>${d ? `<bdi class="n" dir="ltr">${d > 0 ? "+" : "−"}${Math.abs(d)}</bdi>` : ""}<span class="k">${ic("clock")}</span></a>`;
+  }
+  const w = wxCities().find(c => c.portal === code), [icon, tone, label] = wxInfo(w.wmo, w.day);
+  return `<a href="#p-${code}" title="الطقس في ${city}"><span class="c">${city}</span><svg class="wx-i ${tone}"><use href="#w-${icon}"/></svg><b>${w.temp}°</b><span class="s">${label}</span></a>`;
+}
+// خطوات اللوحة: وقت كل عاصمة ثم طقسها (إن وُجد)
+function flapSteps(i, n) {
+  const hasWx = new Set(wxCities().map(c => c.portal));
+  return CAPITALS.filter((_, k) => k % n === i).flatMap(c => hasWx.has(c[0]) ? [[c, "time"], [c, "wx"]] : [[c, "time"]]);
+}
+function flip(b) {
+  const steps = flapSteps(b.i, flaps.n);
+  b.k = (b.k + 1) % steps.length;
+  const html = flapFace(...steps[b.k]);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { b.el.innerHTML = html; return; }
+  const old = b.el.firstElementChild;
+  b.el.insertAdjacentHTML("beforeend", html);
+  const neu = b.el.lastElementChild;
+  neu.classList.add("in"); old?.classList.add("out");
+  setTimeout(() => { old?.remove(); neu.classList.remove("in"); }, 520);
+}
+function buildFlaps() {
+  const host = $("#flaps"), w = host.clientWidth || innerWidth;
+  const n = Math.max(1, Math.min(5, Math.floor((w + 10) / 246)));
+  if (n === flaps.n && flaps.boards.length) return;
+  flaps.n = n;
+  host.innerHTML = Array.from({ length: n }, () => `<div class="flap"></div>`).join("");
+  flaps.boards = [...host.children].map((el, i) => ({ el, i, k: 0 }));
+  flaps.boards.forEach(b => { b.el.innerHTML = flapFace(...flapSteps(b.i, n)[0]); });
+  clearInterval(flaps.timer);
+  flaps.timer = setInterval(() => flaps.boards.forEach((b, i) => setTimeout(() => flip(b), i * 180)), 3500);
+}
+addEventListener("resize", () => { clearTimeout(flaps.rs); flaps.rs = setTimeout(buildFlaps, 200); });
 
 // ── تطبيع البيانات ──
 function normArticle(a) {
@@ -851,7 +894,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVideo
 window.addEventListener("hashchange", onHash);
 
 $("#yr").textContent = new Date().getFullYear();
-tickClock(); setInterval(() => { tickClock(); renderBreaking(); }, 30000);
+tickClock(); buildFlaps(); setInterval(() => { tickClock(); renderBreaking(); }, 30000);
 lastHash = /^#v-/.test(location.hash) ? "#home" : location.hash;
 loadSnapshot().then(() => { if (/^#v-/.test(location.hash)) openVideo(location.hash.slice(3)); loadLive(); });
 setInterval(loadLive, 3 * 60 * 1000);
