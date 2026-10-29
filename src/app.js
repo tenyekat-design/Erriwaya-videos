@@ -144,8 +144,10 @@
   const INTRO = TL.intro, CUT = TL.audioCut;
   const vt = a => INTRO + (a - CUT);          // voice-over time -> video time
   const at = t => t - INTRO + CUT;            // video time -> voice-over time
-  const OUTRO = vt(TL.outroAt);
-  const DURATION = vt(TL.audioEnd) + TL.tail;
+  // the closing logo comes after the last word; the outro music's final chord lands as the logo and the
+  // social icons appear (OUTRO + 2.1, tools/render.js), and its ring is held for a few seconds
+  const OUTRO = vt(TL.audioEnd) + 0.2;
+  const DURATION = Math.max(vt(TL.audioEnd) + TL.tail, OUTRO + 6.0);
 
   // ---------- helpers ----------
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -685,7 +687,7 @@
   function drawProgress(a, alpha) {
     if (alpha <= 0) return;
     const { x0, x1, y } = L.bar;
-    const total = TL.outroAt - CUT;
+    const total = TL.audioEnd - CUT;
     const p = clamp((a - CUT) / total);
     const xr = x1, xk = x1 - (x1 - x0) * p;
     ctx.save();
@@ -898,6 +900,7 @@
     ctx.direction = 'rtl';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
+    const base = L.lower ? ctx.globalAlpha : 1;  // broadcast: follow the frame's fade (outro)
     // smoothText: the whole headline fades out and the next fades in, without moving
     const outP = tOut == null || (L.staticText && !L.smoothText) ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
@@ -906,7 +909,7 @@
       for (const wd of ln.words) {
         const p = L.smoothText ? eio(prog(a, tIn - 0.05, tIn + 0.4)) : L.staticText ? 1 : eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
         if (p > 0) {
-          ctx.globalAlpha = p * (1 - outP);
+          ctx.globalAlpha = base * p * (1 - outP);
           ctx.fillStyle = color;
           ctx.fillText(wd.w, x, L.staticText ? y : y + (1 - p) * 22 - outP * 16);
         }
@@ -934,7 +937,7 @@
     if (kp > 0) {
       ctx.globalAlpha = alpha * kp;
       const kx = L.kicker.right ? L.kicker.right - chipWidth(seg.kicker, seg.topic, 32) / 2 : L.kicker.cx;
-      if (L.lower) drawTag(seg.kicker, seg.topic, kp);
+      if (L.lower) { ctx.globalAlpha = alpha; drawTag(seg.kicker, seg.topic, kp); }
       else drawChip(seg.kicker, seg.topic, kx, L.kicker.y + (1 - kp) * 12, 32);
     }
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
@@ -976,7 +979,7 @@
       const x = new XMLHttpRequest();
       x.open('GET', window.EDITION_DIR + '/subtitles.txt', false); x.send();
       CAPS = x.responseText.split('\n').map(l => l.match(/^\[\s*([\d.]+)\s*-\s*([\d.]+)\]\s*(.+)$/)).filter(Boolean)
-        .map(m => ({ t0: +m[1], t1: +m[2], text: m[3].trim() })).filter(p => p.t0 < TL.outroAt);
+        .map(m => ({ t0: +m[1], t1: +m[2], text: m[3].trim() })).filter(p => p.t0 < TL.audioEnd);
       for (const p of CAPS) {
         const ws = p.text.split(/\s+/), tot = ws.reduce((n, w) => n + w.length + 1, 0);
         let acc = 0;
@@ -1054,7 +1057,6 @@
   function drawTag(kicker, topic, p) {
     const B = L.lower, xr = B.x + B.w, th = 58, y = B.y - th, sl = 9;
     ctx.save();
-    ctx.globalAlpha = 1;
     ctx.font = font(32); ctx.direction = 'rtl';
     const kw = ctx.measureText(kicker).width + 56;
     ctx.font = font(27);
@@ -1176,7 +1178,7 @@
     ctx.save();
     ctx.globalAlpha = alpha;
     for (let i = 0; i < n; i++) {
-      const c0 = TL.chapters[i], c1 = i + 1 < n ? TL.chapters[i + 1] : TL.outroAt;
+      const c0 = TL.chapters[i], c1 = i + 1 < n ? TL.chapters[i + 1] : TL.audioEnd;
       const f = clamp((a - c0) / (c1 - c0));
       const x = x1 - (i + 1) * sw - i * gap;
       ctx.fillStyle = 'rgba(255,255,255,0.3)';

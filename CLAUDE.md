@@ -10,7 +10,8 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 2. Transcription: `tools/setup-asr.sh` once per container (Whisper small via npm; huggingface is blocked),
    then `python3 tools/transcribe.py <date>` → phrase timings + suggested `audioCut` / `audioEnd`.
    Prefer the script text the user sends for names and spelling; use the transcript only for timings.
-   `outroAt` = start of the closing sentence that follows "إلى هنا نصل إلى ختام..." (~6–7 s before the end).
+   `outroAt` = start of the closing sentence that follows "إلى هنا نصل إلى ختام..." (~6–7 s before the end); kept for
+   reference: the closing logo now starts after the voice-over ends (`audioEnd`).
 3. Fill `editions/<date>/edition.js`. `editions/2026-10-25/edition.js` is the reference: one chapter per story,
    2 headlines per story (≤ 2 lines), each photo on the sentence it illustrates, camera/highlights/pins per story
    (an area label `dot: false` gets a `side` when it would cover the highlighted territory),

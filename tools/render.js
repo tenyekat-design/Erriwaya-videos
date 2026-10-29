@@ -68,7 +68,7 @@ async function cover(browser) {
 function description() {
   const TL = loadEdition();
   const vt = a => TL.intro + a - TL.audioCut;
-  const end = vt(TL.audioEnd) + TL.tail;
+  const end = Math.max(vt(TL.audioEnd) + TL.tail, vt(TL.audioEnd) + 6.2);  // as DURATION in src/app.js
   const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   const stories = TL.chapters.map(c => {
     const hs = TL.headlines.filter(h => h.t >= c - 0.05);
@@ -186,7 +186,7 @@ function buildAudio(duration, file) {
   const intro = TL.intro, cut = TL.audioCut;
   const vt = a => intro + a - cut;
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const outro = vt(TL.outroAt), voiceEnd = vt(TL.audioEnd);
+  const voiceEnd = vt(TL.audioEnd), outro = voiceEnd + 0.2;  // closing logo after the last word (OUTRO in src/app.js)
   // story transitions: the whoosh peaks (0.55s into the file) in the pause just before each story
   const energy = voiceEnergy(voice);
   const hits = TL.chapters.map(c => vt(quietest(energy, c - cut - 1.0, c - cut + 0.4)));
