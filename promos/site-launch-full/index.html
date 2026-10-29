@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الرواية – الموقع الجديد</title>
+<style>
+/* Long promo (~55 s) for the Erriwaya website, cut on the edited voice-over (voiceover.mp3, timing.js).
+   Same look and rules as promos/site-launch: renderFrame(t) draws every frame, sizes in --u units. */
+/* Promo for the Erriwaya website launch. Every frame is drawn by renderFrame(t): no CSS animations or
+   transitions, so the headless renderer (render.js) gets the same picture for the same t. Sizes are in
+   units of --u (1/100 of the shorter side) so one layout serves feed 1080x1350, story 1080x1920 and youtube 1920x1080. */
+@font-face { font-family: AlQuds; src: url(../../assets/fonts/al-quds.otf) format('opentype'); }
+:root { --brand: #004A49; --deep: #00302F; --paper: #F4F7F6; --ink: #0F1E1D; --red: #C8102E; --on: #F2F7F6; --mint: #6CC5C0;
+  --u: min(1vw, 1vh); }
+* { box-sizing: border-box; margin: 0 }
+html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--paper); font-family: AlQuds, sans-serif; color: var(--ink) }
+.scene { position: absolute; inset: 0; overflow: hidden; display: none }
+.abs { position: absolute }
+.logo { background: currentColor; -webkit-mask: url(../site-launch/img/logo.png) center / contain no-repeat; mask: url(../site-launch/img/logo.png) center / contain no-repeat; aspect-ratio: 237 / 320 }
+.green { background: radial-gradient(120% 90% at 50% 40%, #00605E 0%, var(--brand) 45%, var(--deep) 100%); color: var(--on) }
+.tile { position: absolute; border-radius: calc(var(--u) * .6); background: rgb(255 255 255 / .09) }
+.cap { position: absolute; left: 6%; right: 6%; text-align: center; line-height: 1.35 }
+.cap b { display: block; font-weight: 400; color: var(--brand); font-size: calc(var(--u) * 7.4) }
+.cap span { display: block; color: #586A68; font-size: calc(var(--u) * 4); margin-top: calc(var(--u) * 1.2) }
+.cap .kick, .kick { display: inline-flex; align-items: center; gap: calc(var(--u) * 1.2); background: var(--brand); color: var(--on); border-radius: 999px;
+  padding: calc(var(--u) * 1) calc(var(--u) * 3) calc(var(--u) * .6); font-size: calc(var(--u) * 3.4); margin-bottom: calc(var(--u) * 2) }
+/* devices */
+.laptop { position: absolute; left: 50%; transform-origin: 50% 0 }
+.laptop .lid { position: relative; background: #1B2524; border-radius: calc(var(--u) * 2) calc(var(--u) * 2) 0 0; padding: calc(var(--u) * 1.6) calc(var(--u) * 1.6) calc(var(--u) * 2.4) }
+.laptop .scr { position: relative; overflow: hidden; background: #fff; border-radius: calc(var(--u) * .4); aspect-ratio: 16 / 10 }
+.laptop .scr img { position: absolute; left: 0; top: 0; width: 100% }
+.laptop .base { height: calc(var(--u) * 2.2); margin: 0 -7%; background: linear-gradient(#D5DCDB, #9AA6A4); border-radius: 0 0 calc(var(--u) * 3) calc(var(--u) * 3) }
+.laptop .base::after { content: ""; display: block; width: 16%; height: 45%; margin: 0 auto; background: #B7C1BF; border-radius: 0 0 calc(var(--u)) calc(var(--u)) }
+.phone { position: absolute; left: 50%; background: #121A19; border-radius: calc(var(--u) * 7); padding: calc(var(--u) * 1.6); box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 8) rgb(0 40 39 / .35) }
+.phone .scr { position: relative; overflow: hidden; border-radius: calc(var(--u) * 5.6); aspect-ratio: 400 / 860; background: #fff }
+.phone .scr img { position: absolute; left: 0; top: 0; width: 100% }
+.phone .notch { position: absolute; top: calc(var(--u) * 2.6); left: 50%; width: 28%; height: calc(var(--u) * 3.2); transform: translateX(-50%); background: #121A19; border-radius: 999px; z-index: 2 }
+.shadow { box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 9) rgb(0 40 39 / .28) }
+/* breaking bar */
+.brk { position: absolute; left: 0; right: 0; background: var(--red); color: #fff; display: flex; align-items: center; gap: calc(var(--u) * 2);
+  padding: calc(var(--u) * 2) 5%; font-size: calc(var(--u) * 4.2); box-shadow: 0 calc(var(--u)) calc(var(--u) * 4) rgb(120 0 20 / .35) }
+.brk .tag { background: #fff; color: var(--red); border-radius: calc(var(--u) * .8); padding: calc(var(--u) * 1) calc(var(--u) * 2) calc(var(--u) * .5); font-size: calc(var(--u) * 4.6); flex-shrink: 0 }
+.brk .dot { width: calc(var(--u) * 1.8); height: calc(var(--u) * 1.8); border-radius: 50%; background: #fff; flex-shrink: 0 }
+.brk .txt { white-space: nowrap; overflow: hidden }
+/* portals */
+.chips { position: absolute; left: 5%; right: 5%; display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1.6) }
+.chip { display: inline-flex; align-items: center; gap: calc(var(--u) * 1); background: #fff; color: var(--brand); border: calc(var(--u) * .3) solid #DAE3E1;
+  border-radius: 999px; padding: calc(var(--u) * 1.2) calc(var(--u) * 2.6) calc(var(--u) * .7); font-size: calc(var(--u) * 4) }
+.chip svg { width: calc(var(--u) * 3.4); height: calc(var(--u) * 3.4); fill: none; stroke: currentColor; stroke-width: 2 }
+.chip.on { background: var(--brand); color: var(--on); border-color: var(--brand) }
+.sections { display: flex; justify-content: center; gap: calc(var(--u) * 1.6); flex-wrap: wrap }
+/* outro */
+.cap .url, .url { display: inline-block; direction: ltr; background: #fff; color: var(--brand); border-radius: 999px; padding: calc(var(--u) * 1.6) calc(var(--u) * 4) calc(var(--u) * 1.2);
+  font-size: calc(var(--u) * 4); font-family: AlQuds, sans-serif; letter-spacing: .01em; white-space: nowrap }
+.soc { display: flex; justify-content: center; gap: calc(var(--u) * 2.4) }
+.soc i { width: calc(var(--u) * 9); height: calc(var(--u) * 9); border-radius: 50%; border: calc(var(--u) * .3) solid rgb(255 255 255 / .4); display: grid; place-items: center }
+.soc svg { width: 45%; height: 45%; fill: currentColor }
+.handles { font-size: calc(var(--u) * 3.6); line-height: 1.6; text-align: center; opacity: .9; direction: rtl }
+.handles em { font-style: normal; direction: ltr; unicode-bidi: isolate; letter-spacing: .03em }
+.flash { position: absolute; inset: 0; background: #fff; pointer-events: none; opacity: 0; z-index: 50 }
+
+.cap { transition: none }
+.wall { position: absolute; left: 50%; transform-origin: 50% 0; border-radius: calc(var(--u) * 1.4); overflow: hidden; box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 10) rgb(0 40 39 / .3) }
+.wall img { display: block; width: 100% }
+.strip { position: absolute; left: 0; height: auto; border-radius: calc(var(--u) * 1); box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 6) rgb(0 40 39 / .25) }
+.playbig { position: absolute; width: calc(var(--u) * 20); height: calc(var(--u) * 20); border-radius: 50%; background: rgb(0 74 73 / .92); display: grid; place-items: center;
+  box-shadow: 0 0 0 calc(var(--u) * 2) rgb(255 255 255 / .55), 0 calc(var(--u) * 2) calc(var(--u) * 6) rgb(0 0 0 / .3) }
+.playbig::after { content: ""; margin-left: 12%; border-style: solid; border-width: calc(var(--u) * 4.4) 0 calc(var(--u) * 4.4) calc(var(--u) * 7.4); border-color: transparent transparent transparent #fff }
+.tap { position: absolute; width: calc(var(--u) * 12); height: calc(var(--u) * 12); margin: calc(var(--u) * -6) 0 0 calc(var(--u) * -6); border-radius: 50%; border: calc(var(--u) * .7) solid var(--brand); pointer-events: none }
+.finger { position: absolute; width: calc(var(--u) * 5); height: calc(var(--u) * 5); margin: calc(var(--u) * -2.5) 0 0 calc(var(--u) * -2.5); border-radius: 50%; background: rgb(0 74 73 / .35); border: calc(var(--u) * .5) solid #fff; box-shadow: 0 calc(var(--u) * .6) calc(var(--u) * 2) rgb(0 0 0 / .3) }
+.chip.dim { opacity: .35 !important }
+.stmt { position: absolute; left: 6%; right: 6%; text-align: center; color: var(--on) }
+.stmt .k { font-size: calc(var(--u) * 4.4); opacity: .85; letter-spacing: .02em }
+.stmt .big { font-size: calc(var(--u) * 12); line-height: 1.25 }
+.stmt .mid { font-size: calc(var(--u) * 7); line-height: 1.3; color: #BFE6E3 }
+.rule { position: absolute; left: 50%; height: calc(var(--u) * .5); background: var(--mint); border-radius: 9px }
+</style>
+</head>
+<body>
+<canvas id="c" hidden></canvas>
+
+<!-- 1. اليوم تبدأ الرواية فصلاً جديداً -->
+<section class="scene green" id="s1">
+  <div id="tiles"></div>
+  <div class="abs logo" id="s1logo"></div>
+  <div class="cap" id="s1sub"><span class="kick" style="background: #fff; color: var(--brand); font-size: calc(var(--u) * 4.6)">اليوم تبدأ الرواية فصلاً جديداً</span></div>
+</section>
+
+<!-- 2. انطلق رسمياً... / منصة أقرب إليك... / آخر الأخبار لحظة بلحظة -->
+<section class="scene" id="s2">
+  <div class="cap" id="s2a"><b>انطلق رسمياً</b><span>الموقع الإلكتروني لشبكة الرواية الإعلامية</span></div>
+  <div class="cap" id="s2b"><b>أقرب إليك</b><span>وأسرع في إيصال الحقيقة</span></div>
+  <div class="cap" id="s2c"><b>آخر الأخبار</b><span>لحظة بلحظة</span></div>
+  <div class="laptop" id="lap"><div class="lid shadow"><div class="scr"><img id="lapimg" src="../site-launch/img/site-desktop.jpg"></div></div><div class="base"></div></div>
+</section>
+
+<!-- 3. والأخبار العاجلة فور وقوعها -->
+<section class="scene" id="s3">
+  <img class="abs" id="s3img" src="../site-launch/img/site-desktop.jpg">
+  <div class="abs" id="s3veil" style="inset: 0; background: linear-gradient(rgb(244 247 246 / 0) 0%, rgb(244 247 246 / .25) 22%, rgb(244 247 246 / .94) 42%, var(--paper) 60%)"></div>
+  <div class="brk" id="brk"><span class="tag">عاجل</span><span class="dot" id="brkdot"></span><span class="txt" id="brktxt"></span></div>
+  <div class="cap" id="s3c"><b>الأخبار العاجلة</b><span>فور وقوعها</span></div>
+</section>
+
+<!-- 4. وتقاريرنا المصورة ومقاطع الفيديو في مكان واحد -->
+<section class="scene" id="s7">
+  <div class="wall" id="wall"><img src="img/site-feed.jpg"></div>
+  <img class="strip" id="strip" src="img/site-shorts.jpg">
+  <div class="abs" id="s7veil" style="left: 0; right: 0; top: 0; background: linear-gradient(var(--paper) 55%, rgb(244 247 246 / 0))"></div>
+  <div class="cap" id="s7c"><b>التقارير المصورة والفيديو</b><span>في مكان واحد</span></div>
+  <div class="playbig" id="play"></div>
+</section>
+
+<!-- 5. بوابات خاصة بكل بلد... / لتصل إلى أخبار منطقتك بلمسة واحدة -->
+<section class="scene" id="s4">
+  <img class="abs" id="s4img" src="../site-launch/img/site-portals.jpg">
+  <div class="abs" style="inset: 0; background: linear-gradient(rgb(244 247 246 / 0) 0%, rgb(244 247 246 / .92) 42%, var(--paper) 60%)"></div>
+  <div class="cap" id="s4a"><b>بوابة خاصة بكل بلد</b><span>من المغرب العربي إلى الساحل والصحراء</span></div>
+  <div class="cap" id="s4b"><b>أخبار منطقتك</b><span>بلمسة واحدة</span></div>
+  <div class="chips" id="chips"></div>
+  <div class="tap" id="tap"></div><div class="finger" id="finger"></div>
+</section>
+
+<!-- 6. تصميم عصري، تصفح سهل / على هاتفك أو حاسوبك... -->
+<section class="scene" id="s5">
+  <div class="cap" id="s5a"><b>تصميم عصري</b><span>وتصفح سهل</span></div>
+  <div class="cap" id="s5b"><b>على هاتفك أو حاسوبك</b><span>أينما كنت، وفي أي وقت</span></div>
+  <div class="laptop" id="lap2"><div class="lid shadow"><div class="scr"><img id="lap2img" src="../site-launch/img/site-desktop.jpg"></div></div><div class="base"></div></div>
+  <div class="phone" id="phone"><div class="notch"></div><div class="scr"><img id="phimg" src="../site-launch/img/site-mobile.jpg"></div></div>
+  <div class="cap" id="s5chips"><div class="sections" id="secs"></div></div>
+</section>
+
+<!-- 7. شبكة الرواية الإعلامية، بيت جديد للخبر، وموعد دائم مع الحقيقة -->
+<section class="scene green" id="s8">
+  <div id="tiles8"></div>
+  <div class="abs logo" id="s8logo"></div>
+  <div class="stmt" id="s8k"><div class="k">شبكة الرواية الإعلامية</div></div>
+  <div class="stmt" id="s8a"><div class="big">بيت جديد للخبر</div></div>
+  <div class="rule" id="s8r"></div>
+  <div class="stmt" id="s8b"><div class="mid">وموعد دائم مع الحقيقة</div></div>
+</section>
+
+<!-- 8. زوروا موقعنا الآن -->
+<section class="scene green" id="s6">
+  <div id="tiles6"></div>
+  <div class="abs logo" id="s6logo"></div>
+  <div class="cap" id="s6t"><b style="color: var(--on); font-size: calc(var(--u) * 8.6)">زوروا موقعنا الآن</b></div>
+  <div class="cap" id="s6u"><span class="url" id="url"></span></div>
+  <div class="cap" id="s6s"><div class="soc" id="soc"></div><div class="handles" style="margin-top: calc(var(--u) * 2.4)">
+    فيسبوك وتيك توك ويوتيوب <em>ERRIWAYA</em><br>إنستغرام <em>ERRIWAYA.MR</em></div></div>
+</section>
+<div class="flash" id="flash"></div>
+
+<script src="timing.js"></script>
+<script>
+// The address the voice-over gives at the end (?url= overrides it).
+const URL_SHOWN = new URLSearchParams(location.search).get('url') || 'erriwaya.com';
+const T = window.PROMO_TIMING;
+const DUR = T.duration, L = T.lines;   // L[k] = video time of sentence k+1
+const S = ['s1', 's2', 's3', 's7', 's4', 's5', 's8', 's6'].map((id, i) => [id, T.scenes[i]]);
+window.SCENES = S.map(s => s[1]);
+window.DURATION = DUR;
+
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = x => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const W = () => innerWidth, H = () => innerHeight, U = () => Math.min(W(), H()) / 100;
+const tall = () => H() / W() > 1.5, wide = () => W() > H();
+const set = (el, css) => Object.assign(el.style, css);
+// fade + rise in at a, out at b
+function inout(el, t, a, b, dy = 3) {
+  const i = easeOut(lin(t, a, a + .6)), o = b == null ? 0 : easeIO(lin(t, b - .4, b));
+  set(el, { opacity: i * (1 - o), transform: `translateY(${(1 - i) * dy * U()}px)` });
+}
+
+const ICON = {
+  pin: '<svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  brief: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></svg>',
+  search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>',
+  report: '<svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-6M15 17v-2"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>',
+};
+// Font Awesome Free 6.5.2 brands (CC BY 4.0), as on the website
+const BRAND = {
+  facebook: ['0 0 320 512', 'M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'],
+  tiktok: ['0 0 448 512', 'M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z'],
+  youtube: ['0 0 576 512', 'M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'],
+  instagram: ['0 0 448 512', 'M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'],
+};
+const COUNTRIES = ['موريتانيا', 'المغرب', 'الجزائر', 'تونس', 'ليبيا', 'الصحراء', 'أزواد', 'السنغال', 'مالي', 'النيجر', 'تشاد', 'غامبيا'];
+const SECTIONS = [['brief', 'الموجز'], ['search', 'تحقيقات'], ['report', 'تقارير'], ['play', 'فيديو']];
+
+// deterministic pseudo-random tiles
+function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+function makeTiles(host, n) { host.innerHTML = Array.from({ length: n }, () => '<div class="tile"></div>').join(''); return [...host.children]; }
+
+
+let tiles1, tiles6, tiles8, chips, secs;
+function setup() {
+  tiles1 = makeTiles($('tiles'), 70);
+  tiles6 = makeTiles($('tiles6'), 40);
+  tiles8 = makeTiles($('tiles8'), 40);
+  $('chips').innerHTML = COUNTRIES.map(c => `<span class="chip">${ICON.pin}${c}</span>`).join('');
+  chips = [...$('chips').children];
+  $('secs').innerHTML = SECTIONS.map(([i, l]) => `<span class="chip">${ICON[i]}${l}</span>`).join('');
+  secs = [...$('secs').children];
+  $('soc').innerHTML = ['facebook', 'tiktok', 'youtube', 'instagram'].map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('');
+  $('url').textContent = URL_SHOWN;
+}
+const placeCap = (el, top) => { el.style.top = top + 'px'; };
+// captions that take turns in one place: each shows from its sentence until the next one starts
+function turns(t, top, list) {
+  list.forEach(([el, a, b]) => { placeCap(el, top); inout(el, t, a, b); });
+}
+function drift(tiles, lt, seed) {
+  const u = U(), w = W(), h = H();
+  tiles.forEach((el, i) => {
+    const sz = (2 + rnd(i + seed) * 6) * u, x = rnd(i + seed + 1) * w, y0 = rnd(i + seed + 2) * h, sp = (2 + rnd(i + seed + 3) * 5) * u;
+    set(el, { width: sz + 'px', height: sz + 'px', left: x + 'px', top: ((y0 - lt * sp) % h + h) % h + 'px', opacity: .5 * lin(lt, 0, 1) });
+  });
+}
+
+function scene1(t, t0, t1) {
+  const u = U(), w = W(), h = H();
+  tiles1.forEach((el, i) => {
+    const sz = (2 + rnd(i) * 5) * u, ang = rnd(i + 99) * Math.PI * 2, r = (.35 + rnd(i + 7) * .6) * Math.max(w, h);
+    const d = .15 + rnd(i + 3) * .5, k = easeIO(lin(t, d, d + 1.1));
+    const x = w / 2 + Math.cos(ang) * r * (1 - k), y = h * .42 + Math.sin(ang) * r * (1 - k);
+    set(el, { width: sz + 'px', height: sz + 'px', left: x - sz / 2 + 'px', top: y - sz / 2 + 'px',
+      opacity: (1 - lin(t, d + .9, d + 1.3)) * (.4 + rnd(i + 5) * .6), transform: `rotate(${(1 - k) * 180 * (rnd(i + 2) - .5)}deg)` });
+  });
+  const lh = (tall() ? 44 : 38) * u, k = back(lin(t, 1.0, 1.7)), lw = lh * 237 / 320;
+  const z = 1 + .05 * lin(t, 1.7, t1);   // slow push-in while the first sentence plays
+  set($('s1logo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: h * .44 - lh / 2 - 6 * u + 'px',
+    transform: `scale(${clamp(k, 0, 2) * z})`, opacity: lin(t, 1.0, 1.3) * (1 - lin(t, t1 - .5, t1 - .1)) });
+  $('s1sub').style.top = h * .44 + lh / 2 - 6 * u + 5 * u + 'px'; inout($('s1sub'), t, L[0] + .2, t1 - .1);
+}
+
+function scene2(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  const lw = wide() ? h * 1.0 : w * .9, lap = $('lap');
+  turns(t, wide() ? 6 * u : tall() ? 13 * u : 7 * u, [[$('s2a'), t0 + .2, L[2]], [$('s2b'), L[2], L[3]], [$('s2c'), L[3], t1]]);
+  const lapTop = wide() ? h * .3 : tall() ? h * .36 : h * .33;
+  const k = easeOut(lin(lt, .1, 1.1)), z = 1 + .06 * easeIO(lin(t, t0 + 1, t1));
+  set(lap, { width: lw + 'px', marginLeft: -lw / 2 + 'px', top: lapTop + (1 - k) * 30 * u + 'px', opacity: k,
+    transform: `perspective(${200 * u}px) rotateX(${(1 - k) * 18}deg) scale(${(1 - .04 * (1 - k)) * z})` });
+  // the page scrolls a little with each sentence: lead story, then the latest rail, then the feed
+  const sw = lw * .97, max = sw * 3900 / 2160 - sw * 10 / 16;
+  const s = .12 * easeIO(lin(t, L[2] - .3, L[2] + 1.5)) + .43 * easeIO(lin(t, L[3] - .3, t1 - .3));
+  $('lapimg').style.transform = `translateY(${-s * max}px)`;
+}
+
+function scene3(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  const img = $('s3img'), iw = Math.max(w, h * 1.6) * 1.12, z = 1 + .05 * lin(lt, 0, t1 - t0);
+  set(img, { width: iw + 'px', left: w - iw + 'px', top: 0, transform: `scale(${z})`, transformOrigin: '100% 0' });
+  const barTop = iw * 150 / 2160 * z;
+  $('s3veil').style.top = barTop + 'px';
+  const k = easeOut(lin(lt, .1, .5));
+  set($('brk'), { top: barTop + 'px', transform: `scaleY(${k})`, transformOrigin: '50% 0', opacity: k });
+  $('brkdot').style.opacity = .25 + .75 * (0.5 + 0.5 * Math.cos(lt * Math.PI * 2 / 1.0));
+  const txt = 'الأخبار العاجلة تظهر هنا لحظة صدورها', n = Math.round(txt.length * lin(lt, .4, 1.4));
+  $('brktxt').textContent = txt.slice(0, n);
+  placeCap($('s3c'), wide() ? h * .55 : h * .52); inout($('s3c'), lt, .3, t1 - t0);
+}
+
+function scene7(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0, d = t1 - t0;
+  const capTop = wide() ? 5 * u : tall() ? 12 * u : 6 * u;
+  placeCap($('s7c'), capTop); inout($('s7c'), lt, .2, d);
+  $('s7veil').style.height = capTop + 30 * u + 'px';
+  // the video cards of the feed on a tilted plane that glides up
+  const ww = wide() ? w * .62 : w * 1.15, wall = $('wall'), k = easeOut(lin(lt, 0, .9));
+  const top = capTop + (wide() ? 24 : 27) * u;
+  set(wall, { width: ww + 'px', marginLeft: -ww / 2 + 'px', top: top + 'px', opacity: k,
+    transform: `perspective(${180 * u}px) rotateX(${14 - 4 * k}deg) translateY(${(1 - k) * 20 * u - lin(lt, .5, d) * 18 * u}px) scale(${.96 + .04 * k})` });
+  // the shorts strip slides in along the bottom (feed and story) or not at all (youtube, no room)
+  const st = $('strip'), sw = wide() ? 0 : w * 1.6;
+  st.style.display = wide() ? 'none' : 'block';
+  if (!wide()) set(st, { width: sw + 'px', top: h - sw * 600 / 1760 - (tall() ? 10 : 3) * u + 'px',
+    transform: `translateX(${(w - sw) + (1 - easeOut(lin(lt, .6, 1.6))) * w - lin(lt, 1.6, d) * 8 * u}px)`, opacity: lin(lt, .6, 1) });
+  // a play button pops in the middle and pulses
+  const p = $('play'), pk = back(lin(lt, .7, 1.2)), pulse = 1 + .05 * Math.sin(lt * 6);
+  set(p, { left: w / 2 - 10 * u + 'px', top: (wide() ? h * .55 : h * .47) - 10 * u + 'px', transform: `scale(${clamp(pk, 0, 2) * pulse})`, opacity: lin(lt, .7, .9) * (1 - lin(lt, d - .3, d)) });
+}
+
+function scene4(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  const img = $('s4img'), iw = wide() ? w * 1.25 : w * 1.9, z = 1 + .06 * lin(lt, 0, t1 - t0);
+  set(img, { width: iw + 'px', left: wide() ? w - iw * .97 + 'px' : w - iw * .99 + 'px', top: -iw * 60 / 2160 + 'px', transform: `scale(${z})`, transformOrigin: '100% 0' });
+  turns(t, wide() ? h * .5 : h * .44, [[$('s4a'), t0 + .5, L[7]], [$('s4b'), L[7], t1]]);
+  $('chips').style.top = (wide() ? h * .72 : h * .62) + 'px';
+  const tapAt = L[7] + 1.4;   // "بلمسة واحدة"
+  chips.forEach((c, i) => {
+    inout(c, lt, 1.0 + i * .12, t1 - t0, 2);
+    const hi = Math.floor((lt - 2.6) / .25);
+    c.classList.toggle('on', t < L[7] - .2 ? lt > 2.6 && hi >= i : i === 0 && t > tapAt);
+    c.classList.toggle('dim', t > tapAt + .3 && i !== 0);
+  });
+  // a finger taps the first country
+  const r = chips[0].getBoundingClientRect(), cx = r.left + r.width * .5, cy = r.top + r.height * .55;
+  const fin = $('finger'), tap = $('tap'), fk = easeOut(lin(t, tapAt - .8, tapAt));
+  set(fin, { left: cx + (1 - fk) * 12 * u + 'px', top: cy + (1 - fk) * 18 * u + 'px', opacity: lin(t, tapAt - .8, tapAt - .5) * (1 - lin(t, tapAt + .6, tapAt + .9)),
+    transform: `scale(${t > tapAt && t < tapAt + .15 ? .85 : 1})` });
+  const rk = lin(t, tapAt, tapAt + .6);
+  set(tap, { left: cx + 'px', top: cy + 'px', opacity: rk > 0 && rk < 1 ? 1 - rk : 0, transform: `scale(${.4 + rk * 1.6})` });
+}
+
+function scene5(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  turns(t, wide() ? 7 * u : tall() ? 12 * u : 5 * u, [[$('s5a'), t0 + .2, L[9]], [$('s5b'), L[9], t1]]);
+  const ph = $('phone'), pw = wide() ? h * .33 : tall() ? w * .56 : w * .38;
+  const k = easeOut(lin(lt, .1, 1)), top = wide() ? h * .27 : tall() ? h * .22 : h * .19;
+  // on "على هاتفك أو حاسوبك" the phone steps aside and a laptop joins it
+  const j = easeIO(lin(t, L[9] - .1, L[9] + .9));
+  const dx = (wide() ? -w * .2 : -w * .22) * j;
+  set(ph, { width: pw + 'px', marginLeft: -pw / 2 + dx + 'px', top: top + (1 - k) * 40 * u + j * (wide() ? 4 : 10) * u + 'px', opacity: k,
+    transform: `rotate(${(1 - k) * -6}deg) scale(${1 - .12 * j})`, zIndex: 2 });
+  const sw = pw - 3.2 * u, sh = sw * 860 / 400, total = sw * 9000 / 1200;
+  const s = easeIO(lin(lt, 1.2, t1 - t0 - .3));
+  $('phimg').style.transform = `translateY(${-s * (total - sh) * .8}px)`;
+  const lw = wide() ? w * .52 : w * .78, lap = $('lap2');
+  set(lap, { width: lw + 'px', marginLeft: -lw / 2 + (wide() ? w * .1 : w * .08) + 'px', top: top + (wide() ? 8 : tall() ? 14 : 10) * u + 'px',
+    opacity: j, transform: `translateX(${(1 - j) * 20 * u}px) scale(${.9 + .1 * j})` });
+  $('lap2img').style.transform = `translateY(${-lin(t, L[9] + .5, t1) * lw * .5}px)`;
+  const sc = $('s5chips');
+  if (wide()) set(sc, { left: '50%', right: '8%', top: h * .44 + 'px' });
+  else set(sc, { left: '4%', right: '4%', top: top + sh + 6.2 * u + 'px' });
+  secs.forEach((c, i) => {
+    inout(c, lt, 1.0 + i * .25, L[9] - t0, 2);
+    c.classList.toggle('on', lt > 1.2 + i * .25 && lt < 2.0 + i * .25);
+  });
+}
+
+function scene8(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  drift(tiles8, lt, 60);
+  const lh = 14 * u, lw = lh * 237 / 320, base = wide() ? h * .1 : tall() ? h * .28 : h * .15;
+  set($('s8logo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: base + 'px', opacity: lin(lt, 0, .5), transform: `scale(${clamp(back(lin(lt, 0, .6)), 0, 2)})` });
+  let y = base + lh + 4 * u;
+  placeCap($('s8k'), y); inout($('s8k'), lt, .2);
+  const bigAt = L[10] + 1.9;   // "بيت جديد للخبر"
+  placeCap($('s8a'), y + 7 * u); inout($('s8a'), t, bigAt - .3, null, 4);
+  const rw = 26 * u * easeOut(lin(t, bigAt + .3, bigAt + 1));
+  set($('s8r'), { width: rw + 'px', marginLeft: -rw / 2 + 'px', top: y + 25 * u + 'px' });
+  placeCap($('s8b'), y + 29 * u); inout($('s8b'), t, L[11] - .1, null, 4);
+}
+
+function scene6(t, t0) {
+  const u = U(), w = W(), h = H(), lt = t - t0;
+  drift(tiles6, lt, 40);
+  const lh = (wide() ? 20 : tall() ? 20 : 17) * u, lw = lh * 237 / 320;
+  const base = wide() ? h * .1 : tall() ? h * .2 : h * .1;
+  set($('s6logo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: base + 'px', transform: `scale(${clamp(back(lin(lt, .1, .7)), 0, 2)})` });
+  const y = base + lh + 3 * u;
+  placeCap($('s6t'), y); inout($('s6t'), lt, .3);
+  placeCap($('s6u'), y + 14 * u); inout($('s6u'), lt, .9);
+  placeCap($('s6s'), y + 26 * u); inout($('s6s'), lt, 1.5);
+}
+
+const FN = { s1: scene1, s2: scene2, s3: scene3, s7: scene7, s4: scene4, s5: scene5, s8: scene8, s6: scene6 };
+window.renderFrame = t => {
+  S.forEach(([id, a], i) => {
+    const b = i + 1 < S.length ? S[i + 1][1] : DUR;
+    const on = t >= a && t < b + (i + 1 < S.length ? 0 : 1);
+    $(id).style.display = on ? 'block' : 'none';
+    if (on) FN[id](t, a, b);
+  });
+  const f = Math.min(...S.slice(1).map(([, a]) => Math.abs(t - a)));
+  $('flash').style.opacity = clamp(1 - f / .18) * .55;
+};
+
+Promise.all([document.fonts.load('40px AlQuds'), ...[...document.images].map(i => i.decode().catch(() => {}))]).then(() => {
+  setup(); window.renderFrame(0); window.READY = true;
+});
+</script>
+</body>
+</html>
