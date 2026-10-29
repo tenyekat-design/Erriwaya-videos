@@ -69,10 +69,13 @@
   };
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
   const L = LAYOUTS[FORMAT] || LAYOUTS.feed;
-  // Trial looks for the feed (?look=wide|full|card|captions): edge-to-edge photo, map as a small inset (wide,
-  // full: it opens full for a moment at the start of each story), big headline on white (card), large spoken
-  // captions word by word (captions). Without ?look the approved layout is unchanged.
-  const LOOK = FORMAT === 'feed' ? new URLSearchParams(location.search).get('look') : null;
+  const W0 = L.W, H0 = L.H;
+  // Looks (?look=): 'broadcast' is the approved look (29 Oct 2026) in every format and the default; 'classic'
+  // is the white layout approved before it. The other looks were trials, feed only: edge-to-edge photo with
+  // a small inset map (wide, full), big headline on white (card), large spoken captions (captions), frosted
+  // panel and story wipes (pro), blurred backdrop with boxed headlines (bold).
+  const LOOK_Q = new URLSearchParams(location.search).get('look') || 'broadcast';
+  const LOOK = LOOK_Q === 'broadcast' || FORMAT === 'feed' ? LOOK_Q : 'classic';
   if (LOOK === 'wide') Object.assign(L, {
     card: { cx: 540, cy: 595, w: 1080, h: 780 }, slide: true, photoR: 0,
     kicker: { cx: 540, y: 985 },
@@ -118,17 +121,31 @@
   });
   // broadcast: TV news style. Full-frame photo, a lower third (story tag, white headline bar, spoken words
   // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
-  if (LOOK === 'broadcast') Object.assign(L, {
-    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
-    broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
-    logoH: 132, logoY: 58, hdrText: [38, 24],
-    kicker: { cx: 540, right: 1050, y: 912 },
-    lower: { x: 30, y: 950, w: 1020, h: 178 },
-    head: { cx: 540, right: 1004, cy: 1039, maxW: 700, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
-    caption: { right: 1004, cy: 1166, maxW: 950, sizes: [31, 28, 25], lines: 1, style: 'text' },
-    ticker: { y: 1236, h: 78 },
-    inset: { S: 700, big: null, small: { x: 40, y: 214, s: 0.3 } },
-  });
+  if (LOOK === 'broadcast') {
+    Object.assign(L, {
+      card: { cx: W0 / 2, cy: H0 / 2, w: W0, h: H0 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
+      broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true, smoothText: true,
+      logoH: 132, hdrText: [38, 24],
+    });
+    // per format: the lower third (lower, with the headline, spoken-words strip and tag placed from it),
+    // the ticker, the inset map and the sting's height
+    const BL = {
+      feed: { logoY: 58, lower: { x: 30, y: 950, w: 1020, h: 178 }, maxW: 700, capW: 950, ticker: { y: 1236, h: 78 },
+              inset: { x: 40, y: 214 }, stingY: 0.42 },
+      story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
+               inset: { x: 40, y: 330 }, stingY: 0.42 },
+      youtube: { logoY: 50, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
+                 inset: { x: 96, y: 200 }, stingY: 0.39 },
+    }[FORMAT] || null;
+    const B = BL.lower, xr = B.x + B.w;
+    Object.assign(L, {
+      logoY: BL.logoY, lower: B, ticker: BL.ticker, stingY: BL.stingY,
+      kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
+      head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
+      caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
+      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 } },
+    });
+  }
   if (LOOK === 'captions') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
     kicker: { cx: 540, y: 262 },
@@ -1115,7 +1132,7 @@
       // slides in from the right with a slight turn and a small overshoot, then leaves to the left;
       // the green rule draws itself once the square has landed
       const inP = prog(p, 0, 0.32), outP = ein(prog(p, 0.72, 1));
-      const S = 440, cy = H * 0.42;
+      const S = 440, cy = H * (L.stingY || 0.42);
       const cx = W / 2 + (1 - eback(inP)) * (W / 2 + S) - outP * (W / 2 + S);
       const rot = (1 - eout(inP)) * 8 * RAD - outP * 6 * RAD;
       ctx.save();

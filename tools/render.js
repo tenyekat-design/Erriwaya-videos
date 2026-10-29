@@ -5,6 +5,7 @@
 //   node tools/render.js --edition 2026-10-24 --cover         cover image + description text only
 //   (a full render writes them too: output/erriwaya-brief-<date>[-format]-cover.jpg, -description.txt and .srt)
 //   add --format youtube for the 1920x1080 layout, --format story for 1080x1920 (default: feed, 1080x1350)
+//   add --look classic for the white layout approved before 29 Oct 2026 (default: broadcast)
 // Without --edition the most recent folder in editions/ is used.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -24,7 +25,9 @@ if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition a
 const FORMAT = String(args.format || 'feed');
 const SIZE = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
 if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
-const LOOK = args.look ? String(args.look) : '';   // trial feed looks: wide | full
+// look: broadcast (approved, the default), classic (the earlier white layout) or a feed trial look
+// (wide | full | card | captions | pro | bold); a look other than the default is added to the file names
+const LOOK = args.look && args.look !== 'broadcast' ? String(args.look) : '';
 const SUFFIX = (FORMAT === 'feed' ? '' : '-' + FORMAT) + (LOOK ? '-' + LOOK : '');
 const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
 const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT + (LOOK ? '&look=' + LOOK : '');
