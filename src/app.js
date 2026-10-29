@@ -120,7 +120,7 @@
   // strip), a ticker crawling the coming stories, and a band sting with the story number at each new story
   if (LOOK === 'broadcast') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noBar: true,
-    broadcast: true, sting: true, staticText: true, titleInBar: true,
+    broadcast: true, sting: true, staticText: true, titleInBar: true, plainHead: true,
     logoH: 132, logoY: 58, hdrText: [38, 24],
     kicker: { cx: 540, right: 1050, y: 912 },
     lower: { x: 30, y: 950, w: 1020, h: 178 },
@@ -878,14 +878,14 @@
         .sort((i, j) => ws[j].length - ws[i].length);
       let cur = measure(ws);
       for (const i of order) {
-        if (cur + tw > goal) break;
+        if (L.plainHead || cur + tw > goal) break;   // plainHead: no tatweel
         n[i]++; cur += tw;
       }
       const out = ws.map((w, i) => stretchWord(w, n[i]));
       const sized = out.map(w => ({ w, width: ctx.measureText(w).width }));
       const ink = sized.reduce((s, w) => s + w.width, 0);
       const gap = sized.length > 1 ? (goal - ink) / (sized.length - 1) : space;
-      const sp = clamp(gap, space, space * 1.45);
+      const sp = L.plainHead ? space : clamp(gap, space, space * 1.45);
       return { words: sized, width: ink + sp * (sized.length - 1), space: sp };
     });
     return (layoutCache[key] = { size, space, lines });
@@ -1074,8 +1074,8 @@
     if (!TICKS) TICKS = TL.chapters.map(c => TL.headlines.find(h => h.t >= c - 0.05)).filter(Boolean);
     let cur = -1;
     TL.chapters.forEach((c, i) => { if (a >= c - 0.05) cur = i; });
-    const order = TICKS.slice(cur + 1).concat(TICKS.slice(0, cur + 1));
-    const text = order.map(h => h.kicker + ': ' + h.text).join('     ◆     ') + '     ◆     ';
+    // one fixed list crawling at a steady pace: nothing jumps when a new story starts
+    const text = TICKS.map(h => h.kicker + ': ' + h.text).join('     ◆     ') + '     ◆     ';
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.fillStyle = 'rgba(11,31,75,0.96)'; ctx.fillRect(0, T.y, W, T.h);
@@ -1085,7 +1085,7 @@
     ctx.beginPath(); ctx.rect(0, T.y, W - lw, T.h); ctx.clip();
     ctx.font = font(30); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     const tw = ctx.measureText(text).width;
-    const off = ((a - (cur >= 0 ? TL.chapters[cur] : 0)) * 85) % tw;
+    const off = (Math.max(0, a - CUT) * 85) % tw;
     ctx.fillStyle = '#fff';
     for (let x = W - lw - 30 + off - tw; x < W + tw; x += tw) if (x > -tw && x - tw < W) ctx.fillText(text, x, T.y + T.h / 2 + 2);
     ctx.restore();
