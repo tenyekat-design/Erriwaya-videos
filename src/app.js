@@ -136,7 +136,7 @@
       story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
                inset: { x: 40, y: 330 }, stingY: 0.42 },
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
-      youtube: { logoY: 44, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
+      youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
                  inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
@@ -1588,8 +1588,16 @@
     const fl = 1 - prog(t, 0, 0.25);
     if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${0.7 * fl})`; ctx.fillRect(0, 0, W, H); }
     // logo, top right in the safe area
-    const lh = HL.logoH, lw = lh * LOGO_W.width / LOGO_W.height;
-    drawLogoAt(W - L.margin - lw / 2, L.logoY + lh / 2 + 10, lh, eout(prog(t, 0.1, 0.5)), LOGO_W);
+    if (L.broadcast) {
+      // broadcast: the same size and place as the logo in the stories, with its soft shadow
+      const lb = logoBox();
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2;
+      drawLogoAt(lb.x + lb.w / 2, lb.y + lb.h / 2, lb.h, eout(prog(t, 0.1, 0.5)), LOGO_W);
+      ctx.restore();
+    } else {
+      const lh = HL.logoH, lw = lh * LOGO_W.width / LOGO_W.height;
+      drawLogoAt(W - L.margin - lw / 2, L.logoY + lh / 2 + 10, lh, eout(prog(t, 0.1, 0.5)), LOGO_W);
+    }
     // headline: words rise in one after another
     const lay = layoutText(hk.text, HL.maxW, HL.sizes, 2);
     const lineH = Math.round(lay.size * 1.35);
