@@ -4,128 +4,151 @@
 <meta charset="utf-8">
 <title>Erriwaya – كاروسيل مينورسو</title>
 <style>
-  /* Erriwaya post template (1080x1350): photo fading into white, white logo top-left, bold headline, social footer */
+  /* Erriwaya post template, premium dark variant (1080x1350): cinematic photo, white logo top-left,
+     big white type with red accents, white footer bar with the red-accent rule and the handles */
   @font-face { font-family: AlQuds; src: url(../../assets/fonts/al-quds.otf) format('opentype'); }
-  :root { --ink: #111; --body: #2A2F3A; --gray: #6B7280; --rule: #D9D9D9; --red: #C8102E; --soft: #F5F5F7; --line: #E6E6EA; --dark: #14161C; }
-  html, body { margin: 0; background: #DDE2EA; }
-  body { font-family: AlQuds, sans-serif; color: var(--ink); }
-  .slide { position: relative; width: 1080px; height: 1350px; background: #fff; overflow: hidden; margin: 0 0 40px; }
-  p, h1, h2, h3 { margin: 0; font-weight: normal; }
+  :root { --bg: #08112A; --bg2: #050A1A; --red: #D7132F; --redt: #FF5A70; --soft: rgba(255,255,255,.08); --edge: rgba(255,255,255,.16);
+          --text: #F3F5FA; --mute: #AEB6C8; --rule: #D9D9D9; }
+  html, body { margin: 0; background: #555; }
+  body { font-family: AlQuds, sans-serif; color: var(--text); }
+  .slide { position: relative; width: 1080px; height: 1350px; overflow: hidden; margin: 0 0 40px;
+           background: radial-gradient(120% 70% at 50% 100%, #10224F 0%, var(--bg) 55%, var(--bg2) 100%); }
+  p, h1, h3 { margin: 0; font-weight: normal; }
 
-  .photo { position: absolute; top: 0; left: 0; right: 0; height: 560px; display: flex; }
-  .photo img { flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block; }
-  .photo img + img { border-right: 6px solid #fff; }
-  /* dark veil at the top keeps the white logo readable on bright skies; white fade at the bottom as in the template */
-  .photo::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 300px; z-index: 1;
-                   background: linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.28) 55%, rgba(0,0,0,0)); }
-  .photo::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 45%;
-                  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.88) 72%, #fff); }
-  .cover .photo { height: 900px; }
+  /* photo: dark veil at the top for the logo, fades into the navy at the bottom */
+  .photo { position: absolute; top: 0; left: 0; right: 0; height: 700px; display: flex; }
+  .photo img { flex: 1; min-width: 0; height: 100%; object-fit: cover; display: block; filter: saturate(1.08) contrast(1.05); }
+  .photo img + img { border-right: 5px solid var(--bg); }
+  .photo::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 320px; z-index: 1;
+                   background: linear-gradient(180deg, rgba(5,10,26,.75), rgba(5,10,26,.3) 55%, rgba(5,10,26,0)); }
+  .photo::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 62%;
+                  background: linear-gradient(180deg, rgba(8,17,42,0), rgba(8,17,42,.75) 55%, var(--bg)); }
+  .tall .photo { height: 1000px; }
+  .tall .photo::after { height: 48%; }
 
-  .logo { position: absolute; z-index: 3; top: 46px; left: 52px; width: 150px; height: 203px; background: #fff;
+  .logo { position: absolute; z-index: 3; top: 44px; left: 50px; width: 160px; height: 216px; background: #fff;
           -webkit-mask: url(../../assets/logo-mark.png) center / contain no-repeat; mask: url(../../assets/logo-mark.png) center / contain no-repeat;
-          filter: drop-shadow(0 2px 4px rgba(0,0,0,.5)); }
-  .page { position: absolute; z-index: 3; top: 58px; right: 54px; direction: ltr; display: flex; gap: 8px; align-items: center; }
-  .page i { width: 26px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.45); }
-  .page i.on { background: #fff; width: 44px; }
+          filter: drop-shadow(0 3px 6px rgba(0,0,0,.55)); }
+  .page { position: absolute; z-index: 3; top: 62px; right: 54px; direction: ltr; display: flex; gap: 8px; align-items: center; }
+  .page i { width: 22px; height: 6px; border-radius: 3px; background: rgba(255,255,255,.4); }
+  .page i.on { background: var(--red); width: 46px; }
+  .ghost { position: absolute; z-index: 0; left: 30px; bottom: 120px; font: bold 330px/1 Arial, sans-serif; color: rgba(255,255,255,.045); direction: ltr; }
 
-  .body { position: absolute; left: 64px; right: 64px; top: 500px; bottom: 140px; display: flex; flex-direction: column; }
-  .kick { align-self: center; display: inline-flex; align-items: center; gap: 12px; background: var(--red); color: #fff;
-          font-size: 28px; padding: 8px 24px; border-radius: 8px; line-height: 1.3; }
-  h1 { font-size: 64px; line-height: 1.3; text-align: center; font-weight: bold; margin-top: 18px; }
-  .lead { font-size: 34px; line-height: 1.6; color: var(--body); text-align: center; margin-top: 14px; }
-  .red { color: var(--red); }
-  .note { font-size: 24px; color: var(--gray); text-align: center; margin-top: 28px; }
+  .body { position: absolute; z-index: 2; left: 60px; right: 60px; top: 520px; bottom: 160px; display: flex; flex-direction: column; }
+  .kick { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; background: var(--red); color: #fff;
+          font-size: 32px; padding: 8px 26px; border-radius: 6px; line-height: 1.35; box-shadow: 0 8px 24px rgba(215,19,47,.35); }
+  h1 { font-size: 88px; line-height: 1.22; font-weight: bold; margin-top: 18px; text-shadow: 0 4px 24px rgba(0,0,0,.45); }
+  .lead { font-size: 42px; line-height: 1.55; color: var(--text); margin-top: 16px; }
+  .red { color: var(--redt); }
+  .note { font-size: 29px; color: var(--mute); margin-top: auto; line-height: 1.5; }
+  .note::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--red); margin-left: 12px; }
 
-  /* cards */
-  .grid { display: grid; gap: 22px; margin-top: 30px; }
-  .card { background: var(--soft); border: 2px solid var(--line); border-radius: 22px; padding: 26px 28px; }
-  .card h3 { font-size: 34px; font-weight: bold; line-height: 1.3; display: flex; align-items: center; gap: 16px; }
-  .card p { font-size: 28px; line-height: 1.5; color: var(--body); margin-top: 8px; }
-  .ic { flex: none; width: 66px; height: 66px; border-radius: 18px; background: var(--red); display: flex; align-items: center; justify-content: center; }
-  .ic svg { width: 38px; height: 38px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .dark { background: var(--dark); border-color: var(--dark); color: #fff; }
-  .dark p { color: #E5E7EB; }
+  .grid { display: grid; gap: 20px; margin-top: 30px; }
+  .card { background: var(--soft); border: 2px solid var(--edge); border-radius: 24px; padding: 24px 28px; backdrop-filter: blur(6px); }
+  .card h3 { font-size: 42px; font-weight: bold; line-height: 1.3; display: flex; align-items: center; gap: 20px; }
+  .card p { font-size: 34px; line-height: 1.5; color: var(--mute); margin-top: 8px; }
+  .ic { flex: none; width: 76px; height: 76px; border-radius: 20px; background: var(--red); display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 8px 22px rgba(215,19,47,.35); }
+  .ic svg { width: 42px; height: 42px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hotcard { background: #fff; color: #0B1430; border-color: #fff; }
+  .hotcard p { color: #1F2937; }
 
-  /* stats */
-  .stats { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 18px; margin-top: 30px; }
-  .stat { background: var(--soft); border: 2px solid var(--line); border-radius: 22px; padding: 24px 12px; text-align: center; }
-  .stat .v { font-size: 64px; font-weight: bold; line-height: 1.15; }
-  .stat .n { font-size: 25px; color: var(--gray); line-height: 1.4; margin-top: 6px; }
-  .stat.hot { background: var(--red); border-color: var(--red); color: #fff; }
-  .stat.hot .n { color: #FFE4E8; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 34px; }
+  .stat { background: var(--soft); border: 2px solid var(--edge); border-radius: 24px; padding: 26px 16px; text-align: center; }
+  .stat .v { font-size: 96px; font-weight: bold; line-height: 1.1; }
+  .stat .n { font-size: 32px; color: var(--mute); line-height: 1.4; margin-top: 6px; }
+  .stat.hot { grid-column: 1 / -1; background: var(--red); border-color: var(--red); box-shadow: 0 14px 40px rgba(215,19,47,.35); }
+  .stat.hot .v { font-size: 120px; }
+  .stat.hot .n { color: #FFE1E6; }
 
-  /* timeline */
-  .tl { position: relative; margin-top: 30px; display: flex; flex-direction: column; gap: 20px; padding-right: 8px; }
-  .tl::before { content: ''; position: absolute; right: 120px; top: 20px; bottom: 20px; width: 4px; background: var(--line); border-radius: 2px; }
-  .tl .row { display: flex; align-items: center; gap: 30px; position: relative; }
-  .tl .y { flex: none; width: 90px; font-size: 38px; font-weight: bold; color: var(--red); text-align: left; }
-  .tl .row::after { content: ''; position: absolute; right: 109px; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--red); }
-  .tl .row.now .y { color: var(--ink); }
-  .tl .row.now::after { background: var(--red); }
-  .tl .t { font-size: 31px; line-height: 1.45; color: var(--body); background: var(--soft); border-radius: 16px; padding: 14px 22px; flex: 1; margin-right: 26px; }
+  .tl { position: relative; margin-top: 30px; display: flex; flex-direction: column; gap: 18px; }
+  .tl::before { content: ''; position: absolute; right: 151px; top: 30px; bottom: 30px; width: 4px; background: rgba(255,255,255,.18); border-radius: 2px; }
+  .tl .row { display: flex; align-items: center; position: relative; }
+  .tl .y { flex: none; width: 128px; font: bold 46px Arial, sans-serif; color: var(--redt); text-align: right; }
+  .tl .row::after { content: ''; position: absolute; right: 140px; width: 18px; height: 18px; border-radius: 50%; background: var(--bg); border: 4px solid var(--red); }
+  .tl .row.now::after { background: var(--red); box-shadow: 0 0 0 8px rgba(215,19,47,.25); }
+  .tl .row.now .y { color: #fff; }
+  .tl .t { font-size: 38px; line-height: 1.4; background: var(--soft); border: 2px solid var(--edge); border-radius: 18px; padding: 16px 24px; flex: 1; margin-right: 60px; }
 
-  /* positions */
-  .pos { grid-template-columns: 1fr 1fr; }
-  .pos .card { padding: 34px 28px; }
-  .pos h3 { font-size: 38px; }
-  .flag { flex: none; width: 72px; height: 48px; border-radius: 6px; box-shadow: 0 0 0 2px rgba(0,0,0,.08); overflow: hidden; display: block; }
-  .pos p { font-size: 30px; margin-top: 14px; }
+  .pos { grid-template-columns: 1fr 1fr; gap: 18px; }
+  .pos .card { padding: 36px 28px; }
+  .pos h3 { font-size: 42px; gap: 16px; }
+  .pos p { font-size: 36px; margin-top: 16px; color: var(--text); opacity: .85; }
+  .flag { flex: none; width: 78px; height: 52px; border-radius: 6px; box-shadow: 0 0 0 2px rgba(255,255,255,.25); display: block; }
 
-  .swipe { position: absolute; left: 64px; bottom: 150px; display: flex; align-items: center; gap: 12px; font-size: 28px; background: var(--ink); color: #fff;
-           padding: 10px 26px; border-radius: 999px; }
+  .swipe { position: absolute; z-index: 3; left: 60px; bottom: 175px; display: flex; align-items: center; gap: 14px; font-size: 34px; background: #fff; color: #0B1430;
+           padding: 12px 30px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+  .swipe b { color: var(--red); font: bold 38px Arial, sans-serif; }
+  .tag { position: absolute; z-index: 2; font-size: 34px; color: #fff; background: rgba(5,10,26,.6); border: 2px solid rgba(255,255,255,.35);
+         padding: 8px 22px; border-radius: 999px; }
 
-  .rule { position: absolute; left: 48px; right: 48px; bottom: 102px; height: 2px; background: var(--rule); }
+  /* footer bar, as in the post template */
+  .footbar { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; height: 128px; background: #fff; }
+  .rule { position: absolute; left: 48px; right: 48px; top: 26px; height: 2px; background: var(--rule); }
   .rule::before { content: ''; position: absolute; left: 0; top: -1px; width: 70px; height: 4px; background: var(--red); }
-  .foot { position: absolute; left: 0; right: 0; bottom: 32px; height: 44px; display: flex; justify-content: center; align-items: center; gap: 26px; direction: ltr; }
-  .foot .grp { display: flex; align-items: center; gap: 14px; font-size: 25px; font-weight: bold; font-family: Arial, sans-serif; letter-spacing: .5px; }
+  .foot { position: absolute; left: 0; right: 0; top: 54px; height: 48px; display: flex; justify-content: center; align-items: center; gap: 28px; direction: ltr; color: #111; }
+  .foot .grp { display: flex; align-items: center; gap: 14px; font: bold 28px Arial, sans-serif; letter-spacing: .5px; }
   .foot .grp span { margin-left: 8px; }
-  .foot .sep { width: 2px; height: 40px; background: var(--rule); }
-  .foot svg { width: 34px; height: 34px; display: block; }
+  .foot .sep { width: 2px; height: 42px; background: var(--rule); }
+  .foot svg { width: 38px; height: 38px; display: block; }
 
-  .big { display: flex; flex-direction: column; gap: 18px; margin-top: 34px; direction: ltr; }
-  .big div { display: flex; align-items: center; gap: 18px; justify-content: center; background: var(--soft); border: 2px solid var(--line); border-radius: 20px;
-             padding: 20px; font: bold 36px Arial, sans-serif; }
-  .big svg { width: 46px; height: 46px; }
+  .big { display: flex; flex-direction: column; gap: 20px; margin-top: 40px; direction: ltr; }
+  .big div { display: flex; align-items: center; gap: 20px; justify-content: center; background: #fff; color: #111; border-radius: 22px;
+             padding: 22px; font: bold 44px Arial, sans-serif; box-shadow: 0 12px 36px rgba(0,0,0,.3); }
+  .big svg { width: 54px; height: 54px; }
 </style>
 </head>
 <body>
 
 <!-- 1 · cover -->
-<section class="slide cover">
-  <div class="photo"><img src="img/unsc-chamber.jpg" style="object-position:55% 50%"></div>
-  <div class="body" style="top:760px">
+<section class="slide tall">
+  <div class="photo" style="align-items:flex-end;overflow:hidden"><img src="img/desert-road.jpg" style="flex:none;width:100%;height:1250px;object-position:96% 100%"></div>
+  <div class="body" style="top:780px">
     <span class="kick">الصحراء الغربية · مجلس الأمن</span>
-    <h1 style="font-size:78px;line-height:1.25">مينورسو على طاولة<br>مجلس الأمن</h1>
-    <p class="lead" style="font-size:40px">ماذا يحدث قبل <b class="red">31 أكتوبر</b>؟</p>
+    <h1 style="font-size:100px;line-height:1.15">مينورسو<br>على طاولة مجلس الأمن</h1>
+    <p class="lead" style="font-size:50px">ماذا يحدث قبل <b class="red">31 أكتوبر</b>؟</p>
   </div>
-  <div class="swipe">اسحب <span style="font-family:Arial">←</span></div>
+  <div class="swipe" style="top:776px;bottom:auto;padding:6px 26px">اسحب <b>←</b></div>
 </section>
 
-<!-- 2 · what is MINURSO -->
+<!-- 2 · where -->
+<section class="slide">
+  <div class="photo" style="height:860px"><img src="img/ws-map.jpg" style="object-position:40% 74%;filter:none"></div>
+  <div class="tag" style="top:430px;left:330px">الصحراء الغربية</div>
+  <div class="body" style="top:720px">
+    <span class="kick">أين؟</span>
+    <h1 style="font-size:80px">إقليم على الأطلسي بين المغرب وموريتانيا</h1>
+    <div class="stats" style="grid-template-columns:1fr 1fr;margin-top:26px">
+      <div class="stat"><div class="v" style="font-size:76px">266 ألف</div><div class="n">كيلومتر مربع تقريباً</div></div>
+      <div class="stat"><div class="v" style="font-size:76px">1975</div><div class="n">نهاية الاستعمار الإسباني</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · what is MINURSO -->
 <section class="slide">
   <div class="photo"><img src="img/un-helicopter.jpg" style="object-position:50% 40%"></div>
   <div class="body">
     <span class="kick">خلفية</span>
     <h1>ما هي مينورسو؟</h1>
-    <p class="lead">بعثة الأمم المتحدة لتنظيم الاستفتاء في الصحراء الغربية، أنشأها مجلس الأمن في <b class="red">أبريل 1991</b></p>
+    <p class="lead">بعثة أممية أنشأها مجلس الأمن في <b class="red">أبريل 1991</b> بمهمتين:</p>
     <div class="grid">
-      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>المهمة الأولى: مراقبة وقف إطلاق النار</h3></div>
-      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M8 10V4h8v6M10 7h4"/></svg></span>المهمة الثانية: تنظيم استفتاء لتقرير المصير</h3>
-        <p>لم يُنظَّم الاستفتاء حتى اليوم.</p></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>مراقبة وقف إطلاق النار</h3></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M8 10V4h8v6M10 7h4"/></svg></span>تنظيم استفتاء لتقرير المصير</h3>
+        <p>لم يُنظَّم حتى اليوم</p></div>
     </div>
   </div>
 </section>
 
-<!-- 3 · timeline -->
+<!-- 4 · timeline -->
 <section class="slide">
-  <div class="photo"><img src="img/minurso.webp" style="object-position:55% 50%"></div>
-  <div class="body" style="top:440px">
+  <div class="photo" style="height:600px"><img src="img/camps.jpg" style="object-position:50% 40%"></div>
+  <div class="body" style="top:330px">
     <span class="kick">محطات</span>
     <h1>نصف قرن من النزاع</h1>
     <div class="tl">
-      <div class="row"><span class="y">1975</span><span class="t">انسحاب إسبانيا من الإقليم وبداية النزاع</span></div>
-      <div class="row"><span class="y">1991</span><span class="t">وقف إطلاق النار وإنشاء بعثة مينورسو</span></div>
+      <div class="row"><span class="y">1975</span><span class="t">انسحاب إسبانيا وبداية النزاع</span></div>
+      <div class="row"><span class="y">1991</span><span class="t">وقف إطلاق النار وإنشاء مينورسو</span></div>
       <div class="row"><span class="y">2007</span><span class="t">المغرب يقدّم مبادرة الحكم الذاتي</span></div>
       <div class="row"><span class="y">2020</span><span class="t">البوليساري تعلن إنهاء وقف إطلاق النار بعد أحداث الكركرات</span></div>
       <div class="row now"><span class="y">2026</span><span class="t">مجلس الأمن يصوّت على مستقبل البعثة</span></div>
@@ -133,15 +156,14 @@
   </div>
 </section>
 
-<!-- 4 · why now -->
+<!-- 5 · why now -->
 <section class="slide">
-  <div class="photo"><img src="img/unsc-vote.jpg" style="object-position:50% 55%"></div>
-  <div class="body">
+  <div class="photo" style="height:620px"><img src="img/unsc-vote.jpg" style="object-position:50% 55%"></div>
+  <div class="body" style="top:420px">
     <span class="kick">الموعد</span>
     <h1>لماذا الآن؟</h1>
-    <p class="lead">ينتهي تفويض البعثة في 31 أكتوبر، ويصوّت مجلس الأمن على تجديد ولايتها وسط خلاف حول مستقبل التسوية.</p>
     <div class="stats">
-      <div class="stat hot"><div class="v">31 أكتوبر</div><div class="n">انتهاء التفويض</div></div>
+      <div class="stat hot"><div class="v">31 أكتوبر</div><div class="n">ينتهي تفويض البعثة ويصوّت المجلس على تجديدها</div></div>
       <div class="stat"><div class="v">15</div><div class="n">عضواً في مجلس الأمن</div></div>
       <div class="stat"><div class="v">9</div><div class="n">أصوات لاعتماده دون فيتو</div></div>
     </div>
@@ -149,78 +171,77 @@
   </div>
 </section>
 
-<!-- 5 · the US draft -->
+<!-- 6 · the US draft -->
 <section class="slide">
-  <div class="photo"><img src="img/unsc-chamber.jpg" style="object-position:25% 50%"></div>
-  <div class="body" style="top:450px">
+  <div class="photo" style="height:560px"><img src="img/unsc-chamber.jpg" style="object-position:30% 50%"></div>
+  <div class="body" style="top:330px">
     <span class="kick">المسودة الأمريكية</span>
     <h1>ماذا تقترح واشنطن؟</h1>
     <div class="grid" style="gap:16px;margin-top:24px">
-      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></span>تغيير اسم بعثة مينورسو</h3></div>
-      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8 12h8"/></svg></span>إنهاء مهامها التقليدية لحفظ السلام تدريجياً</h3></div>
-      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>تكريس الحكم الذاتي تحت السيادة المغربية أساساً للتسوية</h3></div>
-      <div class="card dark" style="padding:22px 26px"><p style="margin:0;font-size:30px"><b style="color:#FF6B7F">رد البوليساري:</b> رفض المسودة والتلويح بالانسحاب من العملية السياسية إذا اعتُمدت دون تعديلات جوهرية.</p></div>
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></span>تغيير اسم البعثة</h3></div>
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8 12h8"/></svg></span>إنهاء مهام حفظ السلام تدريجياً</h3></div>
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>الحكم الذاتي تحت السيادة المغربية أساساً للتسوية</h3></div>
+      <div class="card hotcard" style="padding:22px 28px"><p style="margin:0;font-size:35px;line-height:1.45"><b style="color:var(--red)">البوليساري ترفض</b> وتلوّح بالانسحاب من العملية السياسية إذا اعتُمدت المسودة دون تعديلات جوهرية</p></div>
     </div>
-    <p class="note">مسودة قيد النقاش، وقد يتغيّر نصّها قبل التصويت.</p>
   </div>
 </section>
 
-<!-- 6 · positions -->
+<!-- 7 · positions -->
 <section class="slide">
-  <div class="photo"><img src="img/ballot.jpg" style="object-position:45% 50%"><img src="img/sahrawi-flags.jpg" style="object-position:50% 30%"></div>
-  <div class="body">
+  <div class="photo" style="height:600px"><img src="img/ma-king.webp" style="object-position:40% 30%"><img src="img/sahrawi-flags.jpg" style="object-position:50% 30%"></div>
+  <div class="body" style="top:430px">
     <span class="kick">المواقف</span>
     <h1>أين يقف كل طرف؟</h1>
     <div class="grid pos">
-      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#C1272D"/><path d="M15 5.2l2.6 8-6.8-4.9h8.4l-6.8 4.9z" fill="none" stroke="#006233" stroke-width="1"/></svg>المغرب</h3><p>الحكم الذاتي تحت سيادته أساساً للحل</p></div>
-      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#007A3D"/><rect width="30" height="13.33" fill="#fff"/><rect width="30" height="6.67" fill="#000"/><path d="M0 0l10 10L0 20z" fill="#C4111B"/><circle cx="16" cy="10" r="2.6" fill="#C4111B"/><circle cx="16.9" cy="10" r="2.2" fill="#fff"/><path d="M18.6 8.7l.4 1.1h1.1l-.9.7.3 1.1-.9-.7-.9.7.3-1.1-.9-.7h1.1z" fill="#C4111B"/></svg>البوليساري</h3><p>استفتاء لتقرير المصير، وترفض المسودة</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#C1272D"/><path d="M15 5.2l2.6 8-6.8-4.9h8.4l-6.8 4.9z" fill="none" stroke="#006233" stroke-width="1"/></svg>المغرب</h3><p>الحكم الذاتي تحت سيادته</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#007A3D"/><rect width="30" height="13.33" fill="#fff"/><rect width="30" height="6.67" fill="#000"/><path d="M0 0l10 10L0 20z" fill="#C4111B"/><circle cx="16" cy="10" r="2.6" fill="#C4111B"/><circle cx="16.9" cy="10" r="2.2" fill="#fff"/><path d="M18.6 8.7l.4 1.1h1.1l-.9.7.3 1.1-.9-.7-.9.7.3-1.1-.9-.7h1.1z" fill="#C4111B"/></svg>البوليساري</h3><p>استفتاء لتقرير المصير</p></div>
       <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="15" height="20" fill="#006233"/><rect x="15" width="15" height="20" fill="#fff"/><circle cx="15" cy="10" r="5" fill="#D21034"/><circle cx="16.3" cy="10" r="4" fill="#fff"/><path d="M17.6 8.2l.6 1.4h1.5l-1.2.9.5 1.5-1.4-.9-1.2.9.4-1.5-1.2-.9h1.5z" fill="#D21034"/></svg>الجزائر</h3><p>تدعم حق تقرير المصير</p></div>
-      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#00A95C"/><rect width="30" height="3" fill="#D01C1F"/><rect y="17" width="30" height="3" fill="#D01C1F"/><path d="M10 8.5a5 5 0 0 0 10 0a5 4 0 0 1-10 0z" fill="#FFD700"/><path d="M15 4.3l.6 1.6h1.7l-1.4 1 .5 1.6-1.4-1-1.4 1 .5-1.6-1.4-1h1.7z" fill="#FFD700"/></svg>موريتانيا</h3><p>الحياد الإيجابي في النزاع</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#00A95C"/><rect width="30" height="3" fill="#D01C1F"/><rect y="17" width="30" height="3" fill="#D01C1F"/><path d="M10 8.5a5 5 0 0 0 10 0a5 4 0 0 1-10 0z" fill="#FFD700"/><path d="M15 4.3l.6 1.6h1.7l-1.4 1 .5 1.6-1.4-1-1.4 1 .5-1.6-1.4-1h1.7z" fill="#FFD700"/></svg>موريتانيا</h3><p>الحياد الإيجابي</p></div>
     </div>
   </div>
 </section>
 
-<!-- 7 · scenarios -->
+<!-- 8 · scenarios -->
 <section class="slide">
-  <div class="photo"><img src="img/un-helicopter.jpg" style="object-position:20% 45%"></div>
-  <div class="body" style="top:460px">
+  <div class="photo" style="height:600px"><img src="img/refugees-tent.jpg" style="object-position:50% 35%"></div>
+  <div class="body" style="top:360px">
     <span class="kick">ماذا بعد؟</span>
-    <h1>ثلاثة سيناريوهات ممكنة</h1>
-    <div class="grid" style="gap:18px;margin-top:26px">
+    <h1>ثلاثة سيناريوهات</h1>
+    <div class="grid" style="gap:16px;margin-top:24px">
       <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>اعتماد المسودة كما هي</h3><p>تجديد الولاية مع تغيير اسم البعثة ومهامها</p></div>
       <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg></span>اعتمادها بعد تعديلات</h3><p>صيغة توافقية تراعي اعتراضات الأطراف</p></div>
-      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>تمديد تقني قصير</h3><p>إبقاء البعثة كما هي مؤقتاً لإتاحة وقت للتفاوض</p></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>تمديد تقني قصير</h3><p>وقت إضافي للتفاوض</p></div>
     </div>
-    <p class="note">احتمالات ممكنة وليست توقعات، والقرار بيد أعضاء مجلس الأمن.</p>
+    <p class="note">احتمالات ممكنة وليست توقعات.</p>
   </div>
 </section>
 
-<!-- 8 · outro -->
-<section class="slide">
-  <div class="photo"><img src="img/sahrawi-flags.jpg" style="object-position:50% 25%;filter:saturate(.9)"><img src="img/ballot.jpg" style="object-position:40% 50%"></div>
-  <div class="body">
+<!-- 9 · outro -->
+<section class="slide tall">
+  <div class="photo" style="height:860px"><img src="img/minurso.webp" style="object-position:60% 50%"></div>
+  <div class="body" style="top:640px">
     <span class="kick">تابعونا</span>
-    <h1>نتيجة التصويت وتداعياته<br>في <span class="red">الموجز الإخباري</span></h1>
+    <h1 style="font-size:84px">نتيجة التصويت وتداعياته في <span class="red">الموجز الإخباري</span></h1>
     <div class="big" id="big"></div>
   </div>
 </section>
 
 <script src="../../src/icons.js"></script>
 <script>
-  // common chrome of the post template: logo, page dots, red-accent rule, social footer
+  // common chrome: logo, page dots, white footer bar with the red-accent rule and the handles
   const svg = (name, fill, bg) => bg
     ? `<svg viewBox="-4 -4 32 32"><rect x="-4" y="-4" width="32" height="32" rx="7" fill="${bg}"/><path d="${ICONS[name]}" fill="${fill}"/></svg>`
     : `<svg viewBox="0 0 24 24"><path d="${ICONS[name]}" fill="${fill}"/></svg>`;
-  const ig = `<svg viewBox="0 0 24 24"><defs><radialGradient id="igg" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FDD835"/><stop offset=".45" stop-color="#F0383E"/><stop offset=".75" stop-color="#C1338C"/><stop offset="1" stop-color="#5B51D8"/></radialGradient></defs><path d="${ICONS.instagram}" fill="url(#igg)"/></svg>`;
-  const nets = `${svg('facebook', '#0866FF')}${svg('tiktok', '#fff', '#111')}${svg('youtube', '#FF0000')}`;
-  const foot = `<div class="rule"></div><div class="foot">
-    <div class="grp">${nets}<span>ERRIWAYA</span></div><div class="sep"></div><div class="grp">${ig}<span>ERRIWAYA.MR</span></div></div>`;
+  let g = 0;
+  const ig = () => `<svg viewBox="0 0 24 24"><defs><radialGradient id="ig${++g}" cx="0.3" cy="1.07" r="1.3"><stop offset="0" stop-color="#FDD835"/><stop offset=".45" stop-color="#F0383E"/><stop offset=".75" stop-color="#C1338C"/><stop offset="1" stop-color="#5B51D8"/></radialGradient></defs><path d="${ICONS.instagram}" fill="url(#ig${g})"/></svg>`;
+  const nets = () => `${svg('facebook', '#0866FF')}${svg('tiktok', '#fff', '#111')}${svg('youtube', '#FF0000')}`;
   const slides = document.querySelectorAll('.slide');
   slides.forEach((s, i) => {
     const dots = Array.from(slides, (_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).reverse().join('');
-    s.insertAdjacentHTML('beforeend', `<div class="logo"></div><div class="page">${dots}</div>${foot}`);
+    s.insertAdjacentHTML('beforeend', `<div class="logo"></div><div class="page">${dots}</div>
+      <div class="footbar"><div class="rule"></div><div class="foot"><div class="grp">${nets()}<span>ERRIWAYA</span></div><div class="sep"></div><div class="grp">${ig()}<span>ERRIWAYA.MR</span></div></div></div>`);
   });
-  document.getElementById('big').innerHTML = `<div>${nets}ERRIWAYA</div><div>${ig}ERRIWAYA.MR</div>`;
+  document.getElementById('big').innerHTML = `<div>${nets()}ERRIWAYA</div><div>${ig()}ERRIWAYA.MR</div>`;
 </script>
 </body>
 </html>
