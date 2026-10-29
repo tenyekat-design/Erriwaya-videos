@@ -94,6 +94,17 @@
     bar: { x0: 160, x1: 920, y: 1232, tl: 60, tr: 1020 },
     inset: { S: 700, big: null, small: { x: 36, y: 228, s: 0.3 } },
   });
+  // modern: full-frame photo, story segments along the top, frosted panel with a big right-aligned headline
+  // and the spoken words, a round locator map, and a coloured wipe with the story number at each new story
+  if (LOOK === 'pro') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, pro: true,
+    logoH: 132, logoY: 58, hdrText: [38, 24],
+    glass: { x: 30, y: 884, w: 1020, h: 430, r: 38 },
+    kicker: { cx: 540, right: 1006, y: 930 },
+    head: { cx: 540, right: 1006, cy: 1068, maxW: 930, lineH: 62, panelH: 150, size: [50, 58] },
+    caption: { right: 1006, cy: 1252, maxW: 930, sizes: [38, 35], style: 'text' },
+    inset: { S: 700, round: true, big: null, small: { x: 36, y: 214, s: 0.27 } },
+  });
   if (LOOK === 'captions') Object.assign(L, {
     card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true, noPanel: true, noMap: true,
     kicker: { cx: 540, y: 262 },
@@ -103,7 +114,7 @@
   });
   const W = L.W, H = L.H;
   // edition cameras are framed for the feed map (980x422); keep the same visible area on other map shapes
-  if (L.inset) L.map = { x: 0, y: 0, w: L.inset.S, h: L.inset.S, r: 34 };
+  if (L.inset) L.map = { x: 0, y: 0, w: L.inset.S, h: L.inset.S, r: L.inset.round ? L.inset.S / 2 : 34 };
   const CAM_SCALE = Math.sqrt((422 / 980) / (L.map.h / L.map.w));
 
   const INTRO = TL.intro, CUT = TL.audioCut;
@@ -472,7 +483,7 @@
     const lat = (2 * Math.atan(Math.exp(cam.y * RAD)) - Math.PI / 2) / RAD;
     const hud = `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}   ${Math.abs(cam.x).toFixed(2)}°${cam.x >= 0 ? 'E' : 'W'}`;
     ctx.direction = 'ltr'; ctx.font = font(20); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-    const hw = ctx.measureText(hud).width;
+    const hw = L.inset && L.inset.round ? -1e4 : ctx.measureText(hud).width;
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     rrect(R.x + 18, R.y + R.h - 50, hw + 24, 34, 17); ctx.fill();
     ctx.fillStyle = 'rgba(11,31,75,0.55)';
@@ -609,7 +620,7 @@
       gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(L.caption ? 0.6 : 0, `rgba(11,31,75,${L.caption ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
       ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th);
       const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
-      gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, 'rgba(11,31,75,0.8)'); gb.addColorStop(1, 'rgba(11,31,75,0.96)');
+      gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, `rgba(11,31,75,${L.pro ? 0.45 : 0.8})`); gb.addColorStop(1, `rgba(11,31,75,${L.pro ? 0.7 : 0.96})`);
       ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5);
     }
     ctx.restore();
@@ -685,6 +696,14 @@
     let s = null;
     for (const x of CHIP_SEGS) if (a >= x.t0 - 0.05) s = x;
     return s;
+  }
+  function chipWidth(kicker, topic, size) {
+    ctx.font = font(size); ctx.direction = 'rtl';
+    const kw = ctx.measureText(kicker).width;
+    const ts = Math.round(size * 0.8);
+    ctx.font = font(ts);
+    const tw = topic ? ctx.measureText(topic).width + ts * 1.4 : 0;
+    return kw + size * 2.6 + (topic ? tw + size * 0.25 : 0);
   }
   function drawChip(kicker, topic, cx, cy, size) {
     ctx.font = font(size); ctx.direction = 'rtl';
@@ -818,7 +837,7 @@
     return (layoutCache[key] = { size, space, lines });
   }
 
-  function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut) {
+  function drawWords(lay, cx, cy, lineH, color, a, tIn, tOut, right) {
     const n = lay.lines.length;
     let idx = 0;
     ctx.font = font(lay.size);
@@ -828,7 +847,7 @@
     const outP = tOut == null ? 0 : eio(prog(a, tOut - 0.35, tOut));
     lay.lines.forEach((ln, li) => {
       const y = cy + (li - (n - 1) / 2) * lineH;
-      let x = cx + ln.width / 2;
+      let x = right != null ? right : cx + ln.width / 2;
       for (const wd of ln.words) {
         const p = eout(prog(a, tIn + idx * 0.05, tIn + idx * 0.05 + 0.45));
         if (p > 0) {
@@ -859,7 +878,8 @@
     const kp = seg ? eout(prog(a, seg.t0, seg.t0 + 0.45)) * (seg.t1 == null ? 1 : 1 - eio(prog(a, seg.t1 - 0.35, seg.t1))) : 0;
     if (kp > 0) {
       ctx.globalAlpha = alpha * kp;
-      drawChip(seg.kicker, seg.topic, L.kicker.cx, L.kicker.y + (1 - kp) * 12, 32);
+      const kx = L.kicker.right ? L.kicker.right - chipWidth(seg.kicker, seg.topic, 32) / 2 : L.kicker.cx;
+      drawChip(seg.kicker, seg.topic, kx, L.kicker.y + (1 - kp) * 12, 32);
     }
     // navy panel behind the headlines: wipes in from the right with the first one, then stays
     const pw = L.bar.tr - L.bar.tl, ph = L.head.panelH;
@@ -880,7 +900,7 @@
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
     if (L.dark) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }
-    drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut);
+    drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut, L.head.right);
     ctx.restore();
   }
 
@@ -917,7 +937,7 @@
     let idx = 0;
     const top = C2.cy - (lay.lines.length - 1) * lineH / 2 + (1 - pin) * 14;
     lay.lines.forEach((ln, li) => {
-      let x = C2.cx + ln.width / 2;
+      let x = C2.right != null ? C2.right : C2.cx + ln.width / 2;
       const y = top + li * lineH;
       for (const wd of ln.words) {
         const w = p.words[idx];
@@ -925,12 +945,12 @@
         const on = w && a >= w.t - 0.03 && (!nx || a < nx.t - 0.03);
         const said = w && a >= w.t - 0.03;
         ctx.globalAlpha = alpha * pin;
-        if (on) {
+        if (on && C2.style !== 'text') {
           ctx.fillStyle = '#0A8F65';
           rrect(x - wd.width - 12, y - lay.size * 0.62, wd.width + 24, lay.size * 1.3, 14); ctx.fill();
         }
         ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = on ? 0 : 14;
-        ctx.fillStyle = said ? '#fff' : 'rgba(255,255,255,0.6)';
+        ctx.fillStyle = on && C2.style === 'text' ? '#34D399' : said ? '#fff' : 'rgba(255,255,255,0.6)';
         ctx.fillText(wd.w, x, y + lay.size * 0.05);
         ctx.shadowColor = 'transparent';
         x -= wd.width + lay.space;
@@ -938,6 +958,83 @@
       }
     });
     ctx.restore();
+  }
+
+  // ---------- modern look extras ----------
+  function drawGlass(alpha) {
+    const G = L.glass;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    rrect(G.x, G.y, G.w, G.h, G.r); ctx.clip();
+    ctx.filter = 'blur(26px)';
+    ctx.drawImage(cv, G.x - 40, G.y - 40, G.w + 80, G.h + 80, G.x - 40, G.y - 40, G.w + 80, G.h + 80);
+    ctx.filter = 'none';
+    ctx.fillStyle = 'rgba(11,31,75,0.62)'; ctx.fillRect(G.x, G.y, G.w, G.h);
+    const g = ctx.createLinearGradient(0, G.y, 0, G.y + G.h);
+    g.addColorStop(0, 'rgba(255,255,255,0.08)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(G.x, G.y, G.w, G.h);
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 2;
+    rrect(G.x + 1, G.y + 1, G.w - 2, G.h - 2, G.r); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.14)';
+    ctx.fillRect(G.x + 44, G.y + 312, G.w - 88, 2);  // rule between headline and spoken words
+    ctx.restore();
+  }
+  // story segments along the top, filling right to left
+  function drawSegments(a, alpha) {
+    const n = TL.chapters.length, gap = 10, x0 = L.margin, x1 = W - L.margin, sw = (x1 - x0 - gap * (n - 1)) / n, y = 30;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    for (let i = 0; i < n; i++) {
+      const c0 = TL.chapters[i], c1 = i + 1 < n ? TL.chapters[i + 1] : TL.outroAt;
+      const f = clamp((a - c0) / (c1 - c0));
+      const x = x1 - (i + 1) * sw - i * gap;
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      rrect(x, y, sw, 7, 3.5); ctx.fill();
+      if (f > 0) { ctx.fillStyle = f < 1 ? '#34D399' : '#fff'; rrect(x + sw * (1 - f), y, sw * f, 7, 3.5); ctx.fill(); }
+    }
+    ctx.restore();
+  }
+  // at each new story: a green and a navy panel sweep across with the story number and the country
+  function drawStoryWipe(a) {
+    TL.chapters.forEach((c, i) => {
+      const p = prog(a, c - 0.55, c + 0.75);
+      if (p <= 0 || p >= 1) return;
+      const h = TL.headlines.find(x => x.t >= c - 0.05) || {};
+      const enter = eio(prog(p, 0, 0.32)), leave = eio(prog(p, 0.62, 1));
+      const sk = 220;  // slant
+      const panel = (d, col) => {
+        const e = eio(prog(p, d, 0.32 + d)), l = eio(prog(p, 0.62 - d, 1 - d));
+        const xr = W + sk - (W + 2 * sk) * e * 0 - (W + sk) * l;   // right edge moves left on leave
+        const xl = W + sk - (W + 2 * sk) * e;                       // left edge moves left on enter
+        if (xr <= xl) return;
+        ctx.beginPath();
+        ctx.moveTo(xl, 0); ctx.lineTo(xr, 0); ctx.lineTo(xr - sk, H); ctx.lineTo(xl - sk, H); ctx.closePath();
+        ctx.fillStyle = col; ctx.fill();
+      };
+      ctx.save();
+      panel(0, '#0A8F65');
+      panel(0.06, C.navy);
+      // number + country, visible while the navy panel covers the frame
+      const ta = eout(prog(p, 0.22, 0.36)) * (1 - ein(prog(p, 0.56, 0.7)));
+      if (ta > 0) {
+        const dx = (1 - eout(prog(p, 0.22, 0.4))) * 60 - eio(prog(p, 0.56, 0.7)) * 60;
+        ctx.globalAlpha = ta;
+        ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = font(300); ctx.fillStyle = 'rgba(52,211,153,0.95)';
+        ctx.fillText(String(i + 1).padStart(2, '0'), W / 2 + dx, H * 0.42);
+        ctx.direction = 'rtl';
+        ctx.font = font(96); ctx.fillStyle = '#fff';
+        ctx.fillText(h.kicker || '', W / 2 + dx * 1.5, H * 0.42 + 210);
+        if (h.topic) {
+          ctx.font = font(44); ctx.fillStyle = 'rgba(255,255,255,0.7)';
+          ctx.fillText(h.topic, W / 2 + dx * 2, H * 0.42 + 300);
+        }
+      }
+      ctx.restore();
+    });
   }
 
   // ---------- header ----------
@@ -980,7 +1077,7 @@
     const nw = ctx.measureText(num).width;
     ctx.font = font(24); ctx.fillStyle = dim;
     ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < (L.pro ? 0 : n); i++) {
       const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
@@ -1500,13 +1597,16 @@
       const inA = k => eout(prog(t, 6.45 + k * 0.12, 7.15 + k * 0.12)) * (1 - out);
       if (t >= OUTRO) { ctx.save(); ctx.translate(0, out * 40); }
       drawCarousel(Math.max(a, CUT), inA(0), 0);
-      drawProgress(Math.max(a, CUT), inA(2));
+      if (L.glass) drawGlass(inA(1));
+      if (!L.pro) drawProgress(Math.max(a, CUT), inA(2));
       drawHeadline(a, inA(3));
       drawMapCard(Math.max(a, CUT), inA(4));
       drawCaptions(a, inA(3));
+      if (L.pro) drawStoryWipe(a);
       if (t >= OUTRO) ctx.restore();
       const hdr = eout(prog(t, 6.8, 7.4)) * (1 - eio(prog(t, OUTRO, OUTRO + 0.4)));
       drawHeader(a, hdr);
+      if (L.pro) drawSegments(a, hdr);
       if (t >= 6.85 && t < OUTRO + 0.15) {
         const lb = logoBox();
         ctx.drawImage(L.dark ? LOGO_W : LOGO, lb.x, lb.y, lb.w, lb.h);
