@@ -106,9 +106,9 @@
     inset: { S: 700, round: true, big: null, small: { x: 36, y: 214, s: 0.27 } },
   });
   // bold: blurred photo as the backdrop, the photo itself framed and tilted, headline lines in solid boxes,
-  // the country's name drifting large behind, spoken words below
+  // the country's name drifting large behind, spoken words below, the story-number wipe from 'pro'
   if (LOOK === 'bold') Object.assign(L, {
-    card: { cx: 540, cy: 492, w: 920, h: 556 }, slide: true, photoR: 26, dark: true, noPanel: true, segments: true,
+    card: { cx: 540, cy: 492, w: 920, h: 556 }, slide: true, photoR: 26, dark: true, noPanel: true, segments: true, wipe: true,
     frame: { border: 10, tilt: -1.6 }, blurBg: true, boxed: true, marquee: { y: 1245, size: 170 },
     logoH: 132, logoY: 58, hdrText: [38, 24],
     kicker: { cx: 540, right: 1010, y: 826 },
