@@ -93,6 +93,23 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
   .nav { margin-inline-start: 0; width: 100% }
 }
 
+/* ── news ticker ── */
+.ticker { background: var(--surface, #fff); border-bottom: 1px solid var(--line); color: var(--ink) }
+.ticker .wrap { display: flex; align-items: stretch; gap: 0; padding-block: 0 }
+.ticker .lbl { display: inline-flex; align-items: center; gap: 6px; background: var(--brand); color: var(--on-brand); font: 17px/1 var(--f-display); padding: 10px 14px 8px; flex-shrink: 0 }
+.ticker .lbl .ic { width: 15px; height: 15px }
+.ticker .vp { position: relative; overflow: hidden; flex: 1; min-width: 0; display: flex; align-items: center;
+  mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent) }
+.ticker .track { display: flex; width: max-content; animation: tick var(--dur, 60s) linear infinite }
+.ticker .vp:hover .track, .ticker .vp:focus-within .track { animation-play-state: paused }
+.ticker .track a { display: inline-flex; align-items: center; gap: 10px; padding-inline: 18px; white-space: nowrap; font-weight: 600; font-size: 15px }
+.ticker .track a:hover { color: var(--link) }
+.ticker .track a::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0 }
+.ticker .track a.br::before { background: var(--breaking) }
+.ticker .track time { color: var(--muted); font-weight: 400; font-size: 13px }
+@keyframes tick { from { transform: translateX(0) } to { transform: translateX(50%) } }
+@media (max-width: 640px) { .ticker .lbl { font-size: 15px; padding: 9px 10px 7px } .ticker .track a { font-size: 14px; padding-inline: 14px } }
+@media (prefers-reduced-motion: reduce) { .ticker .vp { overflow-x: auto } }
 /* ── breaking ── */
 .breaking { background: var(--breaking); color: #fff }
 .breaking .wrap { display: flex; align-items: center; gap: 12px; padding-block: 8px }
@@ -293,6 +310,11 @@ footer small { opacity: .7 }
   <span class="tag"><svg class="ic"><use href="#i-bolt"/></svg>عاجل</span><span class="dot"></span><a id="breakingLink" href="#home"></a>
 </div></div>
 
+<div class="ticker" id="ticker" hidden><div class="wrap">
+  <span class="lbl"><svg class="ic"><use href="#i-brief"/></svg>آخر الأخبار</span>
+  <div class="vp" aria-label="شريط آخر الأخبار"><div class="track" id="tickerTrack"></div></div>
+</div></div>
+
 <main class="wrap" id="main"></main>
 
 <footer><div class="wrap">
@@ -436,6 +458,20 @@ function metaLine(it) {
 }
 function card(it) {
   return `<a class="card" href="${hrefOf(it)}"${tgt(it)}>${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
+}
+
+function renderTicker() {
+  const items = feed().slice(0, 15);
+  $("#ticker").hidden = !items.length;
+  if (!items.length) return;
+  const key = items.map(i => i.id + (isFreshBreaking(i) ? "!" : "")).join(",");
+  const tr = $("#tickerTrack");
+  if (tr.dataset.key === key) return;            // لا نعيد التشغيل إن لم يتغير شيء
+  tr.dataset.key = key;
+  const hm = d => d ? new Date(d).toLocaleTimeString("ar", { hour: "2-digit", minute: "2-digit", hour12: false, numberingSystem: "latn" }) : "";
+  const one = items.map(it => `<a href="${hrefOf(it)}"${tgt(it)}${isFreshBreaking(it) ? ' class="br"' : ""}>${esc(it.title)}${it.date ? `<time>${hm(it.date)}</time>` : ""}</a>`).join("");
+  tr.innerHTML = one + one.replace(/<a /g, '<a tabindex="-1" aria-hidden="true" ');
+  requestAnimationFrame(() => tr.style.setProperty("--dur", Math.max(25, tr.scrollWidth / 2 / 55) + "s"));
 }
 
 function renderBreaking() {
@@ -665,6 +701,7 @@ async function loadSnapshot() {
 
 function refresh() {
   renderBreaking();
+  renderTicker();
   const typing = document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName);
   if (typing) return;
   const y = window.scrollY; lastHash = location.hash; route(); window.scrollTo(0, y);
