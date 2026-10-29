@@ -1054,14 +1054,16 @@
   }
   // broadcast story tag in the lower third's style: one chip, green (country) then white (topic), square
   // corners and the same slanted left edge, sitting on the headline bar; wipes in from the right
-  function drawTag(kicker, topic, p) {
-    const B = L.lower, xr = B.x + B.w, th = 58, y = B.y - th, sl = 9;
+  function drawTag(kicker, topic, p, centre) {
+    const B = L.lower, th = 58, sl = 9;
     ctx.save();
     ctx.font = font(32); ctx.direction = 'rtl';
     const kw = ctx.measureText(kicker).width + 56;
     ctx.font = font(27);
     const tw = topic ? ctx.measureText(topic).width + 44 : 0;
     const full = kw + tw + sl, vis = full * eio(p);
+    // on the headline bar, or centred on a given point (the opening hook)
+    const xr = centre ? centre[0] + full / 2 : B.x + B.w, y = centre ? centre[1] - th / 2 : B.y - th;
     ctx.beginPath(); ctx.rect(xr - vis - sl, y - 30, vis + sl, th + 30); ctx.clip();
     const x0 = xr - full;
     ctx.beginPath(); ctx.moveTo(xr, y); ctx.lineTo(x0, y); ctx.lineTo(x0 + sl, y + th); ctx.lineTo(xr, y + th); ctx.closePath();
@@ -1574,7 +1576,8 @@
     const kp = eout(prog(t, 0.15, 0.5));
     if (hk.kicker) {
       ctx.globalAlpha = (1 - out) * kp;
-      drawChip(hk.kicker, hk.topic, W / 2, top - lineH * 0.5 - 60 + (1 - kp) * 12, 38);
+      if (L.lower) drawTag(hk.kicker, hk.topic, kp, [W / 2, top - lineH * 0.5 - 60]);
+      else drawChip(hk.kicker, hk.topic, W / 2, top - lineH * 0.5 - 60 + (1 - kp) * 12, 38);
       ctx.globalAlpha = 1 - out;
     }
     ctx.font = font(lay.size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
@@ -1583,12 +1586,12 @@
       let x = W / 2 + ln.width / 2;
       const y = top + li * lineH;
       for (const wd of ln.words) {
-        const p = eout(prog(t, 0.3 + idx * 0.07, 0.65 + idx * 0.07));
+        const p = L.staticText ? eio(prog(t, 0.3, 0.7)) : eout(prog(t, 0.3 + idx * 0.07, 0.65 + idx * 0.07));
         if (p > 0) {
           ctx.globalAlpha = (1 - out) * p;
           ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 18;
           ctx.fillStyle = '#fff';
-          ctx.fillText(wd.w, x, y + (1 - p) * 26);
+          ctx.fillText(wd.w, x, L.staticText ? y : y + (1 - p) * 26);
           ctx.shadowColor = 'transparent';
         }
         x -= wd.width + lay.space;
