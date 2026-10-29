@@ -11,14 +11,14 @@ window.TIMELINE = {
   map: 'low',         // inset map just above the headline bar so it stays off the faces
 
   // opening hook: the strongest story, full-frame, before the map intro
-  hook: { img: 'mr-ru-putin.jpg', f: [0.27, 0.35], kicker: 'موريتانيا', topic: 'دبلوماسية',
+  hook: { img: 'mr-ru-putin-talk.jpg', f: [0.4, 0.3], kicker: 'موريتانيا', topic: 'دبلوماسية',
           text: 'الرئيس الغزواني يغادر موسكو قبل لقاء ثنائي كان مرتقبا مع بوتين' },
 
   cards: [
     // opening teaser
     { kicker: 'الصحراء الغربية', img: 'unsc-vote.jpg', moves: [{ t: 0.0, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.1] }] },
     { kicker: 'مالي', img: 'ml-drone.webp', moves: [{ t: 5.48, a: [0.55, 0.5, 1.0], b: [0.6, 0.5, 1.1] }] },
-    { kicker: 'موريتانيا', img: 'mr-ru-putin.jpg', moves: [{ t: 9.50, a: [0.27, 0.4, 1.0], b: [0.27, 0.35, 1.1] }] },
+    { kicker: 'موريتانيا', img: 'mr-ru-putin-talk.jpg', moves: [{ t: 9.50, a: [0.47, 0.4, 1.0], b: [0.47, 0.36, 1.05] }] },
     { kicker: 'الجزائر', img: 'dz-pm-putin.jpg', moves: [{ t: 11.20, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.1] }] },
     { kicker: 'تونس', img: 'tn-pm-putin.jpg', moves: [{ t: 12.80, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.1] }] },
     { kicker: 'المغرب', img: 'ma-finance.jpg', moves: [{ t: 14.40, a: [0.5, 0.5, 1.0], b: [0.45, 0.5, 1.1] }] },
@@ -32,8 +32,8 @@ window.TIMELINE = {
     { img: 'ml-drone.webp', moves: [{ t: 41.88, a: [0.5, 0.5, 1.0], b: [0.6, 0.5, 1.12] }] },
     { img: 'ml-army.jpg', moves: [{ t: 56.28, a: [0.3, 0.45, 1.0], b: [0.35, 0.42, 1.1] }] },
     // Mauritania: the president leaves Moscow
-    { img: 'mr-ru-putin.jpg', moves: [{ t: 65.40, a: [0.27, 0.4, 1.0], b: [0.27, 0.35, 1.1] },
-                                      { t: 79.54, a: [0.6, 0.4, 1.0], b: [0.6, 0.36, 1.08] }] },
+    { img: 'mr-ru-putin-talk.jpg', moves: [{ t: 65.40, a: [0.47, 0.4, 1.0], b: [0.47, 0.36, 1.06] },
+                                           { t: 79.54, a: [0.33, 0.3, 1.25], b: [0.35, 0.3, 1.15] }] },
     // Mauritania: power cuts
     { img: 'mr-somelec.jpg', moves: [{ t: 90.94, a: [0.4, 0.4, 1.0], b: [0.45, 0.4, 1.1] }] },
     { img: 'mr-electricity.jpg', moves: [{ t: 103.72, a: [0.5, 0.5, 1.0], b: [0.45, 0.45, 1.14] }] },
@@ -58,7 +58,7 @@ window.TIMELINE = {
     { img: 'sn-cabinet.jpg', moves: [{ t: 220.84, a: [0.55, 0.4, 1.0], b: [0.55, 0.38, 1.12] }] },
     // wrap-up
     { img: 'unsc-vote.jpg', moves: [{ t: 235.26, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'mr-ru-putin.jpg', moves: [{ t: 237.40, a: [0.27, 0.4, 1.05], b: [0.27, 0.38, 1.15] }] },
+    { img: 'mr-ru-putin-talk.jpg', moves: [{ t: 237.40, a: [0.47, 0.4, 1.0], b: [0.47, 0.38, 1.06] }] },
     { img: 'ly-central-bank.jpg', moves: [{ t: 239.60, a: [0.6, 0.6, 1.05], b: [0.6, 0.6, 1.15] }] },
   ],
 
