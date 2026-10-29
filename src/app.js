@@ -134,12 +134,13 @@
               inset: { x: 40, y: 214 }, stingY: 0.42 },
       story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
                inset: { x: 40, y: 330 }, stingY: 0.42 },
-      youtube: { logoY: 50, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
-                 inset: { x: 96, y: 200 }, stingY: 0.39 },
+      // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
+      youtube: { logoY: 44, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
+                 inset: { x: 96, y: 224 }, stingY: 0.39 },
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
     Object.assign(L, {
-      logoY: BL.logoY, lower: B, ticker: BL.ticker, stingY: BL.stingY,
+      logoY: BL.logoY, logoH: BL.logoH || L.logoH, lower: B, ticker: BL.ticker, stingY: BL.stingY,
       kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
       head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
       caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
