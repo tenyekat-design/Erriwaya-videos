@@ -24,9 +24,10 @@ if (!fs.existsSync(path.join(EDIR, 'edition.js'))) { console.error('no edition a
 const FORMAT = String(args.format || 'feed');
 const SIZE = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
 if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
-const SUFFIX = FORMAT === 'feed' ? '' : '-' + FORMAT;
+const LOOK = args.look ? String(args.look) : '';   // trial feed looks: wide | full
+const SUFFIX = (FORMAT === 'feed' ? '' : '-' + FORMAT) + (LOOK ? '-' + LOOK : '');
 const OUT = path.resolve(ROOT, args.out || `output/erriwaya-brief-${EDITION}${SUFFIX}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT;
+const PAGE = 'file://' + path.join(ROOT, 'src', 'index.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT + (LOOK ? '&look=' + LOOK : '');
 
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: SIZE[0], height: SIZE[1] } });
@@ -47,7 +48,7 @@ async function stills(list) {
   const dir = path.join(ROOT, 'output', 'stills');
   fs.mkdirSync(dir, { recursive: true });
   for (const t of list) {
-    const f = path.join(dir, `t${String(t).padStart(6, '0')}.png`);
+    const f = path.join(dir, `${LOOK ? LOOK + '-' : ''}t${String(t).padStart(6, '0')}.png`);
     fs.writeFileSync(f, await grab(page, t, 'image/png'));
     console.log(f);
   }

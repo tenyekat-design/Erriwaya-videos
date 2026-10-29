@@ -69,8 +69,26 @@
   };
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
   const L = LAYOUTS[FORMAT] || LAYOUTS.feed;
+  // Trial looks for the feed (?look=wide|full): edge-to-edge photo, map as a small inset that opens full
+  // for a moment at the start of each story. Without ?look the approved layout is unchanged.
+  const LOOK = FORMAT === 'feed' ? new URLSearchParams(location.search).get('look') : null;
+  if (LOOK === 'wide') Object.assign(L, {
+    card: { cx: 540, cy: 595, w: 1080, h: 780 }, slide: true, photoR: 0,
+    kicker: { cx: 540, y: 985 },
+    head: { cx: 540, cy: 1095, maxW: 880, lineH: 62, panelH: 150 },
+    bar: { x0: 160, x1: 920, y: 1222, tl: 60, tr: 1020 },
+    inset: { S: 700, big: { cx: 540, cy: 595, s: 1 }, small: { x: 36, y: 228, s: 0.4 } },
+  });
+  if (LOOK === 'full') Object.assign(L, {
+    card: { cx: 540, cy: 675, w: 1080, h: 1350 }, slide: true, photoR: 0, dark: true,
+    kicker: { cx: 540, y: 930 },
+    head: { cx: 540, cy: 1045, maxW: 900, lineH: 62, panelH: 150 },
+    bar: { x0: 160, x1: 920, y: 1185, tl: 60, tr: 1020 },
+    inset: { S: 700, big: { cx: 540, cy: 540, s: 0.86 }, small: { x: 36, y: 228, s: 0.4 } },
+  });
   const W = L.W, H = L.H;
   // edition cameras are framed for the feed map (980x422); keep the same visible area on other map shapes
+  if (L.inset) L.map = { x: 0, y: 0, w: L.inset.S, h: L.inset.S, r: 34 };
   const CAM_SCALE = Math.sqrt((422 / 980) / (L.map.h / L.map.w));
 
   const INTRO = TL.intro, CUT = TL.audioCut;
@@ -404,6 +422,15 @@
     const R = L.map;
     ctx.save();
     ctx.globalAlpha = alpha;
+    if (L.inset) {
+      // full size for a moment at each story's start (where it is), then a small locator in the photo's corner
+      const I = L.inset;
+      let big = 0;
+      for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
+      const s = lerp(I.small.s, I.big.s, big);
+      const x = lerp(I.small.x, I.big.cx - I.S * I.big.s / 2, big), y = lerp(I.small.y, I.big.cy - I.S * I.big.s / 2, big);
+      ctx.translate(x, y); ctx.scale(s, s);
+    }
     ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
     ctx.fillStyle = C.soft;
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.fill();
@@ -424,7 +451,7 @@
     const g2 = ctx.createLinearGradient(R.x + R.w, 0, R.x + R.w - 60, 0);
     g2.addColorStop(0, 'rgba(244,246,250,1)'); g2.addColorStop(1, 'rgba(244,246,250,0)');
     ctx.fillStyle = g2; ctx.fillRect(R.x + R.w - 60, R.y, 60, R.h);
-    for (const st of TL.stats) drawStat(st, a, R);
+    if (!L.inset) for (const st of TL.stats) drawStat(st, a, R);
     // coordinates HUD
     const lat = (2 * Math.atan(Math.exp(cam.y * RAD)) - Math.PI / 2) / RAD;
     const hud = `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}   ${Math.abs(cam.x).toFixed(2)}°${cam.x >= 0 ? 'E' : 'W'}`;
@@ -435,9 +462,16 @@
     ctx.fillStyle = 'rgba(11,31,75,0.55)';
     ctx.fillText(hud, R.x + 30, R.y + R.h - 26);
     ctx.restore();
-    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = L.inset ? '#fff' : C.line; ctx.lineWidth = L.inset ? 6 : 1.5;
     rrect(R.x, R.y, R.w, R.h, R.r); ctx.stroke();
     ctx.restore();
+    if (L.inset) {
+      // date/number chips stay full size, beside the inset
+      const I = L.inset, Rs = { x: I.small.x + I.S * I.small.s + 4, y: I.small.y - 22, w: 600, h: 100 };
+      ctx.save(); ctx.globalAlpha = alpha;
+      for (const st of TL.stats) drawStat({ ...st, pos: 'left' }, a, Rs);
+      ctx.restore();
+    }
   }
 
   // ---------- carousel ----------
@@ -496,8 +530,8 @@
       if (ar > 2.6) continue;
       const sgn = Math.sign(r);
       // next cards sit on the left (RTL reading order)
-      const off = ar <= 1 ? lerp(0, L.side[0], ar) : lerp(L.side[0], L.side[1], ar - 1);
-      const sc = ar <= 1 ? lerp(1, 0.7, ar) : lerp(0.7, 0.5, ar - 1);
+      const off = L.slide ? ar * W : ar <= 1 ? lerp(0, L.side[0], ar) : lerp(L.side[0], L.side[1], ar - 1);
+      const sc = L.slide ? 1 : ar <= 1 ? lerp(1, 0.7, ar) : lerp(0.7, 0.5, ar - 1);
       items.push({ i, r, ar, x: cx - sgn * off, sc });
     }
     items.sort((A, B) => B.ar - A.ar);
@@ -511,12 +545,12 @@
       ctx.shadowColor = `rgba(11,31,75,${0.22 * (1 - Math.min(1, it.ar) * 0.5)})`;
       ctx.shadowBlur = 50; ctx.shadowOffsetY = 22;
       ctx.fillStyle = '#fff';
-      rrect(x, y, cw, ch, 30 * it.sc); ctx.fill();
+      rrect(x, y, cw, ch, (L.photoR ?? 30) * it.sc); ctx.fill();
       ctx.shadowColor = 'transparent';
-      rrect(x, y, cw, ch, 30 * it.sc); ctx.clip();
+      rrect(x, y, cw, ch, (L.photoR ?? 30) * it.sc); ctx.clip();
       drawCardImage(card, x, y, cw, ch, a);
       // depth: fade side cards toward the white background
-      const dim = Math.min(1, it.ar) * 0.55 + Math.max(0, it.ar - 1) * 0.3;
+      const dim = L.slide ? 0 : Math.min(1, it.ar) * 0.55 + Math.max(0, it.ar - 1) * 0.3;
       if (dim > 0) { ctx.fillStyle = `rgba(255,255,255,${dim})`; ctx.fillRect(x, y, cw, ch); }
       if (it.ar < 0.5) {
         // light sweep when a card lands
@@ -546,10 +580,20 @@
         }
       }
       ctx.restore();
+      if (L.slide) continue;
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 3;
-      rrect(x + 1.5, y + 1.5, cw - 3, ch - 3, 30 * it.sc - 1.5); ctx.stroke();
+      rrect(x + 1.5, y + 1.5, cw - 3, ch - 3, (L.photoR ?? 30) * it.sc - 1.5); ctx.stroke();
       ctx.restore();
+    }
+    if (L.dark) {
+      // full-frame photo: navy shade at the top (header) and bottom (headline)
+      const gt = ctx.createLinearGradient(0, 0, 0, 320);
+      gt.addColorStop(0, 'rgba(11,31,75,0.85)'); gt.addColorStop(1, 'rgba(11,31,75,0)');
+      ctx.fillStyle = gt; ctx.fillRect(0, 0, W, 320);
+      const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
+      gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, 'rgba(11,31,75,0.8)'); gb.addColorStop(1, 'rgba(11,31,75,0.96)');
+      ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5);
     }
     ctx.restore();
   }
@@ -564,10 +608,10 @@
     const xr = x1, xk = x1 - (x1 - x0) * p;
     ctx.save();
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = '#E7EBF2';
+    ctx.fillStyle = L.dark ? 'rgba(255,255,255,0.28)' : '#E7EBF2';
     rrect(x0, y - 4, x1 - x0, 8, 4); ctx.fill();
     const g = ctx.createLinearGradient(x1, 0, x0, 0);
-    g.addColorStop(0, '#0B1F4B'); g.addColorStop(1, C.acc);
+    g.addColorStop(0, L.dark ? '#fff' : '#0B1F4B'); g.addColorStop(1, C.acc);
     ctx.fillStyle = g;
     rrect(xk, y - 4, xr - xk, 8, 4); ctx.fill();
     // chapter ticks
@@ -591,7 +635,7 @@
   // AL-Quds draws ':' as a small Arabic-style mark; draw the clock colon as two round dots instead
   function drawTime(text, x, y, align, size = 24) {
     const [m, s] = text.split(':');
-    ctx.font = font(size); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillStyle = C.gray;
+    ctx.font = font(size); ctx.direction = 'ltr'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillStyle = L.dark ? 'rgba(255,255,255,0.8)' : C.gray;
     const wm = ctx.measureText(m).width, ws = ctx.measureText(s).width, wc = size * 0.36;
     const x0 = align === 'right' ? x - wm - wc - ws : x;
     ctx.fillText(m, x0, y);
@@ -805,17 +849,19 @@
     const wipe = eio(prog(a, HL[0].t - 0.45, HL[0].t + 0.1));
     ctx.globalAlpha = alpha;
     ctx.save();
+    if (L.dark) ctx.globalAlpha = 0;  // full-frame look: white words straight on the shaded photo
     ctx.shadowColor = 'rgba(11,31,75,0.28)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
     const pg = ctx.createLinearGradient(px + pw, 0, px, 0);
     pg.addColorStop(0, '#0B1F4B'); pg.addColorStop(1, '#142E66');
     ctx.fillStyle = pg;
     rrect(px + pw * (1 - wipe), py, pw * wipe, ph, 26); ctx.fill();
     ctx.restore();
-    if (wipe > 0.2) {
+    if (wipe > 0.2 && !L.dark) {
       ctx.fillStyle = C.acc;
       rrect(px + pw - 22, py + 26, 8, ph - 52, 4); ctx.fill();
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
+    if (L.dark) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }
     drawWords(lay, L.head.cx - 6, L.head.cy, Math.round(lay.size * 1.4), '#FFFFFF', a, h.t, tOut);
     ctx.restore();
   }
@@ -843,9 +889,10 @@
     const tx = lb.x - 52;
     const titleY = lb.y + lb.h * 0.38, dateY = lb.y + lb.h * 0.69;
     ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.navy; ctx.font = font(L.hdrText[0]);
+    const ink = L.dark ? '#fff' : C.navy, dim = L.dark ? 'rgba(255,255,255,0.8)' : C.gray;
+    ctx.fillStyle = ink; ctx.font = font(L.hdrText[0]);
     ctx.fillText(TL.title, tx, titleY);
-    ctx.fillStyle = C.gray; ctx.font = font(L.hdrText[1]);
+    ctx.fillStyle = dim; ctx.font = font(L.hdrText[1]);
     ctx.fillText(TL.date, tx, dateY);
     // story counter on the left
     let ch = 0;
@@ -853,17 +900,17 @@
     if (a >= TL.headlines[TL.headlines.length - 1].t) ch = TL.chapters.length;
     const n = TL.chapters.length;
     ctx.direction = 'ltr'; ctx.textAlign = 'left';
-    ctx.font = font(34); ctx.fillStyle = C.navy;
+    ctx.font = font(34); ctx.fillStyle = ink;
     const num = String(ch).padStart(2, '0');
     ctx.fillText(num, L.margin, titleY);
     const nw = ctx.measureText(num).width;
-    ctx.font = font(24); ctx.fillStyle = C.gray;
+    ctx.font = font(24); ctx.fillStyle = dim;
     ctx.fillText(` / ${String(n).padStart(2, '0')}`, L.margin + nw, titleY + 3);
     for (let i = 0; i < n; i++) {
       const bx = L.margin + i * 30, by = dateY - 3;
       // segments fill right-to-left in reading order
       const k = n - 1 - i;
-      ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : C.navy) : '#E1E6EE';
+      ctx.fillStyle = k < ch ? (k === ch - 1 ? C.acc : ink) : (L.dark ? 'rgba(255,255,255,0.3)' : '#E1E6EE');
       rrect(bx, by, 24, 6, 3); ctx.fill();
     }
     ctx.restore();
@@ -1387,7 +1434,7 @@
       drawHeader(a, hdr);
       if (t >= 6.85 && t < OUTRO + 0.15) {
         const lb = logoBox();
-        ctx.drawImage(LOGO, lb.x, lb.y, lb.w, lb.h);
+        ctx.drawImage(L.dark ? LOGO_W : LOGO, lb.x, lb.y, lb.w, lb.h);
       }
       drawOutro(t);
     }
