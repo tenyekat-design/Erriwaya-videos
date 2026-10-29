@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Erriwaya – كاروسيل مينورسو</title>
+<style>
+  @font-face { font-family: AlQuds; src: url(../../assets/fonts/al-quds.otf) format('opentype'); }
+  :root { --navy: #0B1F4B; --ink: #16233F; --gray: #7A8599; --soft: #F4F6FA; --line: #E4E8F0;
+          --acc: #10B981; --chip: #0A8F65; --dip: #6D3FB5; }
+  html, body { margin: 0; background: #DDE2EA; }
+  body { font-family: AlQuds, sans-serif; color: var(--ink); }
+  .slide { position: relative; width: 1080px; height: 1350px; background: #fff; overflow: hidden; margin: 0 0 40px; }
+
+  /* header: logo on the right, title/date with a clear gap, counter on the left (as in the video) */
+  .hdr { position: absolute; top: 44px; right: 64px; left: 64px; height: 130px; }
+  .logo { position: absolute; right: 0; top: 0; width: 96px; height: 130px; background: var(--navy);
+          -webkit-mask: url(../../assets/logo-mark.png) center / contain no-repeat; mask: url(../../assets/logo-mark.png) center / contain no-repeat; }
+  .hdr .t { position: absolute; right: 140px; top: 38px; font-size: 42px; color: var(--navy); line-height: 1; }
+  .hdr .d { position: absolute; right: 140px; top: 92px; font-size: 26px; color: var(--gray); line-height: 1; }
+  .count { position: absolute; left: 0; top: 34px; direction: ltr; font-size: 34px; color: var(--navy); }
+  .count small { font-size: 24px; color: var(--gray); }
+  .bars { position: absolute; left: 0; top: 92px; direction: ltr; display: flex; gap: 6px; }
+  .bars i { width: 24px; height: 6px; border-radius: 3px; background: #E1E6EE; }
+  .bars i.on { background: var(--navy); } .bars i.cur { background: var(--acc); }
+
+  /* story label: green country chip + coloured topic */
+  .chip { display: inline-flex; align-items: center; gap: 14px; background: var(--chip); color: #fff; border-radius: 999px;
+          padding: 10px 14px 10px 30px; font-size: 32px; border: 3px solid rgba(255,255,255,.9); box-shadow: 0 8px 24px rgba(11,31,75,.3); }
+  .chip b { font-weight: normal; background: #fff; color: var(--dip); border-radius: 999px; padding: 6px 20px; font-size: 25px; }
+
+  .photo { position: absolute; left: 64px; right: 64px; border-radius: 28px; overflow: hidden; box-shadow: 0 14px 40px rgba(11,31,75,.18); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,31,75,0) 55%, rgba(11,31,75,.35)); }
+
+  .panel { position: absolute; left: 64px; right: 64px; background: linear-gradient(180deg, #0B1F4B, #142E66); color: #fff;
+           border-radius: 28px; box-shadow: 0 12px 36px rgba(11,31,75,.28); padding: 40px 52px; box-sizing: border-box; }
+  h1, h2, p { margin: 0; font-weight: normal; }
+  h1 { font-size: 76px; line-height: 1.3; }
+  h2 { font-size: 60px; line-height: 1.3; color: var(--navy); }
+  .lead { font-size: 38px; line-height: 1.5; color: var(--ink); }
+  .muted { color: var(--gray); }
+  .accent { color: var(--acc); }
+
+  .list { position: absolute; left: 64px; right: 64px; display: flex; flex-direction: column; gap: 22px; }
+  .item { display: flex; gap: 26px; align-items: center; background: var(--soft); border: 2px solid var(--line); border-radius: 24px; padding: 26px 32px; }
+  .num { flex: none; width: 74px; height: 74px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 40px;
+         display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .item p { font-size: 37px; line-height: 1.45; }
+  .item p span { display: block; font-size: 27px; color: var(--gray); margin-top: 4px; }
+
+  .stat { display: inline-flex; flex-direction: column; align-items: center; background: #fff; border-radius: 26px; padding: 22px 44px;
+          box-shadow: 0 14px 40px rgba(11,31,75,.14); border: 2px solid var(--line); }
+  .stat .v { font-size: 92px; color: var(--navy); line-height: 1.1; }
+  .stat .n { font-size: 30px; color: var(--gray); }
+
+  .note { position: absolute; left: 64px; right: 64px; font-size: 27px; color: var(--gray); line-height: 1.5; }
+  .note::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--acc); margin-left: 12px; vertical-align: middle; }
+  .swipe { position: absolute; left: 64px; bottom: 56px; font-size: 30px; color: var(--navy); display: flex; align-items: center; gap: 14px; }
+  .swipe::after { content: '←'; font-family: sans-serif; color: var(--acc); font-size: 36px; }
+  .src { position: absolute; right: 64px; bottom: 60px; font-size: 24px; color: var(--gray); }
+
+  canvas.map { position: absolute; left: 64px; border-radius: 28px; }
+  .who { display: flex; gap: 22px; align-items: flex-start; }
+  .who .tag { flex: none; min-width: 190px; text-align: center; border-radius: 16px; padding: 10px 18px; font-size: 32px; color: #fff; }
+  .who p { font-size: 33px; line-height: 1.45; padding-top: 6px; }
+
+  .social { display: flex; justify-content: center; gap: 28px; direction: ltr; }
+  .social div { display: flex; align-items: center; gap: 14px; background: var(--soft); border: 2px solid var(--line); border-radius: 999px; padding: 14px 28px; font-size: 32px; color: var(--navy); }
+  .social svg { width: 34px; height: 34px; fill: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- 1 · cover -->
+<section class="slide" id="s1">
+  <div class="hdr"><div class="logo"></div><div class="t">الموجز الإخباري</div><div class="d">الخميس 29 أكتوبر 2026</div></div>
+  <div class="photo" style="top:220px;height:560px"><img src="../../editions/2026-10-25/img/unsc-vote.jpg"></div>
+  <div style="position:absolute;top:750px;right:96px"><span class="chip">الصحراء الغربية<b>دبلوماسية</b></span></div>
+  <div style="position:absolute;top:860px;right:64px;left:64px">
+    <h2 style="font-size:84px;line-height:1.25">مينورسو على طاولة<br>مجلس الأمن</h2>
+    <p class="lead muted" style="margin-top:24px;font-size:44px">ماذا يحدث قبل <span class="accent">31 أكتوبر</span>؟</p>
+  </div>
+  <div class="swipe">اسحب لتعرف أكثر</div>
+</section>
+
+<!-- 2 · what is MINURSO -->
+<section class="slide" id="s2">
+  <div class="hdr"><div class="logo"></div><div class="t">ما هي مينورسو؟</div><div class="d">الصحراء الغربية</div></div>
+  <div class="photo" style="top:220px;height:480px"><img src="../../editions/2026-10-25/img/minurso.webp" style="object-position:60% 50%"></div>
+  <div style="position:absolute;top:640px;left:110px"><div class="stat"><span class="v">1991</span><span class="n">سنة التأسيس</span></div></div>
+  <div style="position:absolute;top:840px;right:64px;left:64px">
+    <p class="lead" style="font-size:42px">بعثة الأمم المتحدة لتنظيم الاستفتاء في الصحراء الغربية، أنشأها مجلس الأمن في أبريل 1991.</p>
+  </div>
+  <div class="list" style="top:1010px">
+    <div class="item"><div class="num">1</div><p>مراقبة وقف إطلاق النار</p></div>
+    <div class="item"><div class="num">2</div><p>تنظيم استفتاء لتقرير المصير، <span>ولم يُنظَّم حتى اليوم</span></p></div>
+  </div>
+</section>
+
+<!-- 3 · why now -->
+<section class="slide" id="s3">
+  <div class="hdr"><div class="logo"></div><div class="t">لماذا الآن؟</div><div class="d">موعد التصويت</div></div>
+  <div style="position:absolute;top:340px;left:0;right:0;text-align:center">
+    <div class="stat" style="padding:40px 90px"><span class="v" style="font-size:150px">31 أكتوبر</span><span class="n" style="font-size:38px">انتهاء تفويض البعثة</span></div>
+  </div>
+  <div class="panel" style="top:780px">
+    <h1 style="font-size:54px;line-height:1.45">مجلس الأمن يصوّت على تجديد ولاية مينورسو قبل انتهاء تفويضها</h1>
+  </div>
+  <p class="note" style="top:1120px;font-size:32px">في السنوات الأخيرة يجدّد المجلس ولاية البعثة مرة كل عام في أكتوبر، وهذه المرة يأتي التصويت وسط خلاف حول مستقبل التسوية السياسية.</p>
+</section>
+
+<!-- 4 · the US draft -->
+<section class="slide" id="s4">
+  <div class="hdr"><div class="logo"></div><div class="t">المسودة الأمريكية</div><div class="d">ما الذي تقترحه؟</div></div>
+  <p class="lead" style="position:absolute;top:240px;right:64px;left:64px;font-size:42px">مشروع قرار أمريكي متداول في مجلس الأمن يقترح:</p>
+  <div class="list" style="top:340px;gap:28px">
+    <div class="item"><div class="num">1</div><p>تغيير اسم بعثة مينورسو</p></div>
+    <div class="item"><div class="num">2</div><p>إنهاء مهامها التقليدية لحفظ السلام تدريجياً</p></div>
+    <div class="item"><div class="num">3</div><p>تكريس الحكم الذاتي تحت السيادة المغربية أساساً للتسوية</p></div>
+  </div>
+  <div class="panel" style="top:980px;padding:34px 48px">
+    <p style="font-size:36px;line-height:1.5">رفضت جبهة البوليساري المسودة، محذّرة من الانسحاب من العملية السياسية إذا اعتُمدت دون تعديلات جوهرية.</p>
+  </div>
+  <p class="note" style="top:1230px">مسودة قيد النقاش، وقد يتغيّر نصّها قبل التصويت.</p>
+</section>
+
+<!-- 5 · positions -->
+<section class="slide" id="s5">
+  <div class="hdr"><div class="logo"></div><div class="t">المواقف</div><div class="d">أطراف الملف</div></div>
+  <canvas class="map" id="map5" width="952" height="480" style="top:210px"></canvas>
+  <div class="list" style="top:730px;gap:22px">
+    <div class="who"><span class="tag" style="background:#0B1F4B">المغرب</span><p>يقترح الحكم الذاتي تحت سيادته أساساً للحل (مبادرة 2007)</p></div>
+    <div class="who"><span class="tag" style="background:#0A8F65">البوليساري</span><p>تتمسك باستفتاء لتقرير المصير، وترفض المسودة الحالية</p></div>
+    <div class="who"><span class="tag" style="background:#2B4FA8">الجزائر</span><p>تدعم حق تقرير المصير للشعب الصحراوي</p></div>
+    <div class="who"><span class="tag" style="background:#5C709E">موريتانيا</span><p>تلتزم الحياد الإيجابي في النزاع</p></div>
+  </div>
+</section>
+
+<!-- 6 · scenarios -->
+<section class="slide" id="s6">
+  <div class="hdr"><div class="logo"></div><div class="t">السيناريوهات الممكنة</div><div class="d">بعد التصويت</div></div>
+  <div class="list" style="top:300px;gap:36px">
+    <div class="item"><div class="num">1</div><p>اعتماد المسودة كما هي<span>تجديد الولاية مع تغيير اسم البعثة ومهامها</span></p></div>
+    <div class="item"><div class="num">2</div><p>اعتمادها بعد تعديلات<span>صيغة توافقية تراعي اعتراضات بعض الأطراف</span></p></div>
+    <div class="item"><div class="num">3</div><p>تمديد تقني قصير<span>إبقاء البعثة كما هي مؤقتاً لإتاحة وقت للتفاوض</span></p></div>
+  </div>
+  <p class="note" style="top:1000px;font-size:32px">هذه احتمالات ممكنة وليست توقعات، والقرار النهائي بيد أعضاء مجلس الأمن.</p>
+</section>
+
+<!-- 7 · outro -->
+<section class="slide" id="s7">
+  <div class="logo" style="position:absolute;top:200px;left:50%;margin-left:-111px;width:222px;height:300px"></div>
+  <div style="position:absolute;top:560px;left:0;right:0;text-align:center">
+    <h2 style="font-size:70px">الموجز الإخباري</h2>
+    <p class="lead muted" style="margin-top:28px;font-size:40px">تابعوا نتيجة التصويت وتداعياته<br>في موجزنا القادم</p>
+  </div>
+  <div style="position:absolute;top:900px;left:0;right:0">
+    <div class="social" id="soc1"></div>
+    <div class="social" id="soc2" style="margin-top:26px"></div>
+  </div>
+</section>
+
+<script src="../../src/map-data.js"></script>
+<script src="../../src/icons.js"></script>
+<script>
+  // slide counter in every header but the cover and outro
+  const slides = [...document.querySelectorAll('.slide')], N = slides.length;
+  slides.forEach((s, i) => {
+    const h = s.querySelector('.hdr'); if (!h) return;
+    const bars = Array.from({ length: N }, (_, k) => `<i class="${k === i ? 'cur' : k < i ? 'on' : ''}"></i>`).reverse().join('');
+    h.insertAdjacentHTML('beforeend', `<div class="count">${String(i + 1).padStart(2, '0')}<small> / ${String(N).padStart(2, '0')}</small></div><div class="bars">${bars}</div>`);
+  });
+
+  // social rows, as in the video outro
+  const icon = n => `<svg viewBox="0 0 24 24"><path d="${ICONS[n]}"/></svg>`;
+  document.getElementById('soc1').innerHTML = `<div>${['facebook', 'tiktok', 'youtube'].filter(n => ICONS[n]).map(icon).join('')}ERRIWAYA</div>`;
+  document.getElementById('soc2').innerHTML = `<div>${ICONS.instagram ? icon('instagram') : ''}ERRIWAYA.MR</div>`;
+
+  // dot map, same grid as the video: Western Sahara highlighted, neighbours tinted (Natural Earth borders)
+  const MD = window.MAP_DATA, RAD = Math.PI / 180;
+  const mercY = lat => Math.log(Math.tan(Math.PI / 4 + (lat * RAD) / 2)) / RAD;
+  const GRID = Uint8Array.from(atob(MD.grid), ch => ch.charCodeAt(0)), GY1 = mercY(MD.box.lat1);
+  const idx = id => MD.ids.indexOf(id);
+  function drawMap(cv, cam, colors, labels) {
+    const g = cv.getContext('2d'), W = cv.width, H = cv.height, k = W / cam.w, cy = mercY(cam.lat);
+    const P = (lon, my) => [W / 2 + (lon - cam.lon) * k, H / 2 - (my - cy) * k];
+    g.fillStyle = '#F4F6FA'; g.fillRect(0, 0, W, H);
+    const size = MD.cell * k, sq = size * 0.78;
+    for (let r = 0; r < MD.rows; r++) for (let c = 0; c < MD.cols; c++) {
+      const ci = GRID[r * MD.cols + c];
+      const [x, y] = P(MD.box.lon0 + (c + 0.5) * MD.cell, GY1 - (r + 0.5) * MD.cell);
+      if (x < -size || x > W + size || y < -size || y > H + size) continue;
+      if (!ci) { if ((r + c) % 2 === 0) { g.fillStyle = '#E3E8F0'; g.fillRect(x - 1.5, y - 1.5, 3, 3); } continue; }
+      g.fillStyle = colors[ci] || 'rgb(218,224,234)';
+      g.fillRect(x - sq / 2, y - sq / 2, sq, sq);
+    }
+    g.font = '26px AlQuds'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.direction = 'rtl';
+    for (const [t, lon, lat, dark] of labels) {
+      const [x, y] = P(lon, mercY(lat));
+      const w = g.measureText(t).width + 30;
+      g.fillStyle = dark ? '#0A8F65' : 'rgba(255,255,255,.95)';
+      g.shadowColor = 'rgba(11,31,75,.2)'; g.shadowBlur = 10;
+      g.beginPath(); g.roundRect(x - w / 2, y - 22, w, 44, 22); g.fill(); g.shadowBlur = 0;
+      g.fillStyle = dark ? '#fff' : '#0B1F4B'; g.fillText(t, x, y + 2);
+    }
+  }
+  document.fonts.load('26px AlQuds').then(() => drawMap(document.getElementById('map5'),
+    { lon: -6.5, lat: 26.2, w: 31 },
+    { [idx('732')]: '#10B981', [idx('504')]: '#B4C0DA', [idx('012')]: '#B4C0DA', [idx('478')]: '#B4C0DA' },
+    [['الصحراء الغربية', -13.2, 24.6, true], ['المغرب', -6.0, 31.3], ['الجزائر', 2.5, 28.0], ['موريتانيا', -10.2, 20.6]]));
+</script>
+</body>
+</html>
