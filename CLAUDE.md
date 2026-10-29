@@ -41,5 +41,5 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube) and ERRIWAYA.MR (Instagram).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
-  whose final chord lands on the last word; all music ducks under the voice. Western Sahara is drawn as in the
+  whose final chord lands as the closing logo and social icons appear; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.

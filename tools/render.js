@@ -190,7 +190,8 @@ function buildAudio(duration, file) {
   // story transitions: the whoosh peaks (0.55s into the file) in the pause just before each story
   const energy = voiceEnergy(voice);
   const hits = TL.chapters.map(c => vt(quietest(energy, c - cut - 1.0, c - cut + 0.4)));
-  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav, placed on the last word
+  const OUTRO_HIT = 8.0;  // final chord of outro-music.wav
+  const OUTRO_LAND = outro + 2.1;  // ...lands as the closing logo settles and the social icons appear (src/app.js drawOutro)
   const inputs = ['-i', voice, '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav')];
   const f = [
     `[0:a]atrim=start=${cut},asetpts=PTS-STARTPTS,adelay=${ms(intro)}|${ms(intro)},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[v][vk0]`,
@@ -199,7 +200,7 @@ function buildAudio(duration, file) {
     `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume='if(lt(t,${intro - 0.1}),0.75,0.75*max(0.2,1-(t-${intro - 0.1})*1.6))':eval=frame[m]`,
     // quiet bed under the stories, handing over to the closing music
     `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration - intro + 1},volume=0.16,afade=t=in:st=0:d=2.5,afade=t=out:st=${outro - intro - 1}:d=2,adelay=${ms(intro - 0.6)}|${ms(intro - 0.6)}[bed]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(voiceEnd - OUTRO_HIT + 0.25)}|${ms(voiceEnd - OUTRO_HIT + 0.25)}[out]`,
+    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.55,adelay=${ms(OUTRO_LAND - OUTRO_HIT)}|${ms(OUTRO_LAND - OUTRO_HIT)}[out]`,
     // music ducks a further ~8 dB whenever the voice speaks
     `[bed][out]amix=inputs=2:normalize=0:duration=longest[bus]`,
     `[bus][vk]sidechaincompress=threshold=0.015:ratio=6:attack=20:release=450:knee=4[duck]`,

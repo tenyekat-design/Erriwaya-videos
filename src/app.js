@@ -956,7 +956,7 @@
     }
     const lay = layoutHeadline(h.text, L.head.maxW);
     if (L.boxed) { drawBoxed(lay, a, h.t, tOut); ctx.restore(); return; }
-    if (L.dark) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }
+    if (L.dark && !L.lower) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; }  // no halo on the white bar
     drawWords(lay, L.head.cx - (L.noPanel ? 0 : 6), L.head.cy, Math.round(lay.size * 1.4), L.head.color || '#FFFFFF', a, h.t, tOut, L.head.right);
     ctx.restore();
   }
