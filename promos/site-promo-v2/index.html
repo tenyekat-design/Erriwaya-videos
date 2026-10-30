@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الرواية – الفيديو الترويجي</title>
+<style>
+/* Website promo, v2: dark brand look, kinetic captions on the voice's word timings (timing.js), 3D devices, a dot map
+   of the region, wipes between scenes. renderFrame(t) draws every frame; sizes in --u = 1/100 of the shorter side. */
+/* Al Quds only for Arabic, digits, Latin letters and safe punctuation (it draws : + [ ] # * « » wrong) */
+@font-face { font-family: AlQuds; src: url(../../assets/fonts/al-quds.otf) format('opentype');
+  unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0, U+00B0,
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015, U+2212; }
+:root { --u: min(1vw, 1vh); --brand: #004A49; --deep: #00211F; --on: #F2F7F6; --mint: #6CC5C0; --red: #E0243F }
+* { box-sizing: border-box; margin: 0 }
+html, body { width: 100vw; height: 100vh; overflow: clip; background: var(--deep); font-family: AlQuds, "Segoe UI", Tahoma, sans-serif; color: var(--on) }
+/* everything lives in a fixed frame so nothing that slides past the edges can scroll the page */
+#stage { position: fixed; inset: 0; overflow: hidden }
+.abs { position: absolute }
+.full { position: absolute; inset: 0 }
+.scene { position: absolute; inset: 0; display: none; overflow: hidden }
+.logo { background: currentColor; -webkit-mask: url(img/logo.png) center / contain no-repeat; mask: url(img/logo.png) center / contain no-repeat; aspect-ratio: 237 / 320 }
+
+/* background: deep green, drifting light, a dot grid and grain */
+#bg { background: radial-gradient(120% 90% at 50% 30%, #003B39 0%, #002826 55%, #001614 100%) }
+.blob { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 9)); mix-blend-mode: screen }
+#dots { background-image: radial-gradient(rgb(255 255 255 / .09) 1px, transparent 1.4px); background-size: calc(var(--u) * 3.2) calc(var(--u) * 3.2) }
+#grain { opacity: .07; mix-blend-mode: overlay }
+#vignette { background: radial-gradient(120% 100% at 50% 45%, transparent 55%, rgb(0 0 0 / .55) 100%) }
+
+/* top: brand mark and story-style progress */
+#bug { display: flex; align-items: center; gap: calc(var(--u) * 1.4); font-size: calc(var(--u) * 2.6); opacity: .9 }
+#bug .logo { height: calc(var(--u) * 5.2); color: #fff }
+#prog { display: flex; gap: calc(var(--u) * .7); direction: ltr }
+#prog i { flex: 1; height: calc(var(--u) * .45); border-radius: 9px; background: rgb(255 255 255 / .18); overflow: hidden }
+#prog i b { display: block; height: 100%; background: var(--mint); transform-origin: left }
+
+/* kinetic captions */
+#cap { text-align: center; line-height: 1.3; text-shadow: 0 calc(var(--u) * .3) calc(var(--u) * 2) rgb(0 0 0 / .55) }
+#cap .w { display: inline-block; margin: 0 .14em; will-change: transform }
+#cap .w.now { color: var(--mint) }
+#cap .w.ltr { direction: ltr; font-family: "Segoe UI", Arial, sans-serif; font-weight: 700; letter-spacing: .02em }
+#scrim { background: linear-gradient(transparent, rgb(0 18 17 / .75)) }
+
+/* devices */
+.laptop { position: absolute; transform-style: preserve-3d }
+.laptop .lid { position: relative; background: #0D1312; border-radius: calc(var(--u) * 1.8) calc(var(--u) * 1.8) 0 0; padding: calc(var(--u) * 1.3) calc(var(--u) * 1.3) calc(var(--u) * 2); box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 12) rgb(0 0 0 / .55), 0 0 calc(var(--u) * 10) rgb(108 197 192 / .18) }
+.laptop .scr { position: relative; overflow: hidden; border-radius: calc(var(--u) * .4); aspect-ratio: 16 / 10; background: #fff }
+.laptop .scr img { position: absolute; left: 0; top: 0; width: 100% }
+.laptop .scr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgb(255 255 255 / .16), transparent 35%) }
+.laptop .base { height: calc(var(--u) * 2); margin: 0 -7%; background: linear-gradient(#C9D2D0, #7F8C8A); border-radius: 0 0 calc(var(--u) * 3) calc(var(--u) * 3) }
+.phone { position: absolute; background: #0B100F; border-radius: calc(var(--u) * 6.5); padding: calc(var(--u) * 1.3); box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 12) rgb(0 0 0 / .6), inset 0 0 0 calc(var(--u) * .25) #2C3735 }
+.phone .scr { position: relative; overflow: hidden; border-radius: calc(var(--u) * 5.2); aspect-ratio: 360 / 780; background: #fff }
+.phone .scr img { position: absolute; left: 0; top: 0; width: 100% }
+.phone .scr::before { content: ""; position: absolute; z-index: 2; top: 2%; left: 50%; width: 30%; height: 3.4%; transform: translateX(-50%); background: #0B100F; border-radius: 999px }
+.card { position: absolute; border-radius: calc(var(--u) * 1.6); overflow: hidden; background: #F4F7F6; box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 8) rgb(0 0 0 / .45) }
+.card img { display: block; width: 100% }
+
+/* breaking */
+.badge { display: inline-flex; align-items: center; gap: .3em; background: var(--red); color: #fff; border-radius: calc(var(--u) * 1.6); padding: .18em .45em .05em; font-size: calc(var(--u) * 15); box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 10) rgb(224 36 63 / .45) }
+.badge svg { width: .7em; height: .7em; fill: #fff }
+.ring { position: absolute; border-radius: 50%; border: calc(var(--u) * .5) solid var(--red) }
+
+/* video wall */
+.row { position: absolute; display: flex; gap: calc(var(--u) * 1.6); direction: ltr }
+.thumb { position: relative; flex-shrink: 0; border-radius: calc(var(--u) * 1.2); overflow: hidden; box-shadow: 0 calc(var(--u) * 1.5) calc(var(--u) * 4) rgb(0 0 0 / .45) }
+.thumb img { display: block; width: 100%; height: 100% ; object-fit: cover }
+.thumb::after { content: ""; position: absolute; left: 6%; bottom: 8%; width: 18%; aspect-ratio: 1; border-radius: 50%; background: rgb(0 0 0 / .55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7l8 5-8 5z' fill='white'/%3E%3C/svg%3E") center / 60% no-repeat }
+.play { position: absolute; border-radius: 50%; background: rgb(255 255 255 / .14); backdrop-filter: blur(6px); box-shadow: inset 0 0 0 calc(var(--u) * .35) rgb(255 255 255 / .5), 0 calc(var(--u) * 2) calc(var(--u) * 8) rgb(0 0 0 / .4); display: grid; place-items: center }
+.play::after { content: ""; margin-left: 10%; border-style: solid; border-width: calc(var(--u) * 3.6) 0 calc(var(--u) * 3.6) calc(var(--u) * 6); border-color: transparent transparent transparent #fff }
+
+/* map */
+#mapc { position: absolute }
+.mlabel { position: absolute; transform: translate(-50%, -50%); font-size: calc(var(--u) * 2.9); white-space: nowrap; text-shadow: 0 0 calc(var(--u) * 1.2) rgb(0 0 0 / .8) }
+.tap { position: absolute; border-radius: 50%; border: calc(var(--u) * .5) solid #fff }
+.pcard { position: absolute; border-radius: calc(var(--u) * 1.8); overflow: hidden; background: #F4F7F6; box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 12) rgb(0 0 0 / .55) }
+.pcard .hd { display: flex; align-items: center; gap: .4em; background: var(--brand); color: #fff; font-size: calc(var(--u) * 3); padding: .5em .8em .35em }
+.pcard .hd svg { width: 1em; height: 1em; fill: none; stroke: #fff; stroke-width: 2 }
+.pcard img { display: block; width: 100% }
+
+/* statement + outro */
+.big { position: absolute; left: 5%; right: 5%; text-align: center; line-height: 1.2 }
+.big .w { display: inline-block; margin: 0 .12em }
+.url { display: inline-block; direction: ltr; background: #fff; color: var(--brand); border-radius: 999px; font: 700 calc(var(--u) * 4.4) / 1.2 "Segoe UI", Arial, sans-serif; padding: .45em 1.2em .4em; box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 6) rgb(0 0 0 / .35) }
+.url i { display: inline-block; width: .08em; height: 1em; margin-left: .06em; vertical-align: -.12em; background: var(--brand) }
+.soc { display: grid; justify-content: center; gap: calc(var(--u) * 2) }
+.soc .grp { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 2); direction: ltr }
+.soc .ics { display: flex; gap: calc(var(--u) * 1.4) }
+.soc i { width: calc(var(--u) * 7.4); height: calc(var(--u) * 7.4); border-radius: 50%; border: calc(var(--u) * .3) solid rgb(255 255 255 / .4); display: grid; place-items: center }
+.soc svg { width: 45%; height: 45%; fill: currentColor }
+.soc .h { direction: ltr; unicode-bidi: isolate; font: 700 calc(var(--u) * 4) / 1 "Segoe UI", Arial, sans-serif; letter-spacing: .04em }
+
+/* wipe between scenes */
+#wipe { position: absolute; top: -40%; height: 180%; width: 70%; background: linear-gradient(90deg, rgb(108 197 192 / 0), #6CC5C0 18%, #0B6B67 50%, #00302E 82%, rgb(0 48 46 / 0)); transform-origin: center; z-index: 40 }
+</style>
+</head>
+<body>
+<div id="stage">
+<div class="full" id="bg"></div>
+<div class="blob" id="b1" style="background: #0E7C77"></div>
+<div class="blob" id="b2" style="background: #13534F"></div>
+<div class="blob" id="b3" style="background: #2A8F86"></div>
+<div class="full" id="dots"></div>
+
+<!-- A: logo -->
+<section class="scene" id="logo">
+  <div class="abs" id="aline" style="height: calc(var(--u) * .3); background: linear-gradient(90deg, transparent, var(--mint), transparent)"></div>
+  <div class="abs logo" id="alogo" style="color: #fff"></div>
+  <div class="abs" id="asweep" style="background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / .55) 50%, transparent 70%); mix-blend-mode: overlay"></div>
+  <div class="big" id="atext"></div>
+</section>
+
+<!-- B: laptop hero, then push into the screen -->
+<section class="scene" id="hero" style="perspective: calc(var(--u) * 260)">
+  <div class="laptop" id="lap"><div class="lid"><div class="scr"><img id="lapimg" src="img/desk-full.jpg"></div></div><div class="base"></div></div>
+</section>
+
+<!-- C: news cards fly out of the screen -->
+<section class="scene" id="feed" style="perspective: calc(var(--u) * 220)">
+  <img class="abs" id="ticker" src="img/ticker.jpg">
+  <div id="cards"></div>
+</section>
+
+<!-- D: breaking -->
+<section class="scene" id="breaking">
+  <div class="full" id="redglow" style="background: radial-gradient(60% 50% at 50% 42%, rgb(224 36 63 / .45), transparent 70%)"></div>
+  <div id="rings"></div>
+  <div class="abs badge" id="badge"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>عاجل</div>
+</section>
+
+<!-- E: video wall -->
+<section class="scene" id="video" style="perspective: calc(var(--u) * 200)">
+  <div class="abs" id="wall" style="transform-style: preserve-3d"></div>
+  <div class="play" id="play"></div>
+</section>
+
+<!-- F: dot map of the region, the countries light up, a tap opens a portal -->
+<section class="scene" id="map">
+  <canvas id="mapc"></canvas>
+  <div id="labels"></div>
+  <div class="tap" id="tap1"></div><div class="tap" id="tap2"></div>
+  <div class="pcard" id="pcard"><div class="hd"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>بوابة موريتانيا</div><img src="img/card5.jpg"></div>
+</section>
+
+<!-- G: phone and laptop, weather and time -->
+<section class="scene" id="devices" style="perspective: calc(var(--u) * 240)">
+  <div class="laptop" id="lap2"><div class="lid"><div class="scr"><img id="lap2img" src="img/desk-full.jpg"></div></div><div class="base"></div></div>
+  <div class="phone" id="phone"><div class="scr"><img id="phimg" src="img/mob-full.jpg"></div></div>
+  <div id="wxs"></div>
+  <img class="abs" id="topbar" src="img/topbar.jpg" style="border-radius: calc(var(--u) * 1.4); box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 6) rgb(0 0 0 / .45)">
+</section>
+
+<!-- H: brand statement -->
+<section class="scene" id="statement">
+  <div class="abs logo" id="hlogo" style="color: rgb(255 255 255 / .06)"></div>
+  <div class="big" id="hk" style="font-size: calc(var(--u) * 4.4); opacity: .8"></div>
+  <div class="big" id="ha" style="font-size: calc(var(--u) * 12)"></div>
+  <div class="big" id="hb" style="font-size: calc(var(--u) * 7.6); color: var(--mint)"></div>
+</section>
+
+<!-- I: outro -->
+<section class="scene" id="outro">
+  <div class="abs logo" id="ilogo" style="color: #fff"></div>
+  <div class="big" id="it" style="font-size: calc(var(--u) * 8.4)"></div>
+  <div class="big" id="iu"><span class="url" id="url"></span></div>
+  <div class="big" id="is"><div class="soc" id="soc"></div></div>
+  <div class="ring" id="hitring" style="border-color: var(--mint)"></div>
+</section>
+
+<div class="full" id="scrim"></div>
+<div class="abs" id="cap"></div>
+<div class="abs" id="bug"><div class="logo"></div><span>شبكة الرواية الإعلامية</span></div>
+<div class="abs" id="prog"></div>
+<div class="full" id="vignette"></div>
+<svg class="full" id="grain" width="100%" height="100%"><filter id="gf"><feTurbulence id="turb" type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="1"/></filter><rect width="100%" height="100%" filter="url(#gf)"/></svg>
+<div id="wipe"></div>
+</div>
+
+<script src="../../src/map-data.js"></script>
+<script src="timing.js"></script>
+<script>
+const P = window.PROMO, SC = P.scenes, WORDS = P.words, DUR = P.duration;
+const ORDER = ['logo', 'hero', 'feed', 'breaking', 'video', 'map', 'devices', 'statement', 'outro'];
+const START = ORDER.map(k => SC[k]);
+window.SCENES = START.slice(1); window.DURATION = DUR; window.VO_START = P.voStart;
+const URL_SHOWN = new URLSearchParams(location.search).get('url') || 'www.erriwaya.com';
+
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = x => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const W = () => innerWidth, H = () => innerHeight, U = () => Math.min(W(), H()) / 100;
+const tall = () => H() / W() > 1.5, wide = () => W() > H();
+const set = (el, css) => Object.assign(el.style, css);
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const wt = k => WORDS[k][1];                     // when word k is spoken (video time)
+const end = id => { const i = ORDER.indexOf(id); return i + 1 < ORDER.length ? START[i + 1] : DUR; };
+
+// ── layout per format: the visual area and the caption line ──
+function L() {
+  const w = W(), h = H(), u = U();
+  if (wide()) return { vx: w * .5, vy: h * .44, vw: w * .82, vh: h * .66, capY: h * .80, capFs: 5.4 * u, topY: 3.4 * u };
+  if (tall()) return { vx: w * .5, vy: h * .44, vw: w * .9, vh: h * .5, capY: h * .725, capFs: 6.6 * u, topY: h * .055 };
+  return { vx: w * .5, vy: h * .43, vw: w * .9, vh: h * .56, capY: h * .765, capFs: 6.4 * u, topY: 4 * u };
+}
+
+// ── words with their timing, for captions and the big lines ──
+function wordsHTML(a, b) {
+  return WORDS.slice(a, b).map(([w], i) => `<span class="w${/^[\x00-\x7F]+$/.test(w) ? ' ltr' : ''}" data-k="${a + i}">${w}</span>`).join(' ');
+}
+function revealWords(host, t, color = true) {
+  host.querySelectorAll('.w').forEach(el => {
+    const k = +el.dataset.k, [, s, e] = WORDS[k], x = eo(lin(t, s - .06, s + .16));
+    set(el, { opacity: x, transform: `translateY(${(1 - x) * .35}em) scale(${.92 + .08 * x})`, filter: `blur(${(1 - x) * 6}px)` });
+    el.classList.toggle('now', color && t >= s - .02 && t < e + .05);
+  });
+}
+
+// ── captions: one page at a time, words light up as they are spoken ──
+const CAP_SCENES = new Set(['hero', 'feed', 'breaking', 'video', 'map', 'devices']);
+let capPage = -1;
+function captions(t, scene) {
+  const cap = $('cap'), l = L(), u = U();
+  const on = CAP_SCENES.has(scene);
+  $('scrim').style.opacity = on ? 1 : 0;
+  set($('scrim'), { top: l.capY - 14 * u + 'px' });
+  if (!on) { cap.style.opacity = 0; return; }
+  const pi = P.pages.findIndex(([a, b], i) => t >= wt(a) - .25 && (i + 1 >= P.pages.length || t < wt(P.pages[i + 1][0]) - .25));
+  if (pi < 0) { cap.style.opacity = 0; return; }
+  if (pi !== capPage) { capPage = pi; cap.innerHTML = wordsHTML(...P.pages[pi]); }
+  const [a, b] = P.pages[pi], next = P.pages[pi + 1], out = next ? lin(t, wt(next[0]) - .45, wt(next[0]) - .25) : 0;
+  set(cap, { left: '6%', right: '6%', top: l.capY + 'px', opacity: 1 - out, transform: `translateY(${-out * 2 * u}px)`, fontSize: l.capFs + 'px' });
+  revealWords(cap, t);
+}
+
+// ── background, brand mark, progress ──
+function background(t) {
+  const w = W(), h = H(), u = U();
+  [['b1', .3, .25, 70, .12], ['b2', .75, .65, 80, .09], ['b3', .5, .9, 60, .15]].forEach(([id, x, y, s, sp], i) => {
+    const sz = s * u * 1.4;
+    set($(id), { width: sz + 'px', height: sz + 'px', left: w * x + Math.sin(t * sp + i * 2) * 12 * u - sz / 2 + 'px', top: h * y + Math.cos(t * sp * 1.3 + i) * 10 * u - sz / 2 + 'px', opacity: .55 });
+  });
+  $('dots').style.backgroundPosition = `${-t * 6}px ${-t * 4}px`;
+  $('turb').setAttribute('seed', 1 + Math.floor(t * 12) % 50);
+}
+function chrome(t, scene) {
+  const l = L(), u = U(), show = !['logo', 'outro'].includes(scene);
+  const k = show ? lin(t, SC.hero, SC.hero + .6) * (1 - lin(t, SC.outro - .4, SC.outro)) : 0;
+  set($('bug'), { right: '4.5%', top: l.topY + 2.2 * u + 'px', opacity: k * .9 });
+  set($('prog'), { left: '4.5%', right: '4.5%', top: l.topY + 'px', opacity: k });
+  [...$('prog').children].forEach((el, i) => { el.firstChild.style.transform = `scaleX(${lin(t, START[i], START[i + 1] ?? DUR)})`; });
+}
+
+// ── A: logo ──
+function sLogo(t, t0, t1) {
+  const w = W(), h = H(), u = U(), lh = (tall() ? 34 : wide() ? 40 : 36) * u, lw = lh * 237 / 320;
+  const cy = h * (tall() ? .4 : .38);
+  const lk = lin(t, .15, .9);
+  set($('aline'), { left: w * (.5 - .4 * eo(lk)) + 'px', width: w * .8 * eo(lk) + 'px', top: cy + lh * .62 + 'px', opacity: lk * (1 - lin(t, 1.6, 2.4)) });
+  const k = eo(lin(t, .95, 1.9)), out = eio(lin(t, t1 - .55, t1));
+  set($('alogo'), { width: lw + 'px', height: lh + 'px', left: (w - lw) / 2 + 'px', top: cy - lh / 2 + 'px', opacity: lin(t, .95, 1.3) * (1 - out),
+    transform: `scale(${(1.25 - .25 * k) * (1 + out * 1.6)})`, filter: `blur(${(1 - k) * 18 + out * 10}px) drop-shadow(0 0 ${2 * u}px rgb(108 197 192 / .5))` });
+  const sw = lin(t, 1.6, 2.6);
+  set($('asweep'), { width: lw * 1.6 + 'px', height: lh + 'px', top: cy - lh / 2 + 'px', left: (w - lw) / 2 - lw * .8 + sw * lw * 1.6 + 'px', opacity: sw > 0 && sw < 1 ? 1 : 0,
+    WebkitMask: `url(img/logo.png) ${lw * .8 - sw * lw * 1.6}px 0 / ${lw}px ${lh}px no-repeat` });
+  const at = $('atext');
+  if (!at.innerHTML) at.innerHTML = wordsHTML(0, 5);
+  set(at, { top: cy + lh / 2 + 4 * u + 'px', fontSize: (tall() ? 7.4 : 6.6) * u + 'px', opacity: 1 - out, transform: `translateY(${-out * 3 * u}px)` });
+  revealWords(at, t);
+}
+
+// ── B: laptop, then into the screen ──
+function sHero(t, t0, t1) {
+  const l = L(), u = U(), w = W(), h = H(), lap = $('lap');
+  const lw = Math.min(l.vw, l.vh * 1.45), lh = lw * (10 / 16) * 1.07 + 2 * u;
+  const k = eo(lin(t, t0, t0 + 1.3));
+  const push = eio(lin(t, wt(12) - .3, wt(12) + 1.2));          // "منصة..." : the camera goes into the screen
+  // zoom until the screen nearly fills the width, but never taller than ~62% of the frame (room for the captions)
+  const target = Math.min((tall() ? 1.02 : 1.08) * w / (lw * .94), h * .62 / (lw * .94 * .625));
+  const zoom = 1 + push * (target - 1);
+  const sway = Math.sin((t - t0) * .7) * 5 * (1 - push);
+  set(lap, { width: lw + 'px', left: l.vx - lw / 2 + 'px', top: l.vy - lh / 2 + (1 - k) * 30 * u + 'px', opacity: k,
+    transform: `translateY(${push * (l.vy - h * (wide() ? .44 : .4)) * -1}px) rotateX(${(1 - k) * 38 + 8 * (1 - push)}deg) rotateY(${sway}deg) scale(${(.82 + .18 * k) * zoom})` });
+  // the page scrolls: lead story, then the latest news, then the feed
+  const sw = lw * .94, max = sw * 7200 / 2400 - sw * 10 / 16;
+  const s = .1 * eio(lin(t, wt(15), wt(17))) + .38 * eio(lin(t, wt(17), t1 - .2));
+  $('lapimg').style.transform = `translateY(${-s * max}px)`;
+}
+
+// ── C: cards ──
+let cardEls;
+function sFeed(t, t0, t1) {
+  const l = L(), u = U(), w = W(), h = H();
+  const cols = wide() ? 4 : 2, cw = wide() ? w * .19 : w * .4, gap = 2.4 * u;
+  const tk = $('ticker'), tkw = w * 1.6;
+  set(tk, { width: tkw + 'px', top: l.vy - l.vh / 2 - 2 * u + 'px', left: w - tkw + (t - t0) * 9 * u + 'px', opacity: lin(t, t0, t0 + .4) * .95, borderRadius: u + 'px' });
+  cardEls.forEach((el, i) => {
+    const c = i % cols, r = Math.floor(i / cols), a = t0 + .15 + i * .14, k = eo(lin(t, a, a + .9));
+    const x = l.vx + (c - (cols - 1) / 2) * (cw + gap), y0 = l.vy - l.vh * .32 + r * (cw * 1.18 + gap) - (t - t0) * 2.4 * u;
+    const x2 = W() - x;  // RTL: the first card on the right
+    set(el, { width: cw + 'px', left: x2 - cw / 2 + 'px', top: y0 + 'px', opacity: k,
+      transform: `translateZ(${(1 - k) * -90 * u}px) rotateX(${(1 - k) * 30}deg) rotateY(${(c - (cols - 1) / 2) * -6 * (1 - k)}deg)` });
+    el.style.display = r < (wide() ? 2 : 3) ? 'block' : 'none';
+  });
+}
+
+// ── D: breaking ──
+function sBreaking(t, t0, t1) {
+  const l = L(), u = U(), w = W();
+  const b = $('badge'), k = back(lin(t, t0 + .05, t0 + .55));
+  const r = b.getBoundingClientRect();
+  set(b, { left: (w - r.width) / 2 + 'px', top: l.vy - r.height / 2 + 'px', transform: `scale(${clamp(k, 0, 2)})`, opacity: lin(t, t0, t0 + .15) });
+  $('redglow').style.opacity = .6 + .4 * Math.sin((t - t0) * 9) ** 2;
+  [...$('rings').children].forEach((el, i) => {
+    const p = ((t - t0) * .9 + i / 3) % 1, s = 30 * u + p * 70 * u;
+    set(el, { width: s + 'px', height: s + 'px', left: w / 2 - s / 2 + 'px', top: l.vy - s / 2 + 'px', opacity: (1 - p) * .6 * lin(t, t0 + .2, t0 + .5) });
+  });
+}
+
+// ── E: video wall ──
+function sVideo(t, t0, t1) {
+  const l = L(), u = U(), w = W(), h = H(), wall = $('wall');
+  const tw = (wide() ? 28 : 38) * u, th = tw * 9 / 16, k = eo(lin(t, t0, t0 + 1));
+  set(wall, { left: 0, top: l.vy - 1.6 * th + 'px', width: w + 'px', height: 3.4 * th + 'px', opacity: k,
+    transform: `rotateX(${18 - 6 * k}deg) rotateZ(-8deg) scale(${1.25 + .1 * (1 - k)})` });
+  [...wall.children].forEach((row, i) => {
+    const dir = i % 2 ? 1 : -1, speed = (5 + i * 1.5) * u;
+    set(row, { top: i * (th + 1.6 * u) + 'px', left: -tw * 2 + dir * (t - t0) * speed + 'px' });
+    [...row.children].forEach(c => set(c, { width: tw + 'px', height: th + 'px' }));
+  });
+  const p = $('play'), s = 22 * u, pk = back(lin(t, t0 + .6, t0 + 1.1)), pulse = 1 + .04 * Math.sin((t - t0) * 6);
+  set(p, { width: s + 'px', height: s + 'px', left: w / 2 - s / 2 + 'px', top: l.vy - s / 2 + 'px', transform: `scale(${clamp(pk, 0, 2) * pulse})`, opacity: lin(t, t0 + .6, t0 + .8) });
+}
+
+// ── F: map ──
+const MAPN = { 39: 'موريتانيا', 34: 'المغرب', 97: 'الجزائر', 9: 'تونس', 46: 'ليبيا', 35: 'الصحراء', 41: 'مالي', 32: 'النيجر', 82: 'تشاد', 23: 'السنغال', 65: 'غامبيا' };
+const MAGHREB = [34, 97, 9, 46, 39], SAHEL = [41, 32, 82, 23, 65], SAHARA = [35];
+let MAP;
+function setupMap() {
+  const M = window.MAP_DATA, bin = atob(M.grid), g = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) g[i] = bin.charCodeAt(i);
+  const P = new Set(Object.keys(MAPN).map(Number));
+  let c0 = 1e9, c1 = 0, r0 = 1e9, r1 = 0; const cen = {};
+  for (let r = 0; r < M.rows; r++) for (let c = 0; c < M.cols; c++) {
+    const v = g[r * M.cols + c];
+    if (P.has(v)) { c0 = Math.min(c0, c); c1 = Math.max(c1, c); r0 = Math.min(r0, r); r1 = Math.max(r1, r); (cen[v] ||= [0, 0, 0]); cen[v][0] += c; cen[v][1] += r; cen[v][2]++; }
+  }
+  c0 -= 6; c1 += 6; r0 -= 6; r1 += 6;
+  const mercY = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) * 180 / Math.PI;
+  const nkc = [(-15.98 - M.box.lon0) / M.cell, (mercY(M.box.lat1) - mercY(18.08)) / M.cell];
+  MAP = { g, M, c0, c1, r0, r1, cen: Object.fromEntries(Object.entries(cen).map(([k, v]) => [k, [v[0] / v[2], v[1] / v[2]]])), nkc };
+  $('labels').innerHTML = Object.entries(MAPN).filter(([k]) => k !== '65').map(([k, n]) => `<div class="mlabel" data-k="${k}">${n}</div>`).join('');
+}
+function litAt(v) {
+  if (MAGHREB.includes(v)) return wt(45) + MAGHREB.indexOf(v) * .1;
+  if (SAHEL.includes(v)) return wt(48) + SAHEL.indexOf(v) * .1;
+  if (SAHARA.includes(v)) return wt(49);
+  return 1e9;
+}
+function sMap(t, t0, t1) {
+  const l = L(), u = U(), w = W(), h = H(), { g, M, c0, c1, r0, r1, cen, nkc } = MAP;
+  const cv = $('mapc'), dpr = 1;
+  const nc = c1 - c0, nr = r1 - r0, fit = Math.min(l.vw * 1.05 / nc, l.vh * (wide() ? 1.3 : 1.12) / nr);
+  // camera: slow drift, then toward Mauritania for "منطقتك", then the tap
+  const z = eio(lin(t, wt(50) - .2, wt(53)));
+  const zc = [c0 + nc / 2 + (nkc[0] - (c0 + nc / 2)) * z, r0 + nr / 2 + (nkc[1] - (r0 + nr / 2)) * z];
+  const cell = fit * (1 + .06 * lin(t, t0, wt(50)) + z * .9);
+  if (cv.width !== w) { cv.width = w; cv.height = h; set(cv, { left: 0, top: 0, width: w + 'px', height: h + 'px' }); }
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+  const X = c => w / 2 + (c - zc[0]) * cell, Y = r => l.vy + (r - zc[1]) * cell;
+  const appear = lin(t, t0, t0 + 1.4);
+  for (let r = r0; r < r1; r++) for (let c = c0; c < c1; c++) {
+    const v = g[r * M.cols + c];
+    if (!v) continue;
+    const x = X(c + .5), y = Y(r + .5);
+    if (x < -cell || x > w + cell || y < -cell || y > h + cell) continue;
+    const d = rnd(r * 400 + c);
+    const a = lin(appear, d * .7, d * .7 + .3);
+    if (!a) continue;
+    const lk = MAPN[v] ? eo(lin(t, litAt(v), litAt(v) + .5)) : 0;
+    const mr = v === 39 ? lin(t, wt(54), wt(54) + .3) : 0;
+    const rad = cell * (.28 + .12 * lk);
+    ctx.fillStyle = mr ? `rgba(255,255,255,${.9 * a})` : lk ? `rgba(${108 + 40 * (1 - lk)},${197},${192},${(.25 + .7 * lk) * a})` : `rgba(242,247,246,${.16 * a})`;
+    ctx.beginPath(); ctx.arc(x, y, rad, 0, 7); ctx.fill();
+  }
+  $('labels').querySelectorAll('.mlabel').forEach(el => {
+    const k = +el.dataset.k, [cc, rr] = cen[k], lk = eo(lin(t, litAt(k) + .1, litAt(k) + .6));
+    const dim = k !== 39 ? 1 - .7 * lin(t, wt(53), wt(54)) : 1;
+    set(el, { left: X(cc + .5) + 'px', top: Y(rr + .5) + 'px', opacity: lk * dim, fontSize: (k === 35 ? 2.3 : 2.9) * u * (1 + z * .3) + 'px' });
+  });
+  // tap on Nouakchott at "بلمسة", then the portal card
+  const tx = X(nkc[0]), ty = Y(nkc[1]), tapAt = wt(54);
+  [['tap1', 0], ['tap2', .18]].forEach(([id, d]) => {
+    const p = lin(t, tapAt + d, tapAt + d + .7), s = (4 + p * 16) * u;
+    set($(id), { width: s + 'px', height: s + 'px', left: tx - s / 2 + 'px', top: ty - s / 2 + 'px', opacity: p > 0 && p < 1 ? 1 - p : 0 });
+  });
+  const pc = $('pcard'), pw = (wide() ? 30 : 44) * u, pk = back(lin(t, tapAt + .25, tapAt + .8));
+  set(pc, { width: pw + 'px', left: Math.min(w - pw - 4 * u, Math.max(4 * u, tx - pw / 2 + (wide() ? 16 : 0) * u)) + 'px',
+    top: Math.max(l.vy - l.vh / 2, ty - pw * 1.25 - 3 * u) + 'px', opacity: lin(t, tapAt + .25, tapAt + .45), transform: `scale(${clamp(pk, 0, 2)})`, transformOrigin: '50% 100%' });
+}
+
+// ── G: devices ──
+let wxEls;
+function sDevices(t, t0, t1) {
+  const l = L(), u = U(), w = W(), h = H();
+  const ph = $('phone'), pw = Math.min(l.vh * .42, w * (wide() ? .2 : .36)), phh = pw * 780 / 360 + 2.6 * u;
+  const k = eo(lin(t, t0, t0 + 1.1)), two = eio(lin(t, wt(60) - .3, wt(60) + .9));   // "على هاتفك أو حاسوبك"
+  const px = l.vx + (wide() ? -w * .2 : -w * .2) * two;
+  set(ph, { width: pw + 'px', left: px - pw / 2 + 'px', top: l.vy - phh / 2 + (1 - k) * 40 * u + 'px', opacity: k, zIndex: 3,
+    transform: `rotateY(${(1 - k) * -40 + Math.sin((t - t0) * .8) * 8 + two * 14}deg) rotateZ(${(1 - k) * -8}deg) scale(${1 - .1 * two})` });
+  const sw = pw - 2.6 * u, total = sw * 9000 / 1260, view = sw * 780 / 360;
+  $('phimg').style.transform = `translateY(${-eio(lin(t, t0 + .8, t1 - .3)) * (total - view) * .85}px)`;
+  const lap = $('lap2'), lw = Math.min(l.vw * (wide() ? .62 : .8), l.vh * 1.2), lh = lw * (10 / 16) * 1.07 + 2 * u;
+  set(lap, { width: lw + 'px', left: l.vx + (wide() ? w * .1 : w * .1) - lw / 2 + 'px', top: l.vy - lh / 2 - (wide() ? 0 : 6) * u + 'px', opacity: two,
+    transform: `translateX(${(1 - two) * -30 * u}px) rotateY(${-14 + 6 * two}deg) scale(${.85 + .15 * two})` });
+  $('lap2img').style.transform = `translateY(${-lin(t, wt(60), t1) * lw * .4}px)`;
+  // the capitals board and weather cards float in on "أينما كنت وفي أي وقت"
+  const tb = $('topbar'), tbw = Math.min(w * .92, lw * 1.05), fk = eo(lin(t, wt(64) - .2, wt(64) + .6));
+  set(tb, { width: tbw + 'px', left: l.vx - tbw / 2 + 'px', top: l.vy - l.vh / 2 - 4 * u + (1 - fk) * -10 * u + 'px', opacity: fk });
+  wxEls.forEach((el, i) => {
+    const a = wt(66) + i * .15, kk = back(lin(t, a, a + .5)), cw = (wide() ? 11 : 17) * u;
+    const pos = [[.82, .62], [.18, .78], [.84, .28], [.5, .86]][i];
+    set(el, { width: cw + 'px', left: w * pos[0] - cw / 2 + 'px', top: l.vy - l.vh / 2 + l.vh * pos[1] - cw / 2 + Math.sin((t - a) * 2 + i) * 1.2 * u + 'px',
+      opacity: lin(t, a, a + .2), transform: `scale(${clamp(kk, 0, 2)}) rotate(${(i % 2 ? -1 : 1) * 4}deg)`, zIndex: 4 });
+  });
+}
+
+// ── H: statement ──
+function sStatement(t, t0, t1) {
+  const u = U(), w = W(), h = H(), cy = h * (tall() ? .42 : .44);
+  const lh = h * .9, lw = lh * 237 / 320;
+  set($('hlogo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: (h - lh) / 2 + 'px', transform: `scale(${1 + (t - t0) * .03})` });
+  [['hk', 69, 72, cy - 16 * u], ['ha', 72, 75, cy - 9 * u], ['hb', 75, 79, cy + 8 * u]].forEach(([id, a, b, y]) => {
+    const el = $(id); if (!el.innerHTML) el.innerHTML = wordsHTML(a, b);
+    set(el, { top: y + 'px', opacity: 1 - lin(t, t1 - .4, t1) });
+    revealWords(el, t, false);
+  });
+}
+
+// ── I: outro ──
+function sOutro(t, t0, t1) {
+  const u = U(), w = W(), h = H(), lh = (tall() ? 20 : 18) * u, lw = lh * 237 / 320;
+  const base = h * (tall() ? .26 : wide() ? .1 : .15), k = back(lin(t, t0, t0 + .6));
+  set($('ilogo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: base + 'px', transform: `scale(${clamp(k, 0, 2)})`, opacity: lin(t, t0, t0 + .2) });
+  const it = $('it'); if (!it.innerHTML) it.innerHTML = wordsHTML(79, 82);
+  set(it, { top: base + lh + 3 * u + 'px' }); revealWords(it, t, false);
+  // the address types in as it is said
+  const s = WORDS[82][1], e = WORDS[82][2], n = Math.round(URL_SHOWN.length * lin(t, s - .1, e - .1));
+  $('url').innerHTML = URL_SHOWN.slice(0, n) + (t < e + .6 && Math.floor(t * 3) % 2 === 0 ? '<i></i>' : '');
+  set($('iu'), { top: base + lh + 16 * u + 'px', opacity: lin(t, s - .3, s - .1), transform: `scale(${.9 + .1 * eo(lin(t, s - .3, s + .1))})` });
+  set($('is'), { top: base + lh + 30 * u + 'px', opacity: lin(t, e, e + .5), transform: `translateY(${(1 - eo(lin(t, e, e + .6))) * 3 * u}px)` });
+  const hp = lin(t, e, e + 1.2), hs = (20 + hp * 90) * u;
+  set($('hitring'), { width: hs + 'px', height: hs + 'px', left: w / 2 - hs / 2 + 'px', top: base + lh + 20 * u - hs / 2 + 'px', opacity: hp > 0 && hp < 1 ? (1 - hp) * .7 : 0 });
+}
+
+// ── wipes between scenes (the logo zooms through instead) ──
+function wipe(t) {
+  const w = W(), h = H(), el = $('wipe');
+  const near = START.slice(2).map(s => t - s).filter(d => d > -.32 && d < .32)[0];
+  if (near === undefined) { el.style.display = 'none'; return; }
+  const p = (near + .32) / .64;
+  set(el, { display: 'block', left: w * (1.25 - 1.9 * eio(p)) - w * .35 + 'px', transform: 'rotate(14deg)' });
+}
+
+const FN = { logo: sLogo, hero: sHero, feed: sFeed, breaking: sBreaking, video: sVideo, map: sMap, devices: sDevices, statement: sStatement, outro: sOutro };
+window.renderFrame = t => {
+  background(t);
+  let cur = 'logo';
+  ORDER.forEach((id, i) => {
+    const a = START[i], b = end(id), on = t >= a && t < b;
+    $(id).style.display = on ? 'block' : 'none';
+    if (on) { cur = id; FN[id](t, a, b); }
+  });
+  captions(t, cur);
+  chrome(t, cur);
+  wipe(t);
+};
+
+function setup() {
+  $('prog').innerHTML = ORDER.map(() => '<i><b></b></i>').join('');
+  $('cards').innerHTML = [0, 1, 2, 3, 4, 5, 6, 7].map(i => `<div class="card"><img src="img/card${i}.jpg"></div>`).join('');
+  cardEls = [...$('cards').children];
+  $('rings').innerHTML = '<div class="ring"></div><div class="ring"></div><div class="ring"></div>';
+  $('wall').innerHTML = [0, 1, 2].map(r => `<div class="row">${Array.from({ length: 9 }, (_, i) => `<div class="thumb"><img src="img/wall/${String((r * 7 + i * 3) % 20).padStart(2, '0')}.jpg"></div>`).join('')}</div>`).join('');
+  $('wxs').innerHTML = [0, 1, 7, 3].map(i => `<div class="card" style="border-radius: calc(var(--u) * 1.4)"><img src="img/wx${i}.jpg"></div>`).join('');
+  wxEls = [...$('wxs').children];
+  const BRAND = {
+    facebook: ['0 0 320 512', 'M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'],
+    tiktok: ['0 0 448 512', 'M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z'],
+    youtube: ['0 0 576 512', 'M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'],
+    instagram: ['0 0 448 512', 'M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'],
+  };
+  $('soc').innerHTML = [[['facebook', 'tiktok', 'youtube'], 'ERRIWAYA'], [['instagram'], 'ERRIWAYA.MR']].map(([ks, h]) =>
+    `<div class="grp"><div class="ics">${ks.map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('')}</div><bdi class="h">@${h}</bdi></div>`).join('');
+  setupMap();
+}
+
+Promise.all([document.fonts.load('40px AlQuds'), ...[...document.images].map(i => i.decode().catch(() => {}))]).then(() => {
+  setup(); window.renderFrame(0); window.READY = true;
+});
+</script>
+</body>
+</html>
