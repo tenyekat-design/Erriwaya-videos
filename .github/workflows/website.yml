@@ -29,6 +29,8 @@ jobs:
           cp -r assets _site/
           [ -f CNAME ] && cp CNAME _site/ || true
           touch _site/.nojekyll
+          printf 'User-agent: *\nAllow: /\n\nSitemap: https://erriwaya.com/sitemap.xml\n' > _site/robots.txt
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://erriwaya.com/</loc><lastmod>%s</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>\n</urlset>\n' "$(date -u +%FT%TZ)" > _site/sitemap.xml
 
       - name: Fetch videos and news
         run: python3 scripts/build_data.py _site
