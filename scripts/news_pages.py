@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 
 SITE = "https://erriwaya.com"
 NAME = "شبكة الرواية الإعلامية"
-STATIC = ["about.html", "editorial-policy.html", "corrections.html"]
+STATIC = ["about.html", "editorial-policy.html", "corrections.html", "privacy.html"]
 PORTALS = {"mr": "موريتانيا", "ma": "المغرب", "dz": "الجزائر", "tn": "تونس", "ly": "ليبيا", "eh": "الصحراء",
            "az": "أزواد", "sn": "السنغال", "ml": "مالي", "ne": "النيجر", "td": "تشاد", "gm": "غامبيا"}
 
@@ -100,7 +100,7 @@ footer {{ background:var(--brand-deep); color:var(--on-brand); padding-block:20p
   </div>
 </article>
 {more}
-<nav class="pages" aria-label="صفحات الشبكة"><a href="../about.html">من نحن</a><a href="../editorial-policy.html">السياسة التحريرية</a><a href="../corrections.html">سياسة التصحيحات</a></nav>
+<nav class="pages" aria-label="صفحات الشبكة"><a href="../about.html">من نحن</a><a href="../editorial-policy.html">السياسة التحريرية</a><a href="../corrections.html">سياسة التصحيحات</a><a href="../privacy.html">سياسة الخصوصية</a></nav>
 </div>
 <footer>© 2022–{year} {name}</footer>
 </body>
