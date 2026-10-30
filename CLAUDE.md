@@ -82,5 +82,6 @@ ERRIWAYA.COM (site icon) and the ERRIWAYA / ERRIWAYA.MR handles. `music: 'light'
 Scenes: `title` (clip band + flags + 3-line title), `hbars` (horizontal bars from zero, `diff` paints the gap red),
 `vbars` (columns from zero with grid lines), `cards` (big per-unit figures with $ and a proportional bar),
 `share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources).
+A chart scene with `img` gets a photo band behind its heading (navy wash, white heading).
 Use only the figures the user gives; check that derived figures (differences, ratios) match before rendering.
 Reference: `graphics/2026-10-30-ma-mr-fish-exports/graphic.js`.

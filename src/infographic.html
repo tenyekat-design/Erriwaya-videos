@@ -27,6 +27,12 @@
   .hd .n { width: 62px; height: 62px; background: var(--acc); color: #fff; font-size: 40px; display: flex; align-items: center; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
   .hd .h { font-size: 60px; }
   .unit { position: absolute; right: 56px; top: 390px; font-size: 28px; color: var(--grey); }
+  /* photo band behind a section heading: real footage of the trade, navy wash under the white heading */
+  .banner { position: absolute; left: 0; right: 0; top: 270px; height: 168px; overflow: hidden; }
+  .banner img { position: absolute; max-width: none; }
+  .banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(11,31,75,.94) 0%, rgba(11,31,75,.78) 45%, rgba(11,31,75,.2) 100%); }
+  .hd.onph { color: #fff; top: 290px; }
+  .unit.onph { color: rgba(255,255,255,.85); top: 384px; }
   .flag { display: inline-block; vertical-align: middle; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
   .name { font-size: 46px; vertical-align: middle; margin-right: 16px; }
   .note { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; background: var(--acc); color: #fff;
@@ -177,14 +183,16 @@ const BUILD = {
       `<div class="axis" style="top:910px"></div>` + s.ticks.map(k => `<div class="tick ltr" style="top:924px;right:${56 + L * k / s.max}px">${k}%</div>`).join('') +
       `<div class="note" style="top:1030px" data-a="pop" data-in="2.4">${s.note}</div>`;
   },
-  conclusion: s => `<div class="photo" style="top:270px;height:410px"><img id="photo" src="${DIR}img/${s.img}"></div>
+  conclusion: s => `<div class="photo" style="top:270px;height:410px"><img class="cov" src="${DIR}img/${s.img}" data-fy="${s.fy ?? 0.5}"></div>
     <div class="big2" style="top:680px;color:var(--navy)">${flag('mr', 72)} ${words(s.lines[0])}</div>
     <div class="big2" style="top:785px;color:var(--acc)">${flag('ma', 72)} ${words(s.lines[1])}</div>
     <div class="small" style="top:940px" data-a="fade" data-in="1.8">${s.small}</div>
     <div class="srcs" style="top:1085px" data-a="fade" data-in="2.3">${R.sources}</div>`,
 };
 function head(s) {
-  return `<div class="hd" data-a="fade" data-in="0"><div class="n">${s.n}</div><div class="h">${s.heading}</div></div><div class="unit" data-a="fade" data-in="0.15">${s.unit}</div>`;
+  const ph = s.img ? ' onph' : '';
+  return (s.img ? `<div class="banner"><img class="cov" src="${DIR}img/${s.img}" data-fy="${s.fy ?? 0.5}"></div>` : '') +
+    `<div class="hd${ph}" data-a="fade" data-in="0"><div class="n">${s.n}</div><div class="h">${s.heading}</div></div><div class="unit${ph}" data-a="fade" data-in="0.15">${s.unit}</div>`;
 }
 
 function sceneAt(t) {
@@ -238,8 +246,8 @@ window.renderFrame = async t => {
     if (ci.getAttribute('src') !== src) { ci.setAttribute('src', src); await ci.decode(); }
     cover(ci, wh, W, 640, 1.02 + 0.06 * dt / (end - s.t));
   }
-  const ph = $('photo');
-  if (ph) cover(ph, await natural(ph.src), W, 410, 1.03 + 0.07 * prog(dt, 0, end - s.t), 0.5);
+  for (const im of el.querySelectorAll('img.cov'))
+    cover(im, await natural(im.src), im.parentNode.offsetWidth, im.parentNode.offsetHeight, 1.04 + 0.08 * prog(dt, 0, end - s.t), +im.dataset.fy);
   // white logo over the opening footage, navy elsewhere; the header rule waits for the charts
   $('logo').style.background = s.type === 'title' && dt < end - s.t - 0.35 ? '#fff' : 'var(--navy)';
   $('rule').style.opacity = hq;
