@@ -155,7 +155,7 @@ html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--pa
 <script src="timing.js"></script>
 <script>
 // The address the voice-over gives at the end (?url= overrides it).
-const URL_SHOWN = new URLSearchParams(location.search).get('url') || 'erriwaya.com';
+const URL_SHOWN = new URLSearchParams(location.search).get('url') || 'www.erriwaya.com';
 const T = window.PROMO_TIMING;
 const DUR = T.duration, L = T.lines;   // L[k] = video time of sentence k+1
 const S = ['s1', 's2', 's3', 's7', 's4', 's5', 's8', 's6'].map((id, i) => [id, T.scenes[i]]);
