@@ -2,6 +2,7 @@
 // add --format feed for the 1080x1350 Facebook/Instagram feed version (-feed.mp4)
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students              -> output/erriwaya-graphic-<graphic>.mp4 (+ -cover.jpg)
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
+// type: 'infographic' in graphic.js renders src/infographic.html instead (animated charts, 1080x1350 only).
 // Clip frames (fit inside 1080x1920, aspect kept) are extracted once to frames/graphic-<graphic>/<clip>/ (git-ignored).
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -17,18 +18,20 @@ const FPS = 30, WORKERS = +(args.workers || 4);
 const NAME = String(args.graphic || '');
 const RDIR = path.join(ROOT, 'graphics', NAME);
 if (!NAME || !fs.existsSync(path.join(RDIR, 'graphic.js'))) { console.error('no graphic at ' + RDIR); process.exit(1); }
-const FEED = args.format === 'feed', HT = FEED ? 1350 : 1920;
-const OUT = path.join(ROOT, 'output', `erriwaya-graphic-${NAME}${FEED ? '-feed' : ''}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', 'graphic.html') + '?graphic=' + encodeURIComponent(NAME) + (FEED ? '&format=feed' : '');
-const FRAMES = path.join(ROOT, 'frames', 'graphic-' + NAME);
-
 function loadGraphic() {
   const window = {};
   new Function('window', fs.readFileSync(path.join(RDIR, 'graphic.js'), 'utf8'))(window);
   return window.GRAPHIC;
 }
+const INFO = loadGraphic().type === 'infographic';
+const FEED = args.format === 'feed' || INFO, HT = FEED ? 1350 : 1920;
+const PREFIX = INFO ? 'erriwaya-infographic-' : 'erriwaya-graphic-';
+const OUT = path.join(ROOT, 'output', `${PREFIX}${NAME}${FEED && !INFO ? '-feed' : ''}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', INFO ? 'infographic.html' : 'graphic.html') + '?graphic=' + encodeURIComponent(NAME) + (FEED ? '&format=feed' : '');
+const FRAMES = path.join(ROOT, 'frames', 'graphic-' + NAME);
 
 function extractClips() {
+  if (!fs.existsSync(path.join(RDIR, 'clips'))) return;
   for (const f of fs.readdirSync(path.join(RDIR, 'clips'))) {
     const dir = path.join(FRAMES, f.replace(/\.\w+$/, ''));
     if (fs.existsSync(path.join(dir, 'f00001.jpg'))) continue;
@@ -72,7 +75,7 @@ function buildAudio(R, file) {
   execFileSync('python3', [path.join(ROOT, 'tools', 'make-graphic-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
   const ms = s => Math.max(0, Math.round(s * 1000));
   // natural: false mutes the clips (e.g. footage with someone else's narration or music)
-  const shots = R.natural === false ? [] : R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
+  const shots = R.natural === false || !R.shots ? [] : R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
   const clips = [...new Set(shots.map(s => s.clip))];
   const inputs = ['-i', music, '-i', path.join(ROOT, 'assets', 'audio', 'whoosh.wav'), ...clips.flatMap(c => ['-i', path.join(RDIR, 'clips', fs.readdirSync(path.join(RDIR, 'clips')).find(f => f.startsWith(c + '.')))])];
   const f = [`[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8[m]`];
@@ -114,7 +117,7 @@ function buildAudio(R, file) {
   // cover: the hook once its line has settled
   const page = await openPage(browser);
   const cover = OUT.replace(/\.mp4$/, '-cover.jpg');
-  fs.writeFileSync(cover, await grab(page, +(args.coverAt || 2.0)));
+  fs.writeFileSync(cover, await grab(page, +(args.coverAt || R.coverAt || 2.0)));
   await browser.close();
   fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
   const video = path.join(FRAMES, FEED ? 'video-feed.mp4' : 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');

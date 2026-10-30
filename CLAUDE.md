@@ -70,3 +70,15 @@ Reference (approved 28 Oct 2026): `graphics/2026-10-28-una-students/graphic.js` 
 Fixed look: logo top-left; lead caption line and chips navy (no green lead); chips, tags and cards rectangular
 (no rounded pills); green only as accent (side bar, accent words, frame line); AL-Quds font; outro with
 ERRIWAYA.COM (site icon assets/site-icon.png, from the website branch), the ERRIWAYA handles and the sources line; synthesized music + the clips' own sound, low.
+
+## Infographic video (إنفوجرافيك) – animated charts, 1080x1350
+
+A graphic with `type: 'infographic'` in `graphic.js` renders `src/infographic.html` (same command:
+`node tools/render-graphic.js --graphic <folder>`, output `output/erriwaya-infographic-<folder>.mp4` + cover).
+Light background with a faint dot grid, navy / dark red / grey, navy logo top-left (white over the opening photo),
+AL-Quds for titles and figures, SVG flags, footer with the ERRIWAYA and ERRIWAYA.MR handles.
+Scenes: `title` (clip band + flags + 3-line title), `hbars` (horizontal bars from zero, `diff` paints the gap red),
+`vbars` (columns from zero with grid lines), `cards` (big per-unit figures with $ and a proportional bar),
+`share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources).
+Use only the figures the user gives; check that derived figures (differences, ratios) match before rendering.
+Reference: `graphics/2026-10-30-ma-mr-fish-exports/graphic.js`.

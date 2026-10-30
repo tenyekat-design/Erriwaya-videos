@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Erriwaya – إنفوجرافيك</title>
+<!-- Animated infographic (1080x1350, no voice-over): light background, navy / dark red / grey, scenes of charts.
+     ?graphic=<folder in graphics/> whose graphic.js has type: 'infographic'. Rendered by tools/render-graphic.js. -->
+<style>
+  @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
+  :root { --navy: #0B1F4B; --red: #8E1B2C; --grey: #6B7385; --line: #DCD8CF; --bg: #F5F3EE; --card: #FFFFFF; }
+  html, body { margin: 0; background: var(--bg); }
+  #stage { position: relative; width: 1080px; height: 1350px; overflow: hidden; color: var(--navy);
+    background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg);
+    font-family: AlQuds, sans-serif; }
+  .abs { position: absolute; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  #logo { left: 56px; top: 40px; width: 80px; height: 108px; background: var(--navy);
+    -webkit-mask: url(../assets/logo-mark.png) center / contain no-repeat; mask: url(../assets/logo-mark.png) center / contain no-repeat; }
+  #htitle { right: 56px; top: 42px; width: 820px; text-align: right; }
+  #htitle .t { font-size: 37px; line-height: 1.32; }
+  #htitle .s { font-size: 26px; color: var(--grey); margin-top: 4px; }
+  #rule { left: 56px; right: 56px; top: 200px; height: 2px; background: var(--line); }
+  #rule i { position: absolute; right: 0; top: -2px; height: 6px; width: 120px; background: var(--red); }
+  #scene { inset: 0; }
+  /* section heading */
+  .hd { position: absolute; right: 56px; top: 228px; display: flex; align-items: center; gap: 18px; }
+  .hd .n { width: 62px; height: 62px; background: var(--red); color: #fff; font-size: 40px; display: flex; align-items: center; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
+  .hd .h { font-size: 60px; }
+  .unit { position: absolute; right: 56px; top: 336px; font-size: 28px; color: var(--grey); }
+  .flag { display: inline-block; vertical-align: middle; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+  .name { font-size: 46px; vertical-align: middle; margin-right: 16px; }
+  .note { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; background: var(--red); color: #fff;
+    font-size: 46px; padding: 10px 40px 22px; }
+  .note.navy { background: var(--navy); }
+  /* horizontal bars */
+  .row { position: absolute; left: 56px; right: 56px; }
+  .row .lab { position: absolute; right: 0; top: 0; }
+  .row .val { position: absolute; left: 0; top: -14px; font-size: 84px; line-height: 1; }
+  .row .val small { font-size: 36px; margin-right: 10px; }
+  .row .bar { position: absolute; right: 0; top: 96px; height: 70px; width: 0; }
+  .row .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--red) 0 10px, #B4384A 10px 20px); }
+  .axis { position: absolute; left: 56px; right: 56px; height: 2px; background: var(--grey); opacity: .5; }
+  .tick { position: absolute; font-size: 26px; color: var(--grey); transform: translateX(50%); }
+  /* vertical bars */
+  .col { position: absolute; bottom: 350px; width: 230px; height: 0; }
+  .cv { position: absolute; width: 330px; text-align: center; }
+  .cv b { display: block; font-size: 104px; line-height: 1; font-weight: normal; }
+  .cv span { font-size: 32px; color: var(--grey); }
+  .cl { position: absolute; width: 330px; text-align: center; top: 1018px; }
+  .cl .name { font-size: 40px; }
+  .grid { position: absolute; left: 56px; right: 56px; height: 0; border-top: 2px dashed var(--line); }
+  .grid span { position: absolute; left: 0; top: -40px; font-size: 26px; color: var(--grey); }
+  .base { position: absolute; left: 56px; right: 56px; top: 1000px; height: 3px; background: var(--navy); }
+  /* cards */
+  .card { position: absolute; top: 400px; width: 452px; height: 680px; background: var(--card); box-shadow: 0 14px 40px rgba(11,31,75,.12);
+    text-align: center; box-sizing: border-box; padding-top: 44px; }
+  .card .band { position: absolute; left: 0; right: 0; top: 0; height: 12px; }
+  .card .dol { width: 128px; height: 128px; border-radius: 50%; margin: 34px auto 10px; color: #fff; font: bold 84px/128px Arial, sans-serif; }
+  .card .ap { font-size: 34px; color: var(--grey); }
+  .card .big { font-size: 128px; line-height: 1.05; }
+  .card .lb { font-size: 38px; }
+  .card .mini { position: absolute; right: 40px; bottom: 40px; height: 14px; }
+  .card .track { position: absolute; left: 40px; right: 40px; bottom: 40px; height: 14px; background: #ECE9E2; }
+  /* conclusion */
+  .photo { position: absolute; left: 0; right: 0; overflow: hidden; }
+  .photo img { position: absolute; max-width: none; }
+  .photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(245,243,238,0) 55%, var(--bg) 100%); }
+  .photo.dim::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 260px; z-index: 1; background: linear-gradient(180deg, rgba(5,14,36,.5), rgba(5,14,36,0)); }
+  .big2 { position: absolute; left: 40px; right: 40px; text-align: center; font-size: 76px; line-height: 1.35; }
+  .small { position: absolute; left: 90px; right: 90px; text-align: center; font-size: 29px; color: var(--grey); border: 2px solid var(--line); padding: 14px 24px 22px; background: rgba(255,255,255,.6); }
+  .srcs { position: absolute; left: 70px; right: 70px; text-align: center; font-size: 24px; color: var(--grey); line-height: 1.5; }
+  /* title */
+  .tt { position: absolute; left: 40px; right: 40px; text-align: center; font-size: 80px; line-height: 1.28; }
+  .tt .r { color: var(--red); }
+  .sub { position: absolute; left: 0; right: 0; text-align: center; font-size: 38px; color: var(--grey); }
+  .w { display: inline-block; white-space: pre; }
+  /* footer */
+  #foot { left: 56px; right: 56px; top: 1250px; height: 100px; border-top: 2px solid var(--line); display: flex; justify-content: center;
+    align-items: center; gap: 46px; direction: ltr; }
+  #foot .g { display: flex; align-items: center; gap: 10px; }
+  #foot .ic { width: 46px; height: 46px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  #foot .ic svg { width: 26px; height: 26px; fill: #fff; }
+  #foot .h { font: bold 30px 'DejaVu Sans', Arial, sans-serif; letter-spacing: 2px; margin-left: 6px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scene" class="abs"></div>
+  <div id="logo" class="abs"></div>
+  <div id="htitle" class="abs"></div>
+  <div id="rule" class="abs"><i></i></div>
+  <div id="foot" class="abs"></div>
+</div>
+<script src="icons.js"></script>
+<script>
+const NAME = new URLSearchParams(location.search).get('graphic');
+const DIR = '../graphics/' + NAME + '/', FRAMES = '../frames/graphic-' + NAME + '/';
+const W = 1080, H = 1350, FPS = 30;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eout = x => 1 - Math.pow(1 - x, 3);
+const eio = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const COLOR = { mr: 'var(--navy)', ma: 'var(--red)' };
+// thousands separators, fixed decimals
+const fmt = (x, d = 0) => { const [i, f] = x.toFixed(d).split('.'); return i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (f ? '.' + f : ''); };
+const decs = v => (String(v).split('.')[1] || '').length;
+
+// flags drawn in SVG (3:2)
+let fid = 0;
+function flag(c, w) {
+  const h = w * 2 / 3;
+  if (c === 'mr') {
+    const id = 'm' + (fid++);
+    return `<svg class="flag" width="${w}" height="${h}" viewBox="0 0 300 200"><defs><mask id="${id}"><circle cx="150" cy="92" r="62" fill="#fff"/><circle cx="150" cy="70" r="62" fill="#000"/></mask></defs>
+      <rect width="300" height="200" fill="#00A95C"/><rect width="300" height="40" fill="#D01C1F"/><rect y="160" width="300" height="40" fill="#D01C1F"/>
+      <rect width="300" height="200" fill="#FFD700" mask="url(#${id})"/><path d="${star(150, 76, 22, 9)}" fill="#FFD700"/></svg>`;
+  }
+  const p = [0, 1, 2, 3, 4].map(k => { const a = (-90 + 72 * k) * Math.PI / 180; return [150 + 52 * Math.cos(a), 104 + 52 * Math.sin(a)]; });
+  const d = [0, 2, 4, 1, 3].map((k, i) => (i ? 'L' : 'M') + p[k][0].toFixed(1) + ' ' + p[k][1].toFixed(1)).join(' ') + 'Z';
+  return `<svg class="flag" width="${w}" height="${h}" viewBox="0 0 300 200"><rect width="300" height="200" fill="#C1272D"/>
+    <path d="${d}" fill="none" stroke="#006233" stroke-width="9" stroke-linejoin="miter"/></svg>`;
+}
+function star(cx, cy, R, r) {
+  let d = '';
+  for (let k = 0; k < 10; k++) { const a = (-90 + 36 * k) * Math.PI / 180, q = k % 2 ? r : R; d += (k ? 'L' : 'M') + (cx + q * Math.cos(a)).toFixed(1) + ' ' + (cy + q * Math.sin(a)).toFixed(1); }
+  return d + 'Z';
+}
+function can(color, h) {
+  return `<svg width="${h * 0.8}" height="${h}" viewBox="0 0 64 80" style="vertical-align:middle">
+    <rect x="6" y="8" width="52" height="66" rx="7" fill="${color}"/><ellipse cx="32" cy="9" rx="26" ry="6" fill="${color}" opacity=".75"/>
+    <ellipse cx="32" cy="9" rx="20" ry="3.4" fill="none" stroke="#fff" stroke-width="1.6" opacity=".8"/>
+    <rect x="6" y="28" width="52" height="28" fill="#fff" opacity=".92"/>
+    <path d="M17 42c6-7 15-7 22 0c-7 7-16 7-22 0zM39 42l8-6v12z" fill="${color}"/><circle cx="22" cy="41" r="1.6" fill="#fff"/></svg>`;
+}
+const words = (s, cls = '') => s.split(' ').map(w => `<span class="w ${cls}" data-a="word">${w}</span>`).join('<span class="w"> </span>');
+const lab = (c, w = 84) => `<span class="lab">${flag(c, w)}<span class="name">${R.names[c]}</span></span>`;
+
+let R;
+const BUILD = {
+  title: s => `<div class="photo dim" style="top:0;height:640px"><img id="clipimg"></div>
+    <div class="abs" style="left:0;right:0;top:600px;text-align:center" data-a="fade" data-in="0.5">${flag('ma', 108)}<span style="display:inline-block;width:2px;height:60px;background:var(--line);margin:0 26px;vertical-align:middle"></span>${flag('mr', 108)}</div>
+    <div class="tt" style="top:700px">${words('المغرب وموريتانيا..')}<br>${words('من يصدر أسماكًا أكثر')}<br>${words('ومن يجني أموالًا أكثر؟', 'r')}</div>
+    <div class="sub" style="top:1085px" data-a="fade" data-in="2.0">${R.subtitle}</div>`,
+  hbars: s => {
+    const max = Math.max(...s.rows.map(r => r.v)), L = W - 112, min = Math.min(...s.rows.map(r => r.v));
+    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${410 + i * 250}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
+        <div class="val" style="color:${COLOR[r.c]}"><span class="ltr" data-a="count" data-v="${r.v}" data-in="${0.5 + 0.25 * i}">0</span><small>${r.label}</small></div>
+        <div class="bar" style="background:${COLOR[r.c]}" data-a="growx" data-w="${L * r.v / max}" data-in="${0.5 + 0.25 * i}">${s.diff && r.v === max ? `<i style="width:${L * (max - min) / max}px" data-a="fade" data-in="2.1"></i>` : ''}</div></div>`).join('') +
+      `<div class="note" style="top:930px" data-a="pop" data-in="2.4">${s.note}</div>`;
+  },
+  vbars: s => {
+    const max = Math.max(...s.cols.map(c => c.v)), Hm = 430, base = 1000, xs = [W - 56 - 330 + 50, 56 + 50];
+    return head(s) + s.grid.map(g => `<div class="grid" style="top:${base - Hm * g / max}px" data-a="fade" data-in="0.3"><span class="ltr">${g}</span></div>`).join('') +
+      s.cols.map((c, i) => { const h = Hm * c.v / max, x = xs[i];
+        return `<div class="col" style="left:${x + 50}px;background:${COLOR[c.c]}" data-a="growy" data-h="${h}" data-in="${0.5 + 0.3 * i}"></div>
+          <div class="cv" style="left:${x}px;top:${base - h - 172}px;color:${COLOR[c.c]}" data-a="fade" data-in="${1.2 + 0.3 * i}"><b class="ltr" data-a="count" data-v="${c.v}" data-in="${0.5 + 0.3 * i}">0</b><span>${c.label}</span></div>
+          <div class="cl" style="left:${x}px" data-a="fade" data-in="${0.3 + 0.3 * i}">${flag(c.c, 72)}<span class="name">${R.names[c.c]}</span></div>`; }).join('') +
+      `<div class="base"></div><div class="note" style="top:1120px" data-a="pop" data-in="2.4">${s.note}</div>`;
+  },
+  cards: s => {
+    const max = Math.max(...s.cards.map(c => c.v));
+    return head(s) + s.cards.map((c, i) => `<div class="card" style="${i ? 'left:56px' : 'right:56px'}" data-a="fade" data-in="${0.3 + 0.3 * i}">
+        <div class="band" style="background:${COLOR[c.c]}"></div>${flag(c.c, 72)}<span class="name" style="font-size:42px">${R.names[c.c]}</span>
+        <div class="dol" style="background:${COLOR[c.c]}">$</div><div class="ap">نحو</div>
+        <div class="big" style="color:${COLOR[c.c]}"><span class="ltr" data-a="count" data-v="${c.v}" data-in="${0.6 + 0.3 * i}">0</span></div><div class="lb">${c.label}</div>
+        <div class="track"></div><div class="mini" style="background:${COLOR[c.c]}" data-a="growx" data-w="${372 * c.v / max}" data-in="${0.9 + 0.3 * i}"></div></div>`).join('');
+  },
+  share: s => {
+    const L = W - 112;
+    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${410 + i * 230}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
+        <div class="val" style="color:${COLOR[r.c]};top:-26px">${can(COLOR[r.c], 84)}<span style="font-size:36px;margin:0 12px">${r.approx ? 'نحو' : ''}</span><span class="ltr"><span data-a="count" data-v="${r.v}" data-in="${0.5 + 0.25 * i}">0</span>%</span></div>
+        <div class="bar" style="background:${COLOR[r.c]}" data-a="growx" data-w="${L * r.v / s.max}" data-in="${0.5 + 0.25 * i}"></div></div>`).join('') +
+      `<div class="axis" style="top:870px"></div>` + s.ticks.map(k => `<div class="tick ltr" style="top:884px;right:${56 + L * k / s.max}px">${k}%</div>`).join('') +
+      `<div class="note" style="top:985px" data-a="pop" data-in="2.4">${s.note}</div>`;
+  },
+  conclusion: s => `<div class="photo" style="top:210px;height:440px"><img id="photo" src="${DIR}img/${s.img}"></div>
+    <div class="big2" style="top:640px;color:var(--navy)">${flag('mr', 72)} ${words(s.lines[0])}</div>
+    <div class="big2" style="top:745px;color:var(--red)">${flag('ma', 72)} ${words(s.lines[1])}</div>
+    <div class="small" style="top:905px" data-a="fade" data-in="1.8">${s.small}</div>
+    <div class="srcs" style="top:1050px" data-a="fade" data-in="2.3">${R.sources}</div>`,
+};
+function head(s) {
+  return `<div class="hd" data-a="fade" data-in="0"><div class="n">${s.n}</div><div class="h">${s.heading}</div></div><div class="unit" data-a="fade" data-in="0.15">${s.unit}</div>`;
+}
+
+function sceneAt(t) {
+  let i = 0;
+  while (i + 1 < R.scenes.length && R.scenes[i + 1].t <= t) i++;
+  return { s: R.scenes[i], i, end: R.scenes[i + 1] ? R.scenes[i + 1].t : R.duration };
+}
+
+const sizes = {};
+function natural(src) {
+  if (sizes[src]) return Promise.resolve(sizes[src]);
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(sizes[src] = [i.naturalWidth, i.naturalHeight]); i.onerror = () => rej(new Error('missing ' + src)); i.src = src; });
+}
+function cover(img, wh, bw, bh, k, fy = 0.5) {
+  const s = Math.max(bw / wh[0], bh / wh[1]) * k, w = wh[0] * s, h = wh[1] * s;
+  Object.assign(img.style, { width: w + 'px', height: h + 'px', left: (bw - w) / 2 + 'px', top: (bh - h) * fy + 'px' });
+}
+let lastFrame = Infinity;
+
+window.renderFrame = async t => {
+  const { s, i, end } = sceneAt(t), dt = t - s.t, el = $('scene');
+  if (el.dataset.key !== String(i)) {
+    el.dataset.key = i;
+    el.innerHTML = BUILD[s.type](s);
+    await Promise.all([...el.querySelectorAll('img[src]')].map(im => im.decode()));
+  }
+  // scene in / out
+  const out = s === R.scenes[R.scenes.length - 1] ? 0 : prog(t, end - 0.35, end);
+  el.style.opacity = 1 - out;
+  // header title from the first chart on
+  const ht = $('htitle');
+  if (!ht.innerHTML) ht.innerHTML = `<div class="t">${R.title}</div><div class="s">${R.subtitle}</div>`;
+  const hq = s.type === 'title' ? prog(t, end - 0.35, end) : 1;
+  ht.style.opacity = hq;
+  // animated elements
+  let wi = 0;
+  el.querySelectorAll('[data-a]').forEach(e => {
+    const a = +(e.dataset.in || 0), k = e.dataset.a;
+    if (k === 'word') { const q = eout(prog(dt, 0.15 + 0.07 * wi, 0.55 + 0.07 * wi)); wi++; e.style.opacity = q; e.style.transform = `translateY(${(1 - q) * 30}px)`; return; }
+    if (k === 'fade') { const q = eout(prog(dt, a, a + 0.5)); e.style.opacity = q; e.style.transform = (e.classList.contains('note') ? 'translateX(-50%) ' : '') + `translateY(${(1 - q) * 26}px)`; return; }
+    if (k === 'pop') { const q = eout(prog(dt, a, a + 0.45)); e.style.opacity = q; e.style.transform = `translateX(-50%) scale(${0.85 + 0.15 * q})`; return; }
+    if (k === 'growx') { e.style.width = (+e.dataset.w * eio(prog(dt, a, a + 1.3))) + 'px'; return; }
+    if (k === 'growy') { e.style.height = (+e.dataset.h * eio(prog(dt, a, a + 1.3))) + 'px'; return; }
+    if (k === 'count') { const v = +e.dataset.v; e.textContent = fmt(v * eio(prog(dt, a, a + 1.3)), decs(e.dataset.v)); }
+  });
+  // title footage (played at 0.75x) and conclusion photo, both with a slow push-in
+  const ci = $('clipimg');
+  if (ci) {
+    let n = Math.min(Math.floor(dt * FPS * 0.75) + 1, lastFrame), src, wh;
+    for (;;) { src = FRAMES + s.clip + '/f' + String(n).padStart(5, '0') + '.jpg'; try { wh = await natural(src); break; } catch (e) { if (--n < 1) throw e; lastFrame = n; } }
+    if (ci.getAttribute('src') !== src) { ci.setAttribute('src', src); await ci.decode(); }
+    cover(ci, wh, W, 640, 1.02 + 0.06 * dt / (end - s.t));
+  }
+  const ph = $('photo');
+  if (ph) cover(ph, await natural(ph.src), W, 440, 1.03 + 0.07 * prog(dt, 0, end - s.t), 0.5);
+  // white logo over the opening footage, navy elsewhere; the header rule waits for the charts
+  $('logo').style.background = s.type === 'title' && dt < end - s.t - 0.35 ? '#fff' : 'var(--navy)';
+  $('rule').style.opacity = hq;
+};
+
+(async () => {
+  await load(DIR + 'graphic.js');
+  R = window.GRAPHIC;
+  window.DURATION = R.duration;
+  const SOCIAL = [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
+  $('foot').innerHTML = SOCIAL.map(r => `<div class="g">${r.icons.map(n => `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('');
+  await document.fonts.load('60px AlQuds', 'العربية');
+  window.READY = true;
+})();
+function load(src) {
+  return new Promise(r => { const s = document.createElement('script'); s.src = src; s.onload = r; document.body.appendChild(s); });
+}
+</script>
+</body>
+</html>
