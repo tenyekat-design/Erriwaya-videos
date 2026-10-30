@@ -52,11 +52,13 @@ html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--pa
 /* outro */
 .cap .url, .url { display: inline-block; direction: ltr; background: #fff; color: var(--brand); border-radius: 999px; padding: calc(var(--u) * 1.6) calc(var(--u) * 4) calc(var(--u) * 1.2);
   font-size: calc(var(--u) * 4); font-family: AlQuds, sans-serif; letter-spacing: .01em; white-space: nowrap }
-.soc { display: flex; justify-content: center; gap: calc(var(--u) * 2.4) }
-.soc i { width: calc(var(--u) * 9); height: calc(var(--u) * 9); border-radius: 50%; border: calc(var(--u) * .3) solid rgb(255 255 255 / .4); display: grid; place-items: center }
+/* accounts: the platform icons with their handle (no platform names written out) */
+.soc { display: grid; justify-content: center; gap: calc(var(--u) * 2) }
+.soc .grp { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 2) }
+.soc .ics { display: flex; gap: calc(var(--u) * 1.4) }
+.soc i { width: calc(var(--u) * 8); height: calc(var(--u) * 8); border-radius: 50%; border: calc(var(--u) * .3) solid rgb(255 255 255 / .4); display: grid; place-items: center }
 .soc svg { width: 45%; height: 45%; fill: currentColor }
-.handles { font-size: calc(var(--u) * 3.6); line-height: 1.6; text-align: center; opacity: .9; direction: rtl }
-.handles em { font-style: normal; direction: ltr; unicode-bidi: isolate; letter-spacing: .03em }
+.soc .h { color: var(--on); direction: ltr; unicode-bidi: isolate; font: 700 calc(var(--u) * 4.2) / 1 "Segoe UI", Arial, sans-serif; letter-spacing: .04em }
 .flash { position: absolute; inset: 0; background: #fff; pointer-events: none; opacity: 0; z-index: 50 }
 
 .cap { transition: none }
@@ -146,8 +148,7 @@ html, body { width: 100vw; height: 100vh; overflow: hidden; background: var(--pa
   <div class="abs logo" id="s6logo"></div>
   <div class="cap" id="s6t"><b style="color: var(--on); font-size: calc(var(--u) * 8.6)">زوروا موقعنا الآن</b></div>
   <div class="cap" id="s6u"><span class="url" id="url"></span></div>
-  <div class="cap" id="s6s"><div class="soc" id="soc"></div><div class="handles" style="margin-top: calc(var(--u) * 2.4)">
-    فيسبوك وتيك توك ويوتيوب <em>ERRIWAYA</em><br>إنستغرام <em>ERRIWAYA.MR</em></div></div>
+  <div class="cap" id="s6s"><div class="soc" id="soc"></div></div>
 </section>
 <div class="flash" id="flash"></div>
 
@@ -207,7 +208,8 @@ function setup() {
   chips = [...$('chips').children];
   $('secs').innerHTML = SECTIONS.map(([i, l]) => `<span class="chip">${ICON[i]}${l}</span>`).join('');
   secs = [...$('secs').children];
-  $('soc').innerHTML = ['facebook', 'tiktok', 'youtube', 'instagram'].map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('');
+  $('soc').innerHTML = [[['facebook', 'tiktok', 'youtube'], 'ERRIWAYA'], [['instagram'], 'ERRIWAYA.MR']].map(([ks, h]) =>
+    `<div class="grp"><div class="ics">${ks.map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('')}</div><bdi class="h">@${h}</bdi></div>`).join('');
   $('url').textContent = URL_SHOWN;
 }
 const placeCap = (el, top) => { el.style.top = top + 'px'; };

@@ -47,14 +47,16 @@ h1 em { font-style: normal; color: var(--mint) }
 .feat.br svg { stroke: #FF6B7F }
 /* footer */
 .url { display: inline-block; direction: ltr; background: #fff; color: var(--brand); border-radius: 999px; font-size: var(--url); line-height: 1.2; padding: .34em 1.1em .24em; box-shadow: 0 12px 30px rgb(0 0 0 / .3) }
-.soc { display: flex; align-items: center; gap: 12px }
+/* accounts: the platform icons with their handle (no platform names written out) */
+.soc { display: flex; flex-direction: column; align-items: flex-start; gap: 10px }
+.soc .grp { display: flex; align-items: center; gap: 12px }
+.soc .ics { display: flex; gap: 8px }
 .soc i { width: var(--soc); height: var(--soc); border-radius: 50%; border: 2px solid rgb(255 255 255 / .35); display: grid; place-items: center }
 .soc svg { width: 46%; height: 46%; fill: currentColor }
-.handles { font-size: var(--hand); opacity: .85; line-height: 1.5 }
-.handles bdi { letter-spacing: .03em }
+.soc .h { direction: ltr; unicode-bidi: isolate; font: 700 var(--hand) / 1 "Segoe UI", Arial, sans-serif; letter-spacing: .04em }
 
 /* ── feed 1080x1350 ── */
-.feed { --name: 34px; --kick: 30px; --h1: 128px; --sub: 34px; --feat: 23px; --url: 40px; --soc: 52px; --hand: 21px }
+.feed { --name: 34px; --kick: 30px; --h1: 128px; --sub: 34px; --feat: 23px; --url: 40px; --soc: 46px; --hand: 26px }
 .feed .head { top: 56px; right: 64px } .feed .head .logo { height: 86px }
 .feed .kick { top: 190px; right: 64px }
 .feed h1 { top: 258px; right: 64px }
@@ -64,10 +66,9 @@ h1 em { font-style: normal; color: var(--mint) }
 .feed .feats { top: 1030px; right: 40px; left: 40px; justify-content: center; gap: 10px }
 .feed .feat:nth-child(4), .story .feat:nth-child(4) { display: none }
 .feed .foot { top: 1172px; right: 64px; left: 64px; display: flex; align-items: center; justify-content: space-between }
-.feed .handles { bottom: 30px; right: 0; left: 0; text-align: center }
 
 /* ── story 1080x1920 (text and address kept out of the top and bottom 250 px used by the apps) ── */
-.story { --name: 38px; --kick: 34px; --h1: 150px; --sub: 40px; --feat: 29px; --url: 50px; --soc: 66px; --hand: 26px }
+.story { --name: 38px; --kick: 34px; --h1: 150px; --sub: 40px; --feat: 29px; --url: 50px; --soc: 58px; --hand: 32px }
 .story .head { top: 130px; right: 70px } .story .head .logo { height: 100px }
 .story .kick { top: 280px; right: 70px }
 .story h1 { top: 352px; right: 70px }
@@ -75,11 +76,11 @@ h1 em { font-style: normal; color: var(--mint) }
 .story .laptop { top: 690px; left: 150px; width: 860px }
 .story .phone { top: 800px; left: 50px; width: 270px }
 .story .feats { top: 1385px; right: 60px; left: 60px; justify-content: center; gap: 14px }
-.story .foot { top: 1560px; right: 70px; left: 70px; display: flex; align-items: center; justify-content: center; gap: 30px }
-.story .handles { top: 1675px; right: 0; left: 0; text-align: center }
+.story .foot { top: 1540px; right: 70px; left: 70px; display: grid; justify-items: center; gap: 30px }
+.story .soc { flex-direction: row; gap: 36px }
 
 /* ── cover 1640x624 (Facebook): text on the right, devices on the left; corners kept clear ── */
-.cover { --name: 26px; --kick: 22px; --h1: 92px; --sub: 26px; --feat: 20px; --url: 30px; --soc: 42px }
+.cover { --name: 26px; --kick: 22px; --h1: 92px; --sub: 26px; --feat: 20px; --url: 30px; --soc: 36px; --hand: 20px }
 .cover .head { top: 48px; right: 80px } .cover .head .logo { height: 66px }
 .cover .kick { top: 148px; right: 80px }
 .cover h1 { top: 196px; right: 80px }
@@ -116,15 +117,12 @@ h1 em { font-style: normal; color: var(--mint) }
   <span class="url" id="url"></span>
   <div class="soc" id="soc"></div>
 </div>
-<div class="abs handles">فيسبوك وتيك توك ويوتيوب <bdi>ERRIWAYA</bdi> · إنستغرام <bdi>ERRIWAYA.MR</bdi></div>
 
 <script>
 const q = new URLSearchParams(location.search);
 const FORMAT = q.get('format') || 'feed';
 document.body.className = FORMAT;
 document.getElementById('url').textContent = q.get('url') || 'erriwaya.com';
-// the cover has no room for the handles line
-if (FORMAT === 'cover') document.querySelector('.handles').remove();
 // Font Awesome Free 6.5.2 brands (CC BY 4.0), as on the website
 const BRAND = {
   facebook: ['0 0 320 512', 'M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'],
@@ -132,7 +130,8 @@ const BRAND = {
   youtube: ['0 0 576 512', 'M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'],
   instagram: ['0 0 448 512', 'M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'],
 };
-document.getElementById('soc').innerHTML = ['facebook', 'tiktok', 'youtube', 'instagram'].map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('');
+document.getElementById('soc').innerHTML = [[['facebook', 'tiktok', 'youtube'], 'ERRIWAYA'], [['instagram'], 'ERRIWAYA.MR']].map(([ks, h]) =>
+  `<div class="grp"><span class="ics">${ks.map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('')}</span><span class="h">@${h}</span></div>`).join('');
 // deterministic tiles, denser away from the text
 const W = innerWidth, H = innerHeight, rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 document.getElementById('tiles').innerHTML = Array.from({ length: 46 }, (_, i) => {
