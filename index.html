@@ -752,6 +752,9 @@ function listView(title, sub, items, back = true) {
   </section>`;
 }
 
+// رابط الخبر الدائم: صفحة ثابتة تقرؤها محركات البحث وتعرض بطاقة صحيحة عند المشاركة
+const newsUrl = a => `https://erriwaya.com/news/${a.id}.html`;
+
 function articleView(a) {
   const imgs = a.images.length ? a.images : [];
   const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
@@ -763,8 +766,8 @@ function articleView(a) {
     <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
     <div class="body">${paras}</div>
     <div class="tools">
-      <button class="btn" type="button" data-copy="${esc(location.href.split("#")[0] + "#a-" + a.id)}">${ic("link")}نسخ رابط الخبر</button>
-      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + location.href.split("#")[0] + "#a-" + a.id)}">${ic("chat")}مشاركة على واتساب</a>
+      <button class="btn" type="button" data-copy="${esc(newsUrl(a))}">${ic("link")}نسخ رابط الخبر</button>
+      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + newsUrl(a))}">${ic("chat")}مشاركة على واتساب</a>
     </div>
   </article>`;
 }

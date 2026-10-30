@@ -156,11 +156,22 @@ def fs_doc(d):
     return f
 
 
+def all_article_docs(limit=2000):
+    docs, token = [], ""
+    while len(docs) < limit:
+        url = f"{FS}/articles?pageSize=300&orderBy=createdAt%20desc" + (f"&pageToken={token}" if token else "")
+        raw = json.loads(get(url))
+        docs += raw.get("documents", [])
+        token = raw.get("nextPageToken")
+        if not token:
+            break
+    return docs
+
+
 def articles(out_dir):
-    raw = json.loads(get(f"{FS}/articles?pageSize=60&orderBy=createdAt%20desc"))
     os.makedirs(os.path.join(out_dir, "img"), exist_ok=True)
     out = []
-    for d in raw.get("documents", []):
+    for d in all_article_docs():
         a = fs_doc(d)
         imgs = []
         if a.get("imageCount"):
@@ -175,6 +186,14 @@ def articles(out_dir):
                     imgs.append(name)
             except Exception as e:  # noqa: BLE001
                 print("images", a["id"], e)
+        if not imgs and a.get("thumb"):
+            try:
+                name = f"img/{a['id']}-t.jpg"
+                with open(os.path.join(out_dir, name), "wb") as fh:
+                    fh.write(base64.b64decode(a["thumb"]))
+                imgs.append(name)
+            except Exception as e:  # noqa: BLE001
+                print("thumb", a["id"], e)
         out.append({
             "id": a["id"], "title": a.get("title", ""), "body": a.get("body", ""),
             "category": a.get("category", ""), "breaking": bool(a.get("breaking")),
@@ -245,10 +264,16 @@ def main():
         print("videos:", e)
         data["videos"] = prev.get("videos", [])
     try:
-        data["articles"] = articles(out_dir)
+        arts = articles(out_dir)
+        data["articles"] = arts[:60]
     except Exception as e:  # noqa: BLE001
         print("articles:", e)
-        data["articles"] = prev.get("articles", [])
+        arts = data["articles"] = prev.get("articles", [])
+    try:
+        import news_pages
+        print("news pages=%d recent=%d" % news_pages.build(out_dir, arts, NOW))
+    except Exception as e:  # noqa: BLE001
+        print("news pages:", e)
     data["site"] = site_info() or prev.get("site", {})
     try:
         data["weather"] = weather()
