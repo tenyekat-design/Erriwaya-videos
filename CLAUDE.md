@@ -69,4 +69,4 @@ Reference (approved 28 Oct 2026): `graphics/2026-10-28-una-students/graphic.js` 
 
 Fixed look: logo top-left; lead caption line and chips navy (no green lead); chips, tags and cards rectangular
 (no rounded pills); green only as accent (side bar, accent words, frame line); AL-Quds font; outro with
-ERRIWAYA handles and the sources line; synthesized music + the clips' own sound, low.
+ERRIWAYA.COM (site icon assets/site-icon.png, from the website branch), the ERRIWAYA handles and the sources line; synthesized music + the clips' own sound, low.

@@ -14,7 +14,7 @@ window.GRAPHIC = {
     { t: 10.6, img: 'trawler-birds.jpg', fit: 'framed', fx: 0.4 },
     { t: 14.8, clip: 'beach-aerial', from: 0, fit: 'framed', tint: 0.5, source: 'لقطات أرشيفية' },
     { t: 18.2, img: 'deck-catch.jpg', fit: 'framed' },
-    { t: 22.4, img: 'kadis.jpg', fit: 'framed', fy: 0.2 },
+    { t: 22.4, img: 'commission-president.jpg', fit: 'framed', fy: 0.3 },
     { t: 29.0, clip: 'ship-crew', from: 0.3, fit: 'framed', source: 'لقطات أرشيفية' },
     { t: 33.2, clip: 'fish-quay', from: 0, fit: 'framed', source: 'لقطات أرشيفية' },
     { t: 35.2, clip: 'quay-workers', from: 0, fit: 'framed', source: 'لقطات أرشيفية' },

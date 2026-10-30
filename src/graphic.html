@@ -59,6 +59,8 @@
   #outro .row { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 30px; }
   #outro .ic { width: 76px; height: 76px; border-radius: 22px; background: #fff; display: flex; align-items: center; justify-content: center; }
   #outro .ic svg { width: 44px; height: 44px; fill: var(--navy); }
+  #outro .ic.site { background: none; overflow: hidden; }
+  #outro .ic.site img { position: static; width: 76px; height: 76px; transform: none; }
   #outro .h { font-family: 'DejaVu Sans', Arial, sans-serif; font-weight: bold; font-size: 54px; letter-spacing: 3px; margin-left: 14px; }
   #outro .srcs { position: absolute; left: 0; right: 0; bottom: 120px; font-size: 34px; color: rgba(255,255,255,.65); }
   #flash { inset: 0; background: #fff; opacity: 0; }
@@ -267,14 +269,16 @@ function drawCard(t) {
 }
 
 let outroBuilt = false;
-function drawOutro(o) {
+async function drawOutro(o) {
   const el = $('outro');
   if (!outroBuilt) {
     outroBuilt = true;
-    const SOCIAL = [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
+    // the website (icon from its favicon) first, then the social handles
+    const SOCIAL = [{ icons: ['site'], handle: 'ERRIWAYA.COM' }, { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
     el.innerHTML = `<img src="../assets/logo-mark.png"><div class="tag">تابعوا الرواية</div><div class="rule"></div><div class="rows">` +
-      SOCIAL.map(r => `<div class="row">${r.icons.map(n => `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('') +
+      SOCIAL.map(r => `<div class="row">${r.icons.map(n => n === 'site' ? '<div class="ic site"><img src="../assets/site-icon.png"></div>' : `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('') +
       `</div><div class="srcs">${R.sources}</div>`;
+    await Promise.all([...el.querySelectorAll('img')].map(i => i.decode()));
   }
   const lg = el.querySelector('img'), q = eout(prog(o, 0, 0.7));
   lg.style.opacity = q;
