@@ -12,6 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    env:
+      UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,6 +61,17 @@ jobs:
           cp $O/app-x86_64-release.apk erriwaya-x86_64.apk
           ls -la *.apk
 
+      - name: Build Play Store bundle
+        if: env.UPLOAD_KEY_PASSWORD != ''
+        env:
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          set -o pipefail
+          python3 android-ci/use_upload_key.py .
+          flutter build appbundle --release --build-number=$((100 + ${{ github.run_number }})) 2>&1 | tee -a build.log
+          cp build/app/outputs/bundle/release/app-release.aab erriwaya-play.aab
+          ls -la erriwaya-play.aab
+
       - name: Report errors
         if: failure()
         run: |
@@ -91,6 +104,8 @@ jobs:
           files: |
             erriwaya.apk
             erriwaya-old-phones.apk
+            erriwaya-play.aab
+          fail_on_unmatched_files: false
           make_latest: true
           body: |
             ملف تثبيت تطبيق الرواية لأندرويد.
