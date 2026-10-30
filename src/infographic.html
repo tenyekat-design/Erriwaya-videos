@@ -13,14 +13,13 @@
     background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg);
     font-family: AlQuds, sans-serif; }
   .abs { position: absolute; }
-  /* the 1080x1350 design; &format=story places it at 90% inside 1080x1920, clear of TikTok's top bar,
-     side buttons (right) and caption (bottom) */
+  /* the 1080x1350 design; &format=story continues it on the same background in 1080x1920, moved down
+     below TikTok's top bar and leaving the bottom free for its caption */
   #frame { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; overflow: hidden; transform-origin: 0 0; }
-  .story #stage { height: 1920px; background: radial-gradient(rgba(255,255,255,.06) 1.4px, transparent 1.6px) 0 0 / 28px 28px, linear-gradient(180deg, #0B1F4B, #142E66); }
-  .story #frame { transform: translate(54px, 250px) scale(.9); box-shadow: 0 30px 80px rgba(0,0,0,.45);
-    background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg); }
-  #kicker { display: none; left: 0; right: 0; top: 150px; text-align: center; color: #fff; font-size: 46px; }
-  #kicker i { display: block; width: 90px; height: 6px; background: var(--acc2); margin: 10px auto 0; }
+  .story #stage { height: 1920px; }
+  .story #frame { transform: translateY(250px); }
+  #kicker { display: none; left: 0; right: 0; top: 120px; text-align: center; color: var(--navy); font-size: 44px; }
+  #kicker i { display: block; width: 90px; height: 6px; background: var(--acc); margin: 8px auto 0; }
   .story #kicker { display: block; }
   .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
   #logo { left: 64px; top: 56px; width: 130px; height: 176px; background: var(--navy);
@@ -152,14 +151,16 @@ function can(color, h) {
     <rect x="6" y="28" width="52" height="28" fill="#fff" opacity=".92"/>
     <path d="M17 42c6-7 15-7 22 0c-7 7-16 7-22 0zM39 42l8-6v12z" fill="${color}"/><circle cx="22" cy="41" r="1.6" fill="#fff"/></svg>`;
 }
-const words = (s, cls = '') => s.split(' ').map(w => `<span class="w ${cls}" data-a="word">${w}</span>`).join('<span class="w"> </span>');
+// tanween goes on the alef (اً): with it on the letter before (ًا) the font breaks the lam-alef ligature
+const fixLa = s => s.replace(/\u064B\u0627/g, '\u0627\u064B');
+const words = (s, cls = '') => fixLa(s).split(' ').map(w => `<span class="w ${cls}" data-a="word">${w}</span>`).join('<span class="w"> </span>');
 const lab = (c, w = 84) => `<span class="lab">${flag(c, w)}<span class="name">${R.names[c]}</span></span>`;
 
 let R;
 const BUILD = {
   title: s => `<div class="photo dim" style="top:0;height:640px"><img id="clipimg"></div>
     <div class="abs" style="left:0;right:0;top:600px;text-align:center" data-a="fade" data-in="0.5">${flag('ma', 108)}<span style="display:inline-block;width:2px;height:60px;background:var(--line);margin:0 26px;vertical-align:middle"></span>${flag('mr', 108)}</div>
-    <div class="tt" style="top:700px">${words('المغرب وموريتانيا..')}<br>${words('من يصدر أسماكًا أكثر')}<br>${words('ومن يجني أموالًا أكثر؟', 'r')}</div>
+    <div class="tt" style="top:700px">${words('المغرب وموريتانيا..')}<br>${words('من يصدر أسماكاً أكثر')}<br>${words('ومن يجني أموالاً أكثر؟', 'r')}</div>
     <div class="sub" style="top:1085px" data-a="fade" data-in="2.0">${R.subtitle}</div>`,
   hbars: s => {
     const max = Math.max(...s.rows.map(r => r.v)), L = W - 112, min = Math.min(...s.rows.map(r => r.v));
@@ -266,6 +267,9 @@ window.renderFrame = async t => {
 (async () => {
   await load(DIR + 'graphic.js');
   R = window.GRAPHIC;
+  // every text of the graphic gets the same tanween fix
+  const fix = o => { for (const k in o) { if (typeof o[k] === 'string') o[k] = fixLa(o[k]); else if (o[k] && typeof o[k] === 'object') fix(o[k]); } };
+  fix(R);
   window.DURATION = R.duration;
   const SOCIAL = [{ icons: ['site'], handle: 'ERRIWAYA.COM' }, { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
   $('foot').innerHTML = SOCIAL.map(r => `<div class="g">${r.icons.map(n => n === 'site' ? '<div class="ic site"><img src="../assets/site-icon.png"></div>' : `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('');

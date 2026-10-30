@@ -4,7 +4,7 @@
 // Countries: mr = Mauritania (navy), ma = Morocco (Erriwaya green). Times in seconds.
 window.GRAPHIC = {
   type: 'infographic',
-  title: 'المغرب وموريتانيا.. من يصدر أسماكًا أكثر ومن يجني أموالًا أكثر؟',
+  title: 'المغرب وموريتانيا.. من يصدر أسماكاً أكثر ومن يجني أموالاً أكثر؟',
   subtitle: 'مقارنة صادرات المنتجات البحرية خلال سنة 2025',
   duration: 46,
   coverAt: 3.4,
