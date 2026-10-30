@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Erriwaya – إنفوجرافيك</title>
-<!-- Animated infographic (1080x1350, no voice-over): light background, navy / Erriwaya green / grey, scenes of charts.
+<!-- Animated infographic (1080x1350, or 1080x1920 with &format=story; no voice-over): light background, navy / Erriwaya green / grey, scenes of charts.
      ?graphic=<folder in graphics/> whose graphic.js has type: 'infographic'. Rendered by tools/render-graphic.js. -->
 <style>
   @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
@@ -13,6 +13,15 @@
     background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg);
     font-family: AlQuds, sans-serif; }
   .abs { position: absolute; }
+  /* the 1080x1350 design; &format=story places it at 90% inside 1080x1920, clear of TikTok's top bar,
+     side buttons (right) and caption (bottom) */
+  #frame { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; overflow: hidden; transform-origin: 0 0; }
+  .story #stage { height: 1920px; background: radial-gradient(rgba(255,255,255,.06) 1.4px, transparent 1.6px) 0 0 / 28px 28px, linear-gradient(180deg, #0B1F4B, #142E66); }
+  .story #frame { transform: translate(54px, 250px) scale(.9); box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg); }
+  #kicker { display: none; left: 0; right: 0; top: 150px; text-align: center; color: #fff; font-size: 46px; }
+  #kicker i { display: block; width: 90px; height: 6px; background: var(--acc2); margin: 10px auto 0; }
+  .story #kicker { display: block; }
   .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
   #logo { left: 64px; top: 56px; width: 130px; height: 176px; background: var(--navy);
     -webkit-mask: url(../assets/logo-mark.png) center / contain no-repeat; mask: url(../assets/logo-mark.png) center / contain no-repeat; }
@@ -92,18 +101,19 @@
 </style>
 </head>
 <body>
-<div id="stage">
+<div id="stage"><div id="kicker" class="abs">إنفوجرافيك<i></i></div><div id="frame">
   <div id="scene" class="abs"></div>
   <div id="logo" class="abs"></div>
   <div id="htitle" class="abs"></div>
   <div id="rule" class="abs"><i></i></div>
   <div id="foot" class="abs"></div>
-</div>
+</div></div>
 <script src="icons.js"></script>
 <script>
 const NAME = new URLSearchParams(location.search).get('graphic');
 const DIR = '../graphics/' + NAME + '/', FRAMES = '../frames/graphic-' + NAME + '/';
 const W = 1080, H = 1350, FPS = 30;
+if (new URLSearchParams(location.search).get('format') === 'story') document.documentElement.classList.add('story');
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, b) => clamp((t - a) / (b - a));

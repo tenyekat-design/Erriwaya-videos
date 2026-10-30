@@ -83,5 +83,7 @@ Scenes: `title` (clip band + flags + 3-line title), `hbars` (horizontal bars fro
 `vbars` (columns from zero with grid lines), `cards` (big per-unit figures with $ and a proportional bar),
 `share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources).
 A chart scene with `img` gets a photo band behind its heading (navy wash, white heading).
+`--format story` gives the 1080x1920 TikTok version: the same design as a 90% card on a navy frame with an
+«إنفوجرافيك» label above it, clear of TikTok's top bar, side buttons and caption (output `-story.mp4`).
 Use only the figures the user gives; check that derived figures (differences, ratios) match before rendering.
 Reference: `graphics/2026-10-30-ma-mr-fish-exports/graphic.js`.
