@@ -72,7 +72,7 @@ async function renderRange(browser, f0, f1, file) {
 // music (tools/make-graphic-music.py) + the clips' own sound, low, while their footage is on screen + whooshes
 function buildAudio(R, file) {
   const music = path.join(FRAMES, 'music.wav');
-  execFileSync('python3', [path.join(ROOT, 'tools', 'make-graphic-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
+  execFileSync('python3', [path.join(ROOT, 'tools', R.music === 'light' ? 'make-infographic-music.py' : 'make-graphic-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
   const ms = s => Math.max(0, Math.round(s * 1000));
   // natural: false mutes the clips (e.g. footage with someone else's narration or music)
   const shots = R.natural === false || !R.shots ? [] : R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);

@@ -1,6 +1,6 @@
 // Infographic (إنفوجرافيك): Morocco vs Mauritania seafood exports in 2025. Figures exactly as given by the user;
 // no other data. Sources: official Mauritanian foreign-trade data 2025, Moroccan sea-fisheries sector data 2025.
-// Countries: mr = Mauritania (navy), ma = Morocco (dark red). Times in seconds.
+// Countries: mr = Mauritania (navy), ma = Morocco (Erriwaya green). Times in seconds.
 window.GRAPHIC = {
   type: 'infographic',
   title: 'المغرب وموريتانيا.. من يصدر أسماكًا أكثر ومن يجني أموالًا أكثر؟',
@@ -28,6 +28,7 @@ window.GRAPHIC = {
   ],
   sources: 'المصادر: البيانات الرسمية للتجارة الخارجية الموريتانية 2025، وبيانات قطاع الصيد البحري المغربي 2025',
   natural: false,
+  music: 'light',  // tools/make-infographic-music.py
   calm: [22.8, 30.0],  // softer under the per-tonne cards
   hits: [5.6, 14.4, 30.0],
   outroHit: 38.2,

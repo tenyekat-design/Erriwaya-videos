@@ -3,34 +3,34 @@
 <head>
 <meta charset="utf-8">
 <title>Erriwaya – إنفوجرافيك</title>
-<!-- Animated infographic (1080x1350, no voice-over): light background, navy / dark red / grey, scenes of charts.
+<!-- Animated infographic (1080x1350, no voice-over): light background, navy / Erriwaya green / grey, scenes of charts.
      ?graphic=<folder in graphics/> whose graphic.js has type: 'infographic'. Rendered by tools/render-graphic.js. -->
 <style>
   @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
-  :root { --navy: #0B1F4B; --red: #8E1B2C; --grey: #6B7385; --line: #DCD8CF; --bg: #F5F3EE; --card: #FFFFFF; }
+  :root { --navy: #0B1F4B; --acc: #0A8F65; --acc2: #10B981; --grey: #6B7385; --line: #DCD8CF; --bg: #F5F3EE; --card: #FFFFFF; }
   html, body { margin: 0; background: var(--bg); }
   #stage { position: relative; width: 1080px; height: 1350px; overflow: hidden; color: var(--navy);
     background: radial-gradient(rgba(11,31,75,.07) 1.4px, transparent 1.6px) 0 0 / 28px 28px, var(--bg);
     font-family: AlQuds, sans-serif; }
   .abs { position: absolute; }
   .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
-  #logo { left: 56px; top: 40px; width: 80px; height: 108px; background: var(--navy);
+  #logo { left: 64px; top: 56px; width: 130px; height: 176px; background: var(--navy);
     -webkit-mask: url(../assets/logo-mark.png) center / contain no-repeat; mask: url(../assets/logo-mark.png) center / contain no-repeat; }
-  #htitle { right: 56px; top: 42px; width: 820px; text-align: right; }
-  #htitle .t { font-size: 37px; line-height: 1.32; }
-  #htitle .s { font-size: 26px; color: var(--grey); margin-top: 4px; }
-  #rule { left: 56px; right: 56px; top: 200px; height: 2px; background: var(--line); }
-  #rule i { position: absolute; right: 0; top: -2px; height: 6px; width: 120px; background: var(--red); }
+  #htitle { right: 64px; top: 66px; width: 760px; text-align: right; }
+  #htitle .t { font-size: 40px; line-height: 1.32; }
+  #htitle .s { font-size: 28px; color: var(--grey); margin-top: 4px; }
+  #rule { left: 56px; right: 56px; top: 262px; height: 2px; background: var(--line); }
+  #rule i { position: absolute; right: 0; top: -2px; height: 6px; width: 120px; background: var(--acc); }
   #scene { inset: 0; }
   /* section heading */
-  .hd { position: absolute; right: 56px; top: 228px; display: flex; align-items: center; gap: 18px; }
-  .hd .n { width: 62px; height: 62px; background: var(--red); color: #fff; font-size: 40px; display: flex; align-items: center; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
+  .hd { position: absolute; right: 56px; top: 282px; display: flex; align-items: center; gap: 18px; }
+  .hd .n { width: 62px; height: 62px; background: var(--acc); color: #fff; font-size: 40px; display: flex; align-items: center; justify-content: center; padding-bottom: 6px; box-sizing: border-box; }
   .hd .h { font-size: 60px; }
-  .unit { position: absolute; right: 56px; top: 336px; font-size: 28px; color: var(--grey); }
+  .unit { position: absolute; right: 56px; top: 390px; font-size: 28px; color: var(--grey); }
   .flag { display: inline-block; vertical-align: middle; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
   .name { font-size: 46px; vertical-align: middle; margin-right: 16px; }
-  .note { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; background: var(--red); color: #fff;
-    font-size: 46px; padding: 10px 40px 22px; }
+  .note { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; background: var(--acc); color: #fff;
+    font-size: 42px; padding: 6px 36px 18px; }
   .note.navy { background: var(--navy); }
   /* horizontal bars */
   .row { position: absolute; left: 56px; right: 56px; }
@@ -38,24 +38,24 @@
   .row .val { position: absolute; left: 0; top: -14px; font-size: 84px; line-height: 1; }
   .row .val small { font-size: 36px; margin-right: 10px; }
   .row .bar { position: absolute; right: 0; top: 96px; height: 70px; width: 0; }
-  .row .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--red) 0 10px, #B4384A 10px 20px); }
+  .row .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, var(--acc) 0 10px, var(--acc2) 10px 20px); }
   .axis { position: absolute; left: 56px; right: 56px; height: 2px; background: var(--grey); opacity: .5; }
   .tick { position: absolute; font-size: 26px; color: var(--grey); transform: translateX(50%); }
   /* vertical bars */
-  .col { position: absolute; bottom: 350px; width: 230px; height: 0; }
+  .col { position: absolute; bottom: 334px; width: 230px; height: 0; }
   .cv { position: absolute; width: 330px; text-align: center; }
   .cv b { display: block; font-size: 104px; line-height: 1; font-weight: normal; }
   .cv span { font-size: 32px; color: var(--grey); }
-  .cl { position: absolute; width: 330px; text-align: center; top: 1018px; }
+  .cl { position: absolute; width: 330px; text-align: center; top: 1030px; }
   .cl .name { font-size: 40px; }
   .grid { position: absolute; left: 56px; right: 56px; height: 0; border-top: 2px dashed var(--line); }
   .grid span { position: absolute; left: 0; top: -40px; font-size: 26px; color: var(--grey); }
-  .base { position: absolute; left: 56px; right: 56px; top: 1000px; height: 3px; background: var(--navy); }
+  .base { position: absolute; left: 56px; right: 56px; top: 1016px; height: 3px; background: var(--navy); }
   /* cards */
-  .card { position: absolute; top: 400px; width: 452px; height: 680px; background: var(--card); box-shadow: 0 14px 40px rgba(11,31,75,.12);
+  .card { position: absolute; top: 452px; width: 452px; height: 650px; background: var(--card); box-shadow: 0 14px 40px rgba(11,31,75,.12);
     text-align: center; box-sizing: border-box; padding-top: 44px; }
   .card .band { position: absolute; left: 0; right: 0; top: 0; height: 12px; }
-  .card .dol { width: 128px; height: 128px; border-radius: 50%; margin: 34px auto 10px; color: #fff; font: bold 84px/128px Arial, sans-serif; }
+  .card .dol { width: 120px; height: 120px; border-radius: 50%; margin: 26px auto 6px; color: #fff; font: bold 84px/128px Arial, sans-serif; }
   .card .ap { font-size: 34px; color: var(--grey); }
   .card .big { font-size: 128px; line-height: 1.05; }
   .card .lb { font-size: 38px; }
@@ -71,16 +71,18 @@
   .srcs { position: absolute; left: 70px; right: 70px; text-align: center; font-size: 24px; color: var(--grey); line-height: 1.5; }
   /* title */
   .tt { position: absolute; left: 40px; right: 40px; text-align: center; font-size: 80px; line-height: 1.28; }
-  .tt .r { color: var(--red); }
+  .tt .r { color: var(--acc); }
   .sub { position: absolute; left: 0; right: 0; text-align: center; font-size: 38px; color: var(--grey); }
   .w { display: inline-block; white-space: pre; }
   /* footer */
   #foot { left: 56px; right: 56px; top: 1250px; height: 100px; border-top: 2px solid var(--line); display: flex; justify-content: center;
-    align-items: center; gap: 46px; direction: ltr; }
+    align-items: center; gap: 26px; direction: ltr; }
   #foot .g { display: flex; align-items: center; gap: 10px; }
-  #foot .ic { width: 46px; height: 46px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-  #foot .ic svg { width: 26px; height: 26px; fill: #fff; }
-  #foot .h { font: bold 30px 'DejaVu Sans', Arial, sans-serif; letter-spacing: 2px; margin-left: 6px; }
+  #foot .ic { width: 42px; height: 42px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  #foot .ic svg { width: 24px; height: 24px; fill: #fff; }
+  #foot .ic.site { background: none; overflow: hidden; }
+  #foot .ic.site img { width: 42px; height: 42px; }
+  #foot .h { font: bold 25px 'DejaVu Sans', Arial, sans-serif; letter-spacing: 1.5px; margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -101,7 +103,8 @@ const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, b) => clamp((t - a) / (b - a));
 const eout = x => 1 - Math.pow(1 - x, 3);
 const eio = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-const COLOR = { mr: 'var(--navy)', ma: 'var(--red)' };
+// Erriwaya colours: Mauritania navy, Morocco green (the flags tell them apart)
+const COLOR = { mr: 'var(--navy)', ma: 'var(--acc)' };
 // thousands separators, fixed decimals
 const fmt = (x, d = 0) => { const [i, f] = x.toFixed(d).split('.'); return i.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (f ? '.' + f : ''); };
 const decs = v => (String(v).split('.')[1] || '').length;
@@ -144,19 +147,19 @@ const BUILD = {
     <div class="sub" style="top:1085px" data-a="fade" data-in="2.0">${R.subtitle}</div>`,
   hbars: s => {
     const max = Math.max(...s.rows.map(r => r.v)), L = W - 112, min = Math.min(...s.rows.map(r => r.v));
-    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${410 + i * 250}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
+    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${470 + i * 240}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
         <div class="val" style="color:${COLOR[r.c]}"><span class="ltr" data-a="count" data-v="${r.v}" data-in="${0.5 + 0.25 * i}">0</span><small>${r.label}</small></div>
         <div class="bar" style="background:${COLOR[r.c]}" data-a="growx" data-w="${L * r.v / max}" data-in="${0.5 + 0.25 * i}">${s.diff && r.v === max ? `<i style="width:${L * (max - min) / max}px" data-a="fade" data-in="2.1"></i>` : ''}</div></div>`).join('') +
-      `<div class="note" style="top:930px" data-a="pop" data-in="2.4">${s.note}</div>`;
+      `<div class="note" style="top:975px" data-a="pop" data-in="2.4">${s.note}</div>`;
   },
   vbars: s => {
-    const max = Math.max(...s.cols.map(c => c.v)), Hm = 430, base = 1000, xs = [W - 56 - 330 + 50, 56 + 50];
+    const max = Math.max(...s.cols.map(c => c.v)), Hm = 390, base = 1016, xs = [W - 56 - 330 + 50, 56 + 50];
     return head(s) + s.grid.map(g => `<div class="grid" style="top:${base - Hm * g / max}px" data-a="fade" data-in="0.3"><span class="ltr">${g}</span></div>`).join('') +
       s.cols.map((c, i) => { const h = Hm * c.v / max, x = xs[i];
         return `<div class="col" style="left:${x + 50}px;background:${COLOR[c.c]}" data-a="growy" data-h="${h}" data-in="${0.5 + 0.3 * i}"></div>
           <div class="cv" style="left:${x}px;top:${base - h - 172}px;color:${COLOR[c.c]}" data-a="fade" data-in="${1.2 + 0.3 * i}"><b class="ltr" data-a="count" data-v="${c.v}" data-in="${0.5 + 0.3 * i}">0</b><span>${c.label}</span></div>
           <div class="cl" style="left:${x}px" data-a="fade" data-in="${0.3 + 0.3 * i}">${flag(c.c, 72)}<span class="name">${R.names[c.c]}</span></div>`; }).join('') +
-      `<div class="base"></div><div class="note" style="top:1120px" data-a="pop" data-in="2.4">${s.note}</div>`;
+      `<div class="base"></div><div class="note" style="top:1116px" data-a="pop" data-in="2.4">${s.note}</div>`;
   },
   cards: s => {
     const max = Math.max(...s.cards.map(c => c.v));
@@ -168,17 +171,17 @@ const BUILD = {
   },
   share: s => {
     const L = W - 112;
-    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${410 + i * 230}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
+    return head(s) + s.rows.map((r, i) => `<div class="row" style="top:${470 + i * 220}px" data-a="fade" data-in="${0.3 + 0.25 * i}">${lab(r.c)}
         <div class="val" style="color:${COLOR[r.c]};top:-26px">${can(COLOR[r.c], 84)}<span style="font-size:36px;margin:0 12px">${r.approx ? 'نحو' : ''}</span><span class="ltr"><span data-a="count" data-v="${r.v}" data-in="${0.5 + 0.25 * i}">0</span>%</span></div>
         <div class="bar" style="background:${COLOR[r.c]}" data-a="growx" data-w="${L * r.v / s.max}" data-in="${0.5 + 0.25 * i}"></div></div>`).join('') +
-      `<div class="axis" style="top:870px"></div>` + s.ticks.map(k => `<div class="tick ltr" style="top:884px;right:${56 + L * k / s.max}px">${k}%</div>`).join('') +
-      `<div class="note" style="top:985px" data-a="pop" data-in="2.4">${s.note}</div>`;
+      `<div class="axis" style="top:910px"></div>` + s.ticks.map(k => `<div class="tick ltr" style="top:924px;right:${56 + L * k / s.max}px">${k}%</div>`).join('') +
+      `<div class="note" style="top:1030px" data-a="pop" data-in="2.4">${s.note}</div>`;
   },
-  conclusion: s => `<div class="photo" style="top:210px;height:440px"><img id="photo" src="${DIR}img/${s.img}"></div>
-    <div class="big2" style="top:640px;color:var(--navy)">${flag('mr', 72)} ${words(s.lines[0])}</div>
-    <div class="big2" style="top:745px;color:var(--red)">${flag('ma', 72)} ${words(s.lines[1])}</div>
-    <div class="small" style="top:905px" data-a="fade" data-in="1.8">${s.small}</div>
-    <div class="srcs" style="top:1050px" data-a="fade" data-in="2.3">${R.sources}</div>`,
+  conclusion: s => `<div class="photo" style="top:270px;height:410px"><img id="photo" src="${DIR}img/${s.img}"></div>
+    <div class="big2" style="top:680px;color:var(--navy)">${flag('mr', 72)} ${words(s.lines[0])}</div>
+    <div class="big2" style="top:785px;color:var(--acc)">${flag('ma', 72)} ${words(s.lines[1])}</div>
+    <div class="small" style="top:940px" data-a="fade" data-in="1.8">${s.small}</div>
+    <div class="srcs" style="top:1085px" data-a="fade" data-in="2.3">${R.sources}</div>`,
 };
 function head(s) {
   return `<div class="hd" data-a="fade" data-in="0"><div class="n">${s.n}</div><div class="h">${s.heading}</div></div><div class="unit" data-a="fade" data-in="0.15">${s.unit}</div>`;
@@ -213,7 +216,7 @@ window.renderFrame = async t => {
   el.style.opacity = 1 - out;
   // header title from the first chart on
   const ht = $('htitle');
-  if (!ht.innerHTML) ht.innerHTML = `<div class="t">${R.title}</div><div class="s">${R.subtitle}</div>`;
+  if (!ht.innerHTML) ht.innerHTML = `<div class="t">${R.title.replace('.. ', '..<br>')}</div><div class="s">${R.subtitle}</div>`;
   const hq = s.type === 'title' ? prog(t, end - 0.35, end) : 1;
   ht.style.opacity = hq;
   // animated elements
@@ -236,7 +239,7 @@ window.renderFrame = async t => {
     cover(ci, wh, W, 640, 1.02 + 0.06 * dt / (end - s.t));
   }
   const ph = $('photo');
-  if (ph) cover(ph, await natural(ph.src), W, 440, 1.03 + 0.07 * prog(dt, 0, end - s.t), 0.5);
+  if (ph) cover(ph, await natural(ph.src), W, 410, 1.03 + 0.07 * prog(dt, 0, end - s.t), 0.5);
   // white logo over the opening footage, navy elsewhere; the header rule waits for the charts
   $('logo').style.background = s.type === 'title' && dt < end - s.t - 0.35 ? '#fff' : 'var(--navy)';
   $('rule').style.opacity = hq;
@@ -246,8 +249,9 @@ window.renderFrame = async t => {
   await load(DIR + 'graphic.js');
   R = window.GRAPHIC;
   window.DURATION = R.duration;
-  const SOCIAL = [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
-  $('foot').innerHTML = SOCIAL.map(r => `<div class="g">${r.icons.map(n => `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('');
+  const SOCIAL = [{ icons: ['site'], handle: 'ERRIWAYA.COM' }, { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }];
+  $('foot').innerHTML = SOCIAL.map(r => `<div class="g">${r.icons.map(n => n === 'site' ? '<div class="ic site"><img src="../assets/site-icon.png"></div>' : `<div class="ic"><svg viewBox="0 0 24 24"><path d="${window.ICONS[n]}"/></svg></div>`).join('')}<span class="h">${r.handle}</span></div>`).join('');
+  await Promise.all([...$('foot').querySelectorAll('img')].map(i => i.decode()));
   await document.fonts.load('60px AlQuds', 'العربية');
   window.READY = true;
 })();

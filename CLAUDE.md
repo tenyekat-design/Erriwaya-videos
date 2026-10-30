@@ -75,8 +75,10 @@ ERRIWAYA.COM (site icon assets/site-icon.png, from the website branch), the ERRI
 
 A graphic with `type: 'infographic'` in `graphic.js` renders `src/infographic.html` (same command:
 `node tools/render-graphic.js --graphic <folder>`, output `output/erriwaya-infographic-<folder>.mp4` + cover).
-Light background with a faint dot grid, navy / dark red / grey, navy logo top-left (white over the opening photo),
-AL-Quds for titles and figures, SVG flags, footer with the ERRIWAYA and ERRIWAYA.MR handles.
+Light background with a faint dot grid, Erriwaya colours (navy, green #0A8F65, grey), a large logo top-left inside
+the safe area (130x176 at 64,56; white over the opening photo), AL-Quds for titles and figures, SVG flags, footer with
+ERRIWAYA.COM (site icon) and the ERRIWAYA / ERRIWAYA.MR handles. `music: 'light'` uses tools/make-infographic-music.py
+(110 BPM plucks, claps, no booms) instead of the news-style bed.
 Scenes: `title` (clip band + flags + 3-line title), `hbars` (horizontal bars from zero, `diff` paints the gap red),
 `vbars` (columns from zero with grid lines), `cards` (big per-unit figures with $ and a proportional bar),
 `share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources).
