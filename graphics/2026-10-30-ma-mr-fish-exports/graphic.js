@@ -6,7 +6,7 @@ window.GRAPHIC = {
   type: 'infographic',
   title: 'المغرب وموريتانيا.. من يصدر أسماكاً أكثر ومن يجني أموالاً أكثر؟',
   subtitle: 'مقارنة صادرات المنتجات البحرية خلال سنة 2025',
-  duration: 46,
+  duration: 48.8,
   coverAt: 3.4,
   names: { mr: 'موريتانيا', ma: 'المغرب' },
   scenes: [
@@ -26,11 +26,12 @@ window.GRAPHIC = {
     { t: 38.2, type: 'conclusion', img: 'processing-hall.jpg', fy: 0.45,
       lines: ['موريتانيا تصدر كمية أكبر..', 'والمغرب يجني عائدات أعلى'],
       small: 'الأرقام تعبر عن قيمة الصادرات وليس الأرباح الصافية أو إيرادات خزينة الدولة.' },
+    { t: 43.6, type: 'outro' },  // logo grows to the centre, website and handles one by one
   ],
   sources: 'المصادر: البيانات الرسمية للتجارة الخارجية الموريتانية 2025، وبيانات قطاع الصيد البحري المغربي 2025',
   natural: false,
   music: 'light',  // tools/make-infographic-music.py
   calm: [22.8, 30.0],  // softer under the per-tonne cards
   hits: [5.6, 14.4, 30.0],
-  outroHit: 38.2,
+  outroHit: 43.6,
 };

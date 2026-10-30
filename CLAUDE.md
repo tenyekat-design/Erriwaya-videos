@@ -81,7 +81,9 @@ ERRIWAYA.COM (site icon) and the ERRIWAYA / ERRIWAYA.MR handles. `music: 'light'
 (110 BPM plucks, claps, no booms) instead of the news-style bed.
 Scenes: `title` (clip band + flags + 3-line title), `hbars` (horizontal bars from zero, `diff` paints the gap red),
 `vbars` (columns from zero with grid lines), `cards` (big per-unit figures with $ and a proportional bar),
-`share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources).
+`share` (percent bars on a stated axis with can icons), `conclusion` (photo, two-line takeaway, caveat, sources),
+`outro` (~5 s: the logo grows from the header to the centre, then ERRIWAYA.COM and the handles appear one by one;
+the footer icons give way; put `outroHit` on it).
 A chart scene with `img` gets a photo band behind its heading (navy wash, white heading).
 `--format story` gives the 1080x1920 TikTok version: the same design continued on the same light background
 (no frame), moved below TikTok's top bar under an «إنفوجرافيك» label, bottom left free for the caption (`-story.mp4`).
