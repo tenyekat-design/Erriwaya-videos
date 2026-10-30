@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الرواية – تصميم ترويجي للموقع</title>
+<style>
+/* Promotional stills for the Erriwaya website: ?format=feed (1080x1350), story (1080x1920), cover (1640x624).
+   Rendered by render.js; the site screenshots in img/ are of the live site. */
+/* Al Quds only for Arabic, digits, Latin letters and safe punctuation (it draws : + [ ] # * « » wrong) */
+@font-face { font-family: AlQuds; src: url(../../assets/fonts/al-quds.otf) format('opentype');
+  unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0, U+00B0,
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015, U+2212; }
+:root { --brand: #004A49; --deep: #00302F; --on: #F2F7F6; --mint: #6CC5C0; --gold: #FFC93C }
+* { box-sizing: border-box; margin: 0 }
+html, body { width: 100vw; height: 100vh; overflow: hidden }
+body { position: relative; font-family: AlQuds, "Segoe UI", Tahoma, sans-serif; color: var(--on);
+  background: radial-gradient(90% 70% at 30% 45%, #00706D 0%, var(--brand) 42%, var(--deep) 100%) }
+.abs { position: absolute }
+.logo { background: currentColor; -webkit-mask: url(img/logo.png) center / contain no-repeat; mask: url(img/logo.png) center / contain no-repeat; aspect-ratio: 237 / 320 }
+/* tiles as in the video intro, and a large faint logo behind everything */
+.tile { position: absolute; border-radius: 6px; background: rgb(255 255 255 / .06) }
+.ghost { position: absolute; color: rgb(255 255 255 / .045) }
+/* text */
+.head { display: flex; align-items: center; gap: 18px }
+.head .logo { color: #fff }
+.head span { font-size: var(--name); line-height: 1.1 }
+.kick { display: inline-flex; align-items: center; gap: 10px; line-height: 1.2; background: var(--mint); color: var(--deep); border-radius: 999px; font-size: var(--kick); padding: .35em .9em .2em }
+.kick i { width: .55em; height: .55em; border-radius: 50%; background: #C8102E; box-shadow: 0 0 0 .18em rgb(200 16 46 / .25) }
+h1 { font-weight: 400; font-size: var(--h1); line-height: 1.05; letter-spacing: -.01em }
+h1 em { font-style: normal; color: var(--mint) }
+.sub { font-size: var(--sub); line-height: 1.45; opacity: .9 }
+/* devices */
+.laptop .lid { background: #141B1A; border-radius: 18px 18px 0 0; padding: 14px 14px 20px; box-shadow: 0 30px 70px rgb(0 0 0 / .45) }
+.laptop .scr { overflow: hidden; border-radius: 4px; aspect-ratio: 16 / 10; background: #fff }
+.laptop .scr img { width: 100%; display: block }
+.laptop .base { height: 18px; margin: 0 -7%; background: linear-gradient(#DCE3E2, #95A3A1); border-radius: 0 0 26px 26px }
+.laptop .base::after { content: ""; display: block; width: 16%; height: 45%; margin: 0 auto; background: #B3BEBC; border-radius: 0 0 8px 8px }
+.phone { background: #0E1514; border-radius: 46px; padding: 11px; box-shadow: 0 30px 70px rgb(0 0 0 / .5), inset 0 0 0 2px #2A3534 }
+.phone .scr { position: relative; overflow: hidden; border-radius: 36px; aspect-ratio: 400 / 860; background: #fff }
+.phone .scr img { width: 100%; display: block }
+.phone .scr::before { content: ""; position: absolute; top: 10px; left: 50%; width: 30%; height: 22px; transform: translateX(-50%); background: #0E1514; border-radius: 999px }
+/* features */
+.feats { display: flex; flex-wrap: wrap; gap: 12px }
+.feat { display: inline-flex; align-items: center; gap: 10px; background: rgb(255 255 255 / .09); box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .16);
+  border-radius: 999px; padding: .55em 1em .4em; font-size: var(--feat); line-height: 1.2; white-space: nowrap }
+.feat svg { width: 1.15em; height: 1.15em; fill: none; stroke: var(--mint); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round }
+.feat.br svg { stroke: #FF6B7F }
+/* footer */
+.url { display: inline-block; direction: ltr; background: #fff; color: var(--brand); border-radius: 999px; font-size: var(--url); line-height: 1.2; padding: .34em 1.1em .24em; box-shadow: 0 12px 30px rgb(0 0 0 / .3) }
+.soc { display: flex; align-items: center; gap: 12px }
+.soc i { width: var(--soc); height: var(--soc); border-radius: 50%; border: 2px solid rgb(255 255 255 / .35); display: grid; place-items: center }
+.soc svg { width: 46%; height: 46%; fill: currentColor }
+.handles { font-size: var(--hand); opacity: .85; line-height: 1.5 }
+.handles bdi { letter-spacing: .03em }
+
+/* ── feed 1080x1350 ── */
+.feed { --name: 34px; --kick: 30px; --h1: 128px; --sub: 34px; --feat: 23px; --url: 40px; --soc: 52px; --hand: 21px }
+.feed .head { top: 56px; right: 64px } .feed .head .logo { height: 86px }
+.feed .kick { top: 190px; right: 64px }
+.feed h1 { top: 258px; right: 64px }
+.feed .sub { top: 410px; right: 64px; width: 960px }
+.feed .laptop { top: 500px; left: 250px; width: 720px }
+.feed .phone { top: 572px; left: 64px; width: 220px }
+.feed .feats { top: 1030px; right: 40px; left: 40px; justify-content: center; gap: 10px }
+.feed .feat:nth-child(4), .story .feat:nth-child(4) { display: none }
+.feed .foot { top: 1172px; right: 64px; left: 64px; display: flex; align-items: center; justify-content: space-between }
+.feed .handles { bottom: 30px; right: 0; left: 0; text-align: center }
+
+/* ── story 1080x1920 (text and address kept out of the top and bottom 250 px used by the apps) ── */
+.story { --name: 38px; --kick: 34px; --h1: 150px; --sub: 40px; --feat: 29px; --url: 50px; --soc: 66px; --hand: 26px }
+.story .head { top: 130px; right: 70px } .story .head .logo { height: 100px }
+.story .kick { top: 280px; right: 70px }
+.story h1 { top: 352px; right: 70px }
+.story .sub { top: 530px; right: 70px; width: 940px }
+.story .laptop { top: 690px; left: 150px; width: 860px }
+.story .phone { top: 800px; left: 50px; width: 270px }
+.story .feats { top: 1385px; right: 60px; left: 60px; justify-content: center; gap: 14px }
+.story .foot { top: 1560px; right: 70px; left: 70px; display: flex; align-items: center; justify-content: center; gap: 30px }
+.story .handles { top: 1675px; right: 0; left: 0; text-align: center }
+
+/* ── cover 1640x624 (Facebook): text on the right, devices on the left; corners kept clear ── */
+.cover { --name: 26px; --kick: 22px; --h1: 92px; --sub: 26px; --feat: 20px; --url: 30px; --soc: 42px }
+.cover .head { top: 48px; right: 80px } .cover .head .logo { height: 66px }
+.cover .kick { top: 148px; right: 80px }
+.cover h1 { top: 196px; right: 80px }
+.cover .sub { top: 312px; right: 80px; width: 720px }
+.cover .feats { top: 380px; right: 80px; width: 760px }
+.cover .feat:nth-child(n+4) { display: none }
+.cover .foot { top: 470px; right: 80px; display: flex; align-items: center; gap: 22px }
+.cover .laptop { top: 70px; left: 250px; width: 620px }
+.cover .phone { top: 150px; left: 150px; width: 190px; border-radius: 34px; padding: 8px }
+.cover .phone .scr { border-radius: 27px }
+</style>
+</head>
+<body>
+<div id="tiles"></div>
+<div class="ghost logo" id="ghost"></div>
+
+<div class="abs head"><div class="logo"></div><span>شبكة الرواية الإعلامية</span></div>
+<div class="abs kick"><i></i>انطلق رسمياً</div>
+<h1 class="abs">موقعنا <em>الجديد</em></h1>
+<p class="abs sub">أخبار موريتانيا والمغرب العربي والساحل، لحظة بلحظة</p>
+
+<div class="abs laptop"><div class="lid"><div class="scr"><img src="img/desk.jpg"></div></div><div class="base"></div></div>
+<div class="abs phone"><div class="scr"><img src="img/mobile.jpg"></div></div>
+
+<div class="abs feats">
+  <span class="feat br"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>العاجل فور وقوعه</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>بوابة لكل بلد</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></svg>الموجز والتقارير والتحقيقات</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z"/></svg>الفيديو</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><path d="M8.5 3v1.5M3 8.5h1.5M4.6 4.6l1 1M12.4 4.6l-1 1"/><path d="M5.6 10.6A3.5 3.5 0 0 1 12 7.2"/><path d="M8 20h9a3.5 3.5 0 0 0 .3-7 4.8 4.8 0 0 0-9.2 1.2A2.9 2.9 0 0 0 8 20z"/></svg>طقس العواصم وأوقاتها</span>
+</div>
+
+<div class="abs foot">
+  <span class="url" id="url"></span>
+  <div class="soc" id="soc"></div>
+</div>
+<div class="abs handles">فيسبوك وتيك توك ويوتيوب <bdi>ERRIWAYA</bdi> · إنستغرام <bdi>ERRIWAYA.MR</bdi></div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const FORMAT = q.get('format') || 'feed';
+document.body.className = FORMAT;
+document.getElementById('url').textContent = q.get('url') || 'erriwaya.com';
+// the cover has no room for the handles line
+if (FORMAT === 'cover') document.querySelector('.handles').remove();
+// Font Awesome Free 6.5.2 brands (CC BY 4.0), as on the website
+const BRAND = {
+  facebook: ['0 0 320 512', 'M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'],
+  tiktok: ['0 0 448 512', 'M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z'],
+  youtube: ['0 0 576 512', 'M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'],
+  instagram: ['0 0 448 512', 'M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'],
+};
+document.getElementById('soc').innerHTML = ['facebook', 'tiktok', 'youtube', 'instagram'].map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('');
+// deterministic tiles, denser away from the text
+const W = innerWidth, H = innerHeight, rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+document.getElementById('tiles').innerHTML = Array.from({ length: 46 }, (_, i) => {
+  const s = 10 + rnd(i) * 46;
+  return `<div class="tile" style="width:${s}px;height:${s}px;left:${rnd(i + 50) * W * .6}px;top:${rnd(i + 99) * H}px;opacity:${.3 + rnd(i + 7) * .7};transform:rotate(${(rnd(i + 3) - .5) * 30}deg)"></div>`;
+}).join('');
+const g = document.getElementById('ghost'), gh = H * (FORMAT === 'cover' ? 1.3 : .75);
+Object.assign(g.style, { height: gh + 'px', width: gh * 237 / 320 + 'px', left: -gh * .12 + 'px', top: H * (FORMAT === 'cover' ? -.1 : .05) + 'px' });
+Promise.all([document.fonts.load('40px AlQuds'), ...[...document.images].map(i => i.decode().catch(() => {}))]).then(() => { window.READY = true; });
+</script>
+</body>
+</html>
