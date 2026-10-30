@@ -3,7 +3,7 @@
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students              -> output/erriwaya-graphic-<graphic>.mp4 (+ -cover.jpg)
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
 // type: 'infographic' in graphic.js renders src/infographic.html instead (animated charts, 1080x1350;
-// --format story for the 1080x1920 TikTok version, -story.mp4).
+// --format story for the 1080x1920 TikTok version, -story.mp4; --format youtube for 1920x1080, -youtube.mp4).
 // Clip frames (fit inside 1080x1920, aspect kept) are extracted once to frames/graphic-<graphic>/<clip>/ (git-ignored).
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -25,11 +25,13 @@ function loadGraphic() {
   return window.GRAPHIC;
 }
 const INFO = loadGraphic().type === 'infographic';
-const STORY = INFO && args.format === 'story';  // infographics are 1080x1350 unless --format story
-const FEED = (args.format === 'feed' || INFO) && !STORY, HT = FEED ? 1350 : 1920;
+const STORY = INFO && args.format === 'story';  // infographics are 1080x1350 unless --format story / youtube
+const YT = INFO && args.format === 'youtube';
+const FEED = (args.format === 'feed' || INFO) && !STORY && !YT, HT = YT ? 1080 : FEED ? 1350 : 1920, WD = YT ? 1920 : 1080;
+const SFX = STORY ? '-story' : YT ? '-youtube' : '';
 const PREFIX = INFO ? 'erriwaya-infographic-' : 'erriwaya-graphic-';
-const OUT = path.join(ROOT, 'output', `${PREFIX}${NAME}${FEED && !INFO ? '-feed' : ''}${STORY ? '-story' : ''}.mp4`);
-const PAGE = 'file://' + path.join(ROOT, 'src', INFO ? 'infographic.html' : 'graphic.html') + '?graphic=' + encodeURIComponent(NAME) + (FEED ? '&format=feed' : '') + (STORY ? '&format=story' : '');
+const OUT = path.join(ROOT, 'output', `${PREFIX}${NAME}${FEED && !INFO ? '-feed' : ''}${SFX}.mp4`);
+const PAGE = 'file://' + path.join(ROOT, 'src', INFO ? 'infographic.html' : 'graphic.html') + '?graphic=' + encodeURIComponent(NAME) + (FEED ? '&format=feed' : '') + (STORY || YT ? '&format=' + args.format : '');
 const FRAMES = path.join(ROOT, 'frames', 'graphic-' + NAME);
 
 function extractClips() {
@@ -45,7 +47,7 @@ function extractClips() {
 }
 
 async function openPage(browser) {
-  const page = await browser.newPage({ viewport: { width: 1080, height: HT } });
+  const page = await browser.newPage({ viewport: { width: WD, height: HT } });
   page.on('pageerror', e => { console.error('page error:', e.message); process.exit(1); });
   await page.goto(PAGE);
   await page.waitForFunction(() => window.READY === true, null, { timeout: 60000 });
@@ -53,7 +55,7 @@ async function openPage(browser) {
 }
 async function grab(page, t, type = 'jpeg') {
   await page.evaluate(t => window.renderFrame(t), t);
-  return page.screenshot({ type, ...(type === 'jpeg' ? { quality: 92 } : {}), clip: { x: 0, y: 0, width: 1080, height: HT } });
+  return page.screenshot({ type, ...(type === 'jpeg' ? { quality: 92 } : {}), clip: { x: 0, y: 0, width: WD, height: HT } });
 }
 
 async function renderRange(browser, f0, f1, file) {
@@ -113,7 +115,7 @@ function buildAudio(R, file) {
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
     const a = w * per, b = Math.min(F, a + per);
     if (a >= b) return null;
-    parts[w] = path.join(FRAMES, `part${w}${FEED ? '-feed' : ''}${STORY ? '-story' : ''}.mp4`);
+    parts[w] = path.join(FRAMES, `part${w}${FEED ? '-feed' : ''}${SFX}.mp4`);
     return renderRange(browser, a, b, parts[w]);
   }));
   // cover: the hook once its line has settled
@@ -122,7 +124,7 @@ function buildAudio(R, file) {
   fs.writeFileSync(cover, await grab(page, +(args.coverAt || R.coverAt || 2.0)));
   await browser.close();
   fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
-  const video = path.join(FRAMES, FEED ? 'video-feed.mp4' : STORY ? 'video-story.mp4' : 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
+  const video = path.join(FRAMES, FEED ? 'video-feed.mp4' : SFX ? `video${SFX}.mp4` : 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(FRAMES, 'list.txt'), '-c', 'copy', video]);
   buildAudio(R, audio);
   fs.mkdirSync(path.dirname(OUT), { recursive: true });

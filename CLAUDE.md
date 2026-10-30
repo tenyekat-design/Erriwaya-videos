@@ -87,6 +87,8 @@ the footer icons give way; put `outroHit` on it).
 A chart scene with `img` gets a photo band behind its heading (navy wash, white heading).
 `--format story` gives the 1080x1920 TikTok version: the same design continued on the same light background
 (no frame), moved below TikTok's top bar under an «إنفوجرافيك» label, bottom left free for the caption (`-story.mp4`).
+`--format youtube` gives 1920x1080: the design at 80% on the right, the scene's photo full height on the left;
+in the outro the photo fades and the design slides to the centre (`-youtube.mp4`).
 Write tanween on the alef (أموالاً, not أموالًا): AL-Quds breaks the lam-alef when it sits on the lam;
 the page also fixes this in every text of graphic.js.
 Use only the figures the user gives; check that derived figures (differences, ratios) match before rendering.

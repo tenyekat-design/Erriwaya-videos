@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Erriwaya – إنفوجرافيك</title>
-<!-- Animated infographic (1080x1350, or 1080x1920 with &format=story; no voice-over): light background, navy / Erriwaya green / grey, scenes of charts.
+<!-- Animated infographic (1080x1350, 1080x1920 with &format=story, 1920x1080 with &format=youtube; no voice-over): light background, navy / Erriwaya green / grey, scenes of charts.
      ?graphic=<folder in graphics/> whose graphic.js has type: 'infographic'. Rendered by tools/render-graphic.js. -->
 <style>
   @font-face { font-family: AlQuds; src: url(../assets/fonts/al-quds.otf) format('opentype'); }
@@ -21,6 +21,14 @@
   #kicker { display: none; left: 0; right: 0; top: 120px; text-align: center; color: var(--navy); font-size: 44px; }
   #kicker i { display: block; width: 90px; height: 6px; background: var(--acc); margin: 8px auto 0; }
   .story #kicker { display: block; }
+  /* &format=youtube: the design at 80% on the right, the scene's photo full height on the left (fading into the
+     background); in the outro the photo goes and the design slides to the centre */
+  .youtube #stage { width: 1920px; height: 1080px; }
+  .youtube #frame { transform: translateX(1056px) scale(.8); }
+  #side { display: none; left: 0; top: 0; width: 1100px; height: 1080px; overflow: hidden; }
+  #side img { position: absolute; max-width: none; }
+  #side::after { content: ''; position: absolute; inset: 0; background: linear-gradient(270deg, var(--bg) 0%, rgba(245,243,238,0) 22%), linear-gradient(0deg, rgba(11,31,75,.25), rgba(11,31,75,0) 40%); }
+  .youtube #side { display: block; }
   .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
   #logo { left: 64px; top: 56px; width: 130px; height: 176px; background: var(--navy);
     -webkit-mask: url(../assets/logo-mark.png) center / contain no-repeat; mask: url(../assets/logo-mark.png) center / contain no-repeat; }
@@ -111,7 +119,7 @@
 </style>
 </head>
 <body>
-<div id="stage"><div id="kicker" class="abs">إنفوجرافيك<i></i></div><div id="frame">
+<div id="stage"><div id="side" class="abs"><img id="sideimg"></div><div id="kicker" class="abs">إنفوجرافيك<i></i></div><div id="frame">
   <div id="scene" class="abs"></div>
   <div id="logo" class="abs"></div>
   <div id="htitle" class="abs"></div>
@@ -123,7 +131,8 @@
 const NAME = new URLSearchParams(location.search).get('graphic');
 const DIR = '../graphics/' + NAME + '/', FRAMES = '../frames/graphic-' + NAME + '/';
 const W = 1080, H = 1350, FPS = 30;
-if (new URLSearchParams(location.search).get('format') === 'story') document.documentElement.classList.add('story');
+const FORMAT = new URLSearchParams(location.search).get('format');
+if (FORMAT === 'story' || FORMAT === 'youtube') document.documentElement.classList.add(FORMAT);
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, b) => clamp((t - a) / (b - a));
@@ -285,6 +294,15 @@ window.renderFrame = async t => {
   ['left', 'top', 'width', 'height'].forEach((k, j) => lg.style[k] = (L0[j] + (L1[j] - L0[j]) * lp) + 'px');
   $('foot').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : 1;
   $('kicker').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : 1;
+  if (FORMAT === 'youtube') {
+    // left panel: the title footage, then each scene's photo; gone in the outro while the design moves to the centre
+    const si = $('sideimg'), src = ci ? ci.getAttribute('src') : s.img ? DIR + 'img/' + s.img : si.getAttribute('src');
+    if (src && si.getAttribute('src') !== src) { si.setAttribute('src', src); await si.decode(); }
+    if (src) cover(si, await natural(si.src), 1100, 1080, 1.04 + 0.06 * prog(dt, 0, end - s.t), s.fy ?? 0.5);
+    const mp = OUT ? eio(prog(dt, 0, 0.9)) : 0;
+    $('side').style.opacity = 1 - mp;
+    $('frame').style.transform = `translateX(${1056 - 528 * mp}px) scale(.8)`;
+  }
 };
 
 (async () => {
