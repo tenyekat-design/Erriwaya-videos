@@ -158,7 +158,15 @@ h1, h2, h3 { text-wrap: balance; margin: 0 }
 .breaking { background: var(--breaking); color: #fff }
 .breaking .wrap { display: flex; align-items: center; gap: 12px; padding-block: 8px }
 .breaking .tag { display: inline-flex; align-items: center; font: 18px/1 var(--f-display); background: #fff; color: var(--breaking); padding: 5px 10px 3px; border-radius: 4px; flex-shrink: 0 }
-.breaking a { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.breaking .vp { position: relative; overflow: hidden; flex: 1; min-width: 0; display: flex; align-items: center;
+  mask-image: linear-gradient(to left, transparent, #000 20px, #000 calc(100% - 20px), transparent); -webkit-mask-image: linear-gradient(to left, transparent, #000 20px, #000 calc(100% - 20px), transparent) }
+.breaking .track { display: flex; width: max-content; animation: tick var(--dur, 30s) linear infinite }
+.breaking .vp:hover .track, .breaking .vp:focus-within .track { animation-play-state: paused }
+.breaking .track a { display: inline-flex; align-items: center; gap: 12px; padding-inline: 22px; white-space: nowrap; font-weight: 600; font-size: 16px }
+.breaking .track a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgb(255 255 255 / .7); flex-shrink: 0 }
+.breaking .track a:hover { text-decoration: underline }
+.breaking .track time { font-weight: 400; font-size: 13px; opacity: .8 }
+@media (prefers-reduced-motion: reduce) { .breaking .vp { overflow-x: auto } }
 .breaking .tag .ic { width: 14px; height: 14px; margin-inline-end: 2px }
 .breaking .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.4s infinite; flex-shrink: 0 }
 @keyframes pulse { 50% { opacity: .25 } }
@@ -378,7 +386,7 @@ footer small { opacity: .7 }
 </header>
 
 <div class="breaking" id="breaking" hidden><div class="wrap">
-  <span class="tag"><svg class="ic"><use href="#i-bolt"/></svg>عاجل</span><span class="dot"></span><a id="breakingLink" href="#home"></a>
+  <span class="tag"><svg class="ic"><use href="#i-bolt"/></svg>عاجل</span><span class="dot"></span><div class="vp"><div class="track" id="breakingTrack"></div></div>
 </div></div>
 
 <div class="ticker" id="ticker" hidden><div class="wrap">
@@ -594,10 +602,25 @@ function renderTicker() {
   requestAnimationFrame(() => tr.style.setProperty("--dur", Math.max(25, tr.scrollWidth / 2 / 55) + "s"));
 }
 
+// كل الأخبار العاجلة السارية (نصف ساعة) تتجول في الشريط الأحمر، الأحدث أولاً، حتى يُقرأ كل عنوان كاملاً
 function renderBreaking() {
-  const b = state.articles.find(isFreshBreaking);
-  $("#breaking").hidden = !b;
-  if (b) { $("#breakingLink").textContent = b.title; $("#breakingLink").href = hrefOf(b); }
+  const list = state.articles.filter(isFreshBreaking).sort((a, b) => new Date(b.date) - new Date(a.date));
+  $("#breaking").hidden = !list.length;
+  const tr = $("#breakingTrack");
+  const key = list.map(i => i.id + i.title).join("|");
+  if (!list.length) { tr.dataset.key = ""; tr.innerHTML = ""; return; }
+  if (tr.dataset.key === key) return;            // لا نعيد التشغيل إن لم يتغير شيء
+  tr.dataset.key = key;
+  const hm = d => new Date(d).toLocaleTimeString("ar", { hour: "2-digit", minute: "2-digit", hour12: false, numberingSystem: "latn" });
+  const one = list.map(it => `<a href="${hrefOf(it)}">${esc(it.title)}<time>${hm(it.date)}</time></a>`).join("");
+  tr.innerHTML = one;
+  requestAnimationFrame(() => {
+    // نكرر المجموعة حتى تملأ عرض الشريط، ثم نضاعفها ليدور بلا انقطاع
+    const k = Math.max(1, Math.ceil(tr.parentElement.clientWidth / Math.max(1, tr.scrollWidth)));
+    const copy = one.replace(/<a /g, '<a tabindex="-1" aria-hidden="true" ');
+    tr.innerHTML = one + copy.repeat(2 * k - 1);   // نصفان متطابقان، كل نصف يملأ الشريط
+    tr.style.setProperty("--dur", Math.max(12, tr.scrollWidth / 2 / 45) + "s");
+  });
 }
 
 function homeView() {
