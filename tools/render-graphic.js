@@ -2,7 +2,7 @@
 // add --format feed for the 1080x1350 Facebook/Instagram feed version (-feed.mp4)
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students              -> output/erriwaya-graphic-<graphic>.mp4 (+ -cover.jpg)
 //   node tools/render-graphic.js --graphic 2026-10-28-una-students --stills 2,10   PNG stills -> output/stills/
-// Clip frames are extracted once to frames/graphic-<graphic>/<clip>/ (git-ignored).
+// Clip frames (fit inside 1080x1920, aspect kept) are extracted once to frames/graphic-<graphic>/<clip>/ (git-ignored).
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -34,7 +34,7 @@ function extractClips() {
     if (fs.existsSync(path.join(dir, 'f00001.jpg'))) continue;
     fs.mkdirSync(dir, { recursive: true });
     execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', path.join(RDIR, 'clips', f), '-vf',
-      `fps=${FPS},scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920`, '-q:v', '3', path.join(dir, 'f%05d.jpg')]);
+      `fps=${FPS},scale=1080:1920:force_original_aspect_ratio=decrease:flags=lanczos`, '-q:v', '3', path.join(dir, 'f%05d.jpg')]);
     console.log('frames for', f);
   }
 }
@@ -71,7 +71,8 @@ function buildAudio(R, file) {
   const music = path.join(FRAMES, 'music.wav');
   execFileSync('python3', [path.join(ROOT, 'tools', 'make-graphic-music.py'), music, String(R.duration), String(R.outroHit), ...R.calm.map(String), ...R.hits.map(String)], { stdio: 'inherit' });
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const shots = R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
+  // natural: false mutes the clips (e.g. footage with someone else's narration or music)
+  const shots = R.natural === false ? [] : R.shots.map((s, i) => ({ ...s, end: R.shots[i + 1] ? R.shots[i + 1].t : R.duration })).filter(s => s.clip);
   const clips = [...new Set(shots.map(s => s.clip))];
   const inputs = ['-i', music, '-i', path.join(ROOT, 'assets', 'audio', 'whoosh.wav'), ...clips.flatMap(c => ['-i', path.join(RDIR, 'clips', fs.readdirSync(path.join(RDIR, 'clips')).find(f => f.startsWith(c + '.')))])];
   const f = [`[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8[m]`];

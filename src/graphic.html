@@ -134,6 +134,7 @@ function shotAt(t) {
   return { s, i, dt: t - s.t, p: (t - s.t) / (end - s.t) };
 }
 
+const lastFrame = {};
 let frameBottom = 1180 * Y;
 async function drawShot(t) {
   const { s, i, dt, p } = shotAt(t);
@@ -143,10 +144,19 @@ async function drawShot(t) {
   if (outro) return drawOutro(dt);
   const punch = 0.05 * (1 - eout(prog(dt, 0, 0.4)));   // cut lands with a small zoom that settles
   const bg = $('bg'), fg = $('fg'), fr = $('frame');
-  let src;
-  if (s.clip) src = FRAMES + s.clip + '/f' + String(Math.round((s.from + dt) * FPS) + 1).padStart(5, '0') + '.jpg';
-  else src = DIR + 'img/' + s.img;
-  const wh = await natural(src);
+  let src, wh;
+  if (s.clip) {
+    // a shot longer than its clip holds the clip's last frame
+    let n = Math.round((s.from + dt) * FPS) + 1;
+    n = Math.min(n, lastFrame[s.clip] || Infinity);
+    for (;;) {
+      src = FRAMES + s.clip + '/f' + String(n).padStart(5, '0') + '.jpg';
+      try { wh = await natural(src); break; } catch (e) { if (--n < 1) throw e; lastFrame[s.clip] = n; }
+    }
+  } else {
+    src = DIR + 'img/' + s.img;
+    wh = await natural(src);
+  }
   await setSrc(bg, src);
   if (s.fit === 'framed') {
     // blurred, darkened copy fills the frame; the photo sits full width above the captions

@@ -55,7 +55,9 @@ Reference (approved 28 Oct 2026): `graphics/2026-10-28-una-students/graphic.js` 
 1. Research the topic (web search, several sources, prefer AFP/agency facts; no exaggeration; give the other
    side's account in a card). Photos in `graphics/<date>-<slug>/img/`, clips in `clips/`, descriptive names.
 2. Fill `graphic.js`: `shots` (img with `fit: 'cover'` for portrait / `'framed'` for landscape, or `clip` + `from`;
-   `source: 'مشاهد متداولة'` on footage of unknown origin), `kinetic` (big centred text: first the `hook: true`
+   `source: 'مشاهد متداولة'` on footage of unknown origin; landscape clips also take `fit: 'framed'`;
+   cut screen recordings into one clip per shot with the app chrome cropped, `natural: false` when they carry
+   someone else's narration or music), `kinetic` (big centred text: first the `hook: true`
    line over the strongest photo for ~2.6 s, then the title with `chips: true`, a number card, a closing question),
    `captions` (2–3 lines, first line is the navy lead), `cards` (the other side's account), `sources`, `calm`
    (no drums under the card), `hits` (whoosh/boom on the big cuts), `outroHit`. ~55–60 s.
