@@ -153,8 +153,9 @@ html, body { width: 100vw; height: 100vh; overflow: clip; background: var(--deep
 <section class="scene" id="statement">
   <div class="abs logo" id="hlogo" style="color: rgb(255 255 255 / .06)"></div>
   <div class="big" id="hk" style="font-size: calc(var(--u) * 4.4); opacity: .8"></div>
-  <div class="big" id="ha" style="font-size: calc(var(--u) * 12)"></div>
-  <div class="big" id="hb" style="font-size: calc(var(--u) * 7.6); color: var(--mint)"></div>
+  <div class="big" id="ha" style="font-size: calc(var(--u) * 10)"></div>
+  <div class="big" id="hc" style="font-size: calc(var(--u) * 10)"></div>
+  <div class="big" id="hb" style="font-size: calc(var(--u) * 7); color: var(--mint)"></div>
 </section>
 
 <!-- I: outro -->
@@ -432,7 +433,7 @@ function sStatement(t, t0, t1) {
   const u = U(), w = W(), h = H(), cy = h * (tall() ? .42 : .44);
   const lh = h * .9, lw = lh * 237 / 320;
   set($('hlogo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: (h - lh) / 2 + 'px', transform: `scale(${1 + (t - t0) * .03})` });
-  [['hk', 69, 72, cy - 16 * u], ['ha', 72, 75, cy - 9 * u], ['hb', 75, 79, cy + 8 * u]].forEach(([id, a, b, y]) => {
+  [['hk', 69, 72, cy - 22 * u], ['ha', 72, 75, cy - 15 * u], ['hc', 75, 78, cy - 2 * u], ['hb', 78, 82, cy + 13 * u]].forEach(([id, a, b, y]) => {
     const el = $(id); if (!el.innerHTML) el.innerHTML = wordsHTML(a, b);
     set(el, { top: y + 'px', opacity: 1 - lin(t, t1 - .4, t1) });
     revealWords(el, t, false);
@@ -444,10 +445,10 @@ function sOutro(t, t0, t1) {
   const u = U(), w = W(), h = H(), lh = (tall() ? 20 : 18) * u, lw = lh * 237 / 320;
   const base = h * (tall() ? .26 : wide() ? .1 : .15), k = back(lin(t, t0, t0 + .6));
   set($('ilogo'), { height: lh + 'px', width: lw + 'px', left: (w - lw) / 2 + 'px', top: base + 'px', transform: `scale(${clamp(k, 0, 2)})`, opacity: lin(t, t0, t0 + .2) });
-  const it = $('it'); if (!it.innerHTML) it.innerHTML = wordsHTML(79, 82);
+  const it = $('it'); if (!it.innerHTML) it.innerHTML = wordsHTML(82, 85);
   set(it, { top: base + lh + 3 * u + 'px' }); revealWords(it, t, false);
   // the address types in as it is said
-  const s = WORDS[82][1], e = WORDS[82][2], n = Math.round(URL_SHOWN.length * lin(t, s - .1, e - .1));
+  const s = WORDS[85][1], e = WORDS[85][2], n = Math.round(URL_SHOWN.length * lin(t, s - .1, e - .1));
   $('url').innerHTML = URL_SHOWN.slice(0, n) + (t < e + .6 && Math.floor(t * 3) % 2 === 0 ? '<i></i>' : '');
   set($('iu'), { top: base + lh + 16 * u + 'px', opacity: lin(t, s - .3, s - .1), transform: `scale(${.9 + .1 * eo(lin(t, s - .3, s + .1))})` });
   set($('is'), { top: base + lh + 30 * u + 'px', opacity: lin(t, e, e + .5), transform: `translateY(${(1 - eo(lin(t, e, e + .6))) * 3 * u}px)` });

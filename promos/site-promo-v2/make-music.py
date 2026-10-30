@@ -10,8 +10,8 @@ import numpy as np
 import soundfile as sf
 
 SR = 44100
-DUR = 56.0
-GROOVE, BREAK, OUTRO, HIT = 5.51, 42.51, 49.21, 52.3
+DUR = 57.1
+GROOVE, BREAK, OUTRO, HIT = 4.99, 41.97, 50.43, 52.95
 BPM = 100
 BEAT = 60 / BPM
 rng = np.random.default_rng(7)
