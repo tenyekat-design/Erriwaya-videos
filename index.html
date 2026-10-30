@@ -495,11 +495,12 @@ function flip(b) {
   b.k = (b.k + 1) % steps.length;
   const html = flapFace(...steps[b.k]);
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) { b.el.innerHTML = html; return; }
-  const old = b.el.firstElementChild;
+  // كل الوجوه السابقة تخرج، لا الأول فقط: إذا تتابعت قلبتان (مؤقّتات متراكمة بعد العودة إلى الصفحة) كان وجه يبقى عالقاً فوق الجديد
+  const olds = [...b.el.children];
   b.el.insertAdjacentHTML("beforeend", html);
   const neu = b.el.lastElementChild;
-  neu.classList.add("in"); old?.classList.add("out");
-  setTimeout(() => { old?.remove(); neu.classList.remove("in"); }, 520);
+  neu.classList.add("in"); olds.forEach(o => o.classList.add("out"));
+  setTimeout(() => { olds.forEach(o => o.remove()); neu.classList.remove("in"); }, 520);
 }
 function buildFlaps() {
   const host = $("#flaps"), w = host.clientWidth || innerWidth;
@@ -510,7 +511,7 @@ function buildFlaps() {
   flaps.boards = [...host.children].map((el, i) => ({ el, i, k: 0 }));
   flaps.boards.forEach(b => { b.el.innerHTML = flapFace(...flapSteps(b.i, n)[0]); });
   clearInterval(flaps.timer);
-  flaps.timer = setInterval(() => flaps.boards.forEach((b, i) => setTimeout(() => flip(b), i * 180)), 3500);
+  flaps.timer = setInterval(() => { if (!document.hidden) flaps.boards.forEach((b, i) => setTimeout(() => flip(b), i * 180)); }, 3500);
 }
 addEventListener("resize", () => { clearTimeout(flaps.rs); flaps.rs = setTimeout(buildFlaps, 200); });
 
