@@ -2,7 +2,7 @@
 
 يعمل داخل GitHub Actions كل نصف ساعة. المتصفح لا يستطيع قراءة يوتيوب مباشرة،
 فهذا السكربت يقرأ صفحة القناة العامة (بلا مفاتيح) ويحفظ النتيجة مع الموقع.
-الأخبار المكتوبة يقرؤها الموقع مباشرة من Firestore أيضاً، وهذه النسخة احتياطية.
+الموقع يعرض هذه النسخة، ولا يسأل Firestore إلا عن الأخبار المنشورة بعدها.
 
 الاستعمال: python scripts/build_data.py <مجلد الإخراج>
 """
@@ -156,30 +156,49 @@ def fs_doc(d):
     return f
 
 
-def all_article_docs(limit=2000):
-    docs, token = [], ""
-    while len(docs) < limit:
+def all_article_docs(limit=2000, pages=None):
+    docs, token, n = [], "", 0
+    while len(docs) < limit and (pages is None or n < pages):
         url = f"{FS}/articles?pageSize=300&orderBy=createdAt%20desc" + (f"&pageToken={token}" if token else "")
         raw = json.loads(get(url))
         docs += raw.get("documents", [])
-        token = raw.get("nextPageToken")
+        token, n = raw.get("nextPageToken"), n + 1
         if not token:
-            break
-    return docs
+            return docs, True
+    return docs, False
+
+
+# ذاكرة البناء: img/index.json يحفظ كل خبر مع وقت آخر تعديل وأسماء صوره، ويُستعاد من النسخة المنشورة.
+# فلا تُقرأ صور خبر من قاعدة البيانات إلا إذا كان جديداً أو عُدّل، ولا تُقرأ الأخبار الأقدم من آخر 300
+# إلا مرة في اليوم. هكذا يبقى البناء كل نصف ساعة ضمن حدود الخطة المجانية مهما كثرت الأخبار.
+CACHE = "img/index.json"
 
 
 def articles(out_dir):
     os.makedirs(os.path.join(out_dir, "img"), exist_ok=True)
-    out = []
-    for d in all_article_docs():
+    try:
+        with open(os.path.join(out_dir, CACHE), encoding="utf-8") as fh:
+            cache = json.load(fh)
+    except Exception:  # noqa: BLE001
+        cache = {}
+    full_sync = NOW.hour == 3 and NOW.minute < 30 or not cache
+    docs, complete = all_article_docs(pages=None if full_sync else 1)
+    seen, out, reads = set(), [], len(docs)
+    for d in docs:
         a = fs_doc(d)
+        seen.add(a["id"])
+        old = cache.get(a["id"])
         imgs = []
-        if a.get("imageCount"):
+        if old and old.get("updateTime") == d.get("updateTime") and all(
+                os.path.exists(os.path.join(out_dir, x)) for x in old.get("images", [])):
+            imgs = old.get("images", [])
+        elif a.get("imageCount"):
             try:
                 sub = json.loads(get(f"{FS}/articles/{a['id']}/images?pageSize=20"))
-                docs = sorted((fs_doc(x) for x in sub.get("documents", [])),
-                              key=lambda x: x.get("i", 0))
-                for x in docs:
+                reads += len(sub.get("documents", [])) or 1
+                docs_i = sorted((fs_doc(x) for x in sub.get("documents", [])),
+                                key=lambda x: x.get("i", 0))
+                for x in docs_i:
                     name = f"img/{a['id']}-{x.get('i', 0)}.jpg"
                     with open(os.path.join(out_dir, name), "wb") as fh:
                         fh.write(base64.b64decode(x["data"]))
@@ -199,8 +218,35 @@ def articles(out_dir):
             "category": a.get("category", ""), "breaking": bool(a.get("breaking")),
             "thumb": a.get("thumb", ""), "images": imgs,
             "portals": a.get("portals") or [], "createdAt": a.get("createdAt"),
+            "updateTime": d.get("updateTime"),
         })
+    # الأخبار الأقدم من الصفحة المقروءة تبقى من الذاكرة حتى المزامنة اليومية الكاملة (التي تحذف المحذوف).
+    if not complete and not full_sync:
+        oldest = min((x["createdAt"] or "" for x in out), default="")
+        out += [v for k, v in cache.items() if k not in seen and (v.get("createdAt") or "") < oldest]
+    out.sort(key=lambda x: x.get("createdAt") or "", reverse=True)
+    keep = {x for v in out for x in v["images"]}
+    for f in os.listdir(os.path.join(out_dir, "img")):
+        if f.endswith(".jpg") and f"img/{f}" not in keep:
+            os.remove(os.path.join(out_dir, "img", f))
+    with open(os.path.join(out_dir, CACHE), "w", encoding="utf-8") as fh:
+        json.dump({v["id"]: v for v in out}, fh, ensure_ascii=False)
+    print(f"firestore reads≈{reads} (full_sync={full_sync})")
+    for v in out:
+        v.pop("updateTime", None)
     return out
+
+
+def check_live_query():
+    """نفس الاستعلام الذي يرسله الموقع لكل زائر، للتأكد أنه يعمل."""
+    q = {"structuredQuery": {"from": [{"collectionId": "articles"}],
+                             "orderBy": [{"field": {"fieldPath": "createdAt"}, "direction": "DESCENDING"}],
+                             "limit": 2}}
+    req = urllib.request.Request(f"{FS}:runQuery", data=json.dumps(q).encode(),
+                                 headers={"Content-Type": "application/json", "User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        res = json.loads(r.read())
+    print("live query ok:", sum(1 for x in res if x.get("document")), "docs")
 
 
 # ───────────── الطقس ─────────────
@@ -274,6 +320,10 @@ def main():
         print("news pages=%d recent=%d" % news_pages.build(out_dir, arts, NOW))
     except Exception as e:  # noqa: BLE001
         print("news pages:", e)
+    try:
+        check_live_query()
+    except Exception as e:  # noqa: BLE001
+        print("live query FAILED:", e)
     data["site"] = site_info() or prev.get("site", {})
     try:
         data["weather"] = weather()

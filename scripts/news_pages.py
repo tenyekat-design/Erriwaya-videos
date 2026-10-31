@@ -5,6 +5,8 @@
 فيظهر كل خبر في نتائج البحث ويعرض بطاقة صحيحة عند مشاركته على واتساب وفيسبوك.
 """
 import html
+
+import brand
 import json
 import os
 from datetime import datetime, timedelta, timezone
@@ -52,6 +54,7 @@ PAGE = """<!doctype html>
 {published_meta}
 <meta name="theme-color" content="#004A49">
 <link rel="icon" href="../assets/icon.png">
+{head_links}
 <script type="application/ld+json">{ld}</script>
 <style>
 @font-face {{ font-family: "Al Quds"; src: url("../assets/al-quds.otf") format("opentype"); font-display: swap;
@@ -63,10 +66,6 @@ body {{ margin:0; background:var(--paper); color:var(--ink); font:18px/1.95 "Al 
 a {{ color:var(--link) }}
 img {{ max-width:100%; display:block }}
 .wrap {{ max-width:760px; margin-inline:auto; padding-inline:16px }}
-header {{ background:var(--brand); color:var(--on-brand) }}
-header .wrap {{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:12px }}
-header img {{ height:44px; width:auto }}
-header a {{ color:var(--on-brand); text-decoration:none; font-size:15px }}
 article {{ background:var(--surface); margin-block:24px; padding:24px 20px; border-radius:10px; border:1px solid var(--line) }}
 .meta {{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:14px; margin-bottom:10px }}
 .kicker {{ background:var(--chip); color:var(--ink); padding:1px 10px; border-radius:4px; text-decoration:none }}
@@ -82,16 +81,15 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
 .more ul {{ list-style:none; padding:0; margin:0 0 28px }}
 .more li {{ border-bottom:1px solid var(--line); padding-block:10px }}
 .more a {{ color:var(--ink); text-decoration:none }}
-nav.pages {{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-bottom:28px; font-size:15px }}
-footer {{ background:var(--brand-deep); color:var(--on-brand); padding-block:20px; font-size:14px; text-align:center }}
+{brand_css}
 </style>
 </head>
 <body>
-<header><div class="wrap"><a href="../"><img src="../assets/logo.png" alt="الرواية"></a><a href="../">الرئيسية</a></div></header>
+{header}
 <div class="wrap">
 <article>
   <div class="meta">{kickers}{time}</div>
-  <h1>{title}</h1>
+  <h1 class="ew-t">{title}</h1>
   {gallery}
   <div class="body">{paras}</div>
   <div class="tools">
@@ -100,9 +98,8 @@ footer {{ background:var(--brand-deep); color:var(--on-brand); padding-block:20p
   </div>
 </article>
 {more}
-<nav class="pages" aria-label="صفحات الشبكة"><a href="../about.html">من نحن</a><a href="../editorial-policy.html">السياسة التحريرية</a><a href="../corrections.html">سياسة التصحيحات</a><a href="../privacy.html">سياسة الخصوصية</a></nav>
 </div>
-<footer>© 2022–{year} {name}</footer>
+{footer}
 </body>
 </html>
 """
@@ -114,7 +111,7 @@ def _page(a, others, now):
     d = _date(a)
     desc = _summary(a.get("body")) or a.get("title", "")
     imgs = a.get("images") or []
-    image = f"{SITE}/{imgs[0]}" if imgs else f"{SITE}/assets/icon.png"
+    image = f"{SITE}/{imgs[0]}" if imgs else f"{SITE}/assets/og.png"
     sections = [x for x in [a.get("category")] + [PORTALS.get(p, "") for p in a.get("portals") or []] if x]
     breaking = a.get("breaking") and d and now - d < timedelta(minutes=30)
     kickers = ('<span class="kicker red">عاجل</span>' if breaking else "") + "".join(
@@ -143,7 +140,8 @@ def _page(a, others, now):
         title=e(a.get("title")), desc=e(desc), url=e(url), url_q=quote(url, safe=""), image=e(image), name=NAME,
         published_meta=f'<meta property="article:published_time" content="{d.isoformat()}">' if d else "",
         ld=json.dumps(ld, ensure_ascii=False).replace("</", "<\\/"), kickers=kickers, time=time, gallery=gallery,
-        paras=paras, wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year)
+        paras=paras, header=brand.header("../"), footer=brand.footer("../", str(now.year)),
+        brand_css=brand.CSS, head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year)
 
 
 def build(out_dir, arts, now=None):
@@ -175,6 +173,28 @@ def build(out_dir, arts, now=None):
     with open(os.path.join(out_dir, "news-sitemap.xml"), "w", encoding="utf-8") as fh:
         fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                  'xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n' + "\n".join(news_rows) + "\n</urlset>\n")
+
+    # موجز RSS: آخر 30 خبراً، لقارئات الأخبار ومجمّعاتها (ومنها Google News).
+    from email.utils import format_datetime
+    items = []
+    for a in arts[:30]:
+        d = _date(a)
+        url = f"{SITE}/news/{e(a['id'])}.html"
+        img = (a.get("images") or [None])[0]
+        items.append(
+            f"<item><title>{e(a['title'])}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid>"
+            + (f"<pubDate>{format_datetime(d)}</pubDate>" if d else "")
+            + (f"<category>{e(a.get('category'))}</category>" if a.get("category") else "")
+            + f"<description>{e(_summary(a.get('body'), 300))}</description>"
+            + (f'<enclosure url="{SITE}/{e(img)}" type="image/jpeg" length="0"/>' if img else "") + "</item>")
+    with open(os.path.join(out_dir, "feed.xml"), "w", encoding="utf-8") as fh:
+        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+                 f"<title>{NAME}</title><link>{SITE}/</link><language>ar</language>"
+                 f"<description>أخبار موريتانيا والمغرب العربي والساحل</description>"
+                 f'<atom:link href="{SITE}/feed.xml" rel="self" type="application/rss+xml"/>'
+                 f"<lastBuildDate>{format_datetime(now)}</lastBuildDate>"
+                 f"<image><url>{SITE}/assets/icon.png</url><title>{NAME}</title><link>{SITE}/</link></image>"
+                 + "".join(items) + "</channel></rss>\n")
 
     # خبر نُشر للتو ولم تُبنَ صفحته بعد: صفحة 404 تحوّل news/<id>.html إلى عرضه في الصفحة الرئيسية.
     with open(os.path.join(out_dir, "404.html"), "w", encoding="utf-8") as fh:

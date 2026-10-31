@@ -27,10 +27,15 @@ jobs:
           mkdir -p _site
           { printf '<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'; cat index.html; } > _site/index.html
           cp -r assets _site/
-          cp pages/*.html _site/
+          python3 scripts/brand.py pages _site
+          cp pages/manifest.webmanifest _site/
           [ -f CNAME ] && cp CNAME _site/ || true
           touch _site/.nojekyll
           printf 'User-agent: *\nAllow: /\n\nSitemap: https://erriwaya.com/sitemap.xml\nSitemap: https://erriwaya.com/news-sitemap.xml\n' > _site/robots.txt
+
+      - name: Restore image cache
+        run: |
+          git fetch -q --depth 1 origin gh-pages && git archive FETCH_HEAD img | tar -x -C _site && ls _site/img | wc -l || echo "no cache"
 
       - name: Fetch videos and news
         run: python3 scripts/build_data.py _site

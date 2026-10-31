@@ -4,16 +4,22 @@
 <meta name="description" content="شبكة الرواية الإعلامية: منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.">
 <meta property="og:title" content="شبكة الرواية الإعلامية">
 <meta property="og:description" content="أخبار موريتانيا والمغرب العربي والساحل: الموجز، التقارير، التحقيقات.">
-<meta property="og:image" content="https://erriwaya.com/assets/icon.png">
+<meta property="og:image" content="https://erriwaya.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:url" content="https://erriwaya.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="شبكة الرواية الإعلامية">
 <meta property="og:locale" content="ar_AR">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://erriwaya.com/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsMediaOrganization","name":"شبكة الرواية الإعلامية","alternateName":["الرواية","Erriwaya"],"url":"https://erriwaya.com/","logo":"https://erriwaya.com/assets/icon.png","email":"contact@erriwaya.com","foundingDate":"2022","founder":{"@type":"Person","name":"محمد سالم حمدي مولود"},"publishingPrinciples":"https://erriwaya.com/editorial-policy.html","correctionsPolicy":"https://erriwaya.com/corrections.html","sameAs":["https://www.youtube.com/@ERRIWAYA"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsMediaOrganization","name":"شبكة الرواية الإعلامية","alternateName":["الرواية","Erriwaya"],"url":"https://erriwaya.com/","logo":"https://erriwaya.com/assets/icon.png","email":"contact@erriwaya.com","foundingDate":"2022","founder":{"@type":"Person","name":"محمد سالم حمدي مولود"},"publishingPrinciples":"https://erriwaya.com/editorial-policy.html","correctionsPolicy":"https://erriwaya.com/corrections.html","sameAs":["https://www.youtube.com/@ERRIWAYA","https://www.facebook.com/ERRIWAYA","https://www.tiktok.com/@erriwaya","https://www.instagram.com/erriwaya.mr/"]}</script>
 <meta name="theme-color" content="#004A49">
 <link rel="icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="شبكة الرواية الإعلامية" href="https://erriwaya.com/feed.xml">
 <!-- Google Analytics 4 (stream «Erriwaya website», G-MPEY193JSN): visitors, countries, sources, devices.
      Not loaded in previews (localhost, claude). -->
 <script>
@@ -857,18 +863,22 @@ function fsVal(v) {
 function fsDoc(d) { const o = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, fsVal(v)])); o.id = d.name.split("/").pop(); return o; }
 async function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]); }
 
+// قراءة خفيفة: النسخة المحفوظة (data.json) تُحدَّث كل نصف ساعة، فلا نسأل قاعدة البيانات إلا عن الأخبار
+// المنشورة بعدها. استعلام بلا نتائج يُحسب قراءة واحدة، بدل 61 قراءة لكل زائر سابقاً، فتبقى الخطة المجانية كافية.
 async function loadLive() {
   try {
-    const r = await withTimeout(fetch(`${FS}/articles?pageSize=60&orderBy=createdAt%20desc`), 8000);
+    const newest = state.articles.reduce((m, a) => (a.date && a.date > m ? a.date : m), "");
+    const q = { structuredQuery: { from: [{ collectionId: "articles" }],
+      orderBy: [{ field: { fieldPath: "createdAt" }, direction: "DESCENDING" }], limit: 20 } };
+    if (newest) q.structuredQuery.where = { fieldFilter: { field: { fieldPath: "createdAt" }, op: "GREATER_THAN", value: { timestampValue: newest } } };
+    const r = await withTimeout(fetch(`${FS}:runQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(q) }), 8000);
     if (!r.ok) throw 0;
-    const j = await r.json();
-    const snapImgs = new Map(state.articles.map(a => [a.id, a.images]));
-    state.articles = (j.documents || []).map(fsDoc).map(a => { const n = normArticle(a); if (snapImgs.get(n.id)?.length) n.images = snapImgs.get(n.id); return n; });
+    const fresh = (await r.json()).filter(x => x.document).map(x => normArticle(fsDoc(x.document)));
+    if (!fresh.length) return;
+    const ids = new Set(fresh.map(a => a.id));
+    state.articles = [...fresh, ...state.articles.filter(a => !ids.has(a.id))]
+      .sort((x, y) => String(y.date || "").localeCompare(String(x.date || "")));
     refresh();
-  } catch {}
-  try {
-    const r = await withTimeout(fetch(`${FS}/site/info`), 8000);
-    if (r.ok) { state.site = fsDoc(await r.json()); refresh(); }
   } catch {}
 }
 
