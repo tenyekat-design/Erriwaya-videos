@@ -5,6 +5,7 @@
 window.TEXTVIDEO = {
   title: 'اتفاق بين وزارة التعليم العالي والجبهة الطلابية ينهي أزمة النقل والمنح والسكن',
   hashtags: ['موريتانيا', 'الطلاب', 'التعليم_العالي'],
+  clipAudio: false,  // YouTube blocked the version with the clip's crowd sound (31 Oct 2026)
   screens: [
     { kind: 'hook', media: { clip: 'clips/protest.mp4', from: 12, f: [0.5, 0.5] },
       lines: ['بعد أيام من الاحتجاجات', 'والإضرابات في {الجامعة}'] },

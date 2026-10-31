@@ -1,5 +1,6 @@
 // Renders a text video (no narration) from editions/<date>/text.js with src/text.html.
 //   node tools/render-text.js --edition 2026-10-31                -> output/erriwaya-text-2026-10-31.mp4 (1080x1920)
+//   --music-only drops the clips' own sound; --remux rebuilds only the sound of the last render
 //   add --format feed for the 1080x1350 Facebook/Instagram feed version -> output/erriwaya-text-<date>-feed.mp4
 //   node tools/render-text.js --edition 2026-10-31 --stills 2,20  -> PNG stills in output/stills/
 //   node tools/render-text.js --edition 2026-10-31 --cover        -> cover image and description only
@@ -64,8 +65,13 @@ function buildAudio(plan, file) {
   const inputs = ['-i', music];
   const f = [`[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8[music]`];
   const mix = ['[music]'];
+  // clips keep their own sound under the music unless text.js sets clipAudio: false or --music-only is given
+  // (e.g. when a platform's copyright check matches the sound of circulated footage)
+  const window = {};
+  new Function('window', fs.readFileSync(path.join(EDIR, 'text.js'), 'utf8'))(window);
+  const clipAudio = window.TEXTVIDEO.clipAudio !== false && !args['music-only'];
   plan.runs.forEach((r, i) => {
-    if (!r.clip) return;
+    if (!r.clip || !clipAudio) return;
     const k = inputs.filter(x => x === '-i').length;
     inputs.push('-ss', String(r.from), '-t', String(r.dur - 0.5), '-i', path.join(EDIR, r.clip));
     f.push(`[${k}:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.3,afade=t=in:st=0:d=0.5,afade=t=out:st=${Math.max(0, r.dur - 1.3)}:d=0.8,adelay=${ms(r.start)}|${ms(r.start)}[c${i}]`);
@@ -138,6 +144,10 @@ async function renderRange(browser, f0, f1, file) {
     return browser.close();
   }
   if (args.cover) { await writeCover(browser); await browser.close(); return description(screens); }
+  const video = path.join(FRAMES, 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
+  // --remux: keep the last rendered picture, rebuild only the sound (and the cover)
+  const remux = args.remux && fs.existsSync(video);
+  if (!remux) {
   const F = Math.round(plan.duration * FPS), per = Math.ceil(F / WORKERS), parts = [];
   console.log(`text video ${EDITION}: ${F} frames (${plan.duration.toFixed(2)}s), ${screens.length} screens`);
   await Promise.all(Array.from({ length: WORKERS }, (_, w) => {
@@ -146,11 +156,11 @@ async function renderRange(browser, f0, f1, file) {
     parts[w] = path.join(FRAMES, `part${w}.mp4`);
     return renderRange(browser, a, b, parts[w]);
   }));
+  fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(FRAMES, 'list.txt'), '-c', 'copy', video]);
+  }
   await writeCover(browser);
   await browser.close();
-  fs.writeFileSync(path.join(FRAMES, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
-  const video = path.join(FRAMES, 'video.mp4'), audio = path.join(FRAMES, 'audio.m4a');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(FRAMES, 'list.txt'), '-c', 'copy', video]);
   buildAudio(plan, audio);
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', video, '-i', audio, '-i', COVER, '-map', '0:v', '-map', '1:a', '-map', '2',
     '-c', 'copy', '-disposition:v:1', 'attached_pic', '-movflags', '+faststart', '-t', String(plan.duration), OUT]);
