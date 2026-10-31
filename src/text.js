@@ -59,8 +59,7 @@
     if (s.tag === undefined) s.tag = i ? screens[i - 1].tag : '';
   });
   runs.forEach((r, i) => { r.end = i + 1 < runs.length ? runs[i + 1].start : DURATION; r.dur = r.end - r.start; });
-  const changed = (s, i) => i > 0 && (s.kind !== screens[i - 1].kind || s.run !== screens[i - 1].run);
-  window.PLAN = { duration: DURATION, outro: OUTRO, cuts: screens.filter(changed).map(s => s.t0), stats: screens.filter(s => s.kind === 'stat').map(s => s.t0 + 0.2), runs: runs.map(r => ({ clip: r.clip, from: r.from || 0, start: r.start, dur: r.dur + 0.5 })) };
+  window.PLAN = { duration: DURATION, outro: OUTRO, screens: screens.map(s => ({ kind: s.kind, t0: s.t0 })), runs: runs.map(r => ({ clip: r.clip, from: r.from || 0, start: r.start, dur: r.dur + 0.5 })) };
 
   // ---------- assets ----------
   const loadImage = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('cannot load ' + src)); im.src = src; });

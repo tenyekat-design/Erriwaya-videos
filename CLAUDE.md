@@ -62,6 +62,6 @@ Approved 31 Oct 2026 from the user's model video (~60 s): hook (full-frame clip,
 → title (green country pill + white topic pill, big centred headline) → lower thirds (16:9 band on a blurred copy,
 green rule, navy label line then white lines against a green bar) with a `stat` card (big figure + navy caption), a
 `quote` card (white card, green label, quote mark, source) → closing `question` → navy outro (logo, تابعوا الرواية,
-ERRIWAYA / ERRIWAYA.MR, www.erriwaya.com, `sources` line only when the user gives them). Motion approved 31 Oct: punch-in + light flash on cuts, boxes slide in with overshoot, words rise in, green figures count up, progress line at the bottom, whooshes on cuts, intro theme under the opening. `{word}` = green word; `tag` top-right
+ERRIWAYA / ERRIWAYA.MR, www.erriwaya.com, `sources` line only when the user gives them). Motion approved 31 Oct: punch-in + light flash on cuts, boxes slide in with overshoot, words rise in, green figures count up, progress line at the bottom. Music (tools/make-text-music.py, needs scipy): energetic 128 BPM track synthesized per video: build under the hook, drop on the title, impact on each figure, lighter under the quote, breakdown on the question, final hit on the logo; only a few soft swishes on layout changes (no repeated whoosh). `{word}` = green word; `tag` top-right
 («مشاهد متداولة» on circulated footage). Keep it to ~60 s: one idea per screen, 2–3 short lines.
 Output: `output/erriwaya-text-<date>.mp4` + `-cover.jpg` + `-description.txt`.

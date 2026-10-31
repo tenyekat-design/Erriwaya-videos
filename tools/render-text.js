@@ -3,7 +3,7 @@
 //   node tools/render-text.js --edition 2026-10-31 --stills 2,20  -> PNG stills in output/stills/
 //   node tools/render-text.js --edition 2026-10-31 --cover        -> cover image and description only
 // A full render also writes output/erriwaya-text-<date>-cover.jpg and -description.txt.
-// Audio: the quiet bed under the text, each clip's own sound, and the outro music's final chord on the closing logo.
+// Audio: music synthesized for the video by tools/make-text-music.py, with each clip's own sound under it.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -52,27 +52,20 @@ function extractClips(plan) {
 }
 
 function buildAudio(plan, file) {
-  const A = p => path.join(ROOT, 'assets', 'audio', p);
-  const D = plan.duration, outro = plan.outro;
+  const D = plan.duration;
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const inputs = ['-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('intro-music.wav'), '-i', A('whoosh.wav')];
-  const hits = [...plan.cuts, ...plan.stats];
-  const f = [
-    // opening theme over the hook and title, handing over to the bed
-    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,afade=t=out:st=4.5:d=2.5[intro]`,
-    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${outro + 1},volume=0.5,afade=t=in:st=0:d=1.2,afade=t=out:st=${outro - 0.8}:d=1.6,adelay=4500|4500[bed]`,
-    // a whoosh (peak 0.55 s into the file) on every cut and on each figure card
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=250,volume=0.4,asplit=${hits.length}${hits.map((_, i) => `[w${i}]`).join('')}`,
-    ...hits.map((h, i) => `[w${i}]adelay=${ms(h - 0.5)}|${ms(h - 0.5)}[wd${i}]`),
-    // final chord of outro-music.wav (8.0 s in) lands as the closing logo settles
-    `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6,atrim=start=${Math.max(0, 8.0 - (outro + 0.9))},asetpts=PTS-STARTPTS,adelay=${ms(Math.max(0, outro + 0.9 - 8.0))}|${ms(Math.max(0, outro + 0.9 - 8.0))}[out]`,
-  ];
-  const mix = ['[intro]', '[bed]', '[out]', ...hits.map((_, i) => `[wd${i}]`)];
+  // the music is synthesized for this video's screens (drop on the title, impacts on the figures, final hit on the logo)
+  const music = path.join(FRAMES, 'music.wav');
+  fs.writeFileSync(path.join(FRAMES, 'plan.json'), JSON.stringify(plan));
+  execFileSync('python3', [path.join(__dirname, 'make-text-music.py'), path.join(FRAMES, 'plan.json'), music], { stdio: 'inherit' });
+  const inputs = ['-i', music];
+  const f = [`[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8[music]`];
+  const mix = ['[music]'];
   plan.runs.forEach((r, i) => {
     if (!r.clip) return;
     const k = inputs.filter(x => x === '-i').length;
     inputs.push('-ss', String(r.from), '-t', String(r.dur - 0.5), '-i', path.join(EDIR, r.clip));
-    f.push(`[${k}:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.45,afade=t=in:st=0:d=0.5,afade=t=out:st=${Math.max(0, r.dur - 1.3)}:d=0.8,adelay=${ms(r.start)}|${ms(r.start)}[c${i}]`);
+    f.push(`[${k}:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.3,afade=t=in:st=0:d=0.5,afade=t=out:st=${Math.max(0, r.dur - 1.3)}:d=0.8,adelay=${ms(r.start)}|${ms(r.start)}[c${i}]`);
     mix.push(`[c${i}]`);
   });
   f.push(`${mix.join('')}amix=inputs=${mix.length}:normalize=0:duration=longest,apad,atrim=0:${D},alimiter=limit=0.95[mix]`);
