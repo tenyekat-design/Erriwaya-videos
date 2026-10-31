@@ -53,3 +53,12 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
   whose final chord lands as the closing logo and social icons appear; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.
+
+## Text video (no narration)
+
+When the user sends text + photos/clips without a voice-over: `editions/<date>/text.js` (window.TEXTVIDEO: screens of
+2–3 short lines, each optionally starting a photo `{ img, f, z }` or clip `{ clip, from, fy }` and a top-right `tag`),
+rendered by `node tools/render-text.js --edition <date>` (`--stills 2,30` to check) with src/text.html + src/text.js.
+Look approved from the user's reference frame (31 Oct 2026): 16:9 media band on a blurred dark copy, logo top-left,
+navy tag with a red dot top-right, green rule under the band, lines right-aligned against a green bar (first line navy,
+the rest white boxes). Output: `output/erriwaya-text-<date>.mp4` + `-cover.jpg` + `-description.txt`.
