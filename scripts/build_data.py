@@ -172,6 +172,7 @@ def all_article_docs(limit=2000, pages=None):
 # فلا تُقرأ صور خبر من قاعدة البيانات إلا إذا كان جديداً أو عُدّل، ولا تُقرأ الأخبار الأقدم من آخر 300
 # إلا مرة في اليوم. هكذا يبقى البناء كل نصف ساعة ضمن حدود الخطة المجانية مهما كثرت الأخبار.
 CACHE = "img/index.json"
+BUILD = {}  # ملخّص آخر بناء، يُكتب في data.json للمراجعة
 
 
 def articles(out_dir):
@@ -231,6 +232,7 @@ def articles(out_dir):
             os.remove(os.path.join(out_dir, "img", f))
     with open(os.path.join(out_dir, CACHE), "w", encoding="utf-8") as fh:
         json.dump({v["id"]: v for v in out}, fh, ensure_ascii=False)
+    BUILD["firestore_reads"], BUILD["full_sync"] = reads, full_sync
     print(f"firestore reads≈{reads} (full_sync={full_sync})")
     for v in out:
         v.pop("updateTime", None)
@@ -246,7 +248,8 @@ def check_live_query():
                                  headers={"Content-Type": "application/json", "User-Agent": UA})
     with urllib.request.urlopen(req, timeout=30) as r:
         res = json.loads(r.read())
-    print("live query ok:", sum(1 for x in res if x.get("document")), "docs")
+    BUILD["live_query"] = sum(1 for x in res if x.get("document"))
+    print("live query ok:", BUILD["live_query"], "docs")
 
 
 # ───────────── الطقس ─────────────
@@ -323,6 +326,7 @@ def main():
     try:
         check_live_query()
     except Exception as e:  # noqa: BLE001
+        BUILD["live_query"] = f"FAILED: {e}"
         print("live query FAILED:", e)
     data["site"] = site_info() or prev.get("site", {})
     try:
@@ -331,6 +335,7 @@ def main():
         print("weather:", e)
         data["weather"] = prev.get("weather", {})
 
+    data["build"] = BUILD
     with open(os.path.join(out_dir, "data.json"), "w", encoding="utf-8") as fh:
         json.dump(data, fh, ensure_ascii=False)
     print(f"videos={len(data['videos'])} articles={len(data['articles'])} "
