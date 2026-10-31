@@ -1,0 +1,16 @@
+{
+  "name": "شبكة الرواية الإعلامية",
+  "short_name": "الرواية",
+  "description": "أخبار موريتانيا والمغرب العربي والساحل",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#004A49",
+  "theme_color": "#004A49",
+  "icons": [
+    { "src": "assets/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<title>شبكة الرواية الإعلامية</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="شبكة الرواية الإعلامية: منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.">
+<meta property="og:title" content="شبكة الرواية الإعلامية">
+<meta property="og:description" content="أخبار موريتانيا والمغرب العربي والساحل: الموجز، التقارير، التحقيقات.">
+<meta property="og:image" content="https://erriwaya.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://erriwaya.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="شبكة الرواية الإعلامية">
+<meta property="og:locale" content="ar_AR">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://erriwaya.com/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"NewsMediaOrganization","name":"شبكة الرواية الإعلامية","alternateName":["الرواية","Erriwaya"],"url":"https://erriwaya.com/","logo":"https://erriwaya.com/assets/icon.png","email":"contact@erriwaya.com","foundingDate":"2022","founder":{"@type":"Person","name":"محمد سالم حمدي مولود"},"publishingPrinciples":"https://erriwaya.com/editorial-policy.html","correctionsPolicy":"https://erriwaya.com/corrections.html","sameAs":["https://www.youtube.com/@ERRIWAYA","https://www.facebook.com/ERRIWAYA","https://www.tiktok.com/@erriwaya","https://www.instagram.com/erriwaya.mr/"]}</script>
+<meta name="theme-color" content="#004A49">
+<link rel="icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="شبكة الرواية الإعلامية" href="https://erriwaya.com/feed.xml">
+<!-- Google Analytics 4 (stream «Erriwaya website», G-MPEY193JSN): visitors, countries, sources, devices.
+     Not loaded in previews (localhost, claude). -->
+<script>
+if (!/^(localhost|127\.|$)|claude/i.test(location.hostname)) {
+  const s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=G-MPEY193JSN"; document.head.appendChild(s);
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+  gtag("js", new Date()); gtag("config", "G-MPEY193JSN");
+}
+</script>
+<style>
+/* Layout: a green masthead band, then a newsroom page — lead story beside a "latest" rail, a filterable feed,
+   country portals as a regional index, shorts strip, app band, about/contact. Article opens as its own view. */
+/* Al Quds only for Arabic, digits, Latin letters and the punctuation it draws right: it maps : ! + [ ] { } < > # * & « »
+   to Arabic-style or ornamental glyphs (": " as "؛", "[" as a calligraphic seal), so those fall back to the system font */
+@font-face { font-family: "Al Quds"; src: url("assets/al-quds.otf") format("opentype"); font-display: swap;
+  unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0, U+00B0,
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015, U+2212; }
+:root {
+  --brand: #004A49;        /* Erriwaya green */
+  --brand-deep: #00302F;
+  --on-brand: #F2F7F6;
+  --breaking: #C8102E;     /* breaking-news red */
+  --paper: #F4F7F6;
+  --surface: #FFFFFF;
+  --ink: #0F1E1D;
+  --muted: #586A68;
+  --line: #DAE3E1;
+  --link: #00605E;
+  --chip: #E6EEEC;
+  --shadow: 0 1px 2px rgb(0 40 39 / .06), 0 6px 18px rgb(0 40 39 / .06);
+  --f-display: "Al Quds", "Segoe UI", Tahoma, sans-serif;
+  --f-body: "Al Quds", "Segoe UI", Tahoma, sans-serif;
+  --wrap: 1180px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #071514; --surface: #0D201F; --ink: #E6EFED; --muted: #93A7A4; --line: #1D3432;
+  --link: #6CC5C0; --chip: #15302E; --brand-deep: #002423; --shadow: none; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #071514; --surface: #0D201F; --ink: #E6EFED; --muted: #93A7A4; --line: #1D3432;
+  --link: #6CC5C0; --chip: #15302E; --brand-deep: #002423; --shadow: none; color-scheme: dark }
+
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+html { scroll-behavior: smooth }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.75 var(--f-body); direction: rtl; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--brand); }
+a { color: inherit; text-decoration: none }
+img { max-width: 100%; display: block }
+button { font: inherit; cursor: pointer }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { text-wrap: balance; margin: 0 }
+
+/* ── masthead ── */
+.top { background: var(--brand-deep); color: var(--on-brand); font-size: 13px }
+.top .wrap { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px; flex-wrap: wrap }
+.socials { display: flex; gap: 8px; align-items: center }
+.si { width: 1em; height: 1em; fill: currentColor }
+.socials a { display: grid; place-items: center; border-radius: 50%; transition: background .2s, opacity .2s }
+.top-soc a { width: 26px; height: 26px; font-size: 13px; opacity: .85 }
+.top-soc a:hover { opacity: 1; background: rgb(255 255 255 / .14) }
+.foot-soc { gap: 12px }
+.foot-soc a { width: 42px; height: 42px; font-size: 18px; border: 1px solid rgb(255 255 255 / .3) }
+.foot-soc a:hover { background: var(--on-brand); color: var(--brand-deep) }
+.top .wrap { align-items: center }
+.mast { background: var(--brand); color: var(--on-brand); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9 }
+.mast .wrap { display: flex; align-items: center; gap: 20px; padding-block: 10px }
+.brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0 }
+.brand img { height: 46px; width: auto }
+.brand b { font: 22px/1 var(--f-display); letter-spacing: 0; opacity: .95 }
+.nav { display: flex; gap: 4px; margin-inline-start: auto; overflow-x: auto; scrollbar-width: none }
+.nav::-webkit-scrollbar { display: none }
+.nav a, .nav button { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; white-space: nowrap; font-size: 16px; background: none; border: 0; color: inherit }
+.nav a:hover, .nav button:hover, .nav a[aria-current="page"], .nav button[aria-expanded="true"] { background: rgb(255 255 255 / .15) }
+.nav .chev { width: 15px; height: 15px; transition: transform .25s }
+.nav button[aria-expanded="true"] .chev { transform: rotate(180deg) }
+.ic { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle }
+.clock { display: inline-flex; align-items: center; gap: 6px } .clock .ic { width: 15px; height: 15px; opacity: .8 }
+/* capitals board under the Nouakchott clock: each capsule shows a capital's time, slides to its weather, then to the next
+   capital; a thin bar along the bottom shows how long until the next change */
+.flaps { order: 3; flex-basis: 100%; display: flex; justify-content: center; gap: 10px; border-top: 1px solid rgb(255 255 255 / .08); padding-top: 7px; padding-bottom: 2px }
+.flap { position: relative; width: 236px; height: 34px; flex-shrink: 0; border-radius: 999px; overflow: hidden;
+  background: rgb(255 255 255 / .07); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .13) }
+.flap:hover { background: rgb(255 255 255 / .12) }
+.flap a { position: absolute; inset: 0; display: flex; align-items: center; gap: 8px; padding: 0 16px; color: #F2F7F6; white-space: nowrap }
+.flap .c { font: 15px/1 var(--f-display); min-width: 60px; opacity: .9 }
+.flap b { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .03em }
+.flap .n { font: 600 10px/1 "Segoe UI", Tahoma, Arial, sans-serif; unicode-bidi: isolate; direction: ltr; padding: 3px 5px; border-radius: 999px; background: rgb(255 255 255 / .12) }
+.flap .s { opacity: .75; font-size: 13px; overflow: hidden; text-overflow: ellipsis }
+.flap .k { margin-inline-start: auto; opacity: .45; display: inline-flex }
+.flap .k .ic, .flap .wx-i { width: 18px; height: 18px }
+.flap .wx-i { stroke: #F2F7F6 } .flap .wx-i.sun { stroke: #FFC93C } .flap .wx-i.moon { stroke: #C9D3EE } .flap .wx-i.rain { stroke: #7CC0FF } .flap .wx-i.storm { stroke: #C7A6F0 }
+.flap .bar { position: absolute; inset-inline: 18px; bottom: 3px; height: 2px; border-radius: 2px; background: rgb(108 197 192 / .75);
+  transform-origin: right; animation: flap-bar 3.5s linear both }
+.flap a.out { animation: flap-out .28s ease-in forwards }
+.flap a.in { animation: flap-in .34s .12s cubic-bezier(.2, .8, .3, 1) both }
+@keyframes flap-out { to { transform: translateY(-10px); opacity: 0; filter: blur(2px) } }
+@keyframes flap-in { from { transform: translateY(10px); opacity: 0; filter: blur(2px) } }
+@keyframes flap-bar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+@media (prefers-reduced-motion: reduce) { .flap .bar { display: none } }
+@media (max-width: 700px) { .flap { width: 100% } .flaps { padding-inline: 0 } }
+
+/* portals dropdown: a chain of country links that unfolds one by one */
+.portals-panel { background: var(--brand-deep); border-top: 1px solid rgb(255 255 255 / .12); max-height: calc(100vh - 120px); overflow-y: auto; box-shadow: 0 14px 30px rgb(0 0 0 / .25) }
+.portals-panel .wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 280px)); justify-content: start; gap: 8px 48px; padding-block: 16px 20px }
+.pgroup h4 { margin: 0 0 6px; font-size: 13px; font-weight: 400; opacity: .7; letter-spacing: .02em }
+.pchain { list-style: none; margin: 0; padding: 0; position: relative }
+.pchain::before { content: ""; position: absolute; inset-block: 18px; inset-inline-start: 20px; border-inline-start: 1.5px dashed rgb(255 255 255 / .3) }
+.pchain a { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 6px; border-radius: 8px; animation: link-in .32s both; animation-delay: calc(var(--i) * 45ms) }
+.pchain a:hover, .pchain a[aria-current="page"] { background: rgb(255 255 255 / .1) }
+.pchain .node { position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--brand); border: 1.5px solid rgb(255 255 255 / .55); display: grid; place-items: center; flex-shrink: 0; margin-inline-start: 5px }
+.pchain .node .ic { width: 12px; height: 12px }
+.pchain .ar { font-size: 19px }
+.pchain .n { margin-inline-start: auto; font-size: 12px; background: rgb(255 255 255 / .14); border-radius: 999px; padding: 1px 8px; font-variant-numeric: tabular-nums }
+@keyframes link-in { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
+@media (max-width: 760px) { .portals-panel .wrap { grid-template-columns: minmax(0, 1fr) } }
+@media (max-width: 700px) {
+  .mast .wrap { flex-wrap: wrap; gap: 6px 12px }
+  .brand img { height: 38px } .brand b { font-size: 18px }
+  .nav { margin-inline-start: 0; width: 100% }
+}
+
+/* ── news ticker ── */
+.ticker { background: var(--surface, #fff); border-bottom: 1px solid var(--line); color: var(--ink) }
+.ticker .wrap { display: flex; align-items: stretch; gap: 0; padding-block: 0 }
+.ticker .lbl { display: inline-flex; align-items: center; gap: 6px; background: var(--brand); color: var(--on-brand); font: 17px/1 var(--f-display); padding: 10px 14px 8px; flex-shrink: 0 }
+.ticker .lbl .ic { width: 15px; height: 15px }
+.ticker .vp { position: relative; overflow: hidden; flex: 1; min-width: 0; display: flex; align-items: center;
+  mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(to left, transparent, #000 24px, #000 calc(100% - 24px), transparent) }
+.ticker .track { display: flex; width: max-content; animation: tick var(--dur, 60s) linear infinite }
+.ticker .vp:hover .track, .ticker .vp:focus-within .track { animation-play-state: paused }
+.ticker .track a { display: inline-flex; align-items: center; gap: 10px; padding-inline: 18px; white-space: nowrap; font-weight: 600; font-size: 15px }
+.ticker .track a:hover { color: var(--link) }
+.ticker .track a::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0 }
+.ticker .track a.br::before { background: var(--breaking) }
+.ticker .track time { color: var(--muted); font-weight: 400; font-size: 13px }
+@keyframes tick { from { transform: translateX(0) } to { transform: translateX(50%) } }
+@media (max-width: 640px) { .ticker .lbl { font-size: 15px; padding: 9px 10px 7px } .ticker .track a { font-size: 14px; padding-inline: 14px } }
+@media (prefers-reduced-motion: reduce) { .ticker .vp { overflow-x: auto } }
+/* ── breaking ── */
+.breaking { background: var(--breaking); color: #fff }
+.breaking .wrap { display: flex; align-items: center; gap: 12px; padding-block: 8px }
+.breaking .tag { display: inline-flex; align-items: center; font: 18px/1 var(--f-display); background: #fff; color: var(--breaking); padding: 5px 10px 3px; border-radius: 4px; flex-shrink: 0 }
+.breaking .vp { position: relative; overflow: hidden; flex: 1; min-width: 0; display: flex; align-items: center;
+  mask-image: linear-gradient(to left, transparent, #000 20px, #000 calc(100% - 20px), transparent); -webkit-mask-image: linear-gradient(to left, transparent, #000 20px, #000 calc(100% - 20px), transparent) }
+.breaking .track { display: flex; width: max-content; animation: tick var(--dur, 30s) linear infinite }
+.breaking .vp:hover .track, .breaking .vp:focus-within .track { animation-play-state: paused }
+.breaking .track a { display: inline-flex; align-items: center; gap: 12px; padding-inline: 22px; white-space: nowrap; font-weight: 600; font-size: 16px }
+.breaking .track a::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgb(255 255 255 / .7); flex-shrink: 0 }
+.breaking .track a:hover { text-decoration: underline }
+.breaking .track time { font-weight: 400; font-size: 13px; opacity: .8 }
+@media (prefers-reduced-motion: reduce) { .breaking .vp { overflow-x: auto } }
+.breaking .tag .ic { width: 14px; height: 14px; margin-inline-end: 2px }
+.breaking .dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.4s infinite; flex-shrink: 0 }
+@keyframes pulse { 50% { opacity: .25 } }
+
+main { padding-block: 24px 48px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 44px }
+main > * { min-width: 0 }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; border-bottom: 2px solid var(--ink); padding-bottom: 6px }
+.sec-h h2 { font: 28px/1.2 var(--f-display) }
+.sec-h a, .sec-h span { color: var(--link); font-size: 14px; font-weight: 500 }
+
+/* ── lead ── */
+.lead { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px }
+.lead-main { display: grid; gap: 14px; align-content: start }
+.lead-main .media { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; background: var(--chip); position: relative }
+.lead-main .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s }
+.lead-main:hover .media img { transform: scale(1.02) }
+.lead-main h1 { font: 38px/1.35 var(--f-display) }
+.lead-main p { color: var(--muted); margin: 0; font-size: 17px }
+.rail { display: grid; gap: 0; align-content: start }
+.rail h3 { font: 20px/1.2 var(--f-display); color: var(--muted); margin-bottom: 4px }
+.rail a { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--line); align-items: center }
+.rail a:last-child { border-bottom: 0 }
+.rail .th { aspect-ratio: 16/10; border-radius: 4px; overflow: hidden; background: var(--chip); position: relative }
+.rail .th img { width: 100%; height: 100%; object-fit: cover }
+.rail strong { font-weight: 600; font-size: 15px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden }
+@media (max-width: 860px) { .lead { grid-template-columns: minmax(0, 1fr) } .lead-main h1 { font-size: 30px } }
+
+.meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); align-items: center }
+.meta .m { display: inline-flex; align-items: center; gap: 4px } .meta .ic { width: 14px; height: 14px }
+.kicker { color: var(--link); font-weight: 600 }
+.kicker.red { color: var(--breaking) }
+.play { position: absolute; inset-inline-start: 10px; bottom: 10px; background: rgb(0 0 0 / .65); color: #fff; border-radius: 999px; font-size: 12px; padding: 3px 10px 3px 8px; display: flex; gap: 5px; align-items: center }
+.play svg { width: 12px; height: 12px }
+.badge-br { position: absolute; inset-inline-start: 10px; top: 10px; background: var(--breaking); color: #fff; font: 15px/1 var(--f-display); padding: 5px 9px 3px; border-radius: 3px }
+
+/* ── filters + feed ── */
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: thin }
+.chips button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 6px 14px; border-radius: 999px; white-space: nowrap; font-size: 14px }
+.chips button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand) }
+.feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 26px 22px }
+.card { display: grid; gap: 10px; align-content: start }
+.card .media { aspect-ratio: 16/9; border-radius: 6px; overflow: hidden; background: var(--chip); position: relative }
+.card .media img { width: 100%; height: 100%; object-fit: cover }
+.card h3 { font-weight: 600; font-size: 17px; line-height: 1.6 }
+.card:hover h3 { color: var(--link) }
+.card p { margin: 0; color: var(--muted); font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.more { display: flex; justify-content: center; margin-top: 22px }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid var(--brand); background: transparent; color: var(--link); padding: 9px 22px; border-radius: 999px; font-weight: 600 }
+.btn .ic { width: 18px; height: 18px }
+.btn.solid { background: var(--brand); color: var(--on-brand) }
+.empty { color: var(--muted); padding: 24px 0 }
+.ph { width: 100%; height: 100%; display: grid; place-items: center; background: var(--brand); }
+.media .ph img, .th .ph img { width: 30%; height: auto; object-fit: contain; opacity: .9 }
+
+/* ── portals ── */
+.regions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px }
+.region h3 { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .02em; margin-bottom: 8px }
+.region ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line) }
+.region li a { display: flex; align-items: baseline; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line) }
+.region li a:hover { background: var(--chip) }
+.region .ar { font: 22px/1.2 var(--f-display) }
+.region .lat { font-size: 12px; color: var(--muted); direction: ltr; letter-spacing: .04em; text-transform: uppercase }
+.region .n { margin-inline-start: auto; font-size: 13px; color: var(--link); font-variant-numeric: tabular-nums }
+@media (max-width: 760px) { .regions { grid-template-columns: minmax(0, 1fr) } }
+
+/* ── weather in the capitals (data.json → weather, Open-Meteo every 30 min) ── */
+.wx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px }
+.wx-c { display: grid; gap: 2px; justify-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; transition: border-color .2s }
+.wx-c:hover { border-color: var(--link) }
+.wx-c .city { font: 20px/1.2 var(--f-display) }
+.wx-c .cty { font-size: 12px; color: var(--muted) }
+.wx-c .row { display: flex; align-items: center; gap: 8px; margin-top: 6px }
+.wx-c .t { font: 34px/1 var(--f-display); font-variant-numeric: tabular-nums }
+.wx-c .lbl { font-size: 14px; font-weight: 600 }
+.wx-c .mm { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: 10px }
+.wx-i { width: 36px; height: 36px; flex-shrink: 0; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; stroke: var(--muted) }
+.wx-i.sun { stroke: #E0A100 } .wx-i.moon { stroke: #7C8DB5 } .wx-i.rain { stroke: #2F7FD1 } .wx-i.storm { stroke: #7B5AA6 }
+@media (max-width: 700px) {
+  .wx-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 148px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px }
+  .wx-c { scroll-snap-align: start }
+}
+
+/* ── shorts ── */
+.shorts { display: grid; grid-auto-flow: column; grid-auto-columns: 168px; gap: 14px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory }
+.short { scroll-snap-align: start; display: grid; gap: 8px }
+.short .media { aspect-ratio: 9/16; border-radius: 8px; overflow: hidden; background: var(--chip); position: relative }
+.short .media img { width: 100%; height: 100%; object-fit: cover }
+.short strong { font-size: 14px; font-weight: 600; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+
+/* ── app band ── */
+.app { background: var(--brand); color: var(--on-brand); border-radius: 10px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center; padding: 26px 28px }
+.app img { width: 72px; height: 72px; border-radius: 16px; border: 1px solid rgb(255 255 255 / .25) }
+.app h2 { font: 30px/1.2 var(--f-display) }
+.app p { margin: 4px 0 0; opacity: .85 }
+.app .btn { border-color: #fff; color: var(--brand); background: #fff; white-space: nowrap }
+@media (max-width: 640px) { .app { grid-template-columns: minmax(0, 1fr); text-align: center; justify-items: center } }
+
+/* ── about ── */
+.about { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px }
+.about .txt { white-space: pre-line; max-width: 62ch; font-size: 17px }
+.contacts { display: grid; gap: 8px; margin-top: 16px }
+.contacts div { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+.contacts .m { color: var(--muted); font-size: 14px; min-width: 84px; display: inline-flex; align-items: center; gap: 6px }
+.contacts code { font: 15px var(--f-body); direction: ltr; user-select: all; background: var(--chip); padding: 2px 8px; border-radius: 4px }
+.copy { border: 0; background: none; color: var(--link); padding: 4px; display: inline-flex; border-radius: 6px }
+.copy:hover { background: var(--chip) }
+.about-soc { display: flex; align-items: center; gap: 10px; margin-top: 18px; flex-wrap: wrap }
+.about-soc span { color: var(--muted); font-size: 14px; margin-inline-end: 4px }
+.about-soc a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--brand); color: var(--on-brand); font-size: 17px }
+.about-soc a:hover { background: var(--brand-deep) }
+form { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px }
+form h3 { font: 22px/1.2 var(--f-display) }
+label { display: grid; gap: 4px; font-size: 14px; color: var(--muted) }
+input, textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; width: 100% }
+textarea { min-height: 110px; resize: vertical }
+.status { font-size: 14px; min-height: 1.4em; margin: 0 }
+.status.ok { color: var(--link) } .status.err { color: var(--breaking) }
+@media (max-width: 800px) { .about { grid-template-columns: minmax(0, 1fr) } }
+
+footer { background: var(--brand-deep); color: var(--on-brand); padding-block: 28px; font-size: 14px }
+footer .wrap { display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap }
+footer img { height: 40px; width: auto }
+footer small { opacity: .7 }
+.foot-links { display: flex; gap: 6px 18px; flex-wrap: wrap }
+.foot-links a { opacity: .9; text-decoration: underline; text-underline-offset: 4px }
+.foot-links a:hover { opacity: 1 }
+
+/* ── article view ── */
+.article { max-width: 760px; margin-inline: auto; display: grid; gap: 18px }
+.article .back { display: inline-flex; align-items: center; gap: 6px; justify-self: start; color: var(--link); font-weight: 500; background: none; border: 0; padding: 0 }
+.article h1 { font: 40px/1.4 var(--f-display) }
+.article .gallery { display: grid; gap: 10px }
+.article .gallery img { width: 100%; border-radius: 6px }
+.article .body { font-size: 19px; line-height: 2 }
+.article .body p { margin: 0 0 1em }
+.article .tools { display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 14px }
+@media (max-width: 600px) { .article h1 { font-size: 30px } .article .body { font-size: 18px } }
+
+/* ── video modal ── */
+.modal { position: fixed; inset: 0; background: rgb(0 0 0 / .82); z-index: 20; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)) }
+.modal .box { width: min(960px, 100%); display: grid; gap: 10px }
+.modal .frame { aspect-ratio: 16/9; background: #000; border-radius: 6px; overflow: hidden }
+.modal .frame.tall { aspect-ratio: 9/16; max-height: 78vh; justify-self: center; width: auto; height: 78vh }
+.modal iframe { width: 100%; height: 100%; border: 0 }
+.modal .row { display: flex; justify-content: space-between; gap: 12px; color: #fff; align-items: center }
+.modal button { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #000; border: 0; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
+.modal a.yt { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #000; border-radius: 999px; padding: 6px 16px; font-weight: 600 }
+.modal .row span { opacity: .75; font-size: 14px }
+
+.skeleton { background: linear-gradient(90deg, var(--chip), var(--line), var(--chip)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px }
+@keyframes sk { to { background-position: -200% 0 } }
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></symbol>
+    <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+    <symbol id="i-report" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-6M15 17v-2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L20 15.5V19a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="w-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></symbol>
+    <symbol id="w-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+    <symbol id="w-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 18.5z"/></symbol>
+    <symbol id="w-sun-cloud" viewBox="0 0 24 24"><path d="M8.5 3v1.5M3 8.5h1.5M4.6 4.6l1 1M12.4 4.6l-1 1"/><path d="M5.6 10.6A3.5 3.5 0 0 1 12 7.2"/><path d="M8 20h9a3.5 3.5 0 0 0 .3-7 4.8 4.8 0 0 0-9.2 1.2A2.9 2.9 0 0 0 8 20z"/></symbol>
+    <symbol id="w-moon-cloud" viewBox="0 0 24 24"><path d="M12.5 7.2A4.6 4.6 0 0 1 6.6 3a4.6 4.6 0 0 0-1.4 7.6"/><path d="M8 20h9a3.5 3.5 0 0 0 .3-7 4.8 4.8 0 0 0-9.2 1.2A2.9 2.9 0 0 0 8 20z"/></symbol>
+    <symbol id="w-fog" viewBox="0 0 24 24"><path d="M7 13h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 13z"/><path d="M4 17h16M6 20.5h12"/></symbol>
+    <symbol id="w-rain" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M8.5 17.5l-1 2.5M12.5 17.5l-1 2.5M16.5 17.5l-1 2.5"/></symbol>
+    <symbol id="w-storm" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M12.5 14.5l-2 3.5h3l-2 3.5"/></symbol>
+    <symbol id="w-snow" viewBox="0 0 24 24"><path d="M7 14.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.4A3.3 3.3 0 0 0 7 14.5z"/><path d="M8.5 18.5h.01M12 18.5h.01M15.5 18.5h.01M10.2 21h.01M13.8 21h.01" stroke-width="2.4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m10 13 4.5-4.5"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <!-- social icons: Font Awesome Free 6.5.2 brands, CC BY 4.0, fontawesome.com -->
+    <symbol id="s-youtube" viewBox="0 0 576 512"><path fill="currentColor" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></symbol>
+    <symbol id="s-facebook" viewBox="0 0 320 512"><path fill="currentColor" d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z"/></symbol>
+    <symbol id="s-tiktok" viewBox="0 0 448 512"><path fill="currentColor" d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol>
+    <symbol id="s-instagram" viewBox="0 0 448 512"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol>
+  </defs>
+</svg>
+
+<div class="top"><div class="wrap">
+  <span class="clock"><svg class="ic"><use href="#i-clock"/></svg><span id="clock">نواكشوط</span></span>
+  <nav class="flaps" id="flaps" aria-label="أوقات العواصم وطقسها"></nav>
+  <nav class="socials top-soc" aria-label="منصات الرواية">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener" aria-label="يوتيوب" title="يوتيوب"><svg class="si"><use href="#s-youtube"/></svg></a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener" aria-label="فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener" aria-label="تيك توك" title="تيك توك"><svg class="si"><use href="#s-tiktok"/></svg></a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener" aria-label="إنستغرام" title="إنستغرام"><svg class="si"><use href="#s-instagram"/></svg></a>
+  </nav>
+</div></div>
+
+<header class="mast"><div class="wrap">
+  <a class="brand" href="#home" aria-label="شبكة الرواية الإعلامية — الصفحة الرئيسية"><img src="assets/logo.png" alt=""><b>شبكة الرواية الإعلامية</b></a>
+  <nav class="nav" id="nav">
+    <a href="#home"><svg class="ic"><use href="#i-home"/></svg>الرئيسية</a>
+    <button type="button" id="portalsBtn" aria-expanded="false" aria-controls="portalsPanel"><svg class="ic"><use href="#i-globe"/></svg>البوابات<svg class="ic chev"><use href="#i-chev"/></svg></button>
+    <a href="#cat-1"><svg class="ic"><use href="#i-brief"/></svg>الموجز</a>
+    <a href="#cat-2"><svg class="ic"><use href="#i-search"/></svg>تحقيقات</a>
+    <a href="#cat-3"><svg class="ic"><use href="#i-report"/></svg>تقارير</a>
+    <a href="#videos"><svg class="ic"><use href="#i-play"/></svg>فيديو</a>
+    <a href="#about"><svg class="ic"><use href="#i-info"/></svg>من نحن</a>
+  </nav>
+</div>
+<div class="portals-panel" id="portalsPanel" hidden><div class="wrap" id="portalsList"></div></div>
+</header>
+
+<div class="breaking" id="breaking" hidden><div class="wrap">
+  <span class="tag"><svg class="ic"><use href="#i-bolt"/></svg>عاجل</span><span class="dot"></span><div class="vp"><div class="track" id="breakingTrack"></div></div>
+</div></div>
+
+<div class="ticker" id="ticker" hidden><div class="wrap">
+  <span class="lbl"><svg class="ic"><use href="#i-brief"/></svg>آخر الأخبار</span>
+  <div class="vp" aria-label="شريط آخر الأخبار"><div class="track" id="tickerTrack"></div></div>
+</div></div>
+
+<main class="wrap" id="main"></main>
+
+<footer><div class="wrap">
+  <img src="assets/logo.png" alt="الرواية">
+  <nav class="socials foot-soc" aria-label="منصات الرواية">
+    <a href="https://www.youtube.com/@ERRIWAYA" target="_blank" rel="noopener" aria-label="يوتيوب" title="يوتيوب"><svg class="si"><use href="#s-youtube"/></svg></a>
+    <a href="https://www.facebook.com/ERRIWAYA" target="_blank" rel="noopener" aria-label="فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
+    <a href="https://www.tiktok.com/@erriwaya" target="_blank" rel="noopener" aria-label="تيك توك" title="تيك توك"><svg class="si"><use href="#s-tiktok"/></svg></a>
+    <a href="https://www.instagram.com/erriwaya.mr/" target="_blank" rel="noopener" aria-label="إنستغرام" title="إنستغرام"><svg class="si"><use href="#s-instagram"/></svg></a>
+  </nav>
+  <nav class="foot-links" aria-label="صفحات الشبكة"><a href="about.html">من نحن</a><a href="editorial-policy.html">السياسة التحريرية</a><a href="corrections.html">سياسة التصحيحات</a><a href="privacy.html">سياسة الخصوصية</a></nav>
+  <small>© <span id="yr"></span> شبكة الرواية الإعلامية</small>
+</div></footer>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-label="مشغّل الفيديو"></div>
+
+<script>
+(() => {
+"use strict";
+const PROJECT = "erriwaya-68022";
+const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+const APK = "https://github.com/tenyekat-design/erriwaya-videos/releases/latest/download/erriwaya.apk";
+const BREAKING_MS = 30 * 60 * 1000;   // «عاجل» لنصف ساعة فقط، كما في التطبيق
+const LOGO = "assets/logo.png";
+const CAN_EMBED = !/claude/i.test(location.hostname);
+
+const DEFAULT_ABOUT = "الرواية منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.\n\nنقدّم الموجز الإخباري والتقارير والتحقيقات بأسلوب بصري حديث يعتمد الخرائط والإنفوغراف والفيديو، وننشر محتوانا على يوتيوب وفيسبوك وتيك توك وإنستغرام، وفي تطبيق الرواية.";
+
+// التصنيفات والبوابات منقولة من التطبيق (config.dart و portals.dart)
+const W = "(?<![\\p{L}])", WE = "(?![\\p{L}])";
+const CATEGORIES = [
+  ["الموجز", ["موجز"]],
+  ["تحقيقات", ["تحقيق", "استقصائي", "استقصاء", "وثائقي"]],
+  ["تقارير", ["تقرير"]],
+  ["موريتانيا", ["موريتاني", "نواكشوط", "نواذيبو", "انواكشوط"]],
+  ["المغرب العربي", ["مغارب", "المغرب", "الجزائر", "تونس", "ليبيا", "السنغال", `re:${W}(و|ب|ل)?مالي${WE}`]],
+];
+const PORTALS = [
+  ["mr", "موريتانيا", "Mauritanie", "المغرب العربي", ["موريتاني", "نواكشوط", "انواكشوط", "نواذيبو", "انواذيبو", "ولد الغزواني", "روصو", "كيفة"]],
+  ["ma", "المغرب", "Maroc", "المغرب العربي", [`re:${W}(و|ب|ل)?المغرب${WE}(?!\\s*(العربي|الكبير))`, "مغربي", "مغربية", "المغاربة", "الرباط", "الدار البيضاء", "مراكش", "طنجة"]],
+  ["dz", "الجزائر", "Algérie", "المغرب العربي", ["الجزائر", "جزائري", "تبون", "وهران", "قسنطينة"]],
+  ["tn", "تونس", "Tunisie", "المغرب العربي", ["تونس", "تونسي", "قيس سعيد", "صفاقس"]],
+  ["ly", "ليبيا", "Libye", "المغرب العربي", ["ليبيا", "ليبي", "بنغازي", "مصراتة", "الدبيبة", "حفتر", "المنفي"]],
+  ["eh", "الصحراء", "Sahara", "الصحراء وأزواد", ["الصحراء الغربية", "البوليساريو", "بوليساريو", "تندوف", "العيون", "الداخلة", "الكركرات", "المينورسو", "الصحراوي"]],
+  ["az", "أزواد", "Azawad", "الصحراء وأزواد", ["أزواد", "ازواد", "كيدال", "تمبكتو", "تينبكتو", "غاو", "الطوارق", "الأزواد"]],
+  ["sn", "السنغال", "Sénégal", "الجوار", ["السنغال", "السنگال", "السينغال", "سنغالي", "داكار", "دكار", "سونكو", "فاي"]],
+  ["ml", "مالي", "Mali", "الجوار", [`re:${W}(و|ب|ل)?مالي${WE}`, "باماكو", "غويتا", "ماليين"]],
+  ["ne", "النيجر", "Niger", "الجوار", [`re:${W}(و|ب|ل)?النيجر${WE}(?!يا)`, "نيامي", "تياني"]],
+  ["td", "تشاد", "Tchad", "الجوار", ["تشاد", "انجامينا", "نجامينا"]],
+  ["gm", "غامبيا", "Gambie", "الجوار", ["غامبيا", "بانجول"]],
+];
+const reCache = new Map();
+function matchesAny(text, kws) {
+  return kws.some(k => {
+    if (!k.startsWith("re:")) return text.includes(k);
+    let r = reCache.get(k);
+    if (!r) { try { r = new RegExp(k.slice(3), "u"); } catch { r = /$^/; } reCache.set(k, r); }
+    return r.test(text);
+  });
+}
+
+const state = { articles: [], videos: [], site: {}, weather: {}, filter: "all", shown: 12 };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cleanTitle = t => (t || "").replace(/[#_]/g, " ").replace(/\s+/g, " ").trim() || "الرواية";
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+// ── الوقت ──
+function timeAgo(d) {
+  if (!d) return "";
+  const t = new Date(d); if (isNaN(t) || t.getFullYear() <= 2000) return "";
+  const m = Math.floor((Date.now() - t) / 60000);
+  const pl = (n, one, two, few) => n === 1 ? `منذ ${one}` : n === 2 ? `منذ ${two}` : n <= 10 ? `منذ ${n} ${few}` : `منذ ${n} ${one}`;
+  if (m < 1) return "الآن";
+  if (m < 60) return pl(m, "دقيقة", "دقيقتين", "دقائق");
+  if (m < 1440) return pl(Math.floor(m / 60), "ساعة", "ساعتين", "ساعات");
+  if (m < 43200) return pl(Math.floor(m / 1440), "يوم", "يومين", "أيام");
+  return new Intl.DateTimeFormat("ar-MA", { day: "numeric", month: "long", year: "numeric" }).format(t);
+}
+// العواصم: البوابة، المدينة، المنطقة الزمنية. المغرب عاد إلى توقيت غرينتش (والعيون معه)، وبيانات المتصفحات
+// ما زالت تعطيه +1، فنثبّته على UTC هنا.
+const CAPITALS = [["mr", "نواكشوط", "Africa/Nouakchott"], ["ma", "الرباط", "UTC"], ["dz", "الجزائر", "Africa/Algiers"],
+  ["tn", "تونس", "Africa/Tunis"], ["ly", "طرابلس", "Africa/Tripoli"], ["eh", "العيون", "UTC"], ["sn", "داكار", "Africa/Dakar"],
+  ["ml", "باماكو", "Africa/Bamako"], ["ne", "نيامي", "Africa/Niamey"], ["td", "انجامينا", "Africa/Ndjamena"], ["gm", "بانجول", "Africa/Banjul"]];
+const capFmt = Object.fromEntries(CAPITALS.map(([c, , tz]) => [c, new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false })]));
+const hourIn = (tz, now) => +new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(now);
+function tickClock() {
+  const now = new Date();
+  const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+  const nkc = wxCities().find(c => c.portal === "mr");
+  $("#clock").textContent = "نواكشوط | " + f.format(now) + (nkc ? ` | ${nkc.temp}°` : "");
+}
+
+// ── لوحة العواصم: كل كبسولة تعرض عاصمة بوقتها، ثم تنتقل إلى طقسها، ثم إلى العاصمة التالية ──
+const flaps = { boards: [], timer: 0, n: 0 };
+function flapFace([code, city, tz], phase) {
+  const now = new Date();
+  if (phase === "time") {
+    const d = (hourIn(tz, now) - hourIn("Africa/Nouakchott", now) + 36) % 24 - 12;   // الفارق عن نواكشوط
+    return `<a href="#p-${code}" title="الساعة في ${city}"><span class="c">${city}</span><b>${capFmt[code].format(now)}</b>${d ? `<bdi class="n" dir="ltr">${d > 0 ? "+" : "−"}${Math.abs(d)}</bdi>` : ""}<span class="k">${ic("clock")}</span><i class="bar"></i></a>`;
+  }
+  const w = wxCities().find(c => c.portal === code), [icon, tone, label] = wxInfo(w.wmo, w.day);
+  return `<a href="#p-${code}" title="الطقس في ${city}"><span class="c">${city}</span><svg class="wx-i ${tone}"><use href="#w-${icon}"/></svg><b>${w.temp}°</b><span class="s">${label}</span><i class="bar"></i></a>`;
+}
+// خطوات اللوحة: وقت كل عاصمة ثم طقسها (إن وُجد)
+function flapSteps(i, n) {
+  const hasWx = new Set(wxCities().map(c => c.portal));
+  return CAPITALS.filter((_, k) => k % n === i).flatMap(c => hasWx.has(c[0]) ? [[c, "time"], [c, "wx"]] : [[c, "time"]]);
+}
+function flip(b) {
+  const steps = flapSteps(b.i, flaps.n);
+  b.k = (b.k + 1) % steps.length;
+  const html = flapFace(...steps[b.k]);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { b.el.innerHTML = html; return; }
+  // كل الوجوه السابقة تخرج، لا الأول فقط: إذا تتابعت قلبتان (مؤقّتات متراكمة بعد العودة إلى الصفحة) كان وجه يبقى عالقاً فوق الجديد
+  const olds = [...b.el.children];
+  b.el.insertAdjacentHTML("beforeend", html);
+  const neu = b.el.lastElementChild;
+  neu.classList.add("in"); olds.forEach(o => o.classList.add("out"));
+  setTimeout(() => { olds.forEach(o => o.remove()); neu.classList.remove("in"); }, 520);
+}
+function buildFlaps() {
+  const host = $("#flaps"), w = host.clientWidth || innerWidth;
+  const n = Math.max(1, Math.min(5, Math.floor((w + 10) / 246)));
+  if (n === flaps.n && flaps.boards.length) return;
+  flaps.n = n;
+  host.innerHTML = Array.from({ length: n }, () => `<div class="flap"></div>`).join("");
+  flaps.boards = [...host.children].map((el, i) => ({ el, i, k: 0 }));
+  flaps.boards.forEach(b => { b.el.innerHTML = flapFace(...flapSteps(b.i, n)[0]); });
+  clearInterval(flaps.timer);
+  flaps.timer = setInterval(() => { if (!document.hidden) flaps.boards.forEach((b, i) => setTimeout(() => flip(b), i * 180)); }, 3500);
+}
+addEventListener("resize", () => { clearTimeout(flaps.rs); flaps.rs = setTimeout(buildFlaps, 200); });
+
+// ── تطبيع البيانات ──
+function normArticle(a) {
+  return { kind: "a", id: a.id, title: a.title || "", body: a.body || "", category: a.category || "",
+    breaking: !!a.breaking, thumb: a.thumb || "", images: a.images || [], imageCount: a.imageCount ?? (a.images || []).length,
+    portals: a.portals || [], date: a.createdAt || null };
+}
+function normVideo(v) {
+  return { kind: "v", id: v.id, title: cleanTitle(v.title), rawTitle: v.title || "", short: !!v.short, views: v.views || 0, date: v.published || null };
+}
+const text = it => (it.kind === "a" ? `${it.title} ${it.body}` : it.rawTitle).replace(/_/g, " ");
+function cats(it) {
+  const s = new Set(); if (it.kind === "a" && it.category) s.add(it.category);
+  for (const [name, kws] of CATEGORIES) if (matchesAny(text(it), kws)) s.add(name);
+  return [...s];
+}
+const inPortal = (p, it) => (it.kind === "a" && it.portals.includes(p[0])) || matchesAny(text(it), p[4]);
+const isFreshBreaking = it => it.kind === "a" && it.breaking && it.date && Date.now() - new Date(it.date) < BREAKING_MS;
+const thumbOf = it => it.kind === "v" ? `https://i.ytimg.com/vi/${it.id}/${it.short ? "oar2" : "hqdefault"}.jpg`
+  : it.thumb ? `data:image/jpeg;base64,${it.thumb}` : (it.images[0] || "");
+const bigThumbOf = it => it.kind === "v" && !it.short ? `https://i.ytimg.com/vi/${it.id}/maxresdefault.jpg` : thumbOf(it);
+const ytUrl = v => v.short ? `https://www.youtube.com/shorts/${v.id}` : `https://www.youtube.com/watch?v=${v.id}`;
+// حيث لا يمكن تشغيل يوتيوب داخل الصفحة، يفتح الفيديو مباشرة في يوتيوب
+const hrefOf = it => it.kind === "a" ? `#a-${it.id}` : CAN_EMBED ? `#v-${it.id}` : ytUrl(it);
+const tgt = it => it.kind === "v" && !CAN_EMBED ? ' target="_blank" rel="noopener"' : "";
+const excerpt = b => { const t = b.replace(/\s+/g, " ").trim(); return t.length > 170 ? t.slice(0, 170) + "…" : t; };
+const fmtViews = n => n >= 1e6 ? (n / 1e6).toFixed(1) + " مليون مشاهدة" : n >= 1e3 ? Math.round(n / 1e3) + " ألف مشاهدة" : n ? n + " مشاهدة" : "";
+
+function feed() {
+  const all = [...state.articles, ...state.videos.filter(v => !v.short)];
+  return all.sort((a, b) => (new Date(b.date || 0)) - (new Date(a.date || 0)));
+}
+
+// ── عناصر العرض ──
+const playIcon = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>`;
+const ic = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
+function media(it, big) {
+  const src = big ? bigThumbOf(it) : thumbOf(it);
+  const img = src ? `<img src="${esc(src)}" alt="" loading="lazy" ${it.kind === "v" ? `data-alt="https://i.ytimg.com/vi/${it.id}/hqdefault.jpg"` : ""} onerror="imgErr(this)">`
+    : `<div class="ph"><img src="${LOGO}" alt=""></div>`;
+  return `<div class="media">${img}${it.kind === "v" ? `<span class="play">${playIcon}فيديو</span>` : ""}${isFreshBreaking(it) ? `<span class="badge-br">عاجل</span>` : ""}</div>`;
+}
+// صورة بديلة ثم شعار الرواية إن تعذّر تحميل الصورة
+window.imgErr = el => {
+  if (el.dataset.alt && el.src !== el.dataset.alt) { el.src = el.dataset.alt; delete el.dataset.alt; return; }
+  el.onerror = null;
+  const ph = document.createElement("div"); ph.className = "ph"; ph.innerHTML = `<img src="${LOGO}" alt="">`;
+  el.replaceWith(ph);
+};
+function metaLine(it) {
+  const c = cats(it)[0];
+  const k = isFreshBreaking(it) ? `<span class="kicker red">عاجل</span>` : c ? `<span class="kicker">${esc(c)}</span>` : "";
+  const t = timeAgo(it.date);
+  return `<div class="meta">${k}${t ? `<span class="m"><svg class="ic"><use href="#i-clock"/></svg>${t}</span>` : ""}${it.kind === "v" && it.views ? `<span class="m"><svg class="ic"><use href="#i-eye"/></svg>${fmtViews(it.views)}</span>` : ""}</div>`;
+}
+function card(it) {
+  return `<a class="card" href="${hrefOf(it)}"${tgt(it)}>${media(it)}${metaLine(it)}<h3>${esc(it.title)}</h3>${it.kind === "a" ? `<p>${esc(excerpt(it.body))}</p>` : ""}</a>`;
+}
+
+function renderTicker() {
+  const items = feed().slice(0, 15);
+  $("#ticker").hidden = !items.length;
+  if (!items.length) return;
+  const key = items.map(i => i.id + (isFreshBreaking(i) ? "!" : "")).join(",");
+  const tr = $("#tickerTrack");
+  if (tr.dataset.key === key) return;            // لا نعيد التشغيل إن لم يتغير شيء
+  tr.dataset.key = key;
+  const hm = d => d ? new Date(d).toLocaleTimeString("ar", { hour: "2-digit", minute: "2-digit", hour12: false, numberingSystem: "latn" }) : "";
+  const one = items.map(it => `<a href="${hrefOf(it)}"${tgt(it)}${isFreshBreaking(it) ? ' class="br"' : ""}>${esc(it.title)}${it.date ? `<time>${hm(it.date)}</time>` : ""}</a>`).join("");
+  tr.innerHTML = one + one.replace(/<a /g, '<a tabindex="-1" aria-hidden="true" ');
+  requestAnimationFrame(() => tr.style.setProperty("--dur", Math.max(25, tr.scrollWidth / 2 / 55) + "s"));
+}
+
+// كل الأخبار العاجلة السارية (نصف ساعة) تتجول في الشريط الأحمر، الأحدث أولاً، حتى يُقرأ كل عنوان كاملاً
+function renderBreaking() {
+  const list = state.articles.filter(isFreshBreaking).sort((a, b) => new Date(b.date) - new Date(a.date));
+  $("#breaking").hidden = !list.length;
+  const tr = $("#breakingTrack");
+  const key = list.map(i => i.id + i.title).join("|");
+  if (!list.length) { tr.dataset.key = ""; tr.innerHTML = ""; return; }
+  if (tr.dataset.key === key) return;            // لا نعيد التشغيل إن لم يتغير شيء
+  tr.dataset.key = key;
+  const hm = d => new Date(d).toLocaleTimeString("ar", { hour: "2-digit", minute: "2-digit", hour12: false, numberingSystem: "latn" });
+  const one = list.map(it => `<a href="${hrefOf(it)}">${esc(it.title)}<time>${hm(it.date)}</time></a>`).join("");
+  tr.innerHTML = one;
+  requestAnimationFrame(() => {
+    // نكرر المجموعة حتى تملأ عرض الشريط، ثم نضاعفها ليدور بلا انقطاع
+    const k = Math.max(1, Math.ceil(tr.parentElement.clientWidth / Math.max(1, tr.scrollWidth)));
+    const copy = one.replace(/<a /g, '<a tabindex="-1" aria-hidden="true" ');
+    tr.innerHTML = one + copy.repeat(2 * k - 1);   // نصفان متطابقان، كل نصف يملأ الشريط
+    tr.style.setProperty("--dur", Math.max(12, tr.scrollWidth / 2 / 45) + "s");
+  });
+}
+
+function homeView() {
+  const items = feed();
+  if (!items.length) return `<p class="empty">جارٍ تحميل الأخبار…</p>`;
+  const lead = items.find(isFreshBreaking) || items.find(i => i.kind === "a" && thumbOf(i)) || items[0];
+  const rail = items.filter(i => i !== lead).slice(0, 5);
+  const filters = ["الكل", ...CATEGORIES.map(c => c[0])];
+  const filtered = state.filter === "all" ? items.filter(i => i !== lead) : items.filter(i => cats(i).includes(state.filter));
+  const shorts = state.videos.filter(v => v.short).slice(0, 16);
+  return `
+  <section class="lead" aria-label="الأبرز">
+    <a class="lead-main" href="${hrefOf(lead)}"${tgt(lead)}>${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
+    <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
+  </section>
+
+  <section id="latest" aria-label="آخر الأخبار">
+    <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
+    <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map((f, i) => `<button type="button" data-f="${i ? esc(f) : "all"}" aria-pressed="${(i ? f : "all") === state.filter}">${esc(f)}</button>`).join("")}</div>
+    <div class="feed">${filtered.slice(0, state.shown).map(card).join("") || `<p class="empty">لا مواد في هذا التصنيف بعد.</p>`}</div>
+    ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">${ic("plus")}المزيد من الأخبار</button></div>` : ""}
+  </section>
+
+  ${weatherSection()}
+
+  ${shorts.length ? `<section aria-label="مقاطع قصيرة">
+    <div class="sec-h"><h2>مقاطع قصيرة</h2><a href="https://www.youtube.com/@ERRIWAYA/shorts" target="_blank" rel="noopener">كل المقاطع على يوتيوب</a></div>
+    <div class="shorts">${shorts.map(s => `<a class="short" href="${hrefOf(s)}"${tgt(s)}><div class="media"><img src="${thumbOf(s)}" alt="" loading="lazy" data-alt="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" onerror="imgErr(this)"></div><strong>${esc(s.title)}</strong></a>`).join("")}</div>
+  </section>` : ""}
+
+  ${appBand()}
+  ${aboutSection()}`;
+}
+
+// ── الطقس ──
+// رموز WMO من Open-Meteo → [أيقونة، لون، وصف]
+function wxInfo(c, day) {
+  if (c <= 1) return [day ? "sun" : "moon", day ? "sun" : "moon", c ? (day ? "مشمس غالباً" : "صافٍ غالباً") : (day ? "مشمس" : "صافٍ")];
+  if (c === 2) return [day ? "sun-cloud" : "moon-cloud", day ? "sun" : "moon", "غائم جزئياً"];
+  if (c === 3) return ["cloud", "", "غائم"];
+  if (c === 45 || c === 48) return ["fog", "", "ضباب"];
+  if (c >= 51 && c <= 57) return ["rain", "rain", "رذاذ"];
+  if (c === 61 || c === 80) return ["rain", "rain", "أمطار خفيفة"];
+  if (c === 65 || c === 82) return ["rain", "rain", "أمطار غزيرة"];
+  if ((c >= 61 && c <= 67) || c === 81) return ["rain", "rain", "أمطار"];
+  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return ["snow", "", "ثلوج"];
+  if (c >= 95) return ["storm", "storm", c === 95 ? "عاصفة رعدية" : "عاصفة رعدية وبرَد"];
+  return ["cloud", "", "—"];
+}
+// لا نعرض طقساً أقدم من 3 ساعات
+function wxCities() {
+  const w = state.weather || {};
+  return w.cities && Date.now() - new Date(w.updated) < 3 * 3600e3 ? w.cities : [];
+}
+function weatherSection() {
+  const cs = wxCities();
+  if (!cs.length) return "";
+  const at = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(state.weather.updated));
+  return `<section aria-label="الطقس في العواصم">
+    <div class="sec-h"><h2>الطقس في العواصم</h2><span>آخر تحديث ${at} بتوقيت نواكشوط</span></div>
+    <div class="wx-grid">${cs.map(c => {
+      const p = PORTALS.find(x => x[0] === c.portal), [icon, tone, label] = wxInfo(c.wmo, c.day);
+      return `<a class="wx-c" href="#p-${c.portal}" title="${esc(`${label}، الرطوبة ${c.hum ?? "–"}٪، الرياح ${c.wind} كم/س`)}">
+        <span class="city">${esc(c.city)}</span><span class="cty">${esc(p ? p[1] : "")}</span>
+        <span class="row"><svg class="wx-i ${tone}"><use href="#w-${icon}"/></svg><span class="t">${c.temp}°</span></span>
+        <span class="lbl">${label}</span>
+        ${c.max != null ? `<span class="mm"><span>العظمى ${c.max}°</span><span>الصغرى ${c.min}°</span></span>` : ""}
+      </a>`;
+    }).join("")}</div>
+  </section>`;
+}
+
+function renderPortals() {
+  const items = feed();
+  const groups = [...new Set(PORTALS.map(p => p[3]))];
+  const cur = location.hash.slice(1);
+  let i = 0;
+  $("#portalsList").innerHTML = groups.map(g => `<div class="pgroup"><h4>${esc(g)}</h4><ul class="pchain">${PORTALS.filter(p => p[3] === g).map(p => {
+    const n = items.filter(it => inPortal(p, it)).length;
+    return `<li><a href="#p-${p[0]}" style="--i:${i++}" ${cur === "p-" + p[0] ? 'aria-current="page"' : ""}><span class="node">${ic("pin")}</span><span class="ar">${p[1]}</span>${n ? `<span class="n">${n}</span>` : ""}</a></li>`;
+  }).join("")}</ul></div>`).join("");
+}
+function togglePortals(open) {
+  const panel = $("#portalsPanel"), btn = $("#portalsBtn");
+  open = open ?? panel.hidden;
+  if (open) renderPortals();
+  panel.hidden = !open; btn.setAttribute("aria-expanded", String(open));
+}
+
+function appBand() {
+  return `<section class="app" aria-label="تطبيق الرواية">
+    <img src="assets/icon.png" alt="">
+    <div><h2>تطبيق الرواية</h2><p>الأخبار العاجلة لحظة صدورها، والبوابات والفيديو في جيبك. متاح لأجهزة أندرويد.</p></div>
+    <a class="btn" href="${APK}" target="_blank" rel="noopener">${ic("download")}تحميل التطبيق</a>
+  </section>`;
+}
+
+function aboutSection() {
+  const s = state.site || {};
+  const about = (s.about || "").trim() || DEFAULT_ABOUT;
+  const rows = [["mail", "البريد", s.email], ["chat", "واتساب", s.whatsapp], ["phone", "الهاتف", s.phone]].filter(r => r[2]);
+  return `<section id="about" class="about" aria-label="من نحن">
+    <div>
+      <div class="sec-h"><h2>من نحن</h2></div>
+      <div class="txt">${esc(about)}</div>
+      <div class="about-soc"><span>تابعونا</span>${document.querySelector(".foot-soc").innerHTML}</div>
+      ${rows.length ? `<div class="contacts">${rows.map(([i, k, v]) => `<div><span class="m">${ic(i)}${k}</span><code>${esc(v)}</code><button class="copy" type="button" data-copy="${esc(v)}" aria-label="نسخ">${ic("copy")}</button></div>`).join("")}</div>` : ""}
+    </div>
+    <form id="contact" novalidate>
+      <h3>راسل الرواية</h3>
+      <label for="cName">الاسم<input id="cName" name="name" maxlength="80" required autocomplete="name"></label>
+      <label for="cContact">بريدك أو رقمك (اختياري)<input id="cContact" name="contact" maxlength="120" dir="auto"></label>
+      <label for="cText">رسالتك أو معلومتك<textarea id="cText" name="text" maxlength="2000" required></textarea></label>
+      <button class="btn solid" type="submit">${ic("send")}إرسال</button>
+      <p class="status" id="cStatus" role="status"></p>
+    </form>
+  </section>`;
+}
+
+function listView(title, sub, items, back = true) {
+  return `<section>
+    ${back ? `<button class="btn" type="button" data-back style="margin-bottom:16px">${ic("back")}الرئيسية</button>` : ""}
+    <div class="sec-h"><h2>${esc(title)}</h2><span>${esc(sub)}</span></div>
+    <div class="feed">${items.map(card).join("") || `<p class="empty">لا مواد هنا بعد.</p>`}</div>
+  </section>`;
+}
+
+// رابط الخبر الدائم: صفحة ثابتة تقرؤها محركات البحث وتعرض بطاقة صحيحة عند المشاركة
+const newsUrl = a => `https://erriwaya.com/news/${a.id}.html`;
+
+function articleView(a) {
+  const imgs = a.images.length ? a.images : [];
+  const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
+  const c = cats(a);
+  return `<article class="article">
+    <button class="back" type="button" data-back>${ic("back")}الرئيسية</button>
+    <div class="meta">${isFreshBreaking(a) ? `<span class="kicker red">عاجل</span>` : ""}${c.map(x => `<span class="kicker">${esc(x)}</span>`).join("")}<span class="m">${ic("clock")}${timeAgo(a.date)}</span></div>
+    <h1>${esc(a.title)}</h1>
+    <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
+    <div class="body">${paras}</div>
+    <div class="tools">
+      <button class="btn" type="button" data-copy="${esc(newsUrl(a))}">${ic("link")}نسخ رابط الخبر</button>
+      <a class="btn" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + newsUrl(a))}">${ic("chat")}مشاركة على واتساب</a>
+    </div>
+  </article>`;
+}
+
+// ── التوجيه ──
+function route() {
+  const h = location.hash.slice(1) || "home";
+  document.querySelectorAll("#nav a").forEach(a => a.setAttribute("aria-current", a.getAttribute("href") === "#" + h ? "page" : "false"));
+  const main = $("#main");
+  let m;
+  if ((m = h.match(/^a-([\w-]+)$/))) {
+    const a = state.articles.find(x => x.id === m[1]);
+    main.innerHTML = a ? articleView(a) : `<p class="empty">جارٍ تحميل الخبر…</p>`;
+    if (a) { document.title = a.title + " | الرواية"; loadImages(a); }
+    window.scrollTo(0, 0); return;
+  }
+  document.title = "الرواية";
+  if ((m = h.match(/^v-([\w-]{11})$/))) { openVideo(m[1]); if (!$("#main").children.length) main.innerHTML = homeView(); return; }
+  if ((m = h.match(/^p-(\w\w)$/))) {
+    const p = PORTALS.find(x => x[0] === m[1]);
+    if (p) { main.innerHTML = listView(`بوابة ${p[1]}`, "", feed().filter(it => inPortal(p, it))); window.scrollTo(0, 0); return; }
+  }
+  if ((m = h.match(/^cat-(\d)$/))) {
+    const c = CATEGORIES[+m[1] - 1];
+    if (c) { main.innerHTML = listView(c[0], "", feed().filter(it => cats(it).includes(c[0]))); window.scrollTo(0, 0); return; }
+  }
+  if (h === "videos") {
+    main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
+  }
+  main.innerHTML = homeView();
+  if (h === "portals") { togglePortals(true); window.scrollTo(0, 0); }
+  else if (h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
+  else if (h === "home") window.scrollTo(0, 0);
+}
+
+let lastHash = "";
+function onHash() {
+  const h = location.hash;
+  if (/^#v-/.test(h)) { const id = h.slice(3); openVideo(id); return; }
+  closeVideo(false);
+  if (h !== lastHash) { lastHash = h; if (h !== "#portals") togglePortals(false); route(); }
+}
+
+// ── الفيديو ──
+function openVideo(id) {
+  const v = state.videos.find(x => x.id === id) || { id, title: "", short: false };
+  const url = v.short ? `https://www.youtube.com/shorts/${id}` : `https://www.youtube.com/watch?v=${id}`;
+  if (!CAN_EMBED) { window.open(url, "_blank", "noopener") || (location.href = url); history.replaceState(null, "", lastHash || "#home"); return; }
+  const m = $("#modal");
+  m.innerHTML = `<div class="box">
+    <div class="row"><strong>${esc(v.title)}</strong><button type="button" id="closeV">${ic("x")}إغلاق</button></div>
+    <div class="frame${v.short ? " tall" : ""}"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" title="${esc(v.title || "فيديو الرواية")}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+    <div class="row"><span>إذا لم يعمل الفيديو هنا:</span><a class="yt" href="${url}" target="_blank" rel="noopener">${ic("play")}شاهد على يوتيوب</a></div></div>`;
+  m.hidden = false; $("#closeV").focus();
+}
+function closeVideo(restore = true) {
+  const m = $("#modal"); if (m.hidden) return;
+  m.hidden = true; m.innerHTML = "";
+  if (restore) history.replaceState(null, "", lastHash || "#home");
+}
+
+// ── صور الخبر من Firestore عند الحاجة ──
+async function loadImages(a) {
+  if (a.images.length || !a.imageCount) return;
+  try {
+    const r = await fetch(`${FS}/articles/${a.id}/images?pageSize=20`);
+    if (!r.ok) return;
+    const j = await r.json();
+    const docs = (j.documents || []).map(fsDoc).sort((x, y) => (x.i || 0) - (y.i || 0));
+    a.images = docs.map(d => `data:image/jpeg;base64,${d.data}`);
+    const g = document.getElementById("gallery");
+    if (g && location.hash === `#a-${a.id}`) g.innerHTML = a.images.map(s => `<img src="${s}" alt="">`).join("");
+  } catch {}
+}
+
+// ── Firestore REST ──
+function fsVal(v) {
+  if ("stringValue" in v) return v.stringValue;
+  if ("booleanValue" in v) return v.booleanValue;
+  if ("integerValue" in v) return +v.integerValue;
+  if ("doubleValue" in v) return v.doubleValue;
+  if ("timestampValue" in v) return v.timestampValue;
+  if ("arrayValue" in v) return (v.arrayValue.values || []).map(fsVal);
+  if ("mapValue" in v) return Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, fsVal(x)]));
+  return null;
+}
+function fsDoc(d) { const o = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, fsVal(v)])); o.id = d.name.split("/").pop(); return o; }
+async function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]); }
+
+// قراءة خفيفة: النسخة المحفوظة (data.json) تُحدَّث كل نصف ساعة، فلا نسأل قاعدة البيانات إلا عن الأخبار
+// المنشورة بعدها. استعلام بلا نتائج يُحسب قراءة واحدة، بدل 61 قراءة لكل زائر سابقاً، فتبقى الخطة المجانية كافية.
+async function loadLive() {
+  try {
+    const newest = state.articles.reduce((m, a) => (a.date && a.date > m ? a.date : m), "");
+    const q = { structuredQuery: { from: [{ collectionId: "articles" }],
+      orderBy: [{ field: { fieldPath: "createdAt" }, direction: "DESCENDING" }], limit: 20 } };
+    if (newest) q.structuredQuery.where = { fieldFilter: { field: { fieldPath: "createdAt" }, op: "GREATER_THAN", value: { timestampValue: newest } } };
+    const r = await withTimeout(fetch(`${FS}:runQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(q) }), 8000);
+    if (!r.ok) throw 0;
+    const fresh = (await r.json()).filter(x => x.document).map(x => normArticle(fsDoc(x.document)));
+    if (!fresh.length) return;
+    const ids = new Set(fresh.map(a => a.id));
+    state.articles = [...fresh, ...state.articles.filter(a => !ids.has(a.id))]
+      .sort((x, y) => String(y.date || "").localeCompare(String(x.date || "")));
+    refresh();
+  } catch {}
+}
+
+async function loadSnapshot() {
+  try {
+    const r = await fetch("data.json", { cache: "no-cache" });
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    state.articles = (d.articles || []).map(normArticle);
+    state.videos = (d.videos || []).map(normVideo);
+    state.site = d.site || {};
+    state.weather = d.weather || {};
+    store.set("erriwaya-snap", d);
+  } catch {
+    const d = store.get("erriwaya-snap");
+    if (d) { state.articles = (d.articles || []).map(normArticle); state.videos = (d.videos || []).map(normVideo); state.site = d.site || {}; state.weather = d.weather || {}; }
+  }
+  tickClock(); refresh();
+}
+
+function refresh() {
+  renderBreaking();
+  renderTicker();
+  const typing = document.activeElement && /INPUT|TEXTAREA/.test(document.activeElement.tagName);
+  if (typing) return;
+  const y = window.scrollY; lastHash = location.hash; route(); window.scrollTo(0, y);
+}
+
+// ── نموذج المراسلة ──
+async function sendMessage(form) {
+  const st = $("#cStatus");
+  const name = form.name.value.trim(), contact = form.contact.value.trim(), text = form.text.value.trim();
+  if (!name || !text) { st.className = "status err"; st.textContent = "اكتب اسمك ورسالتك قبل الإرسال."; return; }
+  st.className = "status"; st.textContent = "جارٍ الإرسال…";
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(10)), b => b.toString(16).padStart(2, "0")).join("");
+  const body = { writes: [{
+    update: { name: `projects/${PROJECT}/databases/(default)/documents/messages/${id}`,
+      fields: { name: { stringValue: name }, contact: { stringValue: contact }, text: { stringValue: text } } },
+    currentDocument: { exists: false },
+    updateTransforms: [{ fieldPath: "createdAt", setToServerValue: "REQUEST_TIME" }] }] };
+  try {
+    const r = await withTimeout(fetch(`${FS.replace(/\/documents$/, "")}/documents:commit`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }), 10000);
+    if (!r.ok) throw new Error(r.status);
+    form.reset(); st.className = "status ok"; st.textContent = "وصلت رسالتك إلى فريق الرواية. شكراً لك.";
+  } catch {
+    st.className = "status err";
+    st.textContent = "تعذّر الإرسال الآن. أعد المحاولة بعد قليل" + (state.site?.email ? `، أو راسلنا على ${state.site.email}.` : ".");
+  }
+}
+
+// ── الأحداث ──
+document.addEventListener("click", e => {
+  if (e.target.closest("#portalsBtn")) { togglePortals(); return; }
+  if (!$("#portalsPanel").hidden && !e.target.closest("#portalsPanel")) togglePortals(false);
+  const f = e.target.closest("[data-f]");
+  if (f) { state.filter = f.dataset.f; state.shown = 12; const y = scrollY; route(); scrollTo(0, y); return; }
+  if (e.target.id === "moreBtn") { state.shown += 12; const y = scrollY; route(); scrollTo(0, y); return; }
+  if (e.target.closest("[data-back]")) { location.hash = "home"; return; }
+  if (e.target.id === "closeV" || e.target.id === "modal") { closeVideo(); return; }
+  const c = e.target.closest("[data-copy]");
+  if (c) {
+    const done = () => { const t = c.textContent; c.textContent = "نُسخ"; setTimeout(() => c.textContent = t, 1400); };
+    navigator.clipboard?.writeText(c.dataset.copy).then(done, () => {}) ;
+  }
+});
+document.addEventListener("submit", e => { if (e.target.id === "contact") { e.preventDefault(); sendMessage(e.target); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVideo(); togglePortals(false); } });
+window.addEventListener("hashchange", onHash);
+
+$("#yr").textContent = new Date().getFullYear();
+tickClock(); buildFlaps(); setInterval(() => { tickClock(); renderBreaking(); }, 30000);
+lastHash = /^#v-/.test(location.hash) ? "#home" : location.hash;
+loadSnapshot().then(() => { if (/^#v-/.test(location.hash)) openVideo(location.hash.slice(3)); loadLive(); });
+setInterval(loadLive, 3 * 60 * 1000);
+})();
+</script>
