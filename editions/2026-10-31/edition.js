@@ -27,7 +27,7 @@ window.TIMELINE = {
     // Western Sahara
     { img: 'unsc-vote.webp', moves: [{ t: 21.12, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.14] },
                                      { t: 32.03, a: [0.42, 0.42, 1.55], b: [0.44, 0.38, 1.35] }] },
-    { img: 'dz-tebboune.webp', moves: [{ t: 38.54, a: [0.5, 0.35, 1.0], b: [0.5, 0.3, 1.14] }] },
+    { img: 'dz-attaf-podium.jpg', moves: [{ t: 38.54, a: [0.52, 0.4, 1.0], b: [0.52, 0.32, 1.15] }] },
     { img: 'unsc-vote.webp', moves: [{ t: 47.72, a: [0.62, 0.55, 1.4], b: [0.55, 0.5, 1.2] },
                                      { t: 53.68, a: [0.5, 0.5, 1.12], b: [0.5, 0.5, 1.0] }] },
     // Mauritania: Dakar summit on sport and sustainable development
@@ -39,8 +39,9 @@ window.TIMELINE = {
     { img: 'mr-guidimakha-town.jpg', moves: [{ t: 86.62, a: [0.5, 0.5, 1.0], b: [0.45, 0.5, 1.14] }] },
     { img: 'mr-guidimakha-mosque.jpg', moves: [{ t: 97.92, a: [0.5, 0.42, 1.0], b: [0.5, 0.4, 1.12] }] },
     // Algeria: presidential pardon
-    { img: 'dz-tebboune.webp', moves: [{ t: 105.56, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.12] },
-                                       { t: 119.56, a: [0.48, 0.3, 1.6], b: [0.48, 0.32, 1.4] },
+    { img: 'dz-tebboune-interview.jpg', moves: [{ t: 105.56, a: [0.45, 0.4, 1.0], b: [0.43, 0.34, 1.12] }] },
+    { img: 'dz-tebboune-portrait.jpg', moves: [{ t: 115.30, a: [0.48, 0.38, 1.0], b: [0.48, 0.32, 1.1] }] },
+    { img: 'dz-tebboune.webp', moves: [{ t: 119.56, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.12] },
                                        { t: 128.34, a: [0.2, 0.45, 1.3], b: [0.3, 0.42, 1.15] }] },
     // Morocco: foreign direct investment
     { img: 'ma-office-changes.webp', moves: [{ t: 133.42, a: [0.5, 0.45, 1.0], b: [0.6, 0.35, 1.15] },
