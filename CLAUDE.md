@@ -1,5 +1,18 @@
 # Erriwaya news brief (الموجز الإخباري – الرواية)
 
+## Keywords (the user starts a request with one of these; apply that approved template without asking)
+
+| keyword | template | output |
+|---|---|---|
+| `موجز` | news brief with voice-over, broadcast look (approved 29 Oct 2026) | 1080x1350 feed (`node tools/render.js`) |
+| `موجز يوتيوب` / `موجز ستوري` | same, other format | `--format youtube` (1920x1080) / `--format story` (1080x1920) |
+| `موجز كلاسيكي` | news brief, white layout approved 28 Oct 2026 | `--look classic` |
+| `نصي` | text video without narration (approved 31 Oct 2026, below), Facebook version | 1080x1350 (`node tools/render-text.js --format feed`) |
+| `نصي طولي` | same text video for TikTok / Reels / Shorts | 1080x1920 (`node tools/render-text.js`) |
+| `نصي كامل` | text video in both formats | feed + story |
+
+A request without a keyword: voice-over sent → `موجز`; text + photos/clips without voice-over → `نصي`.
+
 This repo is the approved video template. A new edition = a voice-over + photos (+ the script text) from the user.
 Do not change the template (src/, assets/, tools/) unless the user asks; only add `editions/<date>/`.
 
@@ -58,7 +71,8 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 
 When the user sends text + photos/clips without a voice-over: `editions/<date>/text.js` (window.TEXTVIDEO), rendered by
 `node tools/render-text.js --edition <date>` (`--stills 2,30` to check) with src/text.html + src/text.js, 1080x1920.
-Approved 31 Oct 2026 from the user's model video (~60 s): hook (full-frame clip, navy boxes, words appear one by one)
+Approved 31 Oct 2026 from the user's model video (~60 s; reference: editions/2026-10-31, the Facebook version
+`output/erriwaya-text-2026-10-31-feed.mp4` is the approved default): hook (full-frame clip, navy boxes, words appear one by one)
 → title (green country pill + white topic pill, big centred headline) → lower thirds (16:9 band on a blurred copy,
 green rule, navy label line then white lines against a green bar) with a `stat` card (big figure + navy caption), a
 `quote` card (white card, green label, quote mark, source) → closing `question` → navy outro (logo, تابعوا الرواية,
