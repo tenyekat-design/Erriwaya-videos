@@ -1,5 +1,5 @@
 // Renders a text video (no narration) from editions/<date>/text.js with src/text.html.
-//   node tools/render-text.js --edition 2026-10-31                -> output/erriwaya-text-2026-10-31.mp4 (1080x1350)
+//   node tools/render-text.js --edition 2026-10-31                -> output/erriwaya-text-2026-10-31.mp4 (1080x1920)
 //   node tools/render-text.js --edition 2026-10-31 --stills 2,20  -> PNG stills in output/stills/
 //   node tools/render-text.js --edition 2026-10-31 --cover        -> cover image and description only
 // A full render also writes output/erriwaya-text-<date>-cover.jpg and -description.txt.
@@ -14,7 +14,7 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, v, i, arr) =>
   if (v.startsWith('--')) acc.push([v.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : true]);
   return acc;
 }, []));
-const FPS = 30, WORKERS = +(args.workers || 4), SIZE = [1080, 1350];
+const FPS = 30, WORKERS = +(args.workers || 4), SIZE = [1080, 1920];
 const EDITION = String(args.edition || '');
 const EDIR = path.join(ROOT, 'editions', EDITION);
 if (!fs.existsSync(path.join(EDIR, 'text.js'))) { console.error('no text.js in ' + EDIR); process.exit(1); }
@@ -38,7 +38,7 @@ async function grab(p, t, type = 'image/jpeg') {
   return Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
 }
 
-// each clip run as JPEG frames cut to the 16:9 band (fy = vertical focus of the crop)
+// each clip run as JPEG frames (long side 1920); the page crops them to the full frame or the band
 function extractClips(plan) {
   plan.runs.forEach((r, i) => {
     if (!r.clip) return;
@@ -46,7 +46,7 @@ function extractClips(plan) {
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
     execFileSync('ffmpeg', ['-v', 'error', '-y', '-ss', String(r.from), '-t', String(r.dur), '-i', path.join(EDIR, r.clip),
-      '-vf', `fps=${FPS},scale=1080:608:force_original_aspect_ratio=increase,crop=1080:608:(iw-1080)/2:(ih-608)*${r.fy}`,
+      '-vf', `fps=${FPS},scale='if(gt(iw,ih),1920,-2)':'if(gt(iw,ih),-2,1920)'`,
       '-q:v', '3', path.join(dir, '%05d.jpg')]);
   });
 }
@@ -80,7 +80,7 @@ function description(screens) {
   const text = [
     TV.title,
     '',
-    ...screens.map(s => s.lines.join(' ')),
+    ...screens.map(s => s.text),
     '',
     'تابعونا على فيسبوك وتيك توك ويوتيوب: ERRIWAYA',
     'وعلى إنستغرام: ERRIWAYA.MR',
