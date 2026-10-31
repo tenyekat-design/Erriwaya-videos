@@ -12,10 +12,24 @@
 // fade in, green figures count up, a progress line along the bottom; tools/render-text.js adds the whooshes.
 (async () => {
   const TV = window.TEXTVIDEO;
-  const W = 1080, H = 1920, FPS = 30;
+  // ?format=feed: the 1080x1350 version for the Facebook/Instagram feed (default: story, 1080x1920)
+  const FEED = window.FORMAT === 'feed';
+  const W = 1080, H = FEED ? 1350 : 1920, FPS = 30;
   const C = { navy: '#0B1F4B', navyA: 'rgba(11,31,75,0.92)', acc: '#10B981', red: '#E5484D', topic: '#9D174D', gray: '#5B6577' };
   const FONT = 'AlQuds';
-  const L = {
+  const L = FEED ? {
+    logo: { x: 44, y: 48, h: 124 },
+    tag: { r: 1026, y: 66, h: 90, size: 30 },
+    band: { y: 226, h: 607 },
+    rule: { y: 831, h: 6 },
+    lower: { r: 1003, y: 776, h: 88, step: 103, size: 48, pad: 24 },
+    bar: { x: 1014, w: 10 },
+    hook: { r: 992, y: 900, h: 106, step: 118, size: 62, pad: 26 },
+    title: { pills: 395, head: 610, step: 145, size: 92 },
+    stat: { y: 520, step: 145, size: 86 }, question: { y: 570, step: 150, size: 90 },
+    quote: { y: 600, head: 180, size: 42, lh: 72 },
+    outro: { logo: 400, logoH: 380, follow: 735, rows: 830, site: 1080, sources: 1270 },
+  } : {
     logo: { x: 58, y: 72, h: 152 },
     tag: { r: 1014, y: 103, h: 102, size: 30 },
     band: { y: 497, h: 607 },
@@ -23,6 +37,10 @@
     lower: { r: 1003, y: 1043, h: 91, step: 108, size: 50, pad: 24 },
     bar: { x: 1014, w: 10 },
     hook: { r: 992, y: 1120, h: 112, step: 124, size: 66, pad: 26 },
+    title: { pills: 660, head: 900, step: 160, size: 100 },
+    stat: { y: 740, step: 160, size: 92 }, question: { y: 815, step: 160, size: 96 },
+    quote: { y: 876, head: 205, size: 46, lh: 81 },
+    outro: { logo: 662, logoH: 470, follow: 1066, rows: 1180, site: 1440, sources: 1760 },
   };
 
   const cv = document.getElementById('c');
@@ -102,7 +120,7 @@
     ctx.restore();
   }
   const small = document.createElement('canvas');
-  small.width = 180; small.height = 320;
+  small.width = 180; small.height = Math.round(180 * H / W);
   const sg = small.getContext('2d');
   function blurred(s, alpha = 1) {
     if (!s) return;
@@ -242,7 +260,7 @@
       // pills: green country (with a dot) and white topic, centred
       ctx.font = font(40); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       const cw = ctx.measureText(s.country).width + 96, tw = s.topic ? ctx.measureText(s.topic).width + 64 : 0;
-      const x0 = W / 2 + (cw + tw) / 2, y = 660, h = 118;
+      const x0 = W / 2 + (cw + tw) / 2, y = L.title.pills, h = 118;
       const pop = eback(prog(tt, s.t0 + 0.1, s.t0 + 0.5));
       ctx.save(); ctx.globalAlpha = pp; ctx.translate(W / 2, y + h / 2); ctx.scale(lerp(0.6, 1, pop), lerp(0.6, 1, pop)); ctx.translate(-W / 2, -y - h / 2);
       ctx.fillStyle = '#12A06B'; ctx.fillRect(x0 - cw, y, cw, h);
@@ -254,20 +272,20 @@
       let k0 = s.t0 + 0.4;
       s.lines.forEach((line, i) => {
         const sc = lerp(1.25, 1, eout(prog(tt, k0 - 0.05, k0 + 0.45)));
-        ctx.save(); ctx.translate(W / 2, 900 + i * 160); ctx.scale(sc, sc);
-        drawWords(line, 0, 0, 100, '#fff', tt, k0, out, 'center');
+        ctx.save(); ctx.translate(W / 2, L.title.head + i * L.title.step); ctx.scale(sc, sc);
+        drawWords(line, 0, 0, L.title.size, '#fff', tt, k0, out, 'center');
         ctx.restore();
         k0 += words(line).length * WORD + 0.1;
       });
       ctx.restore();
     } else if (k === 'stat' || k === 'question') {
       const out = vis(s, tt);
-      const size = k === 'stat' ? 92 : 96, y0 = k === 'stat' ? 740 : 815;
+      const Q = L[k], size = Q.size, y0 = Q.y;
       ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 20;
       let k0 = s.t0 + 0.15;
       s.lines.forEach((line, i) => {
         const sc = lerp(1.2, 1, eout(prog(tt, k0 - 0.05, k0 + 0.45)));
-        ctx.save(); ctx.translate(W / 2, y0 + i * 160); ctx.scale(sc, sc);
+        ctx.save(); ctx.translate(W / 2, y0 + i * Q.step); ctx.scale(sc, sc);
         drawWords(line, 0, 0, size, '#fff', tt, k0, out, 'center', k === 'stat');
         ctx.restore();
         k0 += words(line).length * WORD + 0.12;
@@ -275,7 +293,7 @@
       ctx.restore();
       if (s.caption) {
         const cp = eout(prog(tt, k0, k0 + 0.3)) * out;
-        const w = lineW(s.caption, 38) + 72, y = y0 + (s.lines.length - 1) * 160 + 120;
+        const w = lineW(s.caption, 38) + 72, y = y0 + (s.lines.length - 1) * Q.step + 120;
         ctx.save(); ctx.globalAlpha = cp;
         ctx.fillStyle = C.navyA; ctx.fillRect(W / 2 - w * cp / 2, y, w * cp, 124);
         ctx.fillStyle = C.acc; ctx.fillRect(W / 2 - w * cp / 2, y + 118, w * cp, 6);
@@ -285,9 +303,9 @@
     } else if (k === 'quote') {
       const out = vis(s, tt);
       const cp = eout(prog(tt, s.t0 + 0.05, s.t0 + 0.4)) * out;
-      const X = 69, Y = 876, R = 1009, P = 54;
+      const X = 69, Y = L.quote.y, R = 1009, P = 54;
       // body text wrapped to the card
-      const size = 46, lh = 81, maxW = R - X - 2 * P;
+      const size = L.quote.size, lh = L.quote.lh, maxW = R - X - 2 * P;
       ctx.font = font(size);
       const rows = [];
       let cur = '';
@@ -296,7 +314,7 @@
         if (cur && ctx.measureText(plain(next)).width > maxW) { rows.push(cur); cur = w; } else cur = next;
       }
       if (cur) rows.push(cur);
-      const bodyY = Y + 205, ruleY = bodyY + rows.length * lh + 10, Hc = ruleY - Y + 140;
+      const bodyY = Y + L.quote.head, ruleY = bodyY + rows.length * lh + 10, Hc = ruleY - Y + 140;
       ctx.save(); ctx.globalAlpha = cp; ctx.translate(0, (1 - cp) * 30);
       ctx.shadowColor = 'rgba(0,0,0,0.25)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 8;
       ctx.fillStyle = '#fff'; ctx.fillRect(X, Y, R - X, Hc);
@@ -338,24 +356,25 @@
     g.addColorStop(0, '#0B1F4B'); g.addColorStop(1, '#123A8C');
     ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
     const lp = eout(prog(o, 0.15, 0.7));
-    const lh = 470 * lerp(0.7, 1, eback(prog(o, 0.15, 0.75))), lw = lh * LOGO.width / LOGO.height;
-    const glow = ctx.createRadialGradient(W / 2, 662, 40, W / 2, 662, 520);
+    const O = L.outro;
+    const lh = O.logoH * lerp(0.7, 1, eback(prog(o, 0.15, 0.75))), lw = lh * LOGO.width / LOGO.height;
+    const glow = ctx.createRadialGradient(W / 2, O.logo, 40, W / 2, O.logo, 520);
     glow.addColorStop(0, `rgba(16,185,129,${0.22 * lp})`); glow.addColorStop(1, 'rgba(16,185,129,0)');
-    ctx.fillStyle = glow; ctx.fillRect(0, 140, W, 1050);
+    ctx.fillStyle = glow; ctx.fillRect(0, O.logo - 520, W, 1040);
     ctx.save(); ctx.globalAlpha = lp;
-    ctx.drawImage(LOGO, W / 2 - lw / 2, 662 - lh / 2, lw, lh);
+    ctx.drawImage(LOGO, W / 2 - lw / 2, O.logo - lh / 2, lw, lh);
     const fp = eout(prog(o, 0.7, 1.2));
     ctx.globalAlpha = fp;
     ctx.font = font(54); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#fff'; ctx.fillText('تابعوا الرواية', W / 2, 1066);
+    ctx.fillStyle = '#fff'; ctx.fillText('تابعوا الرواية', W / 2, O.follow);
     const full = ctx.measureText('تابعوا الرواية').width, part = ctx.measureText('الرواية').width;
-    ctx.fillStyle = C.acc; ctx.fillRect(W / 2 - full / 2, 1110, part * fp, 6);
+    ctx.fillStyle = C.acc; ctx.fillRect(W / 2 - full / 2, O.follow + 44, part * fp, 6);
     ctx.restore();
     const S = 76, gap = 16;
     SOCIAL.forEach((row, ri) => {
       const rp = eout(prog(o, 1.0 + ri * 0.2, 1.5 + ri * 0.2));
       if (rp <= 0) return;
-      const y = 1180 + ri * 106;
+      const y = O.rows + ri * 106;
       ctx.font = font(58); ctx.direction = 'ltr'; ctx.letterSpacing = '6px';
       const tw = ctx.measureText(row.handle).width;
       const iw = row.icons.length * S + (row.icons.length - 1) * gap;
@@ -378,7 +397,7 @@
       const site = 'www.erriwaya.com';
       ctx.save(); ctx.globalAlpha = wp; ctx.translate(0, (1 - wp) * 20);
       ctx.font = font(48); ctx.direction = 'ltr'; ctx.letterSpacing = '3px'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      const sw = ctx.measureText(site).width + 90, y = 1440;
+      const sw = ctx.measureText(site).width + 90, y = O.site;
       ctx.fillStyle = C.acc; ctx.beginPath(); ctx.roundRect(W / 2 - sw / 2, y - 48, sw, 96, 48); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.fillText(site, W / 2, y + 3);
       ctx.letterSpacing = '0px';
@@ -387,7 +406,7 @@
     if (TV.sources) {
       ctx.save(); ctx.globalAlpha = eout(prog(o, 1.4, 1.9)) * 0.75;
       ctx.font = font(30); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#fff'; ctx.fillText('المصادر: ' + TV.sources, W / 2, 1760);
+      ctx.fillStyle = '#fff'; ctx.fillText('المصادر: ' + TV.sources, W / 2, O.sources);
       ctx.restore();
     }
   }

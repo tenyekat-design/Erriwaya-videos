@@ -64,4 +64,5 @@ green rule, navy label line then white lines against a green bar) with a `stat` 
 `quote` card (white card, green label, quote mark, source) → closing `question` → navy outro (logo, تابعوا الرواية,
 ERRIWAYA / ERRIWAYA.MR, www.erriwaya.com, `sources` line only when the user gives them). Motion approved 31 Oct: punch-in + light flash on cuts, boxes slide in with overshoot, words rise in, green figures count up, progress line at the bottom. Music (tools/make-text-music.py, needs scipy): energetic 128 BPM track synthesized per video: build under the hook, drop on the title, impact on each figure, lighter under the quote, breakdown on the question, final hit on the logo; only a few soft swishes on layout changes (no repeated whoosh). `{word}` = green word; `tag` top-right
 («مشاهد متداولة» on circulated footage). Keep it to ~60 s: one idea per screen, 2–3 short lines.
-Output: `output/erriwaya-text-<date>.mp4` + `-cover.jpg` + `-description.txt`.
+Output: `output/erriwaya-text-<date>.mp4` + `-cover.jpg` + `-description.txt`; `--format feed` = the Facebook version
+(1080x1350, same screens re-laid out) → `output/erriwaya-text-<date>-feed.mp4` + `-feed-cover.jpg`.

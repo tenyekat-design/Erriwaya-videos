@@ -1,8 +1,9 @@
 // Renders a text video (no narration) from editions/<date>/text.js with src/text.html.
 //   node tools/render-text.js --edition 2026-10-31                -> output/erriwaya-text-2026-10-31.mp4 (1080x1920)
+//   add --format feed for the 1080x1350 Facebook/Instagram feed version -> output/erriwaya-text-<date>-feed.mp4
 //   node tools/render-text.js --edition 2026-10-31 --stills 2,20  -> PNG stills in output/stills/
 //   node tools/render-text.js --edition 2026-10-31 --cover        -> cover image and description only
-// A full render also writes output/erriwaya-text-<date>-cover.jpg and -description.txt.
+// A full render also writes output/erriwaya-text-<date>[-feed]-cover.jpg and -description.txt.
 // Audio: music synthesized for the video by tools/make-text-music.py, with each clip's own sound under it.
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
@@ -14,14 +15,16 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, v, i, arr) =>
   if (v.startsWith('--')) acc.push([v.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : true]);
   return acc;
 }, []));
-const FPS = 30, WORKERS = +(args.workers || 4), SIZE = [1080, 1920];
+const FPS = 30, WORKERS = +(args.workers || 4), FORMAT = String(args.format || 'story');
+const SIZE = { story: [1080, 1920], feed: [1080, 1350] }[FORMAT];
+if (!SIZE) { console.error('unknown format ' + FORMAT); process.exit(1); }
 const EDITION = String(args.edition || '');
 const EDIR = path.join(ROOT, 'editions', EDITION);
 if (!fs.existsSync(path.join(EDIR, 'text.js'))) { console.error('no text.js in ' + EDIR); process.exit(1); }
-const OUT = path.join(ROOT, 'output', `erriwaya-text-${EDITION}.mp4`);
+const OUT = path.join(ROOT, 'output', `erriwaya-text-${EDITION}${FORMAT === 'feed' ? '-feed' : ''}.mp4`);
 const COVER = OUT.replace(/\.mp4$/, '-cover.jpg');
-const FRAMES = path.join(ROOT, 'frames', EDITION + '-text');
-const page = frames => 'file://' + path.join(ROOT, 'src', 'text.html') + '?edition=' + encodeURIComponent(EDITION) +
+const FRAMES = path.join(ROOT, 'frames', EDITION + '-text-' + FORMAT);
+const page = frames => 'file://' + path.join(ROOT, 'src', 'text.html') + '?edition=' + encodeURIComponent(EDITION) + '&format=' + FORMAT +
   (frames ? '&frames=' + encodeURIComponent('file://' + FRAMES) : '');
 
 async function open(browser, frames = true) {
