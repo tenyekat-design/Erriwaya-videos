@@ -47,7 +47,7 @@
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
-      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
+      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 350, h: 280 }, titleY: 550, followY: 672, rowsY: 730 },
       cover: { logo: { cx: 1440, cy: 200, h: 230 }, title: [1440, 420, 92], date: [1440, 535, 42], photos: [[80, 80, 900, 560], [80, 670, 435, 330], [545, 670, 435, 330]], chips: { cx: 1440, y: 600, maxW: 760 } },
     },
     // TikTok / Reels / Shorts: content kept clear of the top bar and the caption/buttons at the bottom
@@ -1639,6 +1639,7 @@
     { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' },
     { icons: ['instagram'], handle: 'ERRIWAYA.MR' },
   ];
+  const WEBSITE = 'www.erriwaya.com';
   function drawIcon(name, x, y, s) {
     ctx.save();
     ctx.fillStyle = C.navy;
@@ -1729,6 +1730,27 @@
       ctx.fillText(row.handle, x0 + iw + 30 + (1 - eout(rp)) * 20, y + S / 2 + 3);
       ctx.restore();
     });
+    // website, under the social rows
+    const wp = prog(o, 2.1, 2.7);
+    if (wp > 0) {
+      const y = L.outro.rowsY + SOCIAL.length * 112 + 6;
+      ctx.save();
+      ctx.globalAlpha = eout(wp);
+      ctx.font = font(40); ctx.direction = 'ltr';
+      const tw = ctx.measureText(WEBSITE).width, gw = 44, pw = gw + 22 + tw + 64, ph = 72;
+      const x0 = W / 2 - pw / 2 + (1 - eout(wp)) * 16;
+      ctx.fillStyle = C.navy;
+      rrect(x0, y, pw, ph, ph / 2); ctx.fill();
+      // globe
+      const gx = x0 + 32 + gw / 2, gy = y + ph / 2, r = gw / 2 - 2;
+      ctx.strokeStyle = C.acc; ctx.lineWidth = 3.2;
+      ctx.beginPath(); ctx.arc(gx, gy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(gx, gy, r * 0.45, r, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx - r, gy); ctx.lineTo(gx + r, gy); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText(WEBSITE, x0 + 32 + gw + 22, y + ph / 2 + 3);
+      ctx.restore();
+    }
   }
 
   // ---------- cover (thumbnail) ----------
