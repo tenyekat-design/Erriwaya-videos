@@ -55,13 +55,19 @@ function buildAudio(plan, file) {
   const A = p => path.join(ROOT, 'assets', 'audio', p);
   const D = plan.duration, outro = plan.outro;
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const inputs = ['-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav')];
+  const inputs = ['-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('intro-music.wav'), '-i', A('whoosh.wav')];
+  const hits = [...plan.cuts, ...plan.stats];
   const f = [
-    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${outro + 1},volume=0.42,afade=t=in:st=0:d=1.2,afade=t=out:st=${outro - 0.8}:d=1.6[bed]`,
+    // opening theme over the hook and title, handing over to the bed
+    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,afade=t=out:st=4.5:d=2.5[intro]`,
+    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${outro + 1},volume=0.5,afade=t=in:st=0:d=1.2,afade=t=out:st=${outro - 0.8}:d=1.6,adelay=4500|4500[bed]`,
+    // a whoosh (peak 0.55 s into the file) on every cut and on each figure card
+    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=250,volume=0.4,asplit=${hits.length}${hits.map((_, i) => `[w${i}]`).join('')}`,
+    ...hits.map((h, i) => `[w${i}]adelay=${ms(h - 0.5)}|${ms(h - 0.5)}[wd${i}]`),
     // final chord of outro-music.wav (8.0 s in) lands as the closing logo settles
     `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6,atrim=start=${Math.max(0, 8.0 - (outro + 0.9))},asetpts=PTS-STARTPTS,adelay=${ms(Math.max(0, outro + 0.9 - 8.0))}|${ms(Math.max(0, outro + 0.9 - 8.0))}[out]`,
   ];
-  const mix = ['[bed]', '[out]'];
+  const mix = ['[intro]', '[bed]', '[out]', ...hits.map((_, i) => `[wd${i}]`)];
   plan.runs.forEach((r, i) => {
     if (!r.clip) return;
     const k = inputs.filter(x => x === '-i').length;
@@ -84,6 +90,7 @@ function description(screens) {
     '',
     'تابعونا على فيسبوك وتيك توك ويوتيوب: ERRIWAYA',
     'وعلى إنستغرام: ERRIWAYA.MR',
+    'الموقع: www.erriwaya.com',
     '',
     ['الرواية', ...(TV.hashtags || [])].map(t => '#' + t.replace(/\s+/g, '_')).join(' '),
   ].join('\n') + '\n';

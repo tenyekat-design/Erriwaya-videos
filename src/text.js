@@ -7,7 +7,9 @@
 //   stat     blurred full-frame, a big two-line figure and a navy caption box
 //   quote    band + white card: green label, quote mark, text, rule and the source
 //   question blurred full-frame, a big centred closing line
-// then the navy outro (logo, تابعوا الرواية, handles, optional sources line).
+// then the navy outro (logo, تابعوا الرواية, handles, www.erriwaya.com, optional sources line).
+// Motion: punch-in and a light flash on each cut, boxes slide in with a slight overshoot, words rise as they
+// fade in, green figures count up, a progress line along the bottom; tools/render-text.js adds the whooshes.
 (async () => {
   const TV = window.TEXTVIDEO;
   const W = 1080, H = 1920, FPS = 30;
@@ -30,6 +32,7 @@
   const lerp = (a, b, p) => a + (b - a) * p;
   const prog = (t, a, b) => clamp((t - a) / (b - a));
   const eout = p => 1 - Math.pow(1 - p, 3);
+  const eback = p => { const c1 = 1.4, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
   const eio = p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
   const font = s => `${s}px ${FONT}`;
   const plain = s => s.replace(/[{}]/g, '');
@@ -56,7 +59,8 @@
     if (s.tag === undefined) s.tag = i ? screens[i - 1].tag : '';
   });
   runs.forEach((r, i) => { r.end = i + 1 < runs.length ? runs[i + 1].start : DURATION; r.dur = r.end - r.start; });
-  window.PLAN = { duration: DURATION, outro: OUTRO, runs: runs.map(r => ({ clip: r.clip, from: r.from || 0, start: r.start, dur: r.dur + 0.5 })) };
+  const changed = (s, i) => i > 0 && (s.kind !== screens[i - 1].kind || s.run !== screens[i - 1].run);
+  window.PLAN = { duration: DURATION, outro: OUTRO, cuts: screens.filter(changed).map(s => s.t0), stats: screens.filter(s => s.kind === 'stat').map(s => s.t0 + 0.2), runs: runs.map(r => ({ clip: r.clip, from: r.from || 0, start: r.start, dur: r.dur + 0.5 })) };
 
   // ---------- assets ----------
   const loadImage = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('cannot load ' + src)); im.src = src; });
@@ -83,7 +87,7 @@
     if (r.clip) {
       if (!window.FRAMES_DIR) return null;
       const im = await clipFrame(ri, tt);
-      return im && { im, f: r.f || [0.5, 0.5], zoom: 1 };
+      return im && { im, f: r.f || [0.5, 0.5], zoom: lerp(1.0, 1.08, prog(tt, r.start, r.end)) };
     }
     const z = r.z || [1.0, 1.1];
     return { im: r.image, f: r.f || [0.5, 0.5], zoom: lerp(z[0], z[1], eio(prog(tt, r.start, r.end))) };
@@ -126,7 +130,7 @@
     return out;
   }
   // a line drawn right to left, word by word fading in from k0 (time of its first word)
-  function drawWords(line, xr, y, size, color, tt, k0, alpha = 1, align = 'right') {
+  function drawWords(line, xr, y, size, color, tt, k0, alpha = 1, align = 'right', count = false) {
     const ws = words(line);
     ctx.font = font(size); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     const sp = ctx.measureText(' ').width;
@@ -137,7 +141,9 @@
       const p = eout(prog(tt, k0 + i * WORD, k0 + i * WORD + 0.3));
       ctx.globalAlpha = alpha * (0.12 + 0.88 * p);
       ctx.fillStyle = w.green ? C.acc : color;
-      ctx.fillText(w.w, x, y + size * 0.06);
+      let txt = w.w;
+      if (count && w.green && /^\d+$/.test(txt)) txt = String(Math.round(+txt * eout(prog(tt, k0, k0 + 0.9))));
+      ctx.fillText(txt, x, y + size * 0.06 + (1 - p) * size * 0.25);
       x -= widths[i] + sp;
     });
     ctx.globalAlpha = 1;
@@ -154,11 +160,14 @@
       const st = styles(i);
       const w = lineW(line, B.size) + 2 * B.pad;
       const y = B.y + i * B.step;
-      const v = eout(prog(tt, k - 0.1, k + 0.2)) * out;
+      const pin = prog(tt, k - 0.12, k + 0.28), v = Math.min(1, eout(pin)) * out;
       if (v > 0) {
+        const dx = (1 - eback(pin)) * 70 * out + (1 - out) * 40;
         ctx.save();
+        ctx.translate(dx, 0);
         ctx.beginPath(); ctx.rect(B.r - w * v, y, w * v, B.h); ctx.clip();
         ctx.fillStyle = st.bg; ctx.fillRect(B.r - w, y, w, B.h);
+        if (st.bg !== '#fff') sweep(B.r - w, y, w, B.h, tt, k + 0.3);
         drawWords(line, B.r - B.pad, y + B.h / 2, B.size, st.fg, tt, k);
         ctx.restore();
         bottom = Math.max(bottom, y + B.h * Math.min(1, v * 1.3));
@@ -166,6 +175,16 @@
       k += words(line).length * WORD + 0.12;
     });
     return bottom;
+  }
+
+  // a soft diagonal light crossing a box once, starting at time t0
+  function sweep(x, y, w, h, tt, t0) {
+    const p = prog(tt, t0, t0 + 0.7);
+    if (p <= 0 || p >= 1) return;
+    const cx = x + w + 120 - (w + 240) * eio(p);
+    const g = ctx.createLinearGradient(cx - 80, y, cx + 80, y + h);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.28)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
   }
 
   function drawTag(s, tt) {
@@ -183,6 +202,8 @@
     ctx.save();
     ctx.globalAlpha = p;
     ctx.fillStyle = C.navyA; ctx.fillRect(T.r - w, T.y, w, T.h);
+    const pulse = (tt * 1.2) % 1;
+    ctx.fillStyle = `rgba(229,72,77,${0.5 * (1 - pulse)})`; ctx.beginPath(); ctx.arc(T.r - 32, T.y + T.h / 2, 7 + 12 * pulse, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = C.red; ctx.beginPath(); ctx.arc(T.r - 32, T.y + T.h / 2, 7, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.fillText(text, T.r - 54, T.y + T.h / 2 + 3);
     ctx.restore();
@@ -223,7 +244,8 @@
       ctx.font = font(40); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       const cw = ctx.measureText(s.country).width + 96, tw = s.topic ? ctx.measureText(s.topic).width + 64 : 0;
       const x0 = W / 2 + (cw + tw) / 2, y = 660, h = 118;
-      ctx.save(); ctx.globalAlpha = pp; ctx.translate(0, (1 - pp) * 16);
+      const pop = eback(prog(tt, s.t0 + 0.1, s.t0 + 0.5));
+      ctx.save(); ctx.globalAlpha = pp; ctx.translate(W / 2, y + h / 2); ctx.scale(lerp(0.6, 1, pop), lerp(0.6, 1, pop)); ctx.translate(-W / 2, -y - h / 2);
       ctx.fillStyle = '#12A06B'; ctx.fillRect(x0 - cw, y, cw, h);
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x0 - 34, y + h / 2, 7, 0, Math.PI * 2); ctx.fill();
       ctx.fillText(s.country, x0 - 54, y + h / 2 + 3);
@@ -231,20 +253,33 @@
       ctx.restore();
       ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 24;
       let k0 = s.t0 + 0.4;
-      s.lines.forEach((line, i) => { drawWords(line, W / 2, 900 + i * 160, 100, '#fff', tt, k0, out, 'center'); k0 += words(line).length * WORD + 0.1; });
+      s.lines.forEach((line, i) => {
+        const sc = lerp(1.25, 1, eout(prog(tt, k0 - 0.05, k0 + 0.45)));
+        ctx.save(); ctx.translate(W / 2, 900 + i * 160); ctx.scale(sc, sc);
+        drawWords(line, 0, 0, 100, '#fff', tt, k0, out, 'center');
+        ctx.restore();
+        k0 += words(line).length * WORD + 0.1;
+      });
       ctx.restore();
     } else if (k === 'stat' || k === 'question') {
       const out = vis(s, tt);
       const size = k === 'stat' ? 92 : 96, y0 = k === 'stat' ? 740 : 815;
       ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 20;
       let k0 = s.t0 + 0.15;
-      s.lines.forEach((line, i) => { drawWords(line, W / 2, y0 + i * 160, size, '#fff', tt, k0, out, 'center'); k0 += words(line).length * WORD + 0.12; });
+      s.lines.forEach((line, i) => {
+        const sc = lerp(1.2, 1, eout(prog(tt, k0 - 0.05, k0 + 0.45)));
+        ctx.save(); ctx.translate(W / 2, y0 + i * 160); ctx.scale(sc, sc);
+        drawWords(line, 0, 0, size, '#fff', tt, k0, out, 'center', k === 'stat');
+        ctx.restore();
+        k0 += words(line).length * WORD + 0.12;
+      });
       ctx.restore();
       if (s.caption) {
         const cp = eout(prog(tt, k0, k0 + 0.3)) * out;
         const w = lineW(s.caption, 38) + 72, y = y0 + (s.lines.length - 1) * 160 + 120;
         ctx.save(); ctx.globalAlpha = cp;
-        ctx.fillStyle = C.navyA; ctx.fillRect(W / 2 - w / 2, y, w, 124);
+        ctx.fillStyle = C.navyA; ctx.fillRect(W / 2 - w * cp / 2, y, w * cp, 124);
+        ctx.fillStyle = C.acc; ctx.fillRect(W / 2 - w * cp / 2, y + 118, w * cp, 6);
         ctx.restore();
         if (cp > 0) drawWords(s.caption, W / 2, y + 62, 38, '#fff', tt, k0 + 0.1, cp, 'center');
       }
@@ -303,8 +338,11 @@
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, '#0B1F4B'); g.addColorStop(1, '#123A8C');
     ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
-    const lp = eout(prog(o, 0.15, 0.9));
-    const lh = 470 * lerp(0.92, 1, lp), lw = lh * LOGO.width / LOGO.height;
+    const lp = eout(prog(o, 0.15, 0.7));
+    const lh = 470 * lerp(0.7, 1, eback(prog(o, 0.15, 0.75))), lw = lh * LOGO.width / LOGO.height;
+    const glow = ctx.createRadialGradient(W / 2, 662, 40, W / 2, 662, 520);
+    glow.addColorStop(0, `rgba(16,185,129,${0.22 * lp})`); glow.addColorStop(1, 'rgba(16,185,129,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 140, W, 1050);
     ctx.save(); ctx.globalAlpha = lp;
     ctx.drawImage(LOGO, W / 2 - lw / 2, 662 - lh / 2, lw, lh);
     const fp = eout(prog(o, 0.7, 1.2));
@@ -335,6 +373,18 @@
       ctx.restore();
       ctx.letterSpacing = '0px';
     });
+    // website
+    const wp = eout(prog(o, 1.5, 2.0));
+    if (wp > 0) {
+      const site = 'www.erriwaya.com';
+      ctx.save(); ctx.globalAlpha = wp; ctx.translate(0, (1 - wp) * 20);
+      ctx.font = font(48); ctx.direction = 'ltr'; ctx.letterSpacing = '3px'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const sw = ctx.measureText(site).width + 90, y = 1440;
+      ctx.fillStyle = C.acc; ctx.beginPath(); ctx.roundRect(W / 2 - sw / 2, y - 48, sw, 96, 48); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.fillText(site, W / 2, y + 3);
+      ctx.letterSpacing = '0px';
+      ctx.restore();
+    }
     if (TV.sources) {
       ctx.save(); ctx.globalAlpha = eout(prog(o, 1.4, 1.9)) * 0.75;
       ctx.font = font(30); ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -351,13 +401,22 @@
     // short cross-fade from the screen before when the layout or the media changes
     const prev = si > 0 ? screens[si - 1] : null;
     const xf = prev && (prev.kind !== s.kind || prev.run !== s.run) ? eio(prog(tt, s.t0, s.t0 + 0.3)) : 1;
-    if (xf < 1) drawMedia(prev.kind, await source(prev.run, tt), 1);
-    drawMedia(s.kind, await source(s.run, tt), xf);
+    const cut = !!prev && (prev.kind !== s.kind || prev.run !== s.run);
+    if (xf < 1) { const ps = await source(prev.run, tt); if (ps) ps.zoom *= 1 + 0.06 * xf; drawMedia(prev.kind, ps, 1); }
+    const cs = await source(s.run, tt);
+    if (cs && cut) cs.zoom *= 1 + 0.1 * (1 - eout(prog(tt, s.t0, s.t0 + 0.6)));
+    drawMedia(s.kind, cs, xf);
+    if (cut) { const fl = 1 - prog(tt, s.t0, s.t0 + 0.2); if (fl > 0) { ctx.fillStyle = `rgba(255,255,255,${0.22 * fl})`; ctx.fillRect(0, 0, W, H); } }
     const lw = L.logo.h * LOGO.width / LOGO.height;
     ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16;
     ctx.drawImage(LOGO, L.logo.x, L.logo.y, lw, L.logo.h);
     ctx.restore();
-    if (tt < OUTRO) { drawTag(s, tt); drawScreen(s, tt); }
+    if (tt < OUTRO) {
+      drawTag(s, tt); drawScreen(s, tt);
+      // progress along the bottom edge
+      ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(0, H - 8, W, 8);
+      ctx.fillStyle = C.acc; ctx.fillRect(W - W * tt / OUTRO, H - 8, W * tt / OUTRO, 8);
+    }
     drawOutro(tt);
   }
 

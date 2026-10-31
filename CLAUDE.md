@@ -62,6 +62,6 @@ Approved 31 Oct 2026 from the user's model video (~60 s): hook (full-frame clip,
 → title (green country pill + white topic pill, big centred headline) → lower thirds (16:9 band on a blurred copy,
 green rule, navy label line then white lines against a green bar) with a `stat` card (big figure + navy caption), a
 `quote` card (white card, green label, quote mark, source) → closing `question` → navy outro (logo, تابعوا الرواية,
-ERRIWAYA / ERRIWAYA.MR, `sources` line only when the user gives them). `{word}` = green word; `tag` top-right
+ERRIWAYA / ERRIWAYA.MR, www.erriwaya.com, `sources` line only when the user gives them). Motion approved 31 Oct: punch-in + light flash on cuts, boxes slide in with overshoot, words rise in, green figures count up, progress line at the bottom, whooshes on cuts, intro theme under the opening. `{word}` = green word; `tag` top-right
 («مشاهد متداولة» on circulated footage). Keep it to ~60 s: one idea per screen, 2–3 short lines.
 Output: `output/erriwaya-text-<date>.mp4` + `-cover.jpg` + `-description.txt`.
