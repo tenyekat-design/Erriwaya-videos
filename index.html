@@ -3,7 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="شبكة الرواية الإعلامية: منصة إعلامية رقمية تُعنى بأخبار موريتانيا والمغرب العربي ومحيطه في الساحل والصحراء.">
 <meta property="og:title" content="شبكة الرواية الإعلامية">
-<meta property="og:description" content="أخبار موريتانيا والمغرب العربي والساحل: الموجز، التقارير، التحقيقات.">
+<meta property="og:description" content="أخبار موريتانيا والمغرب العربي والساحل: الموجز، التقارير، التحقيقات، الرأي الحر.">
 <meta property="og:image" content="https://erriwaya.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -333,6 +333,7 @@ footer small { opacity: .7 }
     <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
     <symbol id="i-report" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-6M15 17v-2"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/><path d="M13 20h7"/></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></symbol>
     <symbol id="i-play" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
@@ -384,9 +385,10 @@ footer small { opacity: .7 }
   <nav class="nav" id="nav">
     <a href="#home"><svg class="ic"><use href="#i-home"/></svg>الرئيسية</a>
     <button type="button" id="portalsBtn" aria-expanded="false" aria-controls="portalsPanel"><svg class="ic"><use href="#i-globe"/></svg>البوابات<svg class="ic chev"><use href="#i-chev"/></svg></button>
-    <a href="#cat-1"><svg class="ic"><use href="#i-brief"/></svg>الموجز</a>
-    <a href="#cat-2"><svg class="ic"><use href="#i-search"/></svg>تحقيقات</a>
-    <a href="#cat-3"><svg class="ic"><use href="#i-report"/></svg>تقارير</a>
+    <a href="#s-brief"><svg class="ic"><use href="#i-brief"/></svg>الموجز</a>
+    <a href="#s-reports"><svg class="ic"><use href="#i-report"/></svg>التقارير</a>
+    <a href="#s-investigations"><svg class="ic"><use href="#i-search"/></svg>التحقيقات</a>
+    <a href="#s-opinion"><svg class="ic"><use href="#i-pen"/></svg>الرأي الحر</a>
     <a href="#videos"><svg class="ic"><use href="#i-play"/></svg>فيديو</a>
     <a href="#about"><svg class="ic"><use href="#i-info"/></svg>من نحن</a>
   </nav>
@@ -433,13 +435,16 @@ const DEFAULT_ABOUT = "الرواية منصة إعلامية رقمية تُع�
 
 // التصنيفات والبوابات منقولة من التطبيق (config.dart و portals.dart)
 const W = "(?<![\\p{L}])", WE = "(?![\\p{L}])";
-const CATEGORIES = [
-  ["الموجز", ["موجز"]],
-  ["تحقيقات", ["تحقيق", "استقصائي", "استقصاء", "وثائقي"]],
-  ["تقارير", ["تقرير"]],
-  ["موريتانيا", ["موريتاني", "نواكشوط", "نواذيبو", "انواكشوط"]],
-  ["المغرب العربي", ["مغارب", "المغرب", "الجزائر", "تونس", "ليبيا", "السنغال", `re:${W}(و|ب|ل)?مالي${WE}`]],
+// الأقسام: لكل مادة قسم واحد فقط (لا تكرار بين الأقسام). يُعتمد تصنيف المادة في لوحة التطبيق أولاً،
+// وإلا يُستنتج من العنوان وحده بهذا الترتيب. الدول والمناطق في البوابات لا في الأقسام.
+const SECTIONS = [
+  // [المعرّف، الاسم، الأيقونة، أسماء التصنيف المقبولة من التطبيق، كلمات العنوان]
+  ["opinion", "الرأي الحر", "pen", ["الرأي الحر", "الرأي", "رأي", "رأي حر", "مقال رأي", "مقالات", "مقال", "آراء"], [`re:^\\s*(مقال\\s+)?رأي${WE}`, "مقال رأي", "الرأي الحر", "وجهة نظر"]],
+  ["investigations", "التحقيقات", "search", ["التحقيقات", "تحقيقات", "تحقيق", "استقصاء", "تحقيق استقصائي"], ["تحقيق", "استقصائي", "استقصاء", "وثائقي"]],
+  ["reports", "التقارير", "report", ["التقارير", "تقارير", "تقرير"], ["تقرير"]],
+  ["brief", "الموجز", "brief", ["الموجز", "موجز", "الموجز الإخباري"], ["موجز"]],
 ];
+const LEGACY_CAT = { 1: "brief", 2: "investigations", 3: "reports" };   // روابط #cat-N القديمة
 const PORTALS = [
   ["mr", "موريتانيا", "Mauritanie", "المغرب العربي", ["موريتاني", "نواكشوط", "انواكشوط", "نواذيبو", "انواذيبو", "ولد الغزواني", "روصو", "كيفة"]],
   ["ma", "المغرب", "Maroc", "المغرب العربي", [`re:${W}(و|ب|ل)?المغرب${WE}(?!\\s*(العربي|الكبير))`, "مغربي", "مغربية", "المغاربة", "الرباط", "الدار البيضاء", "مراكش", "طنجة"]],
@@ -550,12 +555,30 @@ function normVideo(v) {
   return { kind: "v", id: v.id, title: cleanTitle(v.title), rawTitle: v.title || "", short: !!v.short, views: v.views || 0, date: v.published || null };
 }
 const text = it => (it.kind === "a" ? `${it.title} ${it.body}` : it.rawTitle).replace(/_/g, " ");
-function cats(it) {
-  const s = new Set(); if (it.kind === "a" && it.category) s.add(it.category);
-  for (const [name, kws] of CATEGORIES) if (matchesAny(text(it), kws)) s.add(name);
-  return [...s];
+const titleOf = it => (it.kind === "a" ? it.title : it.rawTitle).replace(/_/g, " ");
+const norm = t => String(t || "").replace(/[\u064B-\u0652\u0640]/g, "").replace(/[أإآ]/g, "ا").replace(/\s+/g, " ").trim();
+// قسم المادة الوحيد (أو null لخبر عادي)
+function sectionOf(it) {
+  if (it._sec !== undefined) return it._sec;
+  let sec = null;
+  if (it.kind === "a" && it.category) sec = SECTIONS.find(x => x[3].some(n => norm(n) === norm(it.category))) || null;
+  if (!sec) sec = SECTIONS.find(x => matchesAny(titleOf(it), x[4])) || null;
+  return (it._sec = sec);
 }
-const inPortal = (p, it) => (it.kind === "a" && it.portals.includes(p[0])) || matchesAny(text(it), p[4]);
+const inSection = (id, it) => sectionOf(it)?.[0] === id;
+// شارة المادة: قسمها، وإلا تصنيفها في التطبيق، وإلا بوابتها الأولى
+function kickerOf(it) {
+  const sec = sectionOf(it); if (sec) return sec[1];
+  if (it.kind === "a" && it.category) return it.category;
+  return portalsOf(it)[0]?.[1] || "";
+}
+// البوابات: ما حدّده المحرر في التطبيق، وإلا ما يرد في العنوان (لا في النص كله، كي لا يتكرر الخبر في كل بوابة يُذكر فيها بلد عَرَضاً)
+function portalsOf(it) {
+  if (!it._por) it._por = it.kind === "a" && it.portals.length ? PORTALS.filter(p => it.portals.includes(p[0]))
+    : PORTALS.filter(p => matchesAny(titleOf(it), p[4]));
+  return it._por;
+}
+const inPortal = (p, it) => portalsOf(it).includes(p);
 const isFreshBreaking = it => it.kind === "a" && it.breaking && it.date && Date.now() - new Date(it.date) < BREAKING_MS;
 const thumbOf = it => it.kind === "v" ? `https://i.ytimg.com/vi/${it.id}/${it.short ? "oar2" : "hqdefault"}.jpg`
   : it.thumb ? `data:image/jpeg;base64,${it.thumb}` : (it.images[0] || "");
@@ -589,7 +612,7 @@ window.imgErr = el => {
   el.replaceWith(ph);
 };
 function metaLine(it) {
-  const c = cats(it)[0];
+  const c = kickerOf(it);
   const k = isFreshBreaking(it) ? `<span class="kicker red">عاجل</span>` : c ? `<span class="kicker">${esc(c)}</span>` : "";
   const t = timeAgo(it.date);
   return `<div class="meta">${k}${t ? `<span class="m"><svg class="ic"><use href="#i-clock"/></svg>${t}</span>` : ""}${it.kind === "v" && it.views ? `<span class="m"><svg class="ic"><use href="#i-eye"/></svg>${fmtViews(it.views)}</span>` : ""}</div>`;
@@ -638,8 +661,8 @@ function homeView() {
   if (!items.length) return `<p class="empty">جارٍ تحميل الأخبار…</p>`;
   const lead = items.find(isFreshBreaking) || items.find(i => i.kind === "a" && thumbOf(i)) || items[0];
   const rail = items.filter(i => i !== lead).slice(0, 5);
-  const filters = ["الكل", ...CATEGORIES.map(c => c[0])];
-  const filtered = state.filter === "all" ? items.filter(i => i !== lead) : items.filter(i => cats(i).includes(state.filter));
+  const filters = [["all", "الكل"], ...SECTIONS.slice().reverse().map(x => [x[0], x[1]])];
+  const filtered = state.filter === "all" ? items.filter(i => i !== lead) : items.filter(i => inSection(state.filter, i));
   const shorts = state.videos.filter(v => v.short).slice(0, 16);
   return `
   <section class="lead" aria-label="الأبرز">
@@ -649,7 +672,7 @@ function homeView() {
 
   <section id="latest" aria-label="آخر الأخبار">
     <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
-    <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map((f, i) => `<button type="button" data-f="${i ? esc(f) : "all"}" aria-pressed="${(i ? f : "all") === state.filter}">${esc(f)}</button>`).join("")}</div>
+    <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map(([id, name]) => `<button type="button" data-f="${id}" aria-pressed="${id === state.filter}">${esc(name)}</button>`).join("")}</div>
     <div class="feed">${filtered.slice(0, state.shown).map(card).join("") || `<p class="empty">لا مواد في هذا التصنيف بعد.</p>`}</div>
     ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">${ic("plus")}المزيد من الأخبار</button></div>` : ""}
   </section>
@@ -750,11 +773,18 @@ function aboutSection() {
   </section>`;
 }
 
-function listView(title, sub, items, back = true) {
+const SECTION_SUB = {
+  brief: "جولة سريعة في أبرز الأخبار",
+  reports: "متابعات وتقارير ميدانية",
+  investigations: "تحقيقات واستقصاءات معمّقة",
+  opinion: "مقالات رأي يعبّر فيها كتّابها عن آرائهم، ولا تعبّر بالضرورة عن رأي الرواية",
+};
+const OPINION_EMPTY = `<p class="empty">لا مقالات رأي منشورة بعد. لنشر مقالك في «الرأي الحر» أرسله عبر <a href="#about">نموذج المراسلة</a>.</p>`;
+function listView(title, sub, items, back = true, empty = "") {
   return `<section>
     ${back ? `<button class="btn" type="button" data-back style="margin-bottom:16px">${ic("back")}الرئيسية</button>` : ""}
     <div class="sec-h"><h2>${esc(title)}</h2><span>${esc(sub)}</span></div>
-    <div class="feed">${items.map(card).join("") || `<p class="empty">لا مواد هنا بعد.</p>`}</div>
+    <div class="feed">${items.map(card).join("") || empty || `<p class="empty">لا مواد هنا بعد.</p>`}</div>
   </section>`;
 }
 
@@ -764,7 +794,7 @@ const newsUrl = a => `https://erriwaya.com/news/${a.id}.html`;
 function articleView(a) {
   const imgs = a.images.length ? a.images : [];
   const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
-  const c = cats(a);
+  const c = [kickerOf(a), ...portalsOf(a).map(p => p[1])].filter((x, i, arr) => x && arr.indexOf(x) === i);
   return `<article class="article">
     <button class="back" type="button" data-back>${ic("back")}الرئيسية</button>
     <div class="meta">${isFreshBreaking(a) ? `<span class="kicker red">عاجل</span>` : ""}${c.map(x => `<span class="kicker">${esc(x)}</span>`).join("")}<span class="m">${ic("clock")}${timeAgo(a.date)}</span></div>
@@ -796,9 +826,14 @@ function route() {
     const p = PORTALS.find(x => x[0] === m[1]);
     if (p) { main.innerHTML = listView(`بوابة ${p[1]}`, "", feed().filter(it => inPortal(p, it))); window.scrollTo(0, 0); return; }
   }
-  if ((m = h.match(/^cat-(\d)$/))) {
-    const c = CATEGORIES[+m[1] - 1];
-    if (c) { main.innerHTML = listView(c[0], "", feed().filter(it => cats(it).includes(c[0]))); window.scrollTo(0, 0); return; }
+  if ((m = h.match(/^cat-(\d)$/)) && LEGACY_CAT[m[1]]) { location.replace("#s-" + LEGACY_CAT[m[1]]); return; }
+  if ((m = h.match(/^s-(\w+)$/))) {
+    const sec = SECTIONS.find(x => x[0] === m[1]);
+    if (sec) {
+      const list = feed().filter(it => inSection(sec[0], it));
+      main.innerHTML = listView(sec[1], SECTION_SUB[sec[0]] || "", list, true, sec[0] === "opinion" ? OPINION_EMPTY : "");
+      window.scrollTo(0, 0); return;
+    }
   }
   if (h === "videos") {
     main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
