@@ -5,3 +5,4 @@ frames/
 __pycache__/
 output/*-youtube.mp4
 output/*-story.mp4
+carousels/_template/slides/

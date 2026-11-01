@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Erriwaya – كاروسيل</title>
+<!-- قالب «كاروسيل» الرواية: 1080×1350. انسخه بـ node carousels/new.js <التاريخ-الموضوع>
+     ضع الصور في img/ وغيّر النصوص الإرشادية (عنوان الغلاف، رقم، حدث...). تجنّب الأقواس المربعة: خط القدس يرسمها زخارف. احذف ما لا تحتاجه من الشرائح أو كرّر ما تريد.
+     الشعار ونقاط الترقيم وشريط الحسابات تضاف تلقائياً (carousel.js)؛ الشريحة الأخيرة بلا تذييل. -->
+<link rel="stylesheet" href="../carousel.css">
+</head>
+<body>
+
+<!-- الغلاف: صورة كبيرة (.tall) + شارة + عنوان + سطر + زر «اسحب» -->
+<section class="slide tall">
+  <div class="photo"><img src="img/cover.jpg" alt="" style="object-position:50% 50%"></div>
+  <div class="body" style="top:780px">
+    <span class="kick">البلد · الجهة</span>
+    <h1 style="font-size:100px;line-height:1.15">عنوان الغلاف<br>على سطرين</h1>
+    <p class="lead" style="font-size:50px">سؤال يشد القارئ مع <b class="red">رقم أو تاريخ</b>؟</p>
+  </div>
+  <div class="swipe" style="top:776px;bottom:auto;padding:6px 26px">اسحب <b>←</b></div>
+</section>
+
+<!-- خريطة أو صورة مع وسم ورقمين -->
+<section class="slide">
+  <div class="photo" style="height:860px"><img src="img/map.jpg" alt="" style="object-position:50% 50%;filter:none"></div>
+  <div class="tag" style="top:430px;left:360px">اسم المكان</div>
+  <div class="body" style="top:720px">
+    <span class="kick">أين؟</span>
+    <h1 style="font-size:80px">جملة تعرّف بالمكان</h1>
+    <div class="stats" style="margin-top:26px">
+      <div class="stat"><div class="v" style="font-size:76px">رقم</div><div class="n">ماذا يعني</div></div>
+      <div class="stat"><div class="v" style="font-size:76px">رقم</div><div class="n">ماذا يعني</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- خلفية: سطر تعريف + بطاقتان بأيقونة -->
+<section class="slide">
+  <div class="photo"><img src="img/background.jpg" alt="" style="object-position:50% 50%"></div>
+  <div class="body">
+    <span class="kick">خلفية</span>
+    <h1>ما هو/ما هي ...؟</h1>
+    <p class="lead">تعريف في سطر مع <b class="red">تاريخ</b></p>
+    <div class="grid">
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>نقطة أولى</h3></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M8 10V4h8v6M10 7h4"/></svg></span>نقطة ثانية</h3><p>تفصيل قصير</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- خط زمني: 5 محطات، الأخيرة (now) هي الحاضر -->
+<section class="slide">
+  <div class="photo" style="height:720px"><img src="img/history.jpg" alt="" style="object-position:50% 50%"></div>
+  <div class="body" style="top:410px">
+    <span class="kick">محطات</span>
+    <h1>عنوان الخط الزمني</h1>
+    <div class="tl">
+      <div class="row"><span class="y">سنة</span><span class="t">حدث</span></div>
+      <div class="row"><span class="y">سنة</span><span class="t">حدث</span></div>
+      <div class="row"><span class="y">سنة</span><span class="t">حدث</span></div>
+      <div class="row"><span class="y">سنة</span><span class="t">حدث</span></div>
+      <div class="row now"><span class="y">سنة</span><span class="t">الحدث الحالي</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- أرقام: رقم رئيسي أحمر + رقمان -->
+<section class="slide">
+  <div class="photo" style="height:620px"><img src="img/numbers.jpg" alt="" style="object-position:50% 50%"></div>
+  <div class="body" style="top:420px">
+    <span class="kick">الموعد</span>
+    <h1>لماذا الآن؟</h1>
+    <div class="stats">
+      <div class="stat hot"><div class="v">الرقم الأهم</div><div class="n">شرحه</div></div>
+      <div class="stat"><div class="v">رقم</div><div class="n">شرحه</div></div>
+      <div class="stat"><div class="v">رقم</div><div class="n">شرحه</div></div>
+    </div>
+    <p class="note">ملاحظة أو سياق في سطر</p>
+  </div>
+</section>
+
+<!-- قائمة نقاط بأيقونات + بطاقة رد بارزة -->
+<section class="slide">
+  <div class="photo" style="height:560px"><img src="img/list.jpg" alt="" style="object-position:50% 40%"></div>
+  <div class="body" style="top:330px">
+    <span class="kick">الموضوع</span>
+    <h1>ماذا يقترح ...؟</h1>
+    <div class="grid" style="gap:16px;margin-top:24px">
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg></span>بند أول</h3></div>
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8 12h8"/></svg></span>بند ثان</h3></div>
+      <div class="card" style="padding:20px 26px"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>بند ثالث</h3></div>
+      <div class="card hotcard" style="padding:22px 28px"><p style="margin:0;font-size:35px;line-height:1.45"><b style="color:var(--red)">الطرف الموقف</b> تفصيل الرد</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- مواقف: صورتان متقابلتان + 4 بطاقات (ضع علم كل طرف SVG مكان .flag) -->
+<section class="slide">
+  <div class="photo" style="height:600px"><img src="img/side-a.jpg" alt="" style="object-position:50% 30%"><img src="img/side-b.jpg" alt="" style="object-position:50% 25%"></div>
+  <div class="body" style="top:430px">
+    <span class="kick">المواقف</span>
+    <h1>أين يقف كل طرف؟</h1>
+    <div class="grid pos">
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#CBD2DC"/></svg>طرف</h3><p>موقفه</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#CBD2DC"/></svg>طرف</h3><p>موقفه</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#CBD2DC"/></svg>طرف</h3><p>موقفه</p></div>
+      <div class="card"><h3><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#CBD2DC"/></svg>طرف</h3><p>موقفه</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- سيناريوهات: 3 بطاقات + تنبيه -->
+<section class="slide">
+  <div class="photo" style="height:600px"><img src="img/next.jpg" alt="" style="object-position:50% 40%"></div>
+  <div class="body" style="top:360px">
+    <span class="kick">ماذا بعد؟</span>
+    <h1>ثلاثة سيناريوهات</h1>
+    <div class="grid" style="gap:16px;margin-top:24px">
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>سيناريو أول</h3><p>شرح</p></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg></span>سيناريو ثان</h3><p>شرح</p></div>
+      <div class="card"><h3><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>سيناريو ثالث</h3><p>شرح</p></div>
+    </div>
+    <p class="note">احتمالات ممكنة وليست توقعات.</p>
+  </div>
+</section>
+
+<!-- الختام: بلا تذييل، الحسابات في #big -->
+<section class="slide tall">
+  <div class="photo" style="height:860px"><img src="img/outro.jpg" alt="" style="object-position:50% 50%"></div>
+  <div class="body" style="top:700px;bottom:80px">
+    <span class="kick">تابعونا</span>
+    <h1 style="font-size:84px">دعوة للمتابعة في <span class="red">الموجز الإخباري</span></h1>
+    <div class="big" id="big"></div>
+  </div>
+</section>
+
+<script src="../../src/icons.js"></script>
+<script src="../carousel.js"></script>
+</body>
+</html>
