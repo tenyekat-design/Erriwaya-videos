@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../theme.dart';
 import 'admin_screen.dart';
@@ -22,7 +24,42 @@ class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _pass = TextEditingController();
   bool _busy = false;
+  bool _showPass = false;
+  bool _remember = true;
   String? _error;
+
+  static const _store = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true));
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSaved();
+  }
+
+  Future<void> _loadSaved() async {
+    try {
+      final email = await _store.read(key: 'editor_email');
+      final pass = await _store.read(key: 'editor_pass');
+      if (!mounted) return;
+      setState(() {
+        if (email != null) _email.text = email;
+        if (pass != null) _pass.text = pass;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _saveOrClear() async {
+    try {
+      if (_remember) {
+        await _store.write(key: 'editor_email', value: _email.text.trim());
+        await _store.write(key: 'editor_pass', value: _pass.text);
+      } else {
+        await _store.delete(key: 'editor_email');
+        await _store.delete(key: 'editor_pass');
+      }
+    } catch (_) {}
+  }
 
   Future<void> _login() async {
     setState(() {
@@ -32,6 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _email.text.trim(), password: _pass.text);
+      await _saveOrClear();
+      TextInput.finishAutofillContext();
       if (!mounted) return;
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (_) => const AdminScreen()));
@@ -63,21 +102,44 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        TextField(
-          controller: _email,
-          keyboardType: TextInputType.emailAddress,
-          textDirection: TextDirection.ltr,
-          decoration: const InputDecoration(
-              labelText: 'البريد الإلكتروني', border: OutlineInputBorder()),
+        AutofillGroup(
+          child: Column(children: [
+            TextField(
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              textDirection: TextDirection.ltr,
+              autofillHints: const [AutofillHints.email, AutofillHints.username],
+              decoration: const InputDecoration(
+                  labelText: 'البريد الإلكتروني', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _pass,
+              obscureText: !_showPass,
+              enableSuggestions: false,
+              autocorrect: false,
+              textDirection: TextDirection.ltr,
+              autofillHints: const [AutofillHints.password],
+              onSubmitted: (_) => _login(),
+              decoration: InputDecoration(
+                labelText: 'كلمة السر',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  tooltip: _showPass ? 'إخفاء كلمة السر' : 'إظهار كلمة السر',
+                  icon: Icon(_showPass ? Icons.visibility_off : Icons.visibility),
+                  onPressed: () => setState(() => _showPass = !_showPass),
+                ),
+              ),
+            ),
+          ]),
         ),
-        const SizedBox(height: 14),
-        TextField(
-          controller: _pass,
-          obscureText: true,
-          textDirection: TextDirection.ltr,
-          onSubmitted: (_) => _login(),
-          decoration:
-              const InputDecoration(labelText: 'كلمة السر', border: OutlineInputBorder()),
+        CheckboxListTile(
+          value: _remember,
+          onChanged: (v) => setState(() => _remember = v ?? false),
+          title: const Text('حفظ البريد وكلمة السر'),
+          controlAffinity: ListTileControlAffinity.leading,
+          contentPadding: EdgeInsets.zero,
+          activeColor: Brand.green,
         ),
         if (_error != null) ...[
           const SizedBox(height: 12),
