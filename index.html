@@ -488,7 +488,7 @@ function timeAgo(d) {
   if (m < 60) return pl(m, "دقيقة", "دقيقتين", "دقائق");
   if (m < 1440) return pl(Math.floor(m / 60), "ساعة", "ساعتين", "ساعات");
   if (m < 43200) return pl(Math.floor(m / 1440), "يوم", "يومين", "أيام");
-  return new Intl.DateTimeFormat("ar-MA", { day: "numeric", month: "long", year: "numeric" }).format(t);
+  return new Intl.DateTimeFormat("ar-u-nu-latn", { day: "numeric", month: "long", year: "numeric" }).format(t);
 }
 // العواصم: البوابة، المدينة، المنطقة الزمنية. المغرب عاد إلى توقيت غرينتش (والعيون معه)، وبيانات المتصفحات
 // ما زالت تعطيه +1، فنثبّته على UTC هنا.
@@ -499,7 +499,7 @@ const capFmt = Object.fromEntries(CAPITALS.map(([c, , tz]) => [c, new Intl.DateT
 const hourIn = (tz, now) => +new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "numeric", hourCycle: "h23" }).format(now);
 function tickClock() {
   const now = new Date();
-  const f = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+  const f = new Intl.DateTimeFormat("ar-u-nu-latn", { timeZone: "Africa/Nouakchott", weekday: "long", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
   const nkc = wxCities().find(c => c.portal === "mr");
   $("#clock").textContent = "نواكشوط | " + f.format(now) + (nkc ? ` | ${nkc.temp}°` : "");
 }
@@ -711,7 +711,7 @@ function wxCities() {
 function weatherSection() {
   const cs = wxCities();
   if (!cs.length) return "";
-  const at = new Intl.DateTimeFormat("ar-MA", { timeZone: "Africa/Nouakchott", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(state.weather.updated));
+  const at = new Intl.DateTimeFormat("ar-u-nu-latn", { timeZone: "Africa/Nouakchott", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(state.weather.updated));
   return `<section aria-label="الطقس في العواصم">
     <div class="sec-h"><h2>الطقس في العواصم</h2><span>آخر تحديث ${at} بتوقيت نواكشوط</span></div>
     <div class="wx-grid">${cs.map(c => {
