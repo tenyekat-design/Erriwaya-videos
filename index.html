@@ -428,6 +428,7 @@ const PROJECT = "erriwaya-68022";
 const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
 const APK = "https://github.com/tenyekat-design/erriwaya-videos/releases/latest/download/erriwaya.apk";
 const BREAKING_MS = 30 * 60 * 1000;   // «عاجل» لنصف ساعة فقط، كما في التطبيق
+const TICKER_MS = 36 * 60 * 60 * 1000;   // يُحذف الخبر من شريط آخر الأخبار بعد 36 ساعة من نشره
 const LOGO = "assets/logo.png";
 const CAN_EMBED = !/claude/i.test(location.hostname);
 
@@ -622,7 +623,7 @@ function card(it) {
 }
 
 function renderTicker() {
-  const items = feed().slice(0, 15);
+  const items = feed().filter(it => it.date && Date.now() - new Date(it.date) < TICKER_MS).slice(0, 15);
   $("#ticker").hidden = !items.length;
   if (!items.length) return;
   const key = items.map(i => i.id + (isFreshBreaking(i) ? "!" : "")).join(",");
@@ -984,7 +985,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { closeVideo
 window.addEventListener("hashchange", onHash);
 
 $("#yr").textContent = new Date().getFullYear();
-tickClock(); buildFlaps(); setInterval(() => { tickClock(); renderBreaking(); }, 30000);
+tickClock(); buildFlaps(); setInterval(() => { tickClock(); renderBreaking(); renderTicker(); }, 30000);
 lastHash = /^#v-/.test(location.hash) ? "#home" : location.hash;
 loadSnapshot().then(() => { if (/^#v-/.test(location.hash)) openVideo(location.hash.slice(3)); loadLive(); });
 setInterval(loadLive, 3 * 60 * 1000);
