@@ -53,3 +53,14 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
   whose final chord lands as the closing logo and social icons appear; all music ducks under the voice. Western Sahara is drawn as in the
   Natural Earth data (separate territory) unless the user decides otherwise.
+
+## Infographic video (إنفوجرافيك) – animated charts
+
+Template: `src/infographic.html` + `tools/render-graphic.js` (brought from the fisheries infographic,
+branch ccr-af80c026-mftyeu, same approved colours: light background, navy, green #0A8F65, grey).
+`node tools/render-graphic.js --graphic <folder>` (1080x1350) and `--format story` (1080x1920, git-ignored) or
+`--format youtube`. Several countries (mr, dz, ma, tn, ly flags): `titleLines`, `flags` and a title `img`;
+`hbars` with more than two rows (bar length `m` on one scale, figure `v` + `label` as written, `na` rows dashed,
+`hi` = leader in green, others navy); `map` (run `node tools/make-infographic-map.js <folder> mr=478 dz=012 ...`;
+`areas` kind res / est / nd, `move` nudges labels); `tiles` (equal cards, no ranking); conclusion `lineFlags`.
+Reference: `graphics/2026-11-01-maghreb-iron/graphic.js`.
