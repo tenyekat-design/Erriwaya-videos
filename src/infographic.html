@@ -107,6 +107,17 @@
   .glegend span { white-space: nowrap; display: flex; align-items: center; gap: 8px; }
   .chip2 { position: absolute; left: 56px; right: 56px; height: 92px; background: var(--card); box-shadow: 0 8px 24px rgba(11,31,75,.1); display: flex; align-items: center; gap: 18px; padding: 0 24px; font-size: 29px; line-height: 1.25; color: var(--navy); border-right: 8px solid var(--navy); box-sizing: border-box; }
   .chip2.dz { border-right-color: var(--acc); }
+  /* story: full-bleed layers of the dark opening scenes reach the top and bottom of the 1080x1920 frame */
+  .story #frame { overflow: visible; }
+  .story .bleed { top: -250px !important; height: 1920px !important; }
+  /* hook: the strongest photo full-frame, a tag and one short line */
+  .hookph { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; overflow: hidden; }
+  .hookph img { position: absolute; max-width: none; }
+  .hookshade { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; background: linear-gradient(180deg, rgba(5,14,36,.45) 0%, rgba(5,14,36,0) 30%, rgba(5,14,36,.35) 55%, rgba(5,14,36,.92) 100%); }
+  .htag { position: absolute; right: 60px; display: flex; font-size: 34px; color: #fff; }
+  .htag span { padding: 4px 18px 10px; }
+  .hline { position: absolute; left: 60px; right: 60px; text-align: right; font-size: 74px; line-height: 1.3; color: #fff; text-shadow: 0 3px 18px rgba(0,0,0,.5); }
+  .hline .r { color: #34D399; }
   /* question and navy end */
   .qq { position: absolute; left: 50px; right: 50px; text-align: center; font-size: 78px; line-height: 1.4; color: var(--navy); }
   .qq .r { color: var(--acc); }
@@ -283,6 +294,9 @@ const BUILD = {
   },
   hbars: s => s.rows.length > 2 ? hrows(s) : hbars2(s),
   globe: s => globeScene(s),
+  hook: s => `<div class="hookph bleed"><img class="cov" src="${DIR}img/${s.img}" data-fy="${s.fy ?? 0.5}"></div><div class="hookshade bleed"></div>
+    <div class="htag" style="top:930px" data-a="fade" data-in="0"><span style="background:var(--acc)">${s.tag[0]}</span><span style="background:#fff;color:var(--navy)">${s.tag[1]}</span></div>
+    <div class="hline" style="top:1010px">${s.lines.map((l, i) => words(l, i === s.lines.length - 1 ? 'r' : '')).join('<br>')}</div>`,
   stat: s => `<div class="photo" style="top:270px;height:440px"><img class="cov" src="${DIR}img/${s.img}" data-fy="${s.fy ?? 0.5}"></div>
     <div class="abs" style="left:0;right:0;top:700px;text-align:center" data-a="fade" data-in="0.3">${flag(s.c, 90)}<span class="name" style="font-size:52px">${R.names[s.c]}</span></div>
     <div class="bignum" style="top:790px" data-a="fade" data-in="0.5"><span class="ltr" data-a="count" data-v="${s.v}" data-in="0.6">0</span><small>${s.label}</small></div>
@@ -395,9 +409,10 @@ function geoData() {
 }
 function globeScene(s) {
   let st = '';
-  for (let k = 0; k < 140; k++) { const x = (k * 7919) % 1080, y = (k * 104729) % 1350, r = 0.8 + (k % 5) * 0.35; st += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${0.3 + (k % 7) / 10}"/>`; }
-  return `<div class="space" id="gspace"></div><svg class="stars" id="gstars" width="1080" height="1350">${st}</svg>
-    <svg class="abs" id="globe" width="1080" height="1350" style="left:0;top:0"></svg><div class="fadebg" id="gfade"></div>
+  for (let k = 0; k < 200; k++) { const x = (k * 7919) % 1080, y = (k * 104729) % 1920, r = 0.8 + (k % 5) * 0.35; st += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${0.3 + (k % 7) / 10}"/>`; }
+  const off = FORMAT === 'story' ? 250 : 0;
+  return `<div class="space bleed" id="gspace"></div><svg class="stars" id="gstars" width="1080" height="${1350 + 2 * off}" style="top:${-off}px">${st}</svg>
+    <svg class="abs" id="globe" width="1080" height="${1350 + 2 * off}" viewBox="0 ${-off} 1080 ${1350 + 2 * off}" style="left:0;top:${-off}px"></svg><div class="fadebg" id="gfade" style="height:${630 + (FORMAT === 'story' ? 320 : 0)}px"></div>
     <div class="gnote" style="top:768px" data-a="fade" data-in="6.6"><i></i>${s.sitesNote}</div>
     <div class="gtitle" style="top:840px">${s.lines.map((l, i) => `<div style="font-size:${i ? 96 : 64}px;line-height:1.28;color:var(--navy)">${words(l, i === s.lines.length - 1 ? 'r' : '')}</div>`).join('')}</div>
     <div class="sub" style="top:1180px" data-a="fade" data-in="10.0">${R.subtitle}</div>`;
@@ -526,7 +541,7 @@ window.renderFrame = async t => {
   if (!ht.innerHTML) ht.innerHTML = `<div class="t">${R.title.replace('.. ', '..<br>')}</div><div class="s">${R.subtitle}</div>`;
   const OUT = s.type === 'outro' || s.type === 'navyend';
   const OPEN = s.type === 'title' || s.type === 'globe';
-  const hq = OPEN ? prog(t, end - 0.35, end) : s.type === 'navyend' ? 0 : OUT || s.type === 'question' ? 1 - prog(dt, 0, 0.35) : 1;
+  const hq = s.type === 'hook' ? 0 : OPEN ? prog(t, end - 0.35, end) : s.type === 'navyend' ? 0 : OUT || s.type === 'question' ? 1 - prog(dt, 0, 0.35) : 1;
   ht.style.opacity = hq;
   // animated elements
   let wi = 0, pi = 0;
@@ -554,14 +569,14 @@ window.renderFrame = async t => {
   for (const im of el.querySelectorAll('img.cov'))
     cover(im, await natural(im.src), im.parentNode.offsetWidth, im.parentNode.offsetHeight, 1.04 + 0.08 * prog(dt, 0, end - s.t), +im.dataset.fy);
   // white logo over the opening footage, navy elsewhere; the header rule waits for the charts
-  $('logo').style.background = (s.type === 'title' && dt < end - s.t - 0.35) || (s.type === 'globe' && light < 0.6) || s.type === 'navyend' ? '#fff' : 'var(--navy)';
+  $('logo').style.background = (s.type === 'title' && dt < end - s.t - 0.35) || (s.type === 'globe' && light < 0.6) || s.type === 'navyend' || s.type === 'hook' ? '#fff' : 'var(--navy)';
   $('rule').style.opacity = hq;
   // outro: logo grows from the header to the centre; footer (and the story label) give way
   const lg = $('logo'), lp = OUT ? eio(prog(dt, 0, 0.9)) : 0;
   const L0 = [64, 56, 130, 176], L1 = [(W - 330) / 2, s.type === 'navyend' ? (H - 447) / 2 : 300, 330, 447];
   ['left', 'top', 'width', 'height'].forEach((k, j) => lg.style[k] = (L0[j] + (L1[j] - L0[j]) * lp) + 'px');
-  $('foot').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : s.type === 'globe' ? light : 1;
-  $('kicker').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : 1;
+  $('foot').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : s.type === 'globe' ? light : s.type === 'hook' ? 0 : 1;
+  $('kicker').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : s.type === 'globe' ? light : s.type === 'hook' ? 0 : 1;
   if (FORMAT === 'youtube') {
     // left panel: the title footage, then each scene's photo; gone in the outro while the design moves to the centre
     const si = $('sideimg'), src = ci ? ci.getAttribute('src') : s.img ? DIR + 'img/' + s.img : si.getAttribute('src');

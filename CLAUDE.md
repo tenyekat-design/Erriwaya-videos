@@ -67,5 +67,7 @@ Reference: `graphics/2026-11-01-maghreb-iron/graphic.js`.
 Also (2 Nov): `globe` opening (space → Maghreb zoom, sites, title words from `wordsAt`), `hbars` with `three`
 (3D bars), `slow`, row `year` chips, `plant` icons and a `foot` line; `stat` (big figure over a photo); `geo` (regional
 map: `box`, `routes` on/off/plan drawn over time, `sites` hub/res/lng, `ship`, timed `boxes` or `chips` under the map);
-`tiles` with one to five cards (`txt` for a non-numeric value); `question`; `navyend` (navy screen, logo only).
+`tiles` with one to five cards (`txt` for a non-numeric value); `question`; `navyend` (navy screen, logo only);
+`hook` (first 2.6 s: strongest photo full-frame, two-colour tag, one short line; the cover). The user prefers the hook
+and the `outro` (logo, icons, ERRIWAYA.COM) over `navyend`. In story format the dark opening scenes fill all 1920 px.
 Map scenes use src/vendor-geo.js (`node tools/make-geo-vendor.js`). 120 s reference: `graphics/2026-11-02-maghreb-gas/`.
