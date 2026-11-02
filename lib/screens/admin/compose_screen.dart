@@ -40,7 +40,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
     if (a != null) {
       _title.text = a.title;
       _body.text = a.body;
-      _category = AppConfig.categories.containsKey(a.category) ? a.category : '';
+      _category = AppConfig.canonicalCategory(a.category) ?? '';
       _breaking = a.breaking;
       _portals.addAll(a.portals);
       _loadingImages = a.imageCount > 0;

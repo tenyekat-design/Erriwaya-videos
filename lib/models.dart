@@ -45,11 +45,8 @@ class VideoItem {
   String get bigThumb => 'https://i.ytimg.com/vi/$id/maxresdefault.jpg';
 
   List<String> get categories {
-    final text = '$title $description';
-    return AppConfig.categories.entries
-        .where((e) => matchesAny(text, e.value))
-        .map((e) => e.key)
-        .toList();
+    final s = sectionFromTitle(displayTitle);
+    return s == null ? const [] : [s];
   }
 
   Map<String, dynamic> toJson() => {
@@ -190,12 +187,23 @@ class Article {
 DateTime feedDate(Object o) => o is Article ? o.createdAt : (o as VideoItem).published;
 
 /// تصنيفات أي عنصر في الخلاصة.
+/// قسم واحد لكل مادة، فلا تتكرر بين الأقسام.
 List<String> feedCategories(Object o) {
   if (o is VideoItem) return o.categories;
-  final a = o as Article;
-  final text = '${a.title} ${a.body}';
-  return {
-    if (a.category.isNotEmpty) a.category,
-    ...AppConfig.categories.entries.where((e) => matchesAny(text, e.value)).map((e) => e.key),
-  }.toList();
+  final s = articleSection(o as Article);
+  return s == null ? const [] : [s];
 }
+
+/// القسم المستنتج من العنوان وحده (لا من النص) حسب الأولوية.
+String? sectionFromTitle(String title) {
+  for (final k in AppConfig.sectionPriority) {
+    if (matchesAny(title, AppConfig.categories[k]!)) return k;
+  }
+  return null;
+}
+
+/// قسم الخبر: تصنيفه في اللوحة، وإلا من عنوانه.
+String? articleSection(Article a) => AppConfig.canonicalCategory(a.category) ?? sectionFromTitle(a.title);
+
+/// ما يُعرض فوق الخبر: قسمه، وإلا تصنيفه كما حُفظ.
+String articleLabel(Article a) => articleSection(a) ?? a.category;

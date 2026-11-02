@@ -87,7 +87,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   child: const Text('عاجل', style: TextStyle(color: Colors.white, fontSize: 13)),
                 ),
               Text(
-                [if (a.category.isNotEmpty) a.category, timeAgo(a.createdAt)].join('  •  '),
+                [if (articleLabel(a).isNotEmpty) articleLabel(a), timeAgo(a.createdAt)].join('  •  '),
                 style: const TextStyle(color: Brand.muted, fontSize: 13),
               ),
             ]),
