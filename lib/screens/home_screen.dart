@@ -72,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SliverToBoxAdapter(child: _BreakingBanner()),
+            SliverToBoxAdapter(child: _LatestTicker(feed: all)),
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 56,
@@ -194,6 +195,45 @@ class _BreakingBanner extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// شريط «آخر الأخبار» كما في الموقع: ما نُشر في آخر 36 ساعة (حتى 15 مادة)، الأحدث أولاً.
+const tickerWindow = Duration(hours: 36);
+
+class _LatestTicker extends StatelessWidget {
+  final List<Object> feed;
+  const _LatestTicker({required this.feed});
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final items = <_BrItem>[
+      for (final o in feed.where((o) => now.difference(feedDate(o)) < tickerWindow).take(15))
+        o is Article
+            ? _BrItem(o.title, () => openArticle(context, o))
+            : _BrItem((o as VideoItem).displayTitle, () => openVideo(context, o)),
+    ];
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      child: Material(
+        color: Brand.greenDark,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          child: Row(children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
+              child: const Text('آخر الأخبار', style: TextStyle(color: Brand.greenDark, fontSize: 14)),
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: _BreakingMarquee(items: items)),
+          ]),
+        ),
+      ),
     );
   }
 }
