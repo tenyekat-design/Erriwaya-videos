@@ -75,6 +75,42 @@
   .htrack.dash { background: none; border-top: 3px dashed #C9C3B6; height: 0; top: 94px; }
   .hbar { position: absolute; right: 0; top: 74px; height: 42px; width: 0; }
   .hr.hi .hbar { box-shadow: 0 8px 22px rgba(10,143,101,.3); }
+  /* 3D bars (three: true): a top face and an end face give the bar depth */
+  .hbar.d3::before { content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px; background: inherit; filter: brightness(1.3); transform: skewX(45deg); transform-origin: 0 100%; }
+  .hbar.d3::after { content: ''; position: absolute; left: -12px; top: 0; width: 12px; height: 100%; background: inherit; filter: brightness(.72); transform: skewY(45deg); transform-origin: 100% 0; }
+  .hr .lab { top: -4px; }
+  .hv .yr { display: inline-block; font-size: 22px; color: #fff; background: var(--grey); padding: 0 10px 4px; margin-right: 10px; vertical-align: middle; }
+  .hv .pl { display: inline-block; vertical-align: middle; margin-left: 10px; }
+  .foot2 { position: absolute; left: 56px; right: 56px; text-align: center; font-size: 22px; color: var(--grey); }
+  /* globe opening */
+  .space { position: absolute; inset: 0; background: radial-gradient(120% 80% at 50% 40%, #13306B 0%, #07142F 70%); }
+  .stars { position: absolute; inset: 0; }
+  .fadebg { position: absolute; left: 0; right: 0; top: 720px; height: 630px; background: linear-gradient(180deg, rgba(245,243,238,0) 0%, var(--bg) 38%); }
+  .gtitle { position: absolute; left: 30px; right: 30px; text-align: center; }
+  .gnote { position: absolute; left: 0; right: 0; text-align: center; font-size: 26px; color: var(--grey); }
+  .gnote i { display: inline-block; width: 16px; height: 16px; border-radius: 50%; background: #F4B63F; box-shadow: 0 0 10px #F4B63F; margin-left: 10px; vertical-align: middle; }
+  /* stat */
+  .bignum { position: absolute; left: 0; right: 0; text-align: center; font-size: 150px; line-height: 1; color: var(--acc); }
+  .bignum small { font-size: 40px; color: var(--navy); margin-right: 14px; }
+  /* geo maps */
+  .gbox { position: absolute; left: 56px; right: 56px; background: var(--card); box-shadow: 0 12px 34px rgba(11,31,75,.11); border-right: 10px solid var(--acc); padding: 12px 28px 16px; line-height: 1.15; box-sizing: border-box; }
+  .gbox .t { font-size: 40px; color: var(--navy); }
+  .gbox .r { font-size: 29px; color: var(--grey); margin-top: 4px; display: flex; align-items: baseline; gap: 14px; }
+  .gbox .r b { font-weight: normal; font-size: 60px; color: var(--acc); }
+  .gbox .f { font-size: 25px; color: var(--navy); margin-top: 8px; border-top: 2px solid var(--line); padding-top: 8px; }
+  .glab { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 26px; color: var(--navy); text-shadow: 0 0 6px #fff, 0 0 6px #fff; }
+  .glab.big { font-size: 30px; color: var(--grey); letter-spacing: .02em; }
+  .glab.site { font-size: 27px; background: var(--navy); color: #fff; text-shadow: none; padding: 2px 12px 6px; }
+  .glab.site.res { background: #fff; color: var(--navy); border: 2px dashed var(--navy); }
+  .glab.rt { font-size: 23px; background: rgba(255,255,255,.9); padding: 0 8px 4px; text-shadow: none; }
+  .glegend { position: absolute; left: 40px; right: 40px; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 26px; font-size: 23px; color: var(--grey); }
+  .glegend span { white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+  .chip2 { position: absolute; left: 56px; right: 56px; height: 92px; background: var(--card); box-shadow: 0 8px 24px rgba(11,31,75,.1); display: flex; align-items: center; gap: 18px; padding: 0 24px; font-size: 29px; line-height: 1.25; color: var(--navy); border-right: 8px solid var(--navy); box-sizing: border-box; }
+  .chip2.dz { border-right-color: var(--acc); }
+  /* question and navy end */
+  .qq { position: absolute; left: 50px; right: 50px; text-align: center; font-size: 78px; line-height: 1.4; color: var(--navy); }
+  .qq .r { color: var(--acc); }
+  .navyfull { position: absolute; inset: 0; background: var(--navy); }
   /* map */
   .mlab { position: absolute; transform: translate(-50%, -50%); text-align: center; white-space: nowrap; color: #fff; }
   .mlab .mt { font-size: 28px; display: flex; align-items: center; gap: 10px; justify-content: center; }
@@ -161,6 +197,7 @@
   <div id="foot" class="abs"></div>
 </div></div>
 <script src="icons.js"></script>
+<script src="vendor-geo.js"></script>
 <script>
 const NAME = new URLSearchParams(location.search).get('graphic');
 const DIR = '../graphics/' + NAME + '/', FRAMES = '../frames/graphic-' + NAME + '/';
@@ -245,6 +282,15 @@ const BUILD = {
     <div class="sub" style="top:1085px" data-a="fade" data-in="2.0">${R.subtitle}</div>`;
   },
   hbars: s => s.rows.length > 2 ? hrows(s) : hbars2(s),
+  globe: s => globeScene(s),
+  stat: s => `<div class="photo" style="top:270px;height:440px"><img class="cov" src="${DIR}img/${s.img}" data-fy="${s.fy ?? 0.5}"></div>
+    <div class="abs" style="left:0;right:0;top:700px;text-align:center" data-a="fade" data-in="0.3">${flag(s.c, 90)}<span class="name" style="font-size:52px">${R.names[s.c]}</span></div>
+    <div class="bignum" style="top:790px" data-a="fade" data-in="0.5"><span class="ltr" data-a="count" data-v="${s.v}" data-in="0.6">0</span><small>${s.label}</small></div>
+    <div class="big2" style="top:965px;font-size:58px;color:var(--navy)">${words(s.line)}</div>
+    <div class="small" style="top:1075px" data-a="fade" data-in="2.6">${s.small}</div>`,
+  geo: s => geoScene(s),
+  question: s => `<div class="qq" style="top:${560 - s.lines.length * 30}px">${s.lines.map((l, i) => words(l, i === s.lines.length - 1 ? 'r' : '')).join('<br>')}</div>`,
+  navyend: s => `<div class="navyfull" data-a="fade" data-in="0"></div>`,
   map: s => mapScene(s),
   tiles: s => tiles(s),
   _hbars: s => {
@@ -290,15 +336,15 @@ const BUILD = {
 const hbars2 = s => BUILD._hbars(s);
 // several countries: one row each (flag, name, figure as written), bars on one scale (m), `na` rows dashed
 function hrows(s) {
-  const max = Math.max(...s.rows.filter(r => r.m).map(r => r.m)), L = W - 112, pitch = 148;
+  const max = Math.max(...s.rows.filter(r => r.m).map(r => r.m)), L = W - 112 - (s.three ? 14 : 0), pitch = 148;
   return head(s) + s.rows.map((r, i) => {
-    const top = 466 + i * pitch, a = 0.3 + 0.22 * i;
+    const top = 466 + i * pitch, a = s.slow ? 0.6 + 0.85 * i : 0.3 + 0.22 * i;
     if (r.na) return `<div class="hr" style="top:${top}px" data-a="fade" data-in="${a}">${lab(r.c, 66)}
         <div class="hv na">${r.na}</div><div class="htrack dash"></div></div>`;
     return `<div class="hr${r.c === s.hi ? ' hi' : ''}" style="top:${top}px" data-a="fade" data-in="${a}">${lab(r.c, 66)}
-        <div class="hv" style="color:${col(r.c, s)}"><span class="ltr" data-a="count" data-v="${r.v}" data-in="${a + 0.2}">0</span><small>${r.label}</small></div>
-        <div class="htrack"></div><div class="hbar" style="background:${col(r.c, s)}" data-a="growx" data-w="${Math.max(6, L * r.m / max)}" data-in="${a + 0.2}"></div></div>`;
-  }).join('');
+        <div class="hv" style="color:${col(r.c, s)}">${s.plant ? plantIcon(col(r.c, s)) : ''}<span class="ltr" data-a="count" data-v="${r.v}" data-in="${a + 0.2}">0</span><small>${r.label}</small>${r.year ? `<span class="yr ltr">${r.year}</span>` : ''}</div>
+        <div class="htrack"></div><div class="hbar${s.three ? ' d3' : ''}" style="background:${col(r.c, s)}" data-a="growx" data-w="${Math.max(6, L * r.m / max)}" data-in="${a + 0.2}"></div></div>`;
+  }).join('') + (s.foot ? `<div class="foot2" style="top:1206px" data-a="fade" data-in="${s.slow ? 5 : 2}">${s.foot}</div>` : '');
 }
 // map: the countries coloured by what their figure is (reserves / estimated resources / none), figures on top
 function mapScene(s) {
@@ -320,21 +366,127 @@ function mapScene(s) {
   const legend = `<div class="legend" data-a="fade" data-in="2.6">${s.legend.map(([k, t]) => `<span><i style="${sw(k)}"></i>${t}</span>`).join('')}</div>`;
   return head(s) + svg + labels + legend + `<div class="note navy" style="top:1060px;font-size:34px;padding:6px 30px 14px" data-a="pop" data-in="3.4">${s.note}</div>`;
 }
-// equal cards (no bars, no ranking): 3 on top, 2 below
+// equal cards (no bars, no ranking): 3 on top, 2 below (or one row of up to 3; a single card is wide)
 function tiles(s) {
-  const cw = 310, ch = 340, gap = 26, row = [3, 2];
+  const n = s.tiles.length, wide = n === 1, cw = wide ? 640 : 310, ch = 340, gap = 26, row = n > 3 ? [3, n - 3] : [n];
   let k = 0, html = head(s);
   row.forEach((n, ri) => {
     const total = n * cw + (n - 1) * gap, x0 = (W - total) / 2;
     for (let j = 0; j < n; j++, k++) {
       const T = s.tiles[k], a = 0.3 + 0.2 * k;
-      html += `<div class="tile" style="right:${x0 + j * (cw + gap)}px;top:${454 + ri * (ch + 18)}px" data-a="fade" data-in="${a}">
+      html += `<div class="tile" style="right:${x0 + j * (cw + gap)}px;top:${(row.length === 1 ? 500 : 454) + ri * (ch + 18)}px;width:${cw}px" data-a="fade" data-in="${a}">
         <div class="band"></div><div class="tc">${flag(T.c, 54)}<span>${R.names[T.c]}</span></div>
-        <div class="tv">${T.pre ? `<em>${T.pre}</em>` : ''}<span class="ltr" data-a="count" data-v="${T.v}" data-in="${a + 0.3}">0</span></div>
+        <div class="tv">${T.pre ? `<em>${T.pre}</em>` : ''}${T.txt ? `<span class="ltr">${T.txt}</span>` : `<span class="ltr" data-a="count" data-v="${T.v}" data-in="${a + 0.3}">0</span>`}</div>
         <div class="tl">${T.label}</div><div class="ts">${T.sub}<br><span class="ltr">${T.year}</span></div></div>`;
     }
   });
-  return html + `<div class="small" style="top:1176px;left:56px;right:56px;font-size:24px;padding:8px 16px 12px;white-space:nowrap" data-a="fade" data-in="2.2">${s.small}</div>`;
+  return html + `<div class="small" style="top:${row.length === 1 ? 900 : 1176}px;left:56px;right:56px;font-size:24px;padding:8px 16px 12px;white-space:nowrap" data-a="fade" data-in="2.2">${s.small}</div>`;
+}
+function plantIcon(c) {  // gas plant: tank, column and a flare
+  return `<svg class="pl" width="58" height="52" viewBox="0 0 58 52"><rect x="2" y="30" width="30" height="20" rx="9" fill="${c}"/><rect x="38" y="12" width="9" height="38" fill="${c}"/>
+    <path d="M42.5 1c4 5 6 8 2.5 11.5c-1.8 1.6-4.6 1.6-5.6-.6c-1.2-2.8 1.5-5 3.1-10.9z" fill="#F4A23A"/><rect x="0" y="48" width="58" height="3" fill="${c}"/></svg>`;
+}
+// opening: a turning globe on a starry navy sky; the camera comes down onto the Maghreb, the sky gives way to the
+// light background, the five countries and the main gas sites light up, then the title
+let GEO = null;
+function geoData() {
+  if (!GEO) GEO = topojson.feature(WORLD, WORLD.objects.countries).features;
+  return GEO;
+}
+function globeScene(s) {
+  let st = '';
+  for (let k = 0; k < 140; k++) { const x = (k * 7919) % 1080, y = (k * 104729) % 1350, r = 0.8 + (k % 5) * 0.35; st += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${0.3 + (k % 7) / 10}"/>`; }
+  return `<div class="space" id="gspace"></div><svg class="stars" id="gstars" width="1080" height="1350">${st}</svg>
+    <svg class="abs" id="globe" width="1080" height="1350" style="left:0;top:0"></svg><div class="fadebg" id="gfade"></div>
+    <div class="gnote" style="top:768px" data-a="fade" data-in="6.6"><i></i>${s.sitesNote}</div>
+    <div class="gtitle" style="top:840px">${s.lines.map((l, i) => `<div style="font-size:${i ? 96 : 64}px;line-height:1.28;color:var(--navy)">${words(l, i === s.lines.length - 1 ? 'r' : '')}</div>`).join('')}</div>
+    <div class="sub" style="top:1180px" data-a="fade" data-in="10.0">${R.subtitle}</div>`;
+}
+const lerpRGB = (a, b, q) => a.map((v, i) => Math.round(v + (b[i] - v) * q));
+function drawGlobe(s, dt) {
+  const q = eio(prog(dt, 0.4, 6.4)), [l0, b0, r0] = s.from, [l1, b1, r1] = s.to;
+  const Rk = Math.exp(Math.log(r0) + (Math.log(r1) - Math.log(r0)) * q);
+  const cy = 600 + (470 - 600) * q;
+  const proj = d3.geoOrthographic().rotate([-(l0 + (l1 - l0) * q), -(b0 + (b1 - b0) * q)]).scale(Rk).translate([540, cy]).clipAngle(90);
+  const path = d3.geoPath(proj), light = prog(dt, 3.4, 6.0), lit = prog(dt, 5.2, 6.6);
+  const rgb = a => `rgb(${a.join(',')})`;
+  const land = lerpRGB([70, 92, 130], [226, 222, 213], light), five = lerpRGB(land, [45, 76, 143], lit);
+  const ids = Object.values(s.ids);
+  let h = `<path d="${path({ type: 'Sphere' })}" fill="${rgb(lerpRGB([22, 56, 120], [222, 229, 238], light))}"/>`;
+  for (const f of geoData()) {
+    const d = path(f); if (!d) continue;
+    const fv = ids.includes(f.id), ws = f.id === '732';
+    h += `<path d="${d}" fill="${rgb(fv ? five : land)}" stroke="${fv ? '#fff' : rgb(lerpRGB([95, 118, 160], [200, 194, 182], light))}" stroke-width="${fv ? 1.6 : 0.8}"${ws ? ' stroke-dasharray="4 3"' : ''}/>`;
+  }
+  const sp = prog(dt, 6.2, 7.4);
+  if (sp > 0) s.sites.forEach(([lo, la], k) => {
+    const p = proj([lo, la]); if (!p) return;
+    const pulse = 1 + 0.35 * Math.sin((dt - k * 0.2) * 5);
+    h += `<circle cx="${p[0]}" cy="${p[1]}" r="${16 * pulse}" fill="#F4B63F" opacity="${0.3 * sp}"/><circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#F4B63F" stroke="#fff" stroke-width="2" opacity="${sp}"/>`;
+  });
+  $('globe').innerHTML = h;
+  $('gspace').style.opacity = 1 - light; $('gstars').style.opacity = 1 - light;
+  $('gfade').style.opacity = prog(dt, 5.0, 6.6);
+  return light;
+}
+// regional map: countries, routes drawn over time, sites, an LNG carrier, timed boxes / chips below the map
+function geoScene(s) {
+  const mh = s.mapH || 480, [x0, y0, x1, y1] = s.box;
+  const box = { type: 'MultiPoint', coordinates: [[x0, y0], [x0, y1], [x1, y1], [x1, y0]] };  // corners: straight edges in Mercator
+  const proj = d3.geoMercator().fitExtent([[0, 0], [W - 112, mh]], box);
+  const [[bx0, by0], [bx1, by1]] = d3.geoPath(proj).bounds(box), mw = bx1 - bx0, mhh = by1 - by0;
+  const X = (W - mw) / 2 - bx0, Y = 452 - by0;
+  s._proj = proj;
+  const path = d3.geoPath(proj), ids = Object.values(s.ids || {}), focus = (s.focus || []).map(c => s.ids[c]);
+  let g = '';
+  for (const f of geoData()) {
+    const b = d3.geoBounds(f); if (b[1][0] < x0 - 8 || b[0][0] > x1 + 8 || b[1][1] < y0 - 8 || b[0][1] > y1 + 8 || b[0][0] > b[1][0]) continue;
+    const fo = focus.includes(f.id), five = ids.includes(f.id), ws = f.id === '732';
+    g += `<path d="${path(f)}" fill="${fo ? '#C9D3E6' : five ? '#DCE2EE' : '#E6E2D9'}" stroke="${ws ? '#B9B3A6' : fo || five ? '#fff' : '#CFC9BC'}" stroke-width="${fo || five ? 2 : 1.2}"${ws ? ' stroke-dasharray="5 4"' : ''}/>`;
+  }
+  const P = ll => proj(ll);
+  const rs = { on: 'stroke="#0A8F65" stroke-width="7"', off: 'stroke="#8C8F99" stroke-width="6" stroke-dasharray="14 9"', plan: 'stroke="#0B1F4B" stroke-width="5" stroke-dasharray="2 11" stroke-linecap="round"' };
+  (s.routes || []).forEach((r, k) => { g += `<path class="route" data-k="${k}" data-kind="${r.kind}" d="M${r.pts.map(P).map(p => p.join(',')).join('L')}" fill="none" ${rs[r.kind]} stroke-linejoin="round"/>`; });
+  (s.places || []).forEach(t => { const [x, y] = P(t.ll); g += `<circle cx="${x}" cy="${y}" r="6" fill="#0B1F4B"/>`; });
+  (s.sites || []).forEach(t => {
+    const [x, y] = P(t.ll);
+    g += t.kind === 'lng' ? `<rect x="${x - 9}" y="${y - 9}" width="18" height="18" fill="#0B1F4B" stroke="#fff" stroke-width="2.5" transform="rotate(45 ${x} ${y})"/>`
+      : t.kind === 'hub' ? `<circle class="pulse" cx="${x}" cy="${y}" r="22" fill="#0A8F65" opacity=".25"/><circle cx="${x}" cy="${y}" r="11" fill="#0A8F65" stroke="#fff" stroke-width="3"/>`
+      : `<circle cx="${x}" cy="${y}" r="28" fill="rgba(11,31,75,.08)" stroke="#0B1F4B" stroke-width="3" stroke-dasharray="6 5"/><circle cx="${x}" cy="${y}" r="8" fill="#0B1F4B"/>`;
+  });
+  const ship = s.ship ? `<g id="ship" opacity="0"><path d="M-34,-9 L24,-9 L36,0 L24,9 L-34,9 Z" fill="#0B1F4B"/><circle cx="-16" cy="0" r="6" fill="#fff"/><circle cx="0" cy="0" r="6" fill="#fff"/><circle cx="16" cy="0" r="6" fill="#fff"/></g>` : '';
+  let html = head(s) + `<svg class="abs" style="left:0;top:0" width="${W}" height="${H}" data-a="fade" data-in="0.1">
+    <defs><clipPath id="gclip"><rect x="${bx0}" y="${by0}" width="${mw}" height="${mhh}"/></clipPath></defs>
+    <g transform="translate(${X},${Y})"><g clip-path="url(#gclip)"><rect x="${bx0}" y="${by0}" width="${mw}" height="${mhh}" fill="#EEF2F7"/>${g}${ship}</g></g></svg>`;
+  const lab = (ll, text, cls, dx = 0, dy = 0, a = 0.6) => { const [x, y] = P(ll); return `<div class="glab ${cls}" style="left:${x + X + dx}px;top:${y + Y + dy}px" data-a="fade" data-in="${a}">${text}</div>`; };
+  (s.labels || []).forEach(l => html += lab(l.ll, l.name, 'big'));
+  (s.places || []).forEach(t => html += lab(t.ll, t.name, '', t.side === 'r' ? 75 : -80, 0));
+  (s.sites || []).forEach(t => html += lab(t.ll, t.name, 'site' + (t.kind === 'res' ? ' res' : ''), t.dx || 0, t.dy ?? (t.kind === 'lng' ? -34 : -52), t.kind === 'res' ? 11 : 0.8));
+  (s.routes || []).forEach((r, k) => { const m = r.pts[r.at ?? Math.floor(r.pts.length / 2)], [x, y] = P(m);
+    html += `<div class="glab rt" style="left:${x + X + (r.dx || 0)}px;top:${y + Y + (r.dy ?? 26)}px" data-a="fade" data-in="${1.6 + 0.5 * k}">${r.name}</div>`; });
+  const gy = 452 + mhh + 14;
+  if (s.legend) html += `<div class="glegend" style="top:${gy}px" data-a="fade" data-in="1.8">${s.legend.map(([k, t]) => `<span>${legendMark(k)}${t}</span>`).join('')}</div>`;
+  const by = gy + (s.legend ? 50 : 0);
+  (s.boxes || []).forEach(b => html += `<div class="gbox" data-win="${b.at},${b.until}" style="top:${by + 6}px"><div class="t">${b.title}</div>${b.rows.map(([n, t]) => `<div class="r">${n ? `<b class="ltr">${n}</b>` : ''}${t}</div>`).join('')}<div class="f">${b.foot}</div></div>`);
+  (s.chips || []).forEach((c, k) => { const slot = s.chips.slice(0, k).filter(o => o.at === c.at).length;
+    html += `<div class="chip2 ${c.c}" data-win="${c.at},${c.until}" style="top:${by + 8 + slot * 104}px">${flag(c.c, 54)}<span>${c.text}</span></div>`; });
+  return html;
+}
+function legendMark(k) {
+  if (k === 'lng') return '<svg width="22" height="22"><rect x="4" y="4" width="14" height="14" fill="#0B1F4B" transform="rotate(45 11 11)"/></svg>';
+  const st = { on: 'stroke="#0A8F65" stroke-width="7"', off: 'stroke="#8C8F99" stroke-width="6" stroke-dasharray="10 6"', plan: 'stroke="#0B1F4B" stroke-width="5" stroke-dasharray="2 9" stroke-linecap="round"' }[k];
+  return `<svg width="54" height="14"><line x1="3" y1="7" x2="51" y2="7" ${st}/></svg>`;
+}
+function animGeo(s, dt, el) {
+  el.querySelectorAll('.route').forEach(p => { const k = +p.dataset.k, q = eio(prog(dt, 0.8 + 0.5 * k, 2.6 + 0.5 * k));
+    if (p.dataset.kind === 'on') { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L * (1 - q); }
+    else p.style.opacity = q; });
+  el.querySelectorAll('.pulse').forEach(c => c.setAttribute('r', 22 + 8 * Math.sin(dt * 4)));
+  el.querySelectorAll('[data-win]').forEach(b => { const [a, z] = b.dataset.win.split(',').map(Number), qi = eout(prog(dt, a, a + 0.5));
+    b.style.opacity = qi * (1 - prog(dt, z - 0.4, z)); b.style.transform = `translateY(${(1 - qi) * 24}px)`; });
+  if (s.ship) { const sh = $('ship'), q = eio(prog(dt, s.ship.at, s.ship.at + s.ship.dur)), a = s._proj(s.ship.from), b = s._proj(s.ship.to);
+    const ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+    sh.setAttribute('transform', `translate(${a[0] + (b[0] - a[0]) * q},${a[1] + (b[1] - a[1]) * q}) rotate(${ang})`); sh.setAttribute('opacity', prog(dt, s.ship.at - 0.3, s.ship.at + 0.2)); }
 }
 function head(s) {
   const ph = s.img ? ' onph' : '';
@@ -372,14 +524,15 @@ window.renderFrame = async t => {
   // header title from the first chart on
   const ht = $('htitle');
   if (!ht.innerHTML) ht.innerHTML = `<div class="t">${R.title.replace('.. ', '..<br>')}</div><div class="s">${R.subtitle}</div>`;
-  const OUT = s.type === 'outro';
-  const hq = s.type === 'title' ? prog(t, end - 0.35, end) : OUT ? 1 - prog(dt, 0, 0.35) : 1;
+  const OUT = s.type === 'outro' || s.type === 'navyend';
+  const OPEN = s.type === 'title' || s.type === 'globe';
+  const hq = OPEN ? prog(t, end - 0.35, end) : s.type === 'navyend' ? 0 : OUT || s.type === 'question' ? 1 - prog(dt, 0, 0.35) : 1;
   ht.style.opacity = hq;
   // animated elements
   let wi = 0, pi = 0;
   el.querySelectorAll('[data-a]').forEach(e => {
     const a = +(e.dataset.in || 0), k = e.dataset.a;
-    if (k === 'word') { const q = eout(prog(dt, 0.15 + 0.07 * wi, 0.55 + 0.07 * wi)); wi++; e.style.opacity = q; e.style.transform = `translateY(${(1 - q) * 30}px)`; return; }
+    if (k === 'word') { const w0 = s.wordsAt || 0, q = eout(prog(dt, w0 + 0.15 + 0.07 * wi, w0 + 0.55 + 0.07 * wi)); wi++; e.style.opacity = q; e.style.transform = `translateY(${(1 - q) * 30}px)`; return; }
     if (k === 'fade') { const q = eout(prog(dt, a, a + 0.5)); e.style.opacity = q; e.style.transform = (e.classList.contains('note') ? 'translateX(-50%) ' : '') + `translateY(${(1 - q) * 26}px)`; return; }
     if (k === 'pop1') { const a1 = 1.1 + 0.18 * pi++, q = eout(prog(dt, a1, a1 + 0.35)); e.style.display = 'inline-block'; e.style.opacity = q; e.style.transform = `scale(${0.6 + 0.4 * q})`; return; }
     if (k === 'pop') { const q = eout(prog(dt, a, a + 0.45)); e.style.opacity = q; e.style.transform = `translateX(-50%) scale(${0.85 + 0.15 * q})`; return; }
@@ -387,6 +540,9 @@ window.renderFrame = async t => {
     if (k === 'growy') { e.style.height = (+e.dataset.h * eio(prog(dt, a, a + 1.3))) + 'px'; return; }
     if (k === 'count') { const v = +e.dataset.v; e.textContent = fmt(v * eio(prog(dt, a, a + 1.3)), decs(e.dataset.v)); }
   });
+  let light = 1;
+  if (s.type === 'globe') light = drawGlobe(s, dt);
+  if (s.type === 'geo') animGeo(s, dt, el);
   // title footage (played at 0.75x) and conclusion photo, both with a slow push-in
   const ci = $('clipimg');
   if (ci) {
@@ -398,13 +554,13 @@ window.renderFrame = async t => {
   for (const im of el.querySelectorAll('img.cov'))
     cover(im, await natural(im.src), im.parentNode.offsetWidth, im.parentNode.offsetHeight, 1.04 + 0.08 * prog(dt, 0, end - s.t), +im.dataset.fy);
   // white logo over the opening footage, navy elsewhere; the header rule waits for the charts
-  $('logo').style.background = s.type === 'title' && dt < end - s.t - 0.35 ? '#fff' : 'var(--navy)';
+  $('logo').style.background = (s.type === 'title' && dt < end - s.t - 0.35) || (s.type === 'globe' && light < 0.6) || s.type === 'navyend' ? '#fff' : 'var(--navy)';
   $('rule').style.opacity = hq;
   // outro: logo grows from the header to the centre; footer (and the story label) give way
   const lg = $('logo'), lp = OUT ? eio(prog(dt, 0, 0.9)) : 0;
-  const L0 = [64, 56, 130, 176], L1 = [(W - 330) / 2, 300, 330, 447];
+  const L0 = [64, 56, 130, 176], L1 = [(W - 330) / 2, s.type === 'navyend' ? (H - 447) / 2 : 300, 330, 447];
   ['left', 'top', 'width', 'height'].forEach((k, j) => lg.style[k] = (L0[j] + (L1[j] - L0[j]) * lp) + 'px');
-  $('foot').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : 1;
+  $('foot').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : s.type === 'globe' ? light : 1;
   $('kicker').style.opacity = OUT ? 1 - prog(dt, 0, 0.3) : 1;
   if (FORMAT === 'youtube') {
     // left panel: the title footage, then each scene's photo; gone in the outro while the design moves to the centre

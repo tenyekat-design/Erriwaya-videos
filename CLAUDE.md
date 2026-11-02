@@ -64,3 +64,8 @@ branch ccr-af80c026-mftyeu, same approved colours: light background, navy, green
 `hi` = leader in green, others navy); `map` (run `node tools/make-infographic-map.js <folder> mr=478 dz=012 ...`;
 `areas` kind res / est / nd, `move` nudges labels); `tiles` (equal cards, no ranking); conclusion `lineFlags`.
 Reference: `graphics/2026-11-01-maghreb-iron/graphic.js`.
+Also (2 Nov): `globe` opening (space → Maghreb zoom, sites, title words from `wordsAt`), `hbars` with `three`
+(3D bars), `slow`, row `year` chips, `plant` icons and a `foot` line; `stat` (big figure over a photo); `geo` (regional
+map: `box`, `routes` on/off/plan drawn over time, `sites` hub/res/lng, `ship`, timed `boxes` or `chips` under the map);
+`tiles` with one to five cards (`txt` for a non-numeric value); `question`; `navyend` (navy screen, logo only).
+Map scenes use src/vendor-geo.js (`node tools/make-geo-vendor.js`). 120 s reference: `graphics/2026-11-02-maghreb-gas/`.
