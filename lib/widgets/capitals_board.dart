@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models.dart';
@@ -49,7 +51,7 @@ Color _tone(CityWeather w) {
   return Colors.white70;
 }
 
-/// لوحة العواصم: الساعة في كل عاصمة وفارقها عن نواكشوط، وطقسها الآن والعظمى والصغرى.
+/// لوحة العواصم (كما في الموقع): كبسولات صغيرة، كل واحدة تعرض ساعة عاصمة ثم طقسها ثم تنتقل إلى العاصمة التالية.
 class CapitalsBoard extends StatelessWidget {
   const CapitalsBoard({super.key});
 
@@ -58,35 +60,32 @@ class CapitalsBoard extends StatelessWidget {
     return ListenableBuilder(
       listenable: Listenable.merge([WeatherService.instance, minuteTick]),
       builder: (context, _) {
-        final ws = WeatherService.instance;
-        final nkc = ws.of('mr');
+        final nkc = WeatherService.instance.of('mr');
         return Padding(
-          padding: const EdgeInsets.only(top: 12),
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(children: [
-                const Icon(Icons.schedule, size: 17, color: Brand.green),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text('نواكشوط | ${nouakchottNow()}${nkc != null ? ' | ${nkc.temp}°' : ''}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Brand.ink, fontSize: 14.5)),
-                ),
-              ]),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 150,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: capitals.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, i) => _CityCard(capitals[i], ws.of(capitals[i].portal)),
+            Row(children: [
+              const Icon(Icons.schedule, size: 15, color: Brand.green),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text('نواكشوط | ${nouakchottNow()}${nkc != null ? ' | ${nkc.temp}°' : ''}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Brand.muted, fontSize: 13)),
               ),
-            ),
+            ]),
+            const SizedBox(height: 6),
+            LayoutBuilder(builder: (context, box) {
+              const gap = 6.0;
+              final n = ((box.maxWidth + gap) / 112).floor().clamp(1, 5);
+              final w = (box.maxWidth - gap * (n - 1)) / n;
+              return Row(children: [
+                for (var i = 0; i < n; i++) ...[
+                  if (i > 0) const SizedBox(width: gap),
+                  SizedBox(width: w, child: _Flap(index: i, count: n)),
+                ],
+              ]);
+            }),
           ]),
         );
       },
@@ -94,71 +93,128 @@ class CapitalsBoard extends StatelessWidget {
   }
 }
 
-class _CityCard extends StatelessWidget {
+/// وجه واحد للكبسولة: ساعة عاصمة أو طقسها.
+class _Face {
   final Capital c;
-  final CityWeather? w;
-  const _CityCard(this.c, this.w);
+  final bool weather;
+  const _Face(this.c, this.weather);
+}
+
+class _Flap extends StatefulWidget {
+  final int index, count;
+  const _Flap({required this.index, required this.count});
+  @override
+  State<_Flap> createState() => _FlapState();
+}
+
+class _FlapState extends State<_Flap> {
+  static const _every = Duration(milliseconds: 3500);
+  int _k = 0;
+  Timer? _start, _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // تتابع الكبسولات بفارق صغير، كلوحة المطار
+    _start = Timer(Duration(milliseconds: 180 * widget.index), () {
+      _timer = Timer.periodic(_every, (_) {
+        if (mounted) setState(() => _k++);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _start?.cancel();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  List<_Face> get _steps {
+    final ws = WeatherService.instance;
+    return [
+      for (var k = 0; k < capitals.length; k++)
+        if (k % widget.count == widget.index) ...[
+          _Face(capitals[k], false),
+          if (ws.of(capitals[k].portal) != null) _Face(capitals[k], true),
+        ],
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final diff = c.utcOffset - capitals.first.utcOffset;
-    final portal = portals.where((p) => p.id == c.portal).firstOrNull;
-    const white = TextStyle(color: Colors.white);
+    final steps = _steps;
+    final f = steps[_k % steps.length];
+    final portal = portals.where((p) => p.id == f.c.portal).firstOrNull;
+    final still = MediaQuery.of(context).disableAnimations;
     return Material(
       color: Brand.green,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(20),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: portal == null
             ? null
             : () =>
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => PortalScreen(portal: portal))),
-        // يتصغّر المحتوى إن كبّر المستخدم خط الهاتف، بدل أن يُقصّ
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.topCenter,
-          child: Container(
-            width: 132,
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Expanded(
-                        child: Text(c.city,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: white.copyWith(fontSize: 15))),
-                    if (diff != 0)
-                      Text('${diff > 0 ? '+' : '−'}${diff.abs()}',
-                          textDirection: TextDirection.ltr,
-                          style: const TextStyle(color: Colors.white60, fontSize: 12)),
-                  ]),
-                  Text(hhmm(c.now),
-                      textDirection: TextDirection.ltr,
-                      style: white.copyWith(fontSize: 22, fontWeight: FontWeight.w600, height: 1.3)),
-                  const SizedBox(height: 8),
-                  if (w != null) ...[
-                    Row(children: [
-                      Icon(weatherIcon(w!), size: 20, color: _tone(w!)),
-                      const SizedBox(width: 6),
-                      Text('${w!.temp}°', style: white.copyWith(fontSize: 17)),
-                      const SizedBox(width: 6),
-                      Expanded(
-                          child: Text(w!.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.white70, fontSize: 12))),
-                    ]),
-                    if (w!.max != null)
-                      Text('العظمى ${w!.max}° · الصغرى ${w!.min}°',
-                          maxLines: 1, style: const TextStyle(color: Colors.white60, fontSize: 11.5)),
-                  ] else
-                    const Text('الطقس غير متاح', style: TextStyle(color: Colors.white60, fontSize: 12)),
-                ]),
+        child: SizedBox(
+          height: 38,
+          child: AnimatedSwitcher(
+            duration: still ? Duration.zero : const Duration(milliseconds: 450),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, anim) => ClipRect(
+              child: SlideTransition(
+                position: Tween(begin: const Offset(0, .6), end: Offset.zero).animate(anim),
+                child: FadeTransition(opacity: anim, child: child),
+              ),
+            ),
+            layoutBuilder: (cur, prev) =>
+                Stack(alignment: Alignment.center, children: [...prev, if (cur != null) cur]),
+            child: KeyedSubtree(
+              key: ValueKey('${f.c.portal}-${f.weather}'),
+              child: _face(f),
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _face(_Face f) {
+    const city = TextStyle(color: Colors.white70, fontSize: 12.5);
+    const big = TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600);
+    final children = <Widget>[];
+    if (!f.weather) {
+      final diff = f.c.utcOffset - capitals.first.utcOffset;
+      children.addAll([
+        const Icon(Icons.schedule, size: 14, color: Colors.white60),
+        const SizedBox(width: 5),
+        Text(f.c.city, maxLines: 1, style: city),
+        const SizedBox(width: 6),
+        Text(hhmm(f.c.now), textDirection: TextDirection.ltr, style: big),
+        if (diff != 0) ...[
+          const SizedBox(width: 4),
+          Text('${diff > 0 ? '+' : '−'}${diff.abs()}',
+              textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        ],
+      ]);
+    } else {
+      final w = WeatherService.instance.of(f.c.portal)!;
+      children.addAll([
+        Icon(weatherIcon(w), size: 16, color: _tone(w)),
+        const SizedBox(width: 5),
+        Text(f.c.city, maxLines: 1, style: city),
+        const SizedBox(width: 6),
+        Text('${w.temp}°', style: big),
+        const SizedBox(width: 5),
+        Text(w.label, maxLines: 1, style: const TextStyle(color: Colors.white60, fontSize: 11)),
+      ]);
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(mainAxisSize: MainAxisSize.min, children: children),
       ),
     );
   }
