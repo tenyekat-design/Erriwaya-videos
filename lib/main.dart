@@ -16,6 +16,7 @@ import 'services/articles_service.dart';
 import 'services/firebase_boot.dart';
 import 'services/push_service.dart';
 import 'services/site_service.dart';
+import 'services/weather_service.dart';
 import 'services/saved_service.dart';
 import 'services/videos_controller.dart';
 import 'theme.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
   unawaited(VideosController.instance.start());
   unawaited(ArticlesService.instance.start());
   unawaited(SiteService.instance.start());
+  unawaited(WeatherService.instance.start());
   unawaited(PushService.init());
   Timer.periodic(const Duration(minutes: 1), (_) => minuteTick.value++);
 }

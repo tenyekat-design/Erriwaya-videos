@@ -8,6 +8,7 @@ import '../services/push_service.dart';
 import '../services/videos_controller.dart';
 import '../theme.dart';
 import '../widgets/article_card.dart';
+import '../widgets/capitals_board.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
 import 'about_screen.dart';
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SliverToBoxAdapter(child: _BreakingBanner()),
             SliverToBoxAdapter(child: _LatestTicker(feed: all)),
+            const SliverToBoxAdapter(child: CapitalsBoard()),
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 56,

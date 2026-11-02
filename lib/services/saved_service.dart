@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../config.dart';
 import '../models.dart';
 
 /// المحفوظات (على الهاتف) والمشاركة — للفيديوهات والأخبار المكتوبة.
@@ -53,7 +54,7 @@ class SavedService extends ChangeNotifier {
 
   static Future<void> share(Object o) {
     if (o is Article) {
-      return Share.share('${o.title}\n\n${o.excerpt}\n\nعبر تطبيق الرواية', subject: o.title);
+      return Share.share('${o.title}\n\n${o.excerpt}\n\n${AppConfig.newsUrl(o.id)}', subject: o.title);
     }
     final v = o as VideoItem;
     return Share.share('${v.displayTitle}\n\n${v.url}\n\nعبر تطبيق الرواية', subject: v.displayTitle);

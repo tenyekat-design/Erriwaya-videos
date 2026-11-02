@@ -14,6 +14,10 @@ class AppConfig {
   static const tiktokUser = 'erriwaya';
   static const instagramUser = 'erriwaya.mr';
 
+  // الموقع وصفحاته
+  static const siteUrl = 'https://erriwaya.com';
+  static String newsUrl(String id) => '$siteUrl/news/$id.html';
+
   static String get youtubeUrl => 'https://www.youtube.com/@$youtubeHandle';
   static String get facebookUrl => 'https://www.facebook.com/$facebookPage';
   static String get tiktokUrl => 'https://www.tiktok.com/@$tiktokUser';

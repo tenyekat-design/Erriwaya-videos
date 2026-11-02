@@ -5,6 +5,10 @@ import '../services/push_service.dart';
 import 'about_screen.dart';
 import 'admin/login_screen.dart';
 import '../theme.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../config.dart';
+
+void _open(String url) => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
 
 Future<void> showSettingsSheet(BuildContext context) async {
   final enabled = await PushService.isEnabled();
@@ -32,7 +36,7 @@ class _SettingsState extends State<_Settings> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
+        child: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
           SwitchListTile(
             value: _on && PushService.available,
             activeTrackColor: Brand.green,
@@ -66,6 +70,30 @@ class _SettingsState extends State<_Settings> {
               nav.push(MaterialPageRoute(builder: (_) => const ContactScreen()));
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.language, color: Brand.green),
+            title: const Text('موقع الرواية'),
+            subtitle: const Text('erriwaya.com', textDirection: TextDirection.ltr, textAlign: TextAlign.right),
+            onTap: () => _open(AppConfig.siteUrl),
+          ),
+          ExpansionTile(
+            leading: const Icon(Icons.policy_outlined, color: Brand.green),
+            title: const Text('سياسات الشبكة'),
+            shape: const Border(),
+            children: [
+              for (final (t, p) in const [
+                ('السياسة التحريرية', 'editorial-policy.html'),
+                ('سياسة التصحيحات', 'corrections.html'),
+                ('سياسة الخصوصية', 'privacy.html'),
+              ])
+                ListTile(
+                  contentPadding: const EdgeInsetsDirectional.only(start: 56, end: 16),
+                  title: Text(t),
+                  trailing: const Icon(Icons.open_in_new, size: 18),
+                  onTap: () => _open('${AppConfig.siteUrl}/$p'),
+                ),
+            ],
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.edit_note, color: Brand.green),
@@ -82,9 +110,9 @@ class _SettingsState extends State<_Settings> {
           ListTile(
             leading: Image.asset('assets/images/logo_white.png', height: 32, color: Brand.green),
             title: const Text('الرواية'),
-            subtitle: const Text('الإصدار 1.2.9'),
+            subtitle: const Text('الإصدار 1.3.0'),
           ),
-        ]),
+        ])),
       ),
     );
   }
