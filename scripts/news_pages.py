@@ -70,6 +70,7 @@ article {{ background:var(--surface); margin-block:24px; padding:24px 20px; bord
 .meta {{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:14px; margin-bottom:10px }}
 .kicker {{ background:var(--chip); color:var(--ink); padding:1px 10px; border-radius:4px; text-decoration:none }}
 .kicker.red {{ background:var(--red); color:#fff }}
+.by {{ color:var(--ink); font-weight:600 }}
 h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
 .gallery {{ display:grid; gap:10px; margin-bottom:18px }}
 .gallery img {{ width:100%; border-radius:8px }}
@@ -95,6 +96,8 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
   <div class="tools">
     <a class="btn" href="https://wa.me/?text={wa}" target="_blank" rel="noopener">مشاركة على واتساب</a>
     <a class="btn alt" href="https://www.facebook.com/sharer/sharer.php?u={url_q}" target="_blank" rel="noopener">مشاركة على فيسبوك</a>
+    <a class="btn alt" href="https://t.me/share/url?url={url_q}" target="_blank" rel="noopener">تيليغرام</a>
+    <a class="btn alt" href="https://x.com/intent/post?url={url_q}" target="_blank" rel="noopener">إكس</a>
   </div>
 </article>
 {more}
@@ -105,6 +108,17 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
 """
 
 
+# أسماء الأقسام كما في الموقع والتطبيق (تصنيفات قديمة محفوظة بأسماء أخرى)
+SECTION_NAMES = {"تقارير": "التقارير", "تقرير": "التقارير", "تحقيقات": "التحقيقات", "تحقيق": "التحقيقات",
+                 "موجز": "الموجز", "الموجز الإخباري": "الموجز", "رأي": "الرأي الحر", "الرأي": "الرأي الحر",
+                 "رأي حر": "الرأي الحر", "مقال رأي": "الرأي الحر", "مقالات": "الرأي الحر"}
+
+
+def _section(a):
+    c = (a.get("category") or "").strip()
+    return SECTION_NAMES.get(c, c)
+
+
 def _page(a, others, now):
     from urllib.parse import quote
     url = f"{SITE}/news/{a['id']}.html"
@@ -112,7 +126,7 @@ def _page(a, others, now):
     desc = _summary(a.get("body")) or a.get("title", "")
     imgs = a.get("images") or []
     image = f"{SITE}/{imgs[0]}" if imgs else f"{SITE}/assets/og.png"
-    sections = [x for x in [a.get("category")] + [PORTALS.get(p, "") for p in a.get("portals") or []] if x]
+    sections = [x for x in [_section(a)] + [PORTALS.get(p, "") for p in a.get("portals") or []] if x]
     breaking = a.get("breaking") and d and now - d < timedelta(minutes=30)
     kickers = ('<span class="kicker red">عاجل</span>' if breaking else "") + "".join(
         f'<span class="kicker">{e(x)}</span>' for x in dict.fromkeys(sections))
@@ -120,6 +134,9 @@ def _page(a, others, now):
     if d:
         local = d.astimezone(timezone.utc)
         time = f'<time datetime="{d.isoformat()}">{local.day} {AR_MONTHS[local.month - 1]} {local.year}</time>'
+    writer = (a.get("writer") or "").strip()
+    if writer:
+        time = f'<span class="by">بقلم: {e(writer)}</span>' + time
     paras = "".join(f"<p>{e(p.strip())}</p>" for p in (a.get("body") or "").split("\n") if p.strip())
     gallery = (f'<div class="gallery">' + "".join(f'<img src="../{e(s)}" alt="{e(a.get("title"))}">' for s in imgs)
                + "</div>") if imgs else ""
@@ -128,6 +145,8 @@ def _page(a, others, now):
           "author": {"@type": "Organization", "name": NAME, "url": SITE + "/"},
           "publisher": {"@type": "NewsMediaOrganization", "name": NAME,
                         "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/icon.png"}}}
+    if writer:
+        ld["author"] = {"@type": "Person", "name": writer}
     if d:
         ld["datePublished"] = ld["dateModified"] = d.isoformat()
     if sections:
@@ -195,6 +214,13 @@ def build(out_dir, arts, now=None):
                  f"<lastBuildDate>{format_datetime(now)}</lastBuildDate>"
                  f"<image><url>{SITE}/assets/icon.png</url><title>{NAME}</title><link>{SITE}/</link></image>"
                  + "".join(items) + "</channel></rss>\n")
+
+    # فهرس البحث: كل الأخبار (العنوان ومقتطف وقسم وتاريخ)، يقرؤه الموقع والتطبيق عند أول بحث.
+    index = [{"id": a["id"], "t": a.get("title", ""), "s": _summary(a.get("body"), 400), "c": _section(a),
+              "d": a.get("createdAt"), "w": (a.get("writer") or "").strip(), "p": a.get("portals") or [],
+              "i": (a.get("images") or [None])[0]} for a in arts]
+    with open(os.path.join(out_dir, "search.json"), "w", encoding="utf-8") as fh:
+        json.dump(index, fh, ensure_ascii=False, separators=(",", ":"))
 
     # خبر نُشر للتو ولم تُبنَ صفحته بعد: صفحة 404 تحوّل news/<id>.html إلى عرضه في الصفحة الرئيسية.
     with open(os.path.join(out_dir, "404.html"), "w", encoding="utf-8") as fh:

@@ -216,7 +216,7 @@ def articles(out_dir):
                 print("thumb", a["id"], e)
         out.append({
             "id": a["id"], "title": a.get("title", ""), "body": a.get("body", ""),
-            "category": a.get("category", ""), "breaking": bool(a.get("breaking")),
+            "category": a.get("category", ""), "writer": a.get("writer", ""), "breaking": bool(a.get("breaking")),
             "thumb": a.get("thumb", ""), "images": imgs,
             "portals": a.get("portals") or [], "createdAt": a.get("createdAt"),
             "updateTime": d.get("updateTime"),
