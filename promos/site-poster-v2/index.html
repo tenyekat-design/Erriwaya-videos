@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الرواية – صور ترويجية للموقع</title>
+<style>
+/* Promo stills for erriwaya.com, made from the site's own stories (content.js) and following the brand guide
+   (pages/brand.html on the website branch): a real photo on top fading to white, the white logo top-left, a bold ink
+   headline with at most one red word, a short red rule, little text, the accounts footer, Al Quds only.
+   ?format=feed (1080x1350), square (1080x1080), story (1080x1920), share (1200x630), cover (1640x624). */
+@font-face { font-family: "Al Quds"; src: url(../../assets/fonts/al-quds.otf) format("opentype");
+  unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0,
+    U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015; }
+:root { --green: #004A49; --deep: #00302F; --red: #C8102E; --ink: #0F1E1D; --gray: #586A68; --line: #DAE3E1 }
+* { box-sizing: border-box; margin: 0 }
+html, body { width: 100vw; height: 100vh; overflow: clip }
+body { position: relative; background: #fff; color: var(--ink); font-family: "Al Quds", "Segoe UI", Tahoma, sans-serif }
+.abs { position: absolute }
+
+/* photos on top, fading to white */
+.hero { position: absolute; top: 0; left: 0; right: 0; display: grid; gap: 6px; background: #fff }
+.hero div { background-size: cover; background-position: center; overflow: hidden }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgb(0 0 0 / .32), transparent 26%, transparent 52%, rgb(255 255 255 / .85) 84%, #fff) }
+/* the brand guide's 'on a photo, with a light shade behind it' */
+.shade { position: absolute; top: 0; left: 0; width: 420px; height: 360px; background: radial-gradient(ellipse 62% 60% at 30% 34%, rgb(0 0 0 / .55), rgb(0 0 0 / .28) 50%, transparent 100%) }
+.share .shade, .cover .shade { width: 380px; height: 320px }
+.logo { position: absolute; background: #fff; -webkit-mask: url(img/logo.png) center / contain no-repeat; mask: url(img/logo.png) center / contain no-repeat; aspect-ratio: 237 / 320 }
+
+/* text */
+.kick { display: inline-flex; align-items: center; gap: .45em; background: var(--green); color: #fff; border-radius: 999px; padding: .3em .85em .2em; line-height: 1.2 }
+.kick i { width: .5em; height: .5em; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 .16em rgb(255 255 255 / .3) }
+h1 { font-weight: 400; line-height: 1.12; color: var(--ink) }
+h1 em { font-style: normal; color: var(--red) }
+.rule { height: 6px; border-radius: 3px; background: var(--red) }
+.sub { color: var(--gray); line-height: 1.5 }
+
+/* stories from the site */
+.now { display: flex; align-items: center; gap: 12px; color: var(--green) }
+.now::after { content: ""; flex: 1; height: 1.5px; background: var(--line) }
+.list { display: grid; gap: 22px }
+.item { display: grid; gap: 10px; align-content: start }
+.item .ph { border-radius: 14px; background-size: cover; background-position: center; aspect-ratio: 16 / 10 }
+.item .lb { color: var(--green); display: flex; align-items: center; gap: 7px; line-height: 1.2 }
+.item .lb::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green) }
+.item .lb.op { color: var(--red) } .item .lb.op::before { background: var(--red) }
+.item b { font-weight: 400; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.list.rows .item { grid-template-columns: auto 1fr; align-items: center; gap: 0 22px }
+.list.rows .item .ph { grid-row: span 2 }
+
+/* features */
+.feats { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center }
+.feat { display: inline-flex; align-items: center; gap: .45em; border-radius: 999px; padding: .42em .9em .32em; line-height: 1.2;
+  color: var(--green); background: rgb(0 74 73 / .07); box-shadow: inset 0 0 0 1.5px rgb(0 74 73 / .16); white-space: nowrap }
+.feat svg { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round }
+.feat.br { color: var(--red); background: rgb(200 16 46 / .07); box-shadow: inset 0 0 0 1.5px rgb(200 16 46 / .2) }
+
+/* accounts footer: ERRIWAYA · ERRIWAYA.MR · www.erriwaya.com */
+.foot { position: absolute; left: 0; right: 0; bottom: 0; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: space-between; border-top: 4px solid var(--red) }
+.foot .url { direction: ltr; letter-spacing: .01em }
+.soc { display: flex; align-items: center; gap: 26px; direction: ltr }
+.grp { display: flex; align-items: center; gap: 10px }
+.ics { display: flex; gap: 7px }
+.ics i { display: grid; place-items: center; border-radius: 50%; border: 1.5px solid rgb(255 255 255 / .4) }
+.ics svg { width: 48%; height: 48%; fill: currentColor }
+.grp span { letter-spacing: .04em }
+
+/* ── feed 1080x1350 ── */
+.feed .hero { height: 560px; grid-template-columns: 1fr 1.25fr; grid-template-rows: 1fr 1fr }
+.feed .hero .a { grid-column: 2; grid-row: 1 / span 2 }  /* the dark photo on the left, under the logo */
+.feed .logo { top: 46px; left: 52px; height: 112px }
+.feed .kick { top: 466px; right: 64px; font-size: 27px }
+.feed h1 { top: 526px; right: 64px; font-size: 112px }
+.feed .rule { top: 664px; right: 64px; width: 96px }
+.feed .sub { top: 688px; right: 64px; font-size: 31px }
+.feed .now { top: 758px; right: 64px; left: 64px; font-size: 24px }
+.feed .list { top: 804px; right: 64px; left: 64px; grid-template-columns: repeat(3, 1fr) }
+.feed .item .ph { aspect-ratio: 16 / 9 } .feed .item .lb { font-size: 20px } .feed .item b { font-size: 23px }
+.feed .feats { top: 1124px; right: 40px; left: 40px; font-size: 21px }
+.feed .feat:nth-child(5) { display: none }
+.feed .foot { height: 118px; padding: 0 56px; font-size: 25px } .feed .foot .url { font-size: 32px }
+.feed .ics i { width: 40px; height: 40px }
+
+/* ── square 1080x1080 ── */
+.square .hero { height: 430px; grid-template-columns: 1fr 1.25fr; grid-template-rows: 1fr 1fr }
+.square .hero .a { grid-column: 2; grid-row: 1 / span 2 }
+.square .logo { top: 40px; left: 46px; height: 98px }
+.square .kick { top: 350px; right: 60px; font-size: 24px }
+.square h1 { top: 402px; right: 60px; font-size: 96px }
+.square .rule { top: 522px; right: 60px; width: 88px }
+.square .sub { top: 546px; right: 60px; font-size: 28px }
+.square .now { top: 610px; right: 60px; left: 60px; font-size: 22px }
+.square .list { top: 652px; right: 60px; left: 60px; grid-template-columns: repeat(3, 1fr); gap: 18px }
+.square .item .ph { aspect-ratio: 16 / 9 } .square .item .lb { font-size: 18px } .square .item b { font-size: 21px }
+.square .feats { display: none }
+.square .foot { height: 104px; padding: 0 50px; font-size: 23px } .square .foot .url { font-size: 29px }
+.square .ics i { width: 36px; height: 36px }
+
+/* ── story 1080x1920 (apps cover the top ~220 px and the bottom ~250 px) ── */
+.story .hero { height: 780px; grid-template-columns: 1fr 1fr; grid-template-rows: 1.3fr 1fr }
+.story .hero .a { grid-column: span 2 }
+.story .logo { top: 230px; left: 60px; height: 120px }
+.story .kick { top: 690px; right: 70px; font-size: 32px }
+.story h1 { top: 756px; right: 70px; font-size: 130px }
+.story .rule { top: 918px; right: 70px; width: 110px }
+.story .sub { top: 946px; right: 70px; left: 70px; font-size: 36px }
+.story .now { top: 1034px; right: 70px; left: 70px; font-size: 27px }
+.story .list { top: 1088px; right: 70px; left: 70px; gap: 24px }
+.story .list.rows .item .ph { width: 236px }
+.story .item .lb { font-size: 23px } .story .item b { font-size: 29px }
+.story .feats { display: none }
+.story .foot { height: 330px; padding: 0 70px 200px; font-size: 28px; flex-direction: column; justify-content: center; gap: 22px } .story .foot .url { font-size: 40px }
+.story .ics i { width: 46px; height: 46px }
+
+/* ── share image 1200x630: photos on the left, text on the right ── */
+.share .hero { top: 0; bottom: 0; right: auto; width: 560px; grid-template-columns: 1fr; grid-template-rows: 1fr }
+.share .hero .b, .share .hero .c { display: none }
+.share .hero::after { background: linear-gradient(rgb(0 0 0 / .3), transparent 30%), linear-gradient(270deg, #fff 0, rgb(255 255 255 / .6) 22%, transparent 55%) }
+.share .logo { top: 34px; left: 40px; height: 92px }
+.share .kick { top: 96px; right: 56px; font-size: 22px }
+.share h1 { top: 146px; right: 56px; font-size: 96px }
+.share .rule { top: 268px; right: 56px; width: 84px }
+.share .sub { top: 290px; right: 56px; width: 560px; font-size: 27px }
+.share .now, .share .list { display: none }
+.share .feats { top: 410px; right: 56px; width: 600px; justify-content: flex-start; font-size: 19px }
+.share .foot { left: 560px; height: 92px; padding: 0 46px; font-size: 20px } .share .foot .url { font-size: 27px }
+.share .ics i { width: 32px; height: 32px }
+.share .feat:nth-child(n+4) { display: none }
+.share .grp span:last-child, .cover .grp span:last-child { display: none }
+.share .soc, .cover .soc { gap: 10px }
+
+/* ── Facebook cover 1640x624: like the share image, wider; the bottom-left stays clear for the page photo ── */
+.cover .hero { top: 0; bottom: 0; right: auto; width: 780px; grid-template-columns: 1fr 1.2fr; grid-template-rows: 1fr 1fr }
+.cover .hero .a { grid-column: 2; grid-row: 1 / span 2 }
+.cover .hero::after { background: linear-gradient(rgb(0 0 0 / .3), transparent 30%), linear-gradient(270deg, #fff 0, rgb(255 255 255 / .55) 18%, transparent 45%) }
+.cover .logo { top: 34px; left: 42px; height: 96px }
+.cover .kick { top: 86px; right: 80px; font-size: 22px }
+.cover h1 { top: 136px; right: 80px; font-size: 100px }
+.cover .rule { top: 262px; right: 80px; width: 86px }
+.cover .sub { top: 286px; right: 80px; width: 720px; font-size: 27px }
+.cover .now, .cover .list { display: none }
+.cover .feats { top: 372px; right: 80px; width: 760px; justify-content: flex-start; font-size: 20px }
+.cover .foot { left: 780px; height: 96px; padding: 0 60px; font-size: 21px } .cover .foot .url { font-size: 28px }
+.cover .ics i { width: 34px; height: 34px }
+</style>
+</head>
+<body>
+<div class="hero" id="hero"><div class="a"></div><div class="b"></div><div class="c"></div></div>
+<div class="shade"></div><div class="logo"></div>
+<div class="abs kick"><i></i>انطلق رسمياً</div>
+<h1 class="abs">موقعنا <em>الجديد</em></h1>
+<div class="abs rule"></div>
+<p class="abs sub">أخبار موريتانيا والمغرب العربي والساحل، لحظة بلحظة</p>
+<div class="abs now">الآن على الموقع</div>
+<div class="abs list" id="list"></div>
+<div class="abs feats">
+  <span class="feat br"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z" fill="currentColor" stroke="none"/></svg>عاجل</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg>بوابة لكل بلد</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/><path d="M13 20h7"/></svg>الرأي الحر</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>بحث في كل الأخبار</span>
+  <span class="feat"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3.5"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg>الفيديو</span>
+</div>
+<div class="foot"><span class="url" id="url"></span><div class="soc" id="soc"></div></div>
+
+<script src="content.js"></script>
+<script>
+const q = new URLSearchParams(location.search), FORMAT = q.get('format') || 'feed';
+document.body.className = FORMAT;
+document.getElementById('url').textContent = q.get('url') || 'www.erriwaya.com';
+const S = window.STORIES;
+// the three photos on top: the first three stories
+['a', 'b', 'c'].forEach((k, i) => { document.querySelector('.hero .' + k).style.backgroundImage = `url(${S[i].photo})`; });
+// stories from the site: three cards (feed, square) or three rows (story)
+const N = { feed: 3, square: 3, story: 3 }[FORMAT] || 0;
+const list = document.getElementById('list');
+if (FORMAT === 'story') list.classList.add('rows');
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+list.innerHTML = S.slice(3, 3 + N).map(s => `<div class="item"><div class="ph" style="background-image:url(${s.photo})"></div>
+  <span class="lb${s.label === 'الرأي الحر' ? ' op' : ''}">${esc(s.label)}</span><b>${esc(s.title)}</b></div>`).join('');
+// Font Awesome Free 6.5.2 brands (CC BY 4.0), as on the website
+const BRAND = {
+  facebook: ['0 0 320 512', 'M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z'],
+  tiktok: ['0 0 448 512', 'M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z'],
+  youtube: ['0 0 576 512', 'M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z'],
+  instagram: ['0 0 448 512', 'M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z'],
+};
+// icons to the left of each handle
+document.getElementById('soc').innerHTML = [[['facebook', 'tiktok', 'youtube'], 'ERRIWAYA'], [['instagram'], 'ERRIWAYA.MR']].map(([ks, h]) =>
+  `<div class="grp"><span class="ics">${ks.map(k => `<i><svg viewBox="${BRAND[k][0]}"><path d="${BRAND[k][1]}"/></svg></i>`).join('')}</span><span>${h}</span></div>`).join('');
+Promise.all([document.fonts.load('40px "Al Quds"'), ...S.slice(0, 3 + N).map(s => new Promise(r => { const i = new Image(); i.onload = i.onerror = r; i.src = s.photo; }))])
+  .then(() => { window.READY = true; });
+</script>
+</body>
+</html>
