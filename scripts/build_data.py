@@ -30,8 +30,8 @@ def get(url, headers=None, timeout=30):
 
 # ───────────── يوتيوب ─────────────
 
-def yt_page(url):
-    body = get(url, {"User-Agent": UA, "Accept-Language": "en-US,en;q=0.8",
+def yt_page(url, lang="en-US,en;q=0.8"):
+    body = get(url, {"User-Agent": UA, "Accept-Language": lang,
                      "Cookie": "CONSENT=YES+1; SOCS=CAI"})
     marker = "var ytInitialData = "
     s = body.find(marker)
@@ -83,6 +83,30 @@ def parse_ago(s):
     return NOW - timedelta(days=days)
 
 
+def arabic_titles(kind):
+    """Titles as the channel wrote them. The English page (read for dates and view counts) carries YouTube's
+    automatic English translation of each title, so the titles come from the Arabic page."""
+    try:
+        data = yt_page(f"https://www.youtube.com/channel/{CHANNEL}/{kind}?hl=ar&gl=MR", "ar,en;q=0.5")
+    except Exception as e:  # noqa: BLE001
+        print("arabic titles:", kind, e)
+        return {}
+    out = {}
+    if kind == "videos":
+        for l in find(data, "lockupViewModel", []):
+            t = at(l, "metadata", "lockupMetadataViewModel", "title", "content")
+            if isinstance(l.get("contentId"), str) and isinstance(t, str) and t.strip():
+                out[l["contentId"]] = t.strip()
+    else:
+        for l in find(data, "shortsLockupViewModel", []):
+            vid = at(l, "onTap", "innertubeCommand", "reelWatchEndpoint", "videoId") or \
+                (l.get("entityId") or "").replace("shorts-shelf-item-", "")
+            t = at(l, "overlayMetadata", "primaryText", "content")
+            if isinstance(vid, str) and isinstance(t, str) and t.strip():
+                out[vid] = t.strip()
+    return out
+
+
 def videos():
     data = yt_page(f"https://www.youtube.com/channel/{CHANNEL}/videos?hl=en&gl=MR")
     out = []
@@ -107,6 +131,9 @@ def videos():
                 views = num(vm.group(1), vm.group(2))
         out.append({"id": vid, "title": title.strip(), "published": published.isoformat(),
                     "views": views, "short": False})
+    ar = arabic_titles("videos")
+    for v in out:
+        v["title"] = ar.get(v["id"], v["title"])
     return out
 
 
@@ -127,6 +154,9 @@ def shorts():
         vm = re.search(r"([\d,.]+)\s*([KMB])?", vt, re.I)
         out.append({"id": vid, "title": title.strip(), "published": None,
                     "views": num(vm.group(1), vm.group(2)) if vm else 0, "short": True})
+    ar = arabic_titles("shorts")
+    for v in out:
+        v["title"] = ar.get(v["id"], v["title"])
     return out
 
 
