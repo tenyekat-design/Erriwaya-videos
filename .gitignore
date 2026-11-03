@@ -1,7 +1,0 @@
-node_modules/
-frames/
-*.log
-.asr-model
-__pycache__/
-output/*-youtube.mp4
-output/*-story.mp4

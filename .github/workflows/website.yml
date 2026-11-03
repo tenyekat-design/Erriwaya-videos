@@ -1,0 +1,52 @@
+# موقع الرواية: يبني البيانات (يوتيوب + الأخبار) وينشر الموقع في فرع gh-pages (GitHub Pages).
+# يعمل عند كل تعديل على فرع website، ويدوياً، وكل نصف ساعة عبر website-refresh.yml في الفرع الافتراضي.
+name: website
+
+on:
+  push:
+    branches: [website]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: website
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: website
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          { printf '<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'; cat index.html; } > _site/index.html
+          cp -r assets _site/
+          [ -d brief ] && cp -r brief _site/ || true
+          python3 scripts/brand.py pages _site
+          cp pages/manifest.webmanifest _site/
+          [ -f CNAME ] && cp CNAME _site/ || true
+          touch _site/.nojekyll
+          printf 'User-agent: *\nAllow: /\n\nSitemap: https://erriwaya.com/sitemap.xml\nSitemap: https://erriwaya.com/news-sitemap.xml\n' > _site/robots.txt
+
+      - name: Restore image cache
+        run: |
+          git fetch -q --depth 1 origin gh-pages && git archive FETCH_HEAD img | tar -x -C _site && ls _site/img | wc -l || echo "no cache"
+
+      - name: Fetch videos and news
+        run: python3 scripts/build_data.py _site
+
+      - name: Publish to gh-pages
+        run: |
+          cd _site
+          git init -q -b gh-pages
+          git config user.name "erriwaya-bot"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -qm "site $(date -u +%FT%TZ)"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
