@@ -10,7 +10,7 @@ import '../models.dart';
 /// خلاصة RSS الخاصة بيوتيوب لم تعد تعمل لهذه القناة، فنقرأ بيانات الصفحة نفسها.
 class YoutubeService {
   static const _kChannel = 'yt_channel_id';
-  static const _kCache = 'yt_cache_v2';
+  static const _kCache = 'yt_cache_v3'; // v3: titles from the Arabic page (v2 held English auto-translations)
   static const _ua =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
   static const _headers = {
@@ -34,12 +34,20 @@ class YoutubeService {
   Future<List<VideoItem>> fetch() async {
     final id = await _channelId();
     final base = 'https://www.youtube.com/channel/$id';
+    // The English pages are read for dates and view counts, but YouTube translates their titles into English,
+    // so the titles come from the Arabic pages (as the channel wrote them).
     final results = await Future.wait([
       _page('$base/videos?hl=en&gl=MR'),
       _page('$base/shorts?hl=en&gl=MR').catchError((_) => <String, dynamic>{}),
+      _page('$base/videos?hl=ar&gl=MR', lang: 'ar,en;q=0.5').catchError((_) => <String, dynamic>{}),
+      _page('$base/shorts?hl=ar&gl=MR', lang: 'ar,en;q=0.5').catchError((_) => <String, dynamic>{}),
     ]);
-    final videos = _parseVideos(results[0]);
-    final shorts = _parseShorts(results[1]);
+    final arTitles = {
+      for (final v in [..._parseVideos(results[2]), ..._parseShorts(results[3])])
+        if (v.title.isNotEmpty) v.id: v.title,
+    };
+    final videos = _parseVideos(results[0], arTitles);
+    final shorts = _parseShorts(results[1], arTitles);
     if (videos.isEmpty && shorts.isEmpty) throw Exception('no videos');
     final seen = <String>{};
     final all = [...videos, ...shorts].where((v) => seen.add(v.id)).toList();
@@ -64,8 +72,9 @@ class YoutubeService {
     return m.group(1)!;
   }
 
-  Future<Map<String, dynamic>> _page(String url) async {
-    final res = await http.get(Uri.parse(url), headers: _headers).timeout(const Duration(seconds: 25));
+  Future<Map<String, dynamic>> _page(String url, {String? lang}) async {
+    final headers = lang == null ? _headers : {..._headers, 'Accept-Language': lang};
+    final res = await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 25));
     if (res.statusCode != 200) throw Exception('HTTP ${res.statusCode}');
     final body = utf8.decode(res.bodyBytes, allowMalformed: true);
     const marker = 'var ytInitialData = ';
@@ -104,7 +113,7 @@ class YoutubeService {
     return o;
   }
 
-  List<VideoItem> _parseVideos(Map<String, dynamic> data) {
+  List<VideoItem> _parseVideos(Map<String, dynamic> data, [Map<String, String> titles = const {}]) {
     final lockups = <Map<String, dynamic>>[];
     _find(data, 'lockupViewModel', lockups);
     final now = DateTime.now();
@@ -138,7 +147,7 @@ class YoutubeService {
       }
       out.add(VideoItem(
         id: id,
-        title: title.trim(),
+        title: titles[id] ?? title.trim(),
         description: '',
         published: published,
         thumbnail: 'https://i.ytimg.com/vi/$id/hqdefault.jpg',
@@ -148,7 +157,7 @@ class YoutubeService {
     return out;
   }
 
-  List<VideoItem> _parseShorts(Map<String, dynamic> data) {
+  List<VideoItem> _parseShorts(Map<String, dynamic> data, [Map<String, String> titles = const {}]) {
     final lockups = <Map<String, dynamic>>[];
     _find(data, 'shortsLockupViewModel', lockups);
     final out = <VideoItem>[];
@@ -161,7 +170,7 @@ class YoutubeService {
       final vm = RegExp(r'([\d,.]+)\s*([KMB])?', caseSensitive: false).firstMatch(viewsText);
       out.add(VideoItem(
         id: id,
-        title: title.trim(),
+        title: titles[id] ?? title.trim(),
         description: '',
         published: VideoItem.unknownDate,
         thumbnail: 'https://i.ytimg.com/vi/$id/oardefault.jpg',
