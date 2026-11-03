@@ -73,12 +73,12 @@
     let xr = anchor === 'center' ? x + total / 2 : anchor === 'left' ? x + total : x;
     parts.forEach((p, i) => { text(p.s, xr, y + (p.dy || 0), p.size, p.color, 'right', alpha, !!p.ltr); xr -= ws[i] + gap; });
   }
-  // a big figure: 'count' counts up, 'roll' spins each digit into place like a meter
+  // a big figure: 'count' counts up, 'drop' sets the digits one by one
   function figure(n, x, y, size, color, e, a0, a1, style) {
     if (e < a0 - 0.2) return;
     const s = fmt(n);
     const fade = eout(prog(e, a0 - 0.2, a0 + 0.1));
-    if (style !== 'roll') {
+    if (style !== 'drop') {
       const p = eout(prog(e, a0, a1));
       const pop = 1 + 0.06 * Math.sin(Math.PI * prog(e, a1 - 0.05, a1 + 0.3));
       ctx.save(); ctx.translate(x, y); ctx.scale(pop, pop);
@@ -86,7 +86,8 @@
       ctx.restore();
       return;
     }
-    const tw = measure(s, size), lh = size * 1.05;
+    // 'drop': each digit drops into its own slot from above, last digit first; one glyph per slot, never stacked
+    const tw = measure(s, size), lh = size * 1.15;
     let cx = x - tw / 2;
     ctx.save();
     ctx.beginPath(); ctx.rect(x - tw / 2 - 20, y - lh / 2, tw + 40, lh); ctx.clip();
@@ -95,13 +96,9 @@
     for (const ch of s) {
       const w = measure(ch, size);
       if (ch === ',') { text(ch, cx + w / 2, y, size, color, 'center', eout(prog(e, a1 - 0.3, a1)), true); cx += w; continue; }
-      const d = +ch;
-      const st = a0 + (nd - 1 - di) * 0.07;            // the last digit settles first
-      const p = eout(prog(e, st, st + (a1 - a0) * 0.75));
-      const pos = (1 - p) * 10 + d;
-      const k = Math.floor(pos), f = pos - k;
-      text(String(k % 10), cx + w / 2, y - f * lh, size, color, 'center', fade * (1 - f), true);
-      text(String((k + 1) % 10), cx + w / 2, y + (1 - f) * lh, size, color, 'center', fade * f, true);
+      const st = a0 + (nd - 1 - di) * ((a1 - a0 - 0.45) / Math.max(1, nd - 1));
+      const p = eout(prog(e, st, st + 0.45));
+      if (p > 0) text(ch, cx + w / 2, y - (1 - p) * lh, size, color, 'center', p, true);
       cx += w; di++;
     }
     ctx.restore();
@@ -332,7 +329,7 @@
     { z: [1.3, 1.3], f: [[0.5, 0.75], [0.5, 0.3]] },      // tilt up
     { z: [1.12, 1.26], f: [[0.4, 0.35], [0.6, 0.5]] },    // diagonal drift
   ];
-  const FIG = ['count', 'roll', 'count', 'roll', 'count'];
+  const FIG = ['count', 'drop', 'count', 'drop', 'count'];
   function sceneCountry(e, t, i) {
     const c = I.countries[i], mv = MOVES[i];
     background(t, [i % 2 ? 0.15 : 0.85, 0.2]);
@@ -385,12 +382,14 @@
     const fa = eout(prog(e, BEAT * 5, BEAT * 5 + 0.4));
     text(c.rank, W - M + (1 - fa) * 30, fy, 40, C.ink, 'right', fa);
     const fb = eout(prog(e, BEAT * 5.5, BEAT * 5.5 + 0.4));
+    const parts = (arr, size, color) => arr.map(x => ({ s: x, size, color, ltr: /^[\d.,%()]+$/.test(x) }));
     if (c.factChip) {
-      const w = measure(c.fact, 32) + 40;
+      const ps = parts(c.fact, 32, C.white);
+      const w = ps.reduce((a, p) => a + measure(p.s, 32), 0) + 14 * (ps.length - 1) + 44;
       ctx.save(); ctx.globalAlpha = fb; ctx.fillStyle = C.navy; rrect(M, fy - 30, w * fb, 60, 10); ctx.fill(); ctx.restore();
-      text(c.fact, M + w / 2, fy + 1, 32, C.white, 'center', prog(e, BEAT * 5.5 + 0.2, BEAT * 5.5 + 0.5));
+      run(ps, M + w / 2, fy + 1, 'center', prog(e, BEAT * 5.5 + 0.2, BEAT * 5.5 + 0.5));
     } else {
-      text(c.fact, M - (1 - fb) * 30, fy, 36, C.green, 'left', fb);
+      run(parts(c.fact, 36, C.green), M - (1 - fb) * 30, fy, 'left', fb);
     }
     footer(1);
   }
@@ -455,12 +454,7 @@
     const lp = prog(e, 0, 0.7);
     const ls = lerp(1.25, 1, eout(lp));
     logo(W / 2, cy, 360 * ls, eout(prog(e, 0, 0.35)));
-    let y = cy + 245;
-    const ta = eout(prog(e, BEAT * 1.5, BEAT * 1.5 + 0.5));
-    text(I.title, W / 2, y + (1 - ta) * 20, 50, C.ink, 'center', ta);
-    ctx.fillStyle = C.green; const lw = 170 * eout(prog(e, BEAT * 2, BEAT * 2 + 0.5));
-    ctx.fillRect(W / 2 - lw / 2, y + 48, lw, 6);
-    y += 125;
+    let y = cy + 290;
     text('تابعونا', W / 2, y, 34, C.mute, 'center', eout(prog(e, BEAT * 3, BEAT * 3 + 0.4)));
     y += 72;
     const s = 60;
