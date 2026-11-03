@@ -27,12 +27,14 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
    or `--format story` (1080x1920, TikTok/Reels/Shorts). ~3–5 min each. YouTube and story videos are git-ignored (> 100 MB).
    Each render also writes `output/erriwaya-brief-<date>[-format]-cover.jpg` (thumbnail in the broadcast look: the
    hook's photo full-frame, its tag and line on the white bar, all countries in the strip below; `cover: { imgs: [...] }`
-   in edition.js overrides the photo; it is also embedded in that video file as its picture) and
+   in edition.js overrides the photo; it is also embedded in that video file as its picture, with the Arabic title
+   «الموجز الإخباري – الرواية | <date>» in its metadata; `output/upload/<format>/<that title>.mp4` is a git-ignored
+   copy to upload and send, because YouTube/Facebook take the default title from the file name) and
    `output/erriwaya-brief-<date>-description.txt` (stories, YouTube chapter timestamps, handles, hashtags)
    and `output/erriwaya-brief-<date>.srt` (subtitles for YouTube/Facebook, from subtitles.txt).
    `--cover` writes only these, in seconds.
 6. Commit `editions/<date>/` + `output/erriwaya-brief-<date>.mp4` + covers + description + .srt, push to the session
-   branch, send the video(s), cover(s), description and .srt.
+   branch, send the video(s) (the output/upload/ copies), cover(s), description and .srt.
 
 ## Fixed decisions
 

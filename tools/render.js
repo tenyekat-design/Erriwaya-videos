@@ -148,13 +148,25 @@ function subtitles() {
 }
 
 // The cover is also embedded in the video file as its picture (shown by phones, file browsers and players).
+// Embeds the cover as the file's picture and the Arabic title in its metadata, and links a copy named with that
+// title in output/upload/<format>/ (YouTube and Facebook take a new video's default title from the file name).
 function embedCover() {
   if (!fs.existsSync(OUT) || !fs.existsSync(COVER)) return;
+  const TL = loadEdition();
+  const title = `${TL.title} – الرواية | ${TL.date}`;
   const tmpOut = OUT.replace(/\.mp4$/, '.cover-tmp.mp4');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', OUT, '-i', COVER, '-map', '0', '-map', '1', '-c', 'copy',
-    '-disposition:v:1', 'attached_pic', '-movflags', '+faststart', tmpOut]);
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', OUT, '-i', COVER, '-map', '0:v:0', '-map', '0:a?', '-map', '1', '-c', 'copy',
+    '-disposition:v:1', 'attached_pic', '-map_metadata', '-1',
+    '-metadata', `title=${title}`, '-metadata', 'artist=الرواية', '-metadata', `comment=${TL.headlines[0].text}`,
+    '-metadata:s:a:0', 'language=ara', '-movflags', '+faststart', tmpOut]);
   fs.renameSync(tmpOut, OUT);
-  console.log('cover embedded in', OUT);
+  console.log('cover and title embedded in', OUT);
+  const dir = path.join(ROOT, 'output', 'upload', FORMAT + (LOOK ? "-" + LOOK : ""));
+  fs.mkdirSync(dir, { recursive: true });
+  const up = path.join(dir, title.replace(/[|/\\:*?"<>]/g, '-').replace(/\s+/g, ' ') + '.mp4');
+  if (fs.existsSync(up)) fs.unlinkSync(up);
+  fs.linkSync(OUT, up);
+  console.log('upload copy', up);
 }
 
 async function renderRange(browser, f0, f1, file) {
