@@ -95,6 +95,7 @@ function description() {
     '',
     'تابعونا على فيسبوك وتيك توك ويوتيوب: ERRIWAYA',
     'وعلى إنستغرام: ERRIWAYA.MR',
+    'الموقع: www.erriwaya.com',
     '',
     tags.map(t => '#' + t).join(' '),
   ].join('\n') + '\n';

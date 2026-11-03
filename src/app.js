@@ -32,7 +32,7 @@
       map: { x: 50, y: 880, w: 980, h: 412, r: 34 },
       dotsH: 840,
       intro: { lon: 0, w: [48, 43], logo: { cx: 540, cy: 560, h: 380 }, titleY: 840 },
-      outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 530, h: 300 }, titleY: 750, followY: 890, rowsY: 960 },
+      outro: { lon: -2, w: [52, 46], logo: { cx: 540, cy: 480, h: 290 }, titleY: 695, followY: 830, rowsY: 890, rowStep: 106 },
       cover: { logo: { cx: 540, cy: 160, h: 190 }, title: [540, 335, 80], date: [540, 440, 36], photos: [[60, 495, 960, 400], [60, 915, 468, 220], [552, 915, 468, 220]], chips: { cx: 540, y: 1160, maxW: 960 } },
     },
     youtube: {
@@ -47,7 +47,7 @@
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
-      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
+      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 350, h: 260 }, titleY: 540, followY: 648, rowsY: 700, rowStep: 98 },
       cover: { logo: { cx: 1440, cy: 200, h: 230 }, title: [1440, 420, 92], date: [1440, 535, 42], photos: [[80, 80, 900, 560], [80, 670, 435, 330], [545, 670, 435, 330]], chips: { cx: 1440, y: 600, maxW: 760 } },
     },
     // TikTok / Reels / Shorts: content kept clear of the top bar and the caption/buttons at the bottom
@@ -63,7 +63,7 @@
       map: { x: 50, y: 1150, w: 980, h: 460, r: 34 },
       dotsH: 1120,
       intro: { lon: -2.5, w: [40, 37], logo: { cx: 540, cy: 840, h: 400 }, titleY: 1140 },
-      outro: { lon: -2, w: [36, 33], logo: { cx: 540, cy: 780, h: 320 }, titleY: 1010, followY: 1150, rowsY: 1220 },
+      outro: { lon: -2, w: [36, 33], logo: { cx: 540, cy: 740, h: 320 }, titleY: 970, followY: 1110, rowsY: 1180 },
       cover: { logo: { cx: 540, cy: 330, h: 230 }, title: [540, 545, 86], date: [540, 650, 40], photos: [[60, 710, 960, 520], [60, 1255, 468, 300], [552, 1255, 468, 300]], chips: { cx: 540, y: 1590, maxW: 960 } },
     },
   };
@@ -1638,6 +1638,7 @@
   const SOCIAL = [
     { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' },
     { icons: ['instagram'], handle: 'ERRIWAYA.MR' },
+    { icons: ['web'], handle: 'www.erriwaya.com' },
   ];
   function drawIcon(name, x, y, s) {
     ctx.save();
@@ -1646,6 +1647,15 @@
     ctx.translate(x + s * 0.22, y + s * 0.22);
     const k = (s * 0.56) / 24;
     ctx.scale(k, k);
+    if (name === 'web') {   // globe: outline, meridian ellipse, equator and two parallels
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.9;
+      ctx.beginPath(); ctx.arc(12, 12, 10.5, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(12, 12, 4.6, 10.5, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(1.5, 12); ctx.lineTo(22.5, 12);
+      ctx.moveTo(3.4, 6.5); ctx.lineTo(20.6, 6.5); ctx.moveTo(3.4, 17.5); ctx.lineTo(20.6, 17.5); ctx.stroke();
+      ctx.restore();
+      return;
+    }
     ctx.fillStyle = '#fff';
     ctx.fill(new Path2D(window.ICONS[name]));
     ctx.restore();
@@ -1703,7 +1713,7 @@
     ctx.restore();
     const S = 72, gap = 16;
     SOCIAL.forEach((row, ri) => {
-      const y = L.outro.rowsY + ri * 112;
+      const y = L.outro.rowsY + ri * (L.outro.rowStep || 112);
       ctx.font = font(46); ctx.direction = 'ltr';
       const tw = ctx.measureText(row.handle).width;
       const iw = row.icons.length * S + (row.icons.length - 1) * gap;
