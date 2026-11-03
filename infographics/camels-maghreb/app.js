@@ -168,12 +168,10 @@
     text(I.source, W / 2, y, 24, C.mute, 'center', alpha);
     if (two) text(I.source2, W / 2, y + 34, 24, C.mute, 'center', alpha);
   }
-  // titles rise out of a mask
+  // titles fade in with a short rise (no clipping, so a line is never shown cut)
   function title(s, y, e, d = 0.15) {
     const a = eout(prog(e, d, d + 0.5));
-    ctx.save(); ctx.beginPath(); ctx.rect(0, y - 45, W, 90); ctx.clip();
-    text(s, W / 2, y + (1 - a) * 70, 56, C.ink, 'center', 1);
-    ctx.restore();
+    text(s, W / 2, y + (1 - a) * 30, 56, C.ink, 'center', a);
   }
 
   // ---------- map ----------
@@ -248,9 +246,7 @@
     ctx.restore();
     const line = (s, y, col, d) => {
       const a = eout(prog(e, d, d + 0.55));
-      ctx.save(); ctx.beginPath(); ctx.rect(0, y - 70, W, 140); ctx.clip();
-      text(s, W - M, y + (1 - a) * 120, 100, col, 'right');
-      ctx.restore();
+      text(s, W - M, y + (1 - a) * 36, 100, col, 'right', a);
     };
     line('كم عدد الإبل', by + 145, C.ink, BEAT * 2);
     line('في المنطقة المغاربية؟', by + 265, C.green, BEAT * 3);
@@ -353,9 +349,7 @@
       ctx.restore();
     }
     const an = eout(prog(e, 0.3, 0.8));
-    ctx.save(); ctx.beginPath(); ctx.rect(px, py + ph - 140, pw - 140, 120); ctx.clip();
-    text(c.name, px + pw - 148 + (1 - an) * 90, py + ph - 76, 84, C.white, 'right', an);
-    ctx.restore();
+    text(c.name, px + pw - 148 + (1 - an) * 40, py + ph - 76, 84, C.white, 'right', an);
     // mini map
     const mr = { x: px + 20, y: py + 20, w: 290, h: 220 };
     const ma = eout(prog(e, 0.4, 0.8));
