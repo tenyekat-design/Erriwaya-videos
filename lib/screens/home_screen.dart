@@ -11,7 +11,6 @@ import '../widgets/article_card.dart';
 import '../widgets/capitals_board.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
-import 'about_screen.dart';
 import 'search_screen.dart';
 import 'settings_sheet.dart';
 
@@ -43,14 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CustomScrollView(slivers: [
             SliverAppBar(
               pinned: true,
-              expandedHeight: 150,
+              toolbarHeight: 66,
               backgroundColor: Brand.green,
-              leading: IconButton(
-                icon: const Icon(Icons.info_outline, color: Colors.white),
-                tooltip: 'عن الرواية',
-                onPressed: () => Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => const AboutScreen())),
-              ),
+              automaticallyImplyLeading: false,
+              titleSpacing: 14,
+              // الشعار واسم الشبكة في سطر واحد، كما في رأس الموقع («عن الرواية» في الإعدادات)
+              title: const BrandTitle(),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search, color: Colors.white),
@@ -63,18 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   tooltip: 'الإعدادات',
                   onPressed: () => showSettingsSheet(context),
                 ),
+                const SizedBox(width: 4),
               ],
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                titlePadding: const EdgeInsets.only(bottom: 10),
-                title: Image.asset('assets/images/logo_white.png', height: 44),
-                background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Brand.greenLight, Brand.green, Brand.greenDark],
-                    ),
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Brand.greenLight, Brand.green],
                   ),
                 ),
               ),
@@ -144,6 +137,23 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+}
+
+/// شعار الرواية واسم «شبكة الرواية الإعلامية» في سطر واحد.
+class BrandTitle extends StatelessWidget {
+  const BrandTitle({super.key});
+  @override
+  Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
+        Image.asset('assets/images/logo_white.png', height: 42),
+        const SizedBox(width: 10),
+        const Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text('شبكة الرواية الإعلامية',
+                maxLines: 1, style: TextStyle(color: Colors.white, fontSize: 20, height: 1.2)),
+          ),
+        ),
+      ]);
 }
 
 class _SectionTitle extends StatelessWidget {
