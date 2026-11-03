@@ -4,6 +4,7 @@
 //   node infographics/render.js --name camels-maghreb --stills 2,8,20 PNG stills -> output/stills/
 //   --cover writes only the cover image
 // Each full render also writes the cover (-cover.jpg) and embeds it in the video.
+// Soundtrack: <name>/score.wav (python3 infographics/<name>/score.py).
 const { chromium } = require('playwright');
 const { spawn, execFileSync } = require('child_process');
 const fs = require('fs');
@@ -56,23 +57,15 @@ async function renderRange(browser, f0, f1, file) {
   await page.close();
 }
 
-// music only (no voice-over): opening theme, the quiet bed a little louder, a whoosh at every wipe,
-// and the closing music whose final chord lands as the logo settles
-function buildAudio(duration, cuts, tOut, file) {
-  const A = f => path.join(ROOT, 'assets', 'audio', f);
-  const ms = s => Math.max(0, Math.round(s * 1000));
-  const OUTRO_HIT = 8.0, LAND = tOut + 1.0;
-  const bedFrom = 3.4, bedTo = tOut - 6.5;
-  const inputs = ['-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav')];
-  const f = [
-    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8,afade=t=out:st=5.5:d=3[m]`,
-    `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${bedTo - bedFrom + 2},volume=0.42,afade=t=in:st=0:d=2.5,afade=t=out:st=${bedTo - bedFrom - 0.5}:d=2.5,adelay=${ms(bedFrom)}|${ms(bedFrom)}[bed]`,
-    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,adelay=${ms(LAND - OUTRO_HIT)}|${ms(LAND - OUTRO_HIT)}[out]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=250,volume=0.32,asplit=${cuts.length}${cuts.map((_, i) => `[w${i}]`).join('')}`,
-    ...cuts.map((c, i) => `[w${i}]adelay=${ms(c - 0.55)}|${ms(c - 0.55)}[wd${i}]`),
-    `[m][bed][out]${cuts.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + cuts.length}:normalize=0:duration=longest,apad,atrim=0:${duration},afade=t=out:st=${duration - 1.2}:d=1.2,alimiter=limit=0.95[mix]`,
-  ].join(';');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', ...inputs, '-filter_complex', f, '-map', '[mix]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
+// the soundtrack is <name>/score.wav (music and sound design composed to the same timeline as the
+// picture, see <name>/score.py); it is rebuilt when missing or older than the timeline
+function buildAudio(duration, file) {
+  const dir = path.join(__dirname, NAME), score = path.join(dir, 'score.wav');
+  const newer = f => fs.existsSync(f) && fs.statSync(f).mtimeMs > fs.statSync(score).mtimeMs;
+  if (!fs.existsSync(score) || newer(path.join(dir, 'timeline.js')) || newer(path.join(dir, 'score.py'))) {
+    execFileSync('python3', [path.join(dir, 'score.py')], { stdio: 'inherit' });
+  }
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', score, '-af', `atrim=0:${duration}`, '-ar', '48000', '-c:a', 'aac', '-b:a', '256k', file]);
 }
 
 function embedCover() {
@@ -98,7 +91,7 @@ function embedCover() {
   }
   if (args.cover) { await cover(browser); return browser.close(); }
   const probe = await openPage(browser);
-  const { duration, cuts, tOut } = await probe.evaluate(() => ({ duration: window.DURATION, cuts: window.CUTS, tOut: window.T_OUT }));
+  const duration = await probe.evaluate(() => window.DURATION);
   await probe.close();
   const N = Math.round(duration * FPS);
   const tmp = path.join(ROOT, 'frames', 'infographic-' + NAME + SUFFIX);
@@ -114,7 +107,7 @@ function embedCover() {
   fs.writeFileSync(path.join(tmp, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
   const video = path.join(tmp, 'video.mp4'), audio = path.join(tmp, 'audio.m4a');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-c', 'copy', video]);
-  buildAudio(duration, cuts, tOut, audio);
+  buildAudio(duration, audio);
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', video, '-i', audio, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-movflags', '+faststart', '-shortest', OUT]);
   await cover(browser);
   await browser.close();
