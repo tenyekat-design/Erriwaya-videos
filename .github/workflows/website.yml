@@ -27,6 +27,7 @@ jobs:
           mkdir -p _site
           { printf '<!doctype html>\n<html lang="ar" dir="rtl">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'; cat index.html; } > _site/index.html
           cp -r assets _site/
+          [ -d brief ] && cp -r brief _site/ || true
           python3 scripts/brand.py pages _site
           cp pages/manifest.webmanifest _site/
           [ -f CNAME ] && cp CNAME _site/ || true
