@@ -48,6 +48,11 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
   same tag. Three formats (feed, youtube, story) with a cover each; description, chapters and .srt with every
   edition. Re-render 2026-10-25 to compare when changing the look. `--look classic` renders the white layout
   approved on 28 Oct; the other `--look` values in src/app.js were trials (feed only).
+- Photos (3 Nov 2026, user's request): never zoom a photo past its quality or pan away its important parts. In feed
+  and story a wide photo shows at least 75% of its width, resting on the lower third with a blurred copy of itself
+  filling the frame; zoom is capped in the template (≤ 1.12, ≤ 1.05 for low-res photos). Keep moves gentle and near
+  the centre (a/b ≈ [0.5, 0.5, 1.0] → [0.5, 0.5, 1.06]). The inset map sits bottom-left above the headline bar so it
+  does not cover faces; `inset: 'top'` on a card puts it back in the top corner when that photo needs it.
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
   YouTube), ERRIWAYA.MR (Instagram) and the website www.erriwaya.com (added 3 Nov 2026).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music

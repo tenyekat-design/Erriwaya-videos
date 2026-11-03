@@ -13,51 +13,44 @@ window.TIMELINE = {
   hook: { img: 'sn-parliament-session.jpg', f: [0.5, 0.45], kicker: 'السنغال', topic: 'اقتصاد',
           text: 'البرلمان السنغالي يرفض مشروع قانون المالية المعدل لسنة 2026' },
 
+  // gentle framing: whole scene kept, zoom ≤ 6% (the template caps it and places wide photos)
   cards: [
     // opening teaser
-    { kicker: 'السنغال', img: 'sn-parliament-top.webp', moves: [{ t: 0.0, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.1] }] },
-    { kicker: 'مالي', img: 'ml-patrol.jpg', moves: [{ t: 1.25, a: [0.6, 0.6, 1.0], b: [0.62, 0.58, 1.1] }] },
+    { kicker: 'السنغال', img: 'sn-parliament-top.webp', moves: [{ t: 0.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { kicker: 'مالي', img: 'ml-patrol.jpg', moves: [{ t: 1.25, a: [0.55, 0.5, 1.0], b: [0.55, 0.5, 1.06] }] },
     // Mauritania
-    { img: 'mr-ghazouani-marlaska.jpg', moves: [{ t: 2.50, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.1] },
-                                                { t: 6.80, a: [0.5, 0.35, 1.45], b: [0.5, 0.35, 1.3] }] },
-    { img: 'es-marlaska.jpg', moves: [{ t: 10.94, a: [0.5, 0.35, 1.0], b: [0.5, 0.3, 1.14] }] },
-    { img: 'mr-ghazouani-marlaska.jpg', moves: [{ t: 18.00, a: [0.3, 0.5, 1.3], b: [0.7, 0.5, 1.3] }] },
+    { img: 'mr-ghazouani-marlaska.jpg', moves: [{ t: 2.50, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 10.94, a: [0.5, 0.45, 1.04], b: [0.5, 0.45, 1.08] }] },
+    { img: 'es-marlaska.jpg', moves: [{ t: 14.50, a: [0.45, 0.5, 1.0], b: [0.45, 0.5, 1.06] }] },
+    { img: 'mr-ghazouani-marlaska.jpg', moves: [{ t: 18.00, a: [0.45, 0.5, 1.0], b: [0.55, 0.5, 1.04] }] },
     // Senegal
-    { img: 'sn-parliament-session.jpg', moves: [{ t: 21.44, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.12] }] },
-    { img: 'sn-parliament.webp', moves: [{ t: 27.82, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] }] },
-    { img: 'sn-parliament-top.webp', moves: [{ t: 34.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] },
-                                             { t: 40.66, a: [0.5, 0.3, 1.4], b: [0.5, 0.32, 1.25] }] },
+    { img: 'sn-parliament-session.jpg', moves: [{ t: 21.44, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'sn-parliament.webp', moves: [{ t: 27.82, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'sn-parliament-top.webp', moves: [{ t: 34.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 40.66, a: [0.5, 0.45, 1.04], b: [0.5, 0.45, 1.08] }] },
     // Western Sahara (UN General Assembly)
-    { img: 'un-ga.webp', moves: [{ t: 44.94, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] },
-                                 { t: 51.94, a: [0.5, 0.4, 1.5], b: [0.5, 0.42, 1.3] },
-                                 { t: 57.76, a: [0.3, 0.6, 1.25], b: [0.7, 0.6, 1.25] }] },
+    { img: 'un-ga.webp', moves: [{ t: 44.94, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 51.94, a: [0.5, 0.45, 1.04], b: [0.5, 0.45, 1.08] }, { t: 57.76, a: [0.45, 0.5, 1.0], b: [0.55, 0.5, 1.04] }] },
     // Chad and Algeria
-    { img: 'td-dz-handshake.jpg', moves: [{ t: 62.64, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.1] },
-                                          { t: 72.20, a: [0.45, 0.5, 1.45], b: [0.45, 0.5, 1.3] },
-                                          { t: 79.90, a: [0.5, 0.3, 1.25], b: [0.5, 0.35, 1.12] }] },
+    { img: 'td-deby-attaf.jpg', moves: [{ t: 62.64, a: [0.48, 0.45, 1.0], b: [0.48, 0.45, 1.06] }, { t: 72.20, a: [0.5, 0.45, 1.03], b: [0.5, 0.45, 1.07] }] },
+    { img: 'td-dz-handshake.jpg', moves: [{ t: 79.90, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.06] }] },
     // Mali
-    { img: 'ml-patrol.jpg', moves: [{ t: 85.58, a: [0.6, 0.6, 1.0], b: [0.65, 0.58, 1.14] }] },
-    { img: 'ml-vehicles.jpg', moves: [{ t: 91.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.1] }] },
-    { img: 'ml-armour.jpg', moves: [{ t: 96.92, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.1] }] },
-    { img: 'ml-patrol2.jpg', moves: [{ t: 100.80, a: [0.55, 0.5, 1.0], b: [0.6, 0.45, 1.12] }] },
+    { img: 'ml-patrol.jpg', moves: [{ t: 85.58, a: [0.55, 0.5, 1.0], b: [0.55, 0.5, 1.06] }] },
+    { img: 'ml-vehicles.jpg', moves: [{ t: 91.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'ml-armour.jpg', moves: [{ t: 96.92, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'ml-patrol2.jpg', moves: [{ t: 100.80, a: [0.55, 0.5, 1.0], b: [0.55, 0.5, 1.06] }] },
     // Morocco
-    { img: 'ma-mansouri-portrait.webp', moves: [{ t: 104.68, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.12] }] },
-    { img: 'ma-meeting.jpg', moves: [{ t: 110.98, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.12] },
-                                     { t: 115.14, a: [0.75, 0.55, 1.4], b: [0.7, 0.55, 1.25] }] },
-    { img: 'ma-mansouri.jpg', moves: [{ t: 120.50, a: [0.5, 0.45, 1.0], b: [0.5, 0.42, 1.08] }] },
+    { img: 'ma-mansouri-portrait.webp', moves: [{ t: 104.68, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.06] }] },
+    { img: 'ma-meeting.jpg', moves: [{ t: 110.98, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 115.14, a: [0.55, 0.5, 1.03], b: [0.55, 0.5, 1.07] }] },
+    { img: 'ma-mansouri.jpg', moves: [{ t: 120.50, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.06] }] },
     // Tunisia
-    { img: 'tn-pharmacy-closed.jpg', moves: [{ t: 124.36, a: [0.5, 0.5, 1.0], b: [0.55, 0.45, 1.12] }] },
-    { img: 'tn-pharmacy.jpg', moves: [{ t: 131.00, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.12] },
-                                      { t: 136.54, a: [0.5, 0.35, 1.35], b: [0.5, 0.4, 1.2] }] },
+    { img: 'tn-pharmacy-closed.jpg', moves: [{ t: 124.36, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'tn-pharmacy.jpg', moves: [{ t: 131.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 136.54, a: [0.5, 0.45, 1.03], b: [0.5, 0.45, 1.07] }] },
     // Libya
-    { img: 'ly-teacher-sign.jpg', moves: [{ t: 142.36, a: [0.45, 0.6, 1.0], b: [0.4, 0.6, 1.12] }] },
-    { img: 'ly-teachers-signs.webp', moves: [{ t: 147.14, a: [0.5, 0.5, 1.0], b: [0.5, 0.55, 1.12] }] },
-    { img: 'ly-teachers-crowd.webp', moves: [{ t: 152.34, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] },
-                                             { t: 157.54, a: [0.6, 0.4, 1.4], b: [0.55, 0.4, 1.25] }] },
+    { img: 'ly-teacher-sign.jpg', moves: [{ t: 142.36, a: [0.45, 0.5, 1.0], b: [0.45, 0.5, 1.06] }] },
+    { img: 'ly-teachers-signs.webp', moves: [{ t: 147.14, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
+    { img: 'ly-teachers-crowd.webp', moves: [{ t: 152.34, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }, { t: 157.54, a: [0.5, 0.45, 1.03], b: [0.5, 0.45, 1.07] }] },
     // wrap-up
-    { img: 'mr-ghazouani-marlaska.jpg', moves: [{ t: 161.50, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'sn-parliament.webp', moves: [{ t: 163.00, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'ml-patrol.jpg', moves: [{ t: 164.50, a: [0.6, 0.6, 1.05], b: [0.6, 0.6, 1.15] }] },
+    { img: 'td-deby-attaf.jpg', moves: [{ t: 161.50, a: [0.48, 0.45, 1.0], b: [0.48, 0.45, 1.04] }] },
+    { img: 'sn-parliament.webp', moves: [{ t: 163.00, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.04] }] },
+    { img: 'ml-patrol.jpg', moves: [{ t: 164.50, a: [0.55, 0.5, 1.0], b: [0.55, 0.5, 1.04] }] },
   ],
 
   headlines: [

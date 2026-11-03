@@ -132,12 +132,12 @@
     // the ticker, the inset map and the sting's height
     const BL = {
       feed: { logoY: 58, lower: { x: 30, y: 950, w: 1020, h: 178 }, maxW: 700, capW: 950, ticker: { y: 1236, h: 78 },
-              inset: { x: 40, y: 214 }, stingY: 0.42 },
+              inset: { x: 40, y: 716, yTop: 214 }, photo: { bottom: 950 }, stingY: 0.42 },
       story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
-               inset: { x: 40, y: 330 }, stingY: 0.42 },
+               inset: { x: 40, y: 946, yTop: 330 }, photo: { bottom: 1180 }, stingY: 0.42 },
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
       youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
-                 inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
+                 inset: { x: 96, y: 734, yTop: 236 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
     Object.assign(L, {
@@ -145,7 +145,8 @@
       kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
       head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
       caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
-      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 } },
+      inset: { S: 700, big: null, small: { x: BL.inset.x, y: BL.inset.y, s: 0.3 }, yTop: BL.inset.yTop },
+      photoBand: BL.photo ? { bottom: BL.photo.bottom, minShow: 0.75 } : null,
     });
   }
   if (LOOK === 'captions') Object.assign(L, {
@@ -500,7 +501,8 @@
       if (I.big) for (const c of TL.chapters) big = Math.max(big, eio(prog(a, c - 0.4, c)) * (1 - eio(prog(a, c + 1.6, c + 2.2))));
       const B = I.big || { cx: 0, cy: 0, s: I.small.s };
       const s = lerp(I.small.s, B.s, big);
-      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(I.small.y, B.cy - I.S * B.s / 2, big);
+      const sy = I.yTop == null ? I.small.y : lerp(I.small.y, I.yTop, insetTopAt(a));
+      const x = lerp(I.small.x, B.cx - I.S * B.s / 2, big), y = lerp(sy, B.cy - I.S * B.s / 2, big);
       ctx.translate(x, y); ctx.scale(s, s);
     }
     ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
@@ -562,6 +564,53 @@
     ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
   }
 
+  // inset map at the top instead of above the bar for cards with inset: 'top' (glides between the two)
+  function insetTopAt(a) {
+    let i = 0;
+    for (let k = 0; k < CARDS.length; k++) if (CARDS[k].start - 0.5 <= a) i = k;
+    const v = k => (CARDS[k] && CARDS[k].inset === 'top' ? 1 : 0);
+    return lerp(i > 0 ? v(i - 1) : v(i), v(i), eio(prog(a, CARDS[i].start - 0.5, CARDS[i].start)));
+  }
+  // a tiny copy of each photo, drawn large = a soft blurred backdrop at no per-frame cost
+  const BLUR = new Map();
+  function blurredOf(img) {
+    if (!BLUR.has(img)) {
+      const c = document.createElement('canvas'); c.width = 32; c.height = 40;
+      const g = c.getContext('2d'), s = Math.max(32 / img.width, 40 / img.height);
+      g.drawImage(img, (32 - img.width * s) / 2, (40 - img.height * s) / 2, img.width * s, img.height * s);
+      BLUR.set(img, c);
+    }
+    return BLUR.get(img);
+  }
+  // where a photo sits in a w x h frame: a wide photo shows at least minShow of its width and rests on the
+  // lower third (a blurred copy fills the rest of the frame); a tall photo fills the frame as before
+  function photoRect(img, x, y, w, h) {
+    const PB = L.photoBand;
+    if (!PB || h < H * 0.9) return null;
+    const ar = img.width / img.height, bh = PB.bottom;
+    if (bh * ar <= w * 1.04) return null;
+    const rh = Math.min(bh, w / PB.minShow / ar);
+    return { x, y: y + bh - rh, w, h: rh };
+  }
+  // photo with framing (fx, fy, zoom); zoom is capped so a photo is never blown up past its quality
+  function drawPhoto(img, x, y, w, h, fx, fy, z, alpha = 1) {
+    const r = photoRect(img, x, y, w, h) || { x, y, w, h };
+    const base = Math.max(r.w / img.width, r.h / img.height);
+    z = Math.min(z, base > 1.5 ? 1.05 : 1.12);
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    if (r.h < h) {
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(blurredOf(img), x - 40, y - 40, w + 80, h + 80);
+      ctx.fillStyle = 'rgba(11,31,75,0.45)'; ctx.fillRect(x, y, w, h);
+      ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 40;
+      ctx.fillStyle = '#000'; ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.shadowColor = 'transparent';
+    }
+    coverDraw(img, r.x, r.y, r.w, r.h, fx, fy, z);
+    ctx.restore();
+  }
+
   function drawCardImage(card, x, y, w, h, a) {
     const img = IMG[card.img];
     const mv = card.moves;
@@ -576,16 +625,13 @@
       return [lerp(A[0], B[0], e), lerp(A[1], B[1], e), lerp(A[2], B[2], e)];
     };
     const s = state(m, a);
-    coverDraw(img, x, y, w, h, s[0], s[1], s[2]);
+    drawPhoto(img, x, y, w, h, s[0], s[1], s[2]);
     if (m > 0) {
       const xf = prog(a, mv[m].t - 0.25, mv[m].t + 0.35);
       if (xf < 1) {
         // cross-zoom from the previous framing
         const sp = state(m - 1, a);
-        ctx.save();
-        ctx.globalAlpha = 1 - eio(xf);
-        coverDraw(img, x, y, w, h, sp[0], sp[1], sp[2] * (1 + 0.12 * xf));
-        ctx.restore();
+        drawPhoto(img, x, y, w, h, sp[0], sp[1], sp[2] * (1 + 0.05 * xf), 1 - eio(xf));
       }
     }
   }
@@ -1576,8 +1622,8 @@
     ctx.globalAlpha = 1 - out;
     // photo: punch-in at the start, slow push, a quick zoom as it hands over to the map
     const f = hk.f || [0.5, 0.5];
-    const z = lerp(1.22, 1.06, eout(prog(t, 0, 0.5))) + 0.05 * prog(t, 0.5, HOOK) + 0.25 * ein(out);
-    coverDraw(img, 0, 0, W, H, f[0], f[1], z);
+    const z = lerp(1.08, 1.02, eout(prog(t, 0, 0.5))) + 0.03 * prog(t, 0.5, HOOK) + 0.06 * ein(out);
+    drawPhoto(img, 0, 0, W, H, f[0], f[1], z);
     const g = ctx.createLinearGradient(0, H * 0.35, 0, H);
     g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.45, 'rgba(11,31,75,0.72)'); g.addColorStop(1, 'rgba(11,31,75,0.94)');
     ctx.fillStyle = g; ctx.fillRect(0, H * 0.35, W, H * 0.65);
@@ -1763,7 +1809,7 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
     ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
-    if (IMG[ph.img]) coverDraw(IMG[ph.img], 0, 0, W, H, ph.f[0], ph.f[1], 1.04);
+    if (IMG[ph.img]) drawPhoto(IMG[ph.img], 0, 0, W, H, ph.f[0], ph.f[1], 1.0);
     const g = ctx.createLinearGradient(0, B.y - H * 0.3, 0, H);
     g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.5, 'rgba(11,31,75,0.55)'); g.addColorStop(1, 'rgba(11,31,75,0.92)');
     ctx.fillStyle = g; ctx.fillRect(0, B.y - H * 0.3, W, H - B.y + H * 0.3);
