@@ -105,12 +105,6 @@ class _PortalTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(portal.latin.toUpperCase(),
-                  style: const TextStyle(
-                      fontFamily: 'sans-serif',
-                      fontSize: 10,
-                      letterSpacing: 1.2,
-                      color: Colors.white70)),
               const Spacer(),
               Text(portal.name, style: const TextStyle(fontSize: 22, color: Colors.white)),
               const SizedBox(height: 2),

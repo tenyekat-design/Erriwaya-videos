@@ -76,11 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _LatestTicker(feed: all)),
             const SliverToBoxAdapter(child: CapitalsBoard()),
             SliverToBoxAdapter(
+              // الأزرار بارتفاع ثابت يتسع لنصّها (كانت تُضغط في 36 بكسل فينزل النص إلى أسفلها)
               child: SizedBox(
-                height: 56,
+                height: 58,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                   children: ['الكل', ...AppConfig.categories.keys].map((c) {
                     final sel = c == _cat;
                     return Padding(
@@ -89,10 +90,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: Text(c),
                         selected: sel,
                         showCheckmark: false,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                         selectedColor: Brand.green,
                         backgroundColor: Colors.white,
                         labelStyle: TextStyle(
-                            fontFamily: Brand.font, color: sel ? Colors.white : Brand.ink),
+                            fontFamily: Brand.font,
+                            fontSize: 15,
+                            height: 1.2,
+                            leadingDistribution: TextLeadingDistribution.even,
+                            color: sel ? Colors.white : Brand.ink),
                         onSelected: (_) => setState(() => _cat = c),
                       ),
                     );
