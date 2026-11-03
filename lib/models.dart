@@ -127,6 +127,7 @@ class Article {
   final int imageCount;
   final DateTime createdAt;
   final List<String> portals; // معرّفات البوابات التي اختارها المحرر
+  final String writer; // كاتب المقال (لمقالات الرأي خاصة)، يظهر «بقلم»
 
   Article({
     required this.id,
@@ -138,6 +139,7 @@ class Article {
     required this.imageCount,
     required this.createdAt,
     this.portals = const [],
+    this.writer = '',
   });
 
   Uint8List? _thumbBytes;
@@ -168,6 +170,7 @@ class Article {
         'imageCount': imageCount,
         'createdAt': createdAt.toIso8601String(),
         'portals': portals,
+        'writer': writer,
       };
 
   factory Article.fromJson(Map<String, dynamic> j) => Article(
@@ -180,6 +183,7 @@ class Article {
         imageCount: (j['imageCount'] ?? 0) as int,
         createdAt: DateTime.tryParse((j['createdAt'] ?? '') as String) ?? DateTime.now(),
         portals: ((j['portals'] ?? const []) as List).map((e) => e.toString()).toList(),
+        writer: (j['writer'] ?? '') as String,
       );
 }
 

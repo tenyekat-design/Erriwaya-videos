@@ -71,15 +71,14 @@ bool matchesAny(String text, List<String> keywords) {
   return false;
 }
 
-String _textOf(Object o) {
-  if (o is Article) return '${o.title} ${o.body}'.replaceAll('_', ' ');
-  final v = o as VideoItem;
-  return '${v.title} ${v.description}'.replaceAll('_', ' ');
-}
-
+/// كما في الموقع: البوابات التي اختارها المحرر، وإلا الدول المذكورة في العنوان (لا في النص كله،
+/// كي لا يتكرر الخبر في كل بوابة يُذكر فيها بلد عَرَضاً).
 bool inPortal(Portal p, Object o) {
-  if (o is Article && o.portals.contains(p.id)) return true;
-  return matchesAny(_textOf(o), p.keywords);
+  if (o is Article) {
+    if (o.portals.isNotEmpty) return o.portals.contains(p.id);
+    return matchesAny(o.title.replaceAll('_', ' '), p.keywords);
+  }
+  return matchesAny((o as VideoItem).title.replaceAll('_', ' '), p.keywords);
 }
 
 /// البوابات التي يظهر فيها عنصر.

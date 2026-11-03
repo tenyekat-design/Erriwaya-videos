@@ -12,6 +12,7 @@ import '../widgets/capitals_board.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
 import 'about_screen.dart';
+import 'search_screen.dart';
 import 'settings_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -51,6 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     .push(MaterialPageRoute(builder: (_) => const AboutScreen())),
               ),
               actions: [
+                IconButton(
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  tooltip: 'بحث',
+                  onPressed: () => Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => const SearchScreen())),
+                ),
                 IconButton(
                   icon: const Icon(Icons.settings_outlined, color: Colors.white),
                   tooltip: 'الإعدادات',

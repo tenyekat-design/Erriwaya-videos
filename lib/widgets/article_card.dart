@@ -63,8 +63,11 @@ class ArticleThumb extends StatelessWidget {
   }
 }
 
-String _meta(Article a) =>
-    [if (articleLabel(a).isNotEmpty) articleLabel(a), timeAgo(a.createdAt)].join('  •  ');
+String _meta(Article a) => [
+      if (articleLabel(a).isNotEmpty) articleLabel(a),
+      if (a.writer.isNotEmpty) a.writer,
+      timeAgo(a.createdAt),
+    ].join('  •  ');
 
 class ArticleHero extends StatelessWidget {
   final Article article;

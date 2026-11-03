@@ -23,6 +23,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
   static const _maxImages = 8;
   final _title = TextEditingController();
   final _body = TextEditingController();
+  final _writer = TextEditingController();
   String _category = '';
   bool _breaking = false;
   final Set<String> _portals = {};
@@ -40,6 +41,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
     if (a != null) {
       _title.text = a.title;
       _body.text = a.body;
+      _writer.text = a.writer;
       _category = AppConfig.canonicalCategory(a.category) ?? '';
       _breaking = a.breaking;
       _portals.addAll(a.portals);
@@ -90,6 +92,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
           category: _category,
           breaking: _breaking,
           images: _images,
+          writer: _writer.text.trim(),
           portals: _portals.toList(),
         );
         if (!mounted) return;
@@ -110,6 +113,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
         breaking: _breaking,
         images: _images,
         author: FirebaseAuth.instance.currentUser?.email ?? '',
+        writer: _writer.text.trim(),
         portals: _portals.toList(),
       );
       var msg = 'نُشر الخبر.';
@@ -168,6 +172,18 @@ class _ComposeScreenState extends State<ComposeScreen> {
             onChanged: (v) => setState(() => _category = v ?? ''),
           ),
           const SizedBox(height: 14),
+          TextField(
+            controller: _writer,
+            maxLength: 80,
+            decoration: InputDecoration(
+              labelText: 'الكاتب (اختياري)',
+              helperText: _category == 'الرأي الحر'
+                  ? 'اسم كاتب المقال، يظهر «بقلم: …» في التطبيق والموقع'
+                  : 'يظهر «بقلم: …» فوق الخبر',
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 6),
           const Text('البوابات (الدول المعنية بالخبر)', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           Wrap(spacing: 6, runSpacing: 6, children: [
@@ -182,7 +198,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
           ]),
           const Padding(
             padding: EdgeInsets.only(top: 6),
-            child: Text('يظهر الخبر أيضاً تلقائياً في بوابة كل دولة يُذكر اسمها في نصه.',
+            child: Text('إن لم تختر بوابة، يظهر الخبر في بوابة الدولة المذكورة في عنوانه.',
                 style: TextStyle(fontSize: 12.5, color: Brand.muted)),
           ),
           const SizedBox(height: 8),

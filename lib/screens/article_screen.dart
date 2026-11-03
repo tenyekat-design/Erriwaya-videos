@@ -93,6 +93,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
             ]),
             const SizedBox(height: 10),
             Text(a.title, style: const TextStyle(fontSize: 22, height: 1.5, color: Brand.ink)),
+            if (a.writer.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text('بقلم: ${a.writer}',
+                    style: const TextStyle(fontSize: 15, color: Brand.green, fontWeight: FontWeight.w600)),
+              ),
             const SizedBox(height: 14),
             ListenableBuilder(
               listenable: SavedService.instance,
