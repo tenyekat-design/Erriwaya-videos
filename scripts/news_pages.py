@@ -20,6 +20,14 @@ PORTALS = {"mr": "موريتانيا", "ma": "المغرب", "dz": "الجزائ
 e = lambda x: html.escape(str(x or ""), quote=True)
 
 
+
+def _svg(k, label=""):
+    """أيقونة منصة من رموز الصفحة الرئيسية (brand.ICONS)، أو اسمها نصاً إن غابت."""
+    if k in brand.ICONS:
+        vb, d = brand.ICONS[k]
+        return f'<svg viewBox="{vb}" aria-hidden="true"><path fill="currentColor" d="{d}"/></svg>'
+    return label or k
+
 def _date(a):
     try:
         return datetime.fromisoformat(a["createdAt"].replace("Z", "+00:00"))
@@ -78,6 +86,12 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
 .tools {{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px }}
 .btn {{ display:inline-flex; padding:8px 16px; border-radius:6px; background:var(--brand); color:var(--on-brand); text-decoration:none; font-size:15px }}
 .btn.alt {{ background:var(--chip); color:var(--ink) }}
+.share {{ align-items:center }}
+.share-l {{ color:var(--muted); font-size:15px; margin-inline-end:4px }}
+.sh {{ width:44px; height:44px; display:grid; place-items:center; border-radius:50%; color:#fff; text-decoration:none }}
+.sh:hover {{ filter:brightness(1.08) }}
+.sh svg {{ width:20px; height:20px }}
+.sh.wa {{ background:#25D366 }} .sh.fb {{ background:#1877F2 }} .sh.tg {{ background:#229ED9 }} .sh.xx {{ background:#000 }}
 .more h2 {{ font-size:20px; margin:8px 0 }}
 .more ul {{ list-style:none; padding:0; margin:0 0 28px }}
 .more li {{ border-bottom:1px solid var(--line); padding-block:10px }}
@@ -93,11 +107,12 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
   <h1 class="ew-t">{title}</h1>
   {gallery}
   <div class="body">{paras}</div>
-  <div class="tools">
-    <a class="btn" href="https://wa.me/?text={wa}" target="_blank" rel="noopener">مشاركة على واتساب</a>
-    <a class="btn alt" href="https://www.facebook.com/sharer/sharer.php?u={url_q}" target="_blank" rel="noopener">مشاركة على فيسبوك</a>
-    <a class="btn alt" href="https://t.me/share/url?url={url_q}" target="_blank" rel="noopener">تيليغرام</a>
-    <a class="btn alt" href="https://x.com/intent/post?url={url_q}" target="_blank" rel="noopener">إكس</a>
+  <div class="tools share">
+    <span class="share-l">شارك الخبر</span>
+    <a class="sh wa" href="https://wa.me/?text={wa}" target="_blank" rel="noopener" aria-label="مشاركة على واتساب" title="واتساب">{ic_wa}</a>
+    <a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u={url_q}" target="_blank" rel="noopener" aria-label="مشاركة على فيسبوك" title="فيسبوك">{ic_fb}</a>
+    <a class="sh tg" href="https://t.me/share/url?url={url_q}" target="_blank" rel="noopener" aria-label="مشاركة على تيليغرام" title="تيليغرام">{ic_tg}</a>
+    <a class="sh xx" href="https://x.com/intent/post?url={url_q}" target="_blank" rel="noopener" aria-label="مشاركة على إكس" title="إكس">{ic_x}</a>
   </div>
 </article>
 {more}
@@ -160,7 +175,8 @@ def _page(a, others, now):
         published_meta=f'<meta property="article:published_time" content="{d.isoformat()}">' if d else "",
         ld=json.dumps(ld, ensure_ascii=False).replace("</", "<\\/"), kickers=kickers, time=time, gallery=gallery,
         paras=paras, header=brand.header("../"), footer=brand.footer("../", str(now.year)),
-        brand_css=brand.CSS, head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year)
+        brand_css=brand.CSS, head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year,
+        ic_wa=_svg("whatsapp"), ic_fb=_svg("facebook"), ic_tg=_svg("telegram"), ic_x=_svg("x"))
 
 
 def build(out_dir, arts, now=None):
