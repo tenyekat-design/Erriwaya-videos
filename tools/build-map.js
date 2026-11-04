@@ -28,6 +28,12 @@ const ids = [''];
 const names = [''];
 feats.forEach(({ f }) => { ids.push(f.id); names.push(f.properties.name); });
 
+// Western Sahara whole (user's decision, 4 Nov 2026): in world-atlas 50m, Morocco's polygon runs down to
+// Mauritania and "W. Sahara" is only the strip east of the berm. Morocco ends at 27°40'N (Tarfaya), so its
+// cells south of that parallel are Western Sahara's, and the border is drawn on the parallel, not on the berm.
+const WS_LAT = 27 + 40 / 60, WS_EAST = -8.667;
+const iMA = ids.indexOf('504'), iWS = ids.indexOf('732');
+
 const y0 = mercY(BOX.lat0), y1 = mercY(BOX.lat1);
 const cols = Math.ceil((BOX.lon1 - BOX.lon0) / CELL);
 const rows = Math.ceil((y1 - y0) / CELL);
@@ -39,7 +45,7 @@ for (let r = 0; r < rows; r++) {
     for (let i = 0; i < feats.length; i++) {
       const { f, b } = feats[i];
       if (lon < b[0][0] || lon > b[1][0] || lat < b[0][1] || lat > b[1][1]) continue;
-      if (d3.geoContains(f, [lon, lat])) { grid[r * cols + c] = i + 1; break; }
+      if (d3.geoContains(f, [lon, lat])) { grid[r * cols + c] = i + 1 === iMA && lat < WS_LAT ? iWS : i + 1; break; }
     }
   }
 }
@@ -60,7 +66,20 @@ function clipLines(multi) {
   }
   return out;
 }
-const borders = clipLines(topojson.mesh(world, world.objects.countries, (a, b) => a !== b));
+const isMAWS = (a, b) => [a.id, b.id].sort().join() === '504,732';
+const borders = clipLines(topojson.mesh(world, world.objects.countries, (a, b) => a !== b && !isMAWS(a, b)));
+// Morocco / Western Sahara on 27°40'N, from the Atlantic coast (where Morocco's outline crosses it) to Algeria
+const maGeo = countries.find(f => f.id === '504').geometry;
+const maRing = (maGeo.type === 'Polygon' ? maGeo.coordinates : maGeo.coordinates.flat(1)).reduce((a, b) => b.length > a.length ? b : a);
+let wsCoast = null;
+maRing.forEach((p, k) => {
+  const q = maRing[(k + 1) % maRing.length];
+  if ((p[1] - WS_LAT) * (q[1] - WS_LAT) <= 0 && p[0] < -11) {
+    const x = p[0] + (q[0] - p[0]) * (WS_LAT - p[1]) / (q[1] - p[1] || 1);
+    if (!wsCoast || x < wsCoast) wsCoast = x;
+  }
+});
+borders.push([round([wsCoast, WS_LAT]), round([WS_EAST, WS_LAT])]);
 const coasts = clipLines(topojson.mesh(world, world.objects.countries, (a, b) => a === b));
 
 // Coastline walk from Nouakchott.
