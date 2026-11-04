@@ -223,6 +223,58 @@
   }
 
 
+  // ---------- offshore block map, redrawn from the published block maps (blocks.js, reference pixel space) ----------
+  const BK = window.BLOCKS;
+  const BLAND = new Path2D(), BSHELF = new Path2D(), BLINES = new Path2D(), BC10 = new Path2D(), BTIOF = new Path2D(), BTEVET = new Path2D();
+  BK.coast.forEach(([x, y], i) => (i ? BLAND.lineTo(x, y) : BLAND.moveTo(x, y)));
+  BLAND.lineTo(BK.w + 400, BK.h + 400); BLAND.lineTo(BK.w + 400, -400); BLAND.lineTo(BK.coast[0][0], -400); BLAND.closePath();
+  BK.shelf.forEach(([x, y], i) => (i ? BSHELF.lineTo(x, y) : BSHELF.moveTo(x, y)));
+  [...BK.coast].reverse().forEach(([x, y]) => BSHELF.lineTo(x, y)); BSHELF.closePath();
+  BK.lines.forEach(([a, b, c, d]) => { BLINES.moveTo(a, b); BLINES.lineTo(c, d); });
+  const poly = (P, pts) => { pts.forEach(([x, y], i) => (i ? P.lineTo(x, y) : P.moveTo(x, y))); P.closePath(); };
+  poly(BC10, BK.c10); poly(BTIOF, BK.tiof); poly(BTEVET, BK.fields.tevet);
+  // view = [x0, y0, x1, y1] in reference pixels, fitted to the rect's width; o = layer opacities
+  function drawBlocks(rect, view, o = {}) {
+    const k = rect.w / (view[2] - view[0]);
+    const ox = rect.x - view[0] * k, oy = rect.y + rect.h / 2 - ((view[1] + view[3]) / 2) * k;
+    ctx.save();
+    ctx.globalAlpha *= (o.alpha ?? 1);
+    ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+    ctx.fillStyle = '#EEF3F9'; ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+    ctx.fillStyle = 'rgba(11,31,75,0.07)';
+    for (let y = rect.y + 13; y < rect.y + rect.h; y += 26) for (let x = rect.x + 13; x < rect.x + rect.w; x += 26) ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+    ctx.translate(ox, oy); ctx.scale(k, k);
+    ctx.fillStyle = 'rgba(16,185,129,0.13)'; ctx.fill(BSHELF);                         // continental shelf
+    ctx.fillStyle = rgb(mix(C.landRGB, C.greenRGB, 0.3)); ctx.fill(BLAND);
+    ctx.lineWidth = 2.5 / k; ctx.strokeStyle = C.green; ctx.beginPath();
+    BK.coast.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+    ctx.globalAlpha *= 1;
+    ctx.save(); ctx.globalAlpha *= (o.grid ?? 1); ctx.lineWidth = 1.6 / k; ctx.strokeStyle = 'rgba(11,31,75,0.38)'; ctx.stroke(BLINES); ctx.restore();
+    if (o.c10) {                                                                         // C-10 fills and its outline draws on
+      ctx.save(); ctx.globalAlpha *= o.c10; ctx.fillStyle = 'rgba(16,185,129,0.16)'; ctx.fill(BC10); ctx.restore();
+      ctx.save(); ctx.lineWidth = 4 / k; ctx.strokeStyle = C.navy; ctx.setLineDash([C10LEN, C10LEN]); ctx.lineDashOffset = C10LEN * (1 - (o.c10line ?? o.c10)); ctx.stroke(BC10); ctx.restore();
+    }
+    if (o.fields) {
+      ctx.save(); ctx.globalAlpha *= o.fields; ctx.fillStyle = '#8A96A8'; ctx.fill(BTEVET); ctx.restore();
+    }
+    if (o.tiof) {
+      ctx.save(); ctx.globalAlpha *= o.tiof; ctx.fillStyle = C.green; ctx.fill(BTIOF);
+      ctx.lineWidth = 2 / k; ctx.strokeStyle = C.white; ctx.stroke(BTIOF); ctx.restore();
+    }
+    ctx.restore();
+    ctx.save(); ctx.globalAlpha *= (o.alpha ?? 1);
+    ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+    const P = ([x, y]) => [ox + x * k, oy + y * k];
+    if (o.labels) BK.labels.forEach(([t, x, y]) => {
+      const [px, py] = P([x, y + 8]);
+      text(t, px, py, o.lsize || 22, 'rgba(11,31,75,0.55)', 'left', o.labels, true);
+    });
+    ctx.restore();
+    return P;
+  }
+  // the outline length of C-10 for the draw-on (perimeter in reference pixels)
+  const C10LEN = BK.c10.reduce((s, p, i) => { const q = BK.c10[(i + 1) % BK.c10.length]; return s + Math.hypot(q[0] - p[0], q[1] - p[1]); }, 0);
+
   // ---------- offshore detail map (vector coast, same palette as the dotted map) ----------
   const DT = window.DETAIL;
   const DLAND = {}; for (const k in DT.land) DLAND[k] = new Path2D(DT.land[k]);
@@ -362,34 +414,26 @@
       const wsP = [rect.x + rect.w / 2 + (-13.0 - cam.lon) * rect.w / cam.w, rect.y + rect.h / 2 - (mercY(24.8) - mercY(cam.lat)) * rect.w / cam.w];
       pill('الصحراء الغربية', wsP[0], wsP[1], 28, C.navy, C.white, eout(prog(e, BEAT * 2.4, BEAT * 3)) * (1 - z), 1);
     }
-    // 2) the vector coast takes over for the offshore detail
+    // 2) the block map takes over: the offshore blocks, C-10 outlined, Tiof inside it
     if (z > 0) {
       const ca = eout(prog(e, BEAT * 5.2, BEAT * 6.5));
-      const zoom = lerp(1.0, 1.12, eio(prog(e, BEAT * 6.5, 10)));
-      const P = drawDetail(rect, 560, 430, zoom, e, ca);
-      const [nx, ny] = P(DT.pts.nkc), [cx, cy] = P(DT.pts.ching), [tx, ty] = P(DT.pts.tiof), [kx, ky] = P(DT.pts.c10);
+      const zz = eio(prog(e, BEAT * 6.5, 10));
+      const view = [lerp(300, 330, zz), lerp(40, 70, zz), lerp(760, 750, zz), lerp(330, 335, zz)];
       const d0 = BEAT * 7;
+      const P = drawBlocks(rect, view, { alpha: ca, labels: eout(prog(e, BEAT * 6, BEAT * 6.6)), lsize: 24,
+        c10: eout(prog(e, d0, d0 + 0.9)), c10line: eio(prog(e, d0, d0 + 1.2)), fields: eout(prog(e, d0 + BEAT, d0 + BEAT + 0.4)),
+        tiof: eout(prog(e, d0 + BEAT * 2, d0 + BEAT * 2 + 0.4)) });
+      const [nx, ny] = P(BK.nkc), [kx, ky] = P(BK.c10label), [chx, chy] = P(BK.fields.chinguetti);
+      const [tx, ty] = P([561, 212]);
       dot(nx, ny, 13, C.navy, ca);
-      tag('نواكشوط', nx + 24, ny, 30, C.navy, C.white, ca, 'left');
-      // C10: dashed zone ~50 km offshore (approximate)
-      const ka = eout(prog(e, d0, d0 + 0.5));
-      if (ka > 0) {
-        const r = 64;
-        ctx.save(); ctx.globalAlpha = ka;
-        ctx.fillStyle = 'rgba(11,31,75,0.08)'; ctx.strokeStyle = C.navy; ctx.lineWidth = 4; ctx.setLineDash([14, 10]);
-        ctx.beginPath(); ctx.arc(kx, ky, r * eout(prog(e, d0, d0 + 0.8)), 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.restore();
-        tag('المقطع C10', kx + r + 14, ky, 32, C.navy, C.white, ka, 'left');
-      }
-      // Chinguetti for scale, Tiof pulses
+      tag('نواكشوط', nx - 24, ny, 30, C.navy, C.white, ca, 'right');
+      pill('المقطع C10', kx, ky, 32, C.navy, C.white, eout(prog(e, d0 + 0.5, d0 + 0.9)), 1);
       const ga = eout(prog(e, d0 + BEAT, d0 + BEAT + 0.4));
-      dot(cx, cy, 11, '#8A96A8', ga);
-      tag('حقل شنقيط', cx + 22, cy + 6, 26, C.white, C.mute, ga, 'left');
+      dot(chx, chy, 10, '#8A96A8', ga);
+      tag('شنقيط', chx + 18, chy + 22, 24, C.white, C.mute, ga, 'left');
       const ta = eout(prog(e, d0 + BEAT * 2, d0 + BEAT * 2 + 0.4));
-      dashed(cx, cy, cx + (tx - cx) * ta, cy + (ty - cy) * ta, '#8A96A8', 3, ga);
-      pulse(tx, ty, 15, C.green, e, ta);
-      tag('حقل تيوف', tx - 26, ty, 32, C.green, C.white, ta, 'right');
-      tag('نحو 25 كلم', (cx + tx) / 2 + 22, (cy + ty) / 2 + 2, 24, C.white, C.ink, eout(prog(e, d0 + BEAT * 2.6, d0 + BEAT * 3)), 'left');
+      pulse(tx, ty, 12, C.green, e, ta);
+      tag('حقل تيوف', tx - 50, ty, 30, C.green, C.white, ta, 'right');
     }
     const by = rect.y + rect.h + 70;
     const la = eout(prog(e, BEAT * 8, BEAT * 8 + 0.5));
@@ -456,7 +500,12 @@
   function sceneC10(e, t) {
     background(t, [0.15, 0.2]);
     header(e, STEP.c10);
-    const p = panel(e, IMG[I.img.sea], null, { z: [1.25, 1.1], f: [[0.4, 0.45], [0.45, 0.5]] }, 'المقطع C10', '1', 'صورة تعبيرية');
+    const drawC10 = (x, y, w, h, kb) => {
+      const P = drawBlocks({ x, y, w, h }, [lerp(130, 160, kb), 60, lerp(760, 750, kb), 330], { labels: 1, lsize: 22,
+        c10: eout(prog(e, 0.3, 1.2)), c10line: eio(prog(e, 0.2, 1.6)), fields: 1, tiof: 1 });
+      const [nx, ny] = P(BK.nkc); dot(nx, ny, 10, C.navy);
+    };
+    const p = panel(e, drawC10, null, null, 'المقطع C10', '1');
     const ny = p.py + p.ph + 100;
     figure(11500, W / 2, ny, 130, C.green, e, BEAT * 0.8, BEAT * 3, 'count');
     run([{ s: 'مساحة تقريبية', size: 40, color: C.ink }, { s: '–', size: 40, color: C.mute }, { s: 'كلم²', size: 40, color: C.ink }],
@@ -492,12 +541,11 @@
     background(t, [0.85, 0.2]);
     header(e, STEP.tiof);
     const drawPanel = (x, y, w, h, kb) => {
-      const P = drawDetail({ x, y, w, h }, lerp(575, 555, kb), 540, lerp(1.35, 1.55, kb), e);
-      const [tx, ty] = P(DT.pts.tiof), [cx, cy] = P(DT.pts.ching);
-      dot(cx, cy, 11, '#8A96A8');
-      dashed(cx, cy, tx, ty, '#8A96A8', 3);
-      pulse(tx, ty, 16, C.green, e);
-      tag('شنقيط', cx + 20, cy + 4, 24, C.white, C.mute, 1, 'left');
+      const P = drawBlocks({ x, y, w, h }, [lerp(440, 455, kb), 165, lerp(740, 735, kb), 299], { labels: 1, lsize: 22, c10: 1, fields: 1, tiof: 1, grid: 0.6 });
+      const [tx, ty] = P([561, 212]), [cx, cy] = P(BK.fields.chinguetti);
+      dot(cx, cy, 10, '#8A96A8');
+      tag('شنقيط', cx - 18, cy, 24, C.white, C.mute, 1, 'right');
+      pulse(tx, ty, 14, C.green, e);
     };
     const p = panel(e, drawPanel, null, null, 'حقل تيوف', '2');
     const ny = p.py + p.ph + 100;
@@ -600,6 +648,13 @@
     step(sy, '8 يوليو 2026', 'عُرض على مجلس الوزراء: مورفي أويل وشاريوت – 3 مقاطع', C.navy, BEAT * 5, false);
     step(sy + 175, '3 نوفمبر 2026', 'التوقيع مع مورفي أويل وحدها – مقطعان', C.green, BEAT * 6.5, true);
     step(sy + 350, 'غير واضح', 'مصير المقطع الثالث ودور شاريوت', C.red, BEAT * 8, true);
+    const la = eout(prog(e, BEAT * 5.2, BEAT * 5.7));
+    const lg = IMG[I.img.chariot], lw = 340, lh = 150;
+    ctx.save(); ctx.globalAlpha = la; ctx.fillStyle = C.white; ctx.shadowColor = 'rgba(11,31,75,0.15)'; ctx.shadowBlur = 24;
+    rrect(M, sy + 300, lw, lh, 18); ctx.fill(); ctx.shadowColor = 'transparent';
+    ctx.beginPath(); rrect(M, sy + 300, lw, lh, 18); ctx.clip();
+    ctx.drawImage(lg, lg.width * 0.12, lg.height * 0.36, lg.width * 0.8, lg.height * 0.3, M + 14, sy + 300 + 22, lw - 28, (lw - 28) * (lg.height * 0.3) / (lg.width * 0.8));
+    ctx.restore();
     footer(eout(prog(e, 1, 1.6)), I.src.chariot);
   }
 

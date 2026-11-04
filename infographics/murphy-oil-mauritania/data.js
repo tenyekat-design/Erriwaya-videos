@@ -3,7 +3,7 @@
 // QatarEnergy/Shell (Apr 2023: 40% of C-10, Shell 50% operator, SMH 10%; 11,500 km2, ~50 km offshore, 50-2,000 m);
 // Madar/Ecofin (Tiof ~280 million barrels, ministry estimate); Offshore Magazine (Tiof found Nov 2003, ~25 km from Chinguetti);
 // Council of Ministers 8 Jul 2026 (Medias24, Upstream): request for Murphy Oil and Chariot, three offshore blocks.
-// Block outlines are not published: offshore positions on the map are approximate.
+// Block map redrawn from the published block maps the user supplied (blocks.js); outlines are schematic.
 window.INFO = {
   slug: 'murphy-oil-mauritania',
   title: 'النفط البحري في موريتانيا',
@@ -15,7 +15,7 @@ window.INFO = {
     tiof: 'المصدر: وزارة الطاقة والنفط (تقدير الموارد)',
     murphy: 'المصدر: مورفي أويل',
     chariot: 'المصدر: مجلس الوزراء (8 يوليو 2026) – رويترز',
-    map: 'المواقع البحرية تقريبية: لم تُنشر الحدود الرسمية للمقطعين',
+    map: 'حدود المقاطع تقريبية، معاد رسمها من خرائط المقاطع المنشورة',
   },
   img: {
     hook: 'signing-desk.jpg',
@@ -23,5 +23,6 @@ window.INFO = {
     sea: 'offshore-aerial.jpg',
     murphy: 'murphy-hq-sign.jpg',
     tanks: 'murphy-tanks.jpg',
+    chariot: 'chariot-logo.jpg',
   },
 };
