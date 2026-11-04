@@ -86,7 +86,15 @@ def footer(prefix="", year_html='<span id="yr"></span>'):
 def head_links(prefix=""):
     """أيقونة الهاتف وملف التثبيت على الشاشة الرئيسية."""
     return (f'<link rel="apple-touch-icon" href="{prefix}assets/apple-touch-icon.png">'
-            f'<link rel="manifest" href="{prefix}manifest.webmanifest">')
+            f'<link rel="manifest" href="{prefix}manifest.webmanifest">' + GA)
+
+
+# إحصاءات Google Analytics نفسها التي في الصفحة الرئيسية، لتُحسب زيارات صفحات الأخبار الثابتة والصفحات التعريفية
+# (روابط المشاركة ونتائج البحث تفتح هذه الصفحات). لا تُحمَّل في المعاينات.
+GA = ('<script>if(!/^(localhost|127\\.|$)|claude/i.test(location.hostname)){var s=document.createElement("script");'
+      's.async=true;s.src="https://www.googletagmanager.com/gtag/js?id=G-MPEY193JSN";document.head.appendChild(s);'
+      'window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};'
+      'gtag("js",new Date());gtag("config","G-MPEY193JSN")}</script>')
 
 
 def apply(src_html, prefix=""):
