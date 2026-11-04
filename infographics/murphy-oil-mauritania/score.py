@@ -255,7 +255,7 @@ bar_t = lambda b: b * BAR
 for b, ch in enumerate(PROG):
     if b >= END:
         continue
-    cut = 900 if b < 2 else 1500 if b < 21 else 2200
+    cut = 1200 if b < 2 else 2000 if b < 21 else 2800
     place(pad(CH[ch][0], BAR + 0.6, cutoff=cut, a=0.35 if b else 1.2, r=0.7), bar_t(b), 0.22 if b >= 2 else 0.26, send=0.35)
 place(pad(CH['Dm9'][0] + [74, 76], DUR - CUTS[-1], cutoff=2600, a=0.02, r=3.5), CUTS[-1], 0.3, send=0.5)
 
@@ -263,11 +263,11 @@ BASS_PAT = [(0, 1.5), (1.5, 0.5), (2.5, 0.5), (3, 1)]
 BASS_PAT2 = [(0, 0.75), (0.75, 0.75), (1.5, 0.5), (2, 1), (3, 0.5), (3.5, 0.5)]
 for b in range(2, END):
     root = CH[PROG[b]][1]
-    pat = BASS_PAT if b < 6 else BASS_PAT2
+    pat = BASS_PAT2
     for i, (o, d) in enumerate(pat):
         if b == END - 1 and o >= 3:
             continue
-        m = root + (12 if (b >= 6 and i in (2, 4)) else 0)
+        m = root + (12 if i in (2, 4) else 0)
         place(bass(m, d * BEAT + 0.05), bar_t(b) + o * BEAT, 0.55)
 place(bass(38, 4.0) * np.exp(-t_(int(4.0 * SR)) * 0.3), CUTS[-1], 0.6)
 
@@ -278,17 +278,15 @@ for b in range(2, END):
         at = t0 + beat * BEAT
         if b == END - 1 and beat == 3:
             continue
-        if beat in (0, 2) or (b >= 6 and beat == 1 and b % 2 and not calm):
-            place(kick(1.0 if beat == 0 else 0.85), at, 0.8 if not calm else 0.55)
-        if b >= 4 and beat in (1, 3):
+        if not calm or beat in (0, 2):                 # four on the floor
+            place(kick(1.0 if beat in (0, 2) else 0.8), at, 0.8 if not calm else 0.55)
+        if beat in (1, 3):
             place(clap(), at, 0.55, pan=0.05, send=0.3)
-        for s_ in range(4 if b >= 6 else 2):
-            sub = at + s_ * BEAT / (4 if b >= 6 else 2)
-            if b < 6 and s_ == 0:
-                continue
-            accent = 1.0 if s_ % 2 else 0.6
-            place(hat(open_=(b >= 9 and s_ == 2 and beat == 3)), sub, 0.5 * accent, pan=0.35)
-    if b >= 6 and not calm:
+        for s_ in range(4):
+            sub = at + s_ * BEAT / 4
+            accent = 1.0 if s_ % 2 else 0.65
+            place(hat(open_=(s_ == 2 and not calm)), sub, 0.5 * accent, pan=0.35)
+    if not calm:
         for o, kind in ((0, 'd'), (1.5, 't'), (2.0, 't'), (2.5, 'd'), (3.5, 't'), (3.75, 't')):
             place(doum() if kind == 'd' else tek(), t0 + o * BEAT, 0.45 if kind == 'd' else 0.35, pan=-0.3, send=0.15)
 
@@ -298,6 +296,19 @@ def phrase(b0, nbars, pattern, octave=0, gain=0.5, pan=-0.15, bright=0.8):
         for (o, idx, d) in pattern:
             m = tones[idx % len(tones)] + octave + (12 if idx >= len(tones) else 0)
             place(pluck(m, 1.4 * d + 0.3, bright), bar_t(b0 + bb) + o * BEAT, gain, pan=pan, send=0.3)
+
+for b in range(2, END):                       # running 16th arpeggio under everything
+    tones = TONES[PROG[b]]
+    seq = [0, 2, 1, 3, 2, 4, 3, 1]
+    for k in range(16):
+        if b == END - 1 and k >= 12:
+            continue
+        place(pluck(tones[seq[k % 8]] + 12, 0.25, 1.0), bar_t(b) + k * BEAT / 4, 0.16 if k % 4 else 0.22,
+              pan=-0.45 if k % 2 else 0.45, send=0.15)
+    if b >= 6 and not (21 <= b < 23):            # off-beat chord stabs
+        for o in (1.5, 3.5):
+            for m in tones[:3]:
+                place(pluck(m, 0.35, 1.1), bar_t(b) + o * BEAT, 0.14, pan=0.1, send=0.25)
 
 MOTIF = [(0, 0, 1), (0.75, 2, 0.5), (1.5, 3, 0.5), (2, 1, 1), (3, 2, 0.5), (3.5, 4, 0.5)]
 phrase(0, 2, MOTIF, gain=0.6)

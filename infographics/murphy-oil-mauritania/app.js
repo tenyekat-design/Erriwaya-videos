@@ -20,7 +20,7 @@
     navy: '#0B1F4B', ink: '#0B1F4B', white: '#FFFFFF',
     green: '#0A8F65', green2: '#10B981', greenRGB: [16, 185, 129], greenDk: [10, 143, 101],
     mute: 'rgba(11,31,75,0.62)', red: '#E03A3E',
-    landRGB: [222, 228, 238], wsRGB: [236, 239, 245],
+    landRGB: [222, 228, 238], wsRGB: [190, 200, 216],
   };
 
   const main = document.getElementById('c');
@@ -174,6 +174,7 @@
   const RAD = Math.PI / 180;
   const mercY = lat => Math.log(Math.tan(Math.PI / 4 + (lat * RAD) / 2)) / RAD;
   const GRID = Uint8Array.from(atob(MD.grid), ch => ch.charCodeAt(0));
+  (window.WS_CELLS || []).forEach(i => { GRID[i] = MD.ids.indexOf('732'); });   // Western Sahara whole
   const GY1 = mercY(MD.box.lat1);
   const IDX = {};
   MD.ids.forEach((id, i) => { if (id) IDX[id] = i; });
@@ -330,7 +331,10 @@
       const pa = eout(prog(e, BEAT * 1.2, BEAT * 1.8)) * (1 - z);
       dot(x, y, 12, C.navy, pa);
       tag('نواكشوط', x + 24, y, 30, C.navy, C.white, pa, 'left');
-      tag('موريتانيا', rect.x + rect.w * 0.66, rect.y + rect.h * 0.3, 34, C.white, C.ink, eout(prog(e, BEAT * 2, BEAT * 2.6)) * (1 - z));
+      const mrP = [rect.x + rect.w / 2 + (-10.0 - cam.lon) * rect.w / cam.w, rect.y + rect.h / 2 - (mercY(20.0) - mercY(cam.lat)) * rect.w / cam.w];
+      pill('موريتانيا', mrP[0], mrP[1], 34, C.white, C.ink, eout(prog(e, BEAT * 2, BEAT * 2.6)) * (1 - z), 1);
+      const wsP = [rect.x + rect.w / 2 + (-13.0 - cam.lon) * rect.w / cam.w, rect.y + rect.h / 2 - (mercY(24.8) - mercY(cam.lat)) * rect.w / cam.w];
+      pill('الصحراء الغربية', wsP[0], wsP[1], 28, C.navy, C.white, eout(prog(e, BEAT * 2.4, BEAT * 3)) * (1 - z), 1);
     }
     // 2) the vector coast takes over for the offshore detail
     if (z > 0) {
