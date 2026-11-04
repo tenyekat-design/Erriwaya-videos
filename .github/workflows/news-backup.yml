@@ -1,0 +1,36 @@
+# نسخة احتياطية يومية لأخبار الرواية (Firestore) في فرع backup.
+# السكربت في فرع website (scripts/backup_firestore.py)؛ الجدولة هنا لأن GitHub لا يجدول إلا من الفرع الافتراضي.
+# لا يُمحى أي خبر من النسخة حتى لو حُذف من اللوحة، وتاريخ الفرع يحفظ كل نسخة سابقة.
+name: news-backup
+on:
+  schedule:
+    - cron: "41 2 * * *"   # يومياً 02:41 بتوقيت غرينتش
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: news-backup
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: website
+          path: site
+      - name: Checkout backup branch (or start it)
+        run: |
+          git clone --branch backup --single-branch "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" backup \
+            || { mkdir backup && cd backup && git init -q -b backup \
+                 && git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"; }
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: python3 site/scripts/backup_firestore.py backup
+      - name: Commit and push
+        working-directory: backup
+        run: |
+          git config user.name "erriwaya-backup"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "لا جديد"; exit 0; fi
+          git commit -q -m "نسخة احتياطية $(date -u +%F)"
+          git push -q origin backup
