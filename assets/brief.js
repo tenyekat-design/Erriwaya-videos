@@ -358,7 +358,7 @@
         ctx.lineWidth = 3; ctx.strokeStyle = p.main ? NAVY : GREEN; ctx.stroke();
       }
       const tw = ctx.measureText(p.label).width + 14, h = 22;
-      const lx = !p.dot ? x - tw / 2 : p.side === "left" ? x - 12 - tw : x + 12;
+      const gap = p.dot ? 12 : 4, lx = p.side === "left" ? x - gap - tw : x + gap;   // an area label sits beside its area
       ctx.fillStyle = p.main || !p.dot ? NAVY : "rgb(11 31 75 / .8)";
       ctx.beginPath(); ctx.roundRect(lx, y - h / 2, tw, h, 4); ctx.fill();
       ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.fillText(p.label, lx + tw / 2, y + 1);
