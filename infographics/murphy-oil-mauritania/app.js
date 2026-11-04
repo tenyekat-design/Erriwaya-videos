@@ -502,21 +502,17 @@
   function sceneMurphy(e, t) {
     background(t, [0.15, 0.2]);
     header(e, STEP.murphy);
+    // two photos of the company: the head-office sign, then its storage tanks
     const drawPanel = (x, y, w, h, kb) => {
-      ctx.fillStyle = C.navy; ctx.fillRect(x, y, w, h);
-      const P = drawMap({ x, y, w, h }, { lon: lerp(-5, -7, kb), lat: 20, w: lerp(62, 58, kb) }, (ci) => {
-        if (ci === IDX['478']) return [C.greenRGB, 1];
-        if (ci === IDX['504'] || ci === IDX['384']) return [[120, 170, 230], 1];
-        return [[34, 58, 110], 1];
-      }, 1);
-      const pts = [[-10.5, 20.3, 'موريتانيا', C.green2], [-6.0, 30.5, 'المغرب', '#8FB8EE'], [-5.5, 9.0, 'كوت ديفوار', '#8FB8EE']];
-      pts.forEach(([lon, lat, n, col], i) => {
-        const [px, py] = P(lon, lat), a = eout(prog(e, 0.6 + i * 0.35, 1.0 + i * 0.35));
-        pill(n, px, py, 26, C.white, C.ink, a, 1);
-      });
+      photo(IMG[I.img.murphy], x, y, w, h, [lerp(0.48, 0.55, kb), 0.55], lerp(1.05, 1.18, kb));
+      const xa = eio(prog(e, BEAT * 5.5, BEAT * 6.5));
+      if (xa > 0) {
+        ctx.save(); ctx.globalAlpha = xa;
+        photo(IMG[I.img.tanks], x, y, w, h, [lerp(0.55, 0.62, prog(e, BEAT * 5.5, 7.5)), 0.42], lerp(1.08, 1.16, prog(e, BEAT * 5.5, 7.5)));
+        ctx.restore();
+      }
     };
     const p = panel(e, drawPanel, null, null, 'مورفي أويل', null);
-    text('Murphy Oil Corporation', p.px + p.pw - 34, p.py + 50, 34, C.white, 'right', eout(prog(e, 0.5, 1)), true);
     const ny = p.py + p.ph + 100;
     figure(1950, W / 2, ny, 130, C.green, e, BEAT * 0.8, BEAT * 3, 'year');
     text('سنة التأسيس', W / 2, ny + 84, 40, C.ink, 'center', eout(prog(e, BEAT * 3, BEAT * 3 + 0.4)));

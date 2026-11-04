@@ -21,5 +21,7 @@ window.INFO = {
     hook: 'signing-desk.jpg',
     sign: 'signing-handshake.jpg',
     sea: 'offshore-aerial.jpg',
+    murphy: 'murphy-hq-sign.jpg',
+    tanks: 'murphy-tanks.jpg',
   },
 };
