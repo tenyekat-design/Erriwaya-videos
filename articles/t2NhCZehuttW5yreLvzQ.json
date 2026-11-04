@@ -1,0 +1,35 @@
+{
+ "createTime": "2026-10-27T10:58:18.990582Z",
+ "fields": {
+  "author": {
+   "stringValue": "tenyekat@gmail.com"
+  },
+  "body": {
+   "stringValue": ""
+  },
+  "breaking": {
+   "booleanValue": true
+  },
+  "category": {
+   "stringValue": ""
+  },
+  "createdAt": {
+   "timestampValue": "2026-10-27T10:58:18.859Z"
+  },
+  "imageCount": {
+   "integerValue": "0"
+  },
+  "portals": {
+   "arrayValue": {}
+  },
+  "thumb": {
+   "stringValue": ""
+  },
+  "title": {
+   "stringValue": "الرئيس الموريتاني يصل موسكو للمشاركة في القمة الأفريقية الروسية"
+  }
+ },
+ "images": [],
+ "name": "projects/erriwaya-68022/databases/(default)/documents/articles/t2NhCZehuttW5yreLvzQ",
+ "updateTime": "2026-10-27T10:58:18.990582Z"
+}

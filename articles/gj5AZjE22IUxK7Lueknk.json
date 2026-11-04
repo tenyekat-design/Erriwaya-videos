@@ -1,0 +1,44 @@
+{
+ "createTime": "2026-10-30T20:02:23.201692Z",
+ "fields": {
+  "author": {
+   "stringValue": "tenyekat@gmail.com"
+  },
+  "body": {
+   "stringValue": ""
+  },
+  "breaking": {
+   "booleanValue": true
+  },
+  "category": {
+   "stringValue": ""
+  },
+  "createdAt": {
+   "timestampValue": "2026-10-30T20:02:23.180Z"
+  },
+  "imageCount": {
+   "integerValue": "0"
+  },
+  "portals": {
+   "arrayValue": {
+    "values": [
+     {
+      "stringValue": "ma"
+     },
+     {
+      "stringValue": "eh"
+     }
+    ]
+   }
+  },
+  "thumb": {
+   "stringValue": ""
+  },
+  "title": {
+   "stringValue": "روسيا تستخدم حق الفيتو ضد مشروع قرار أمريكي بشأن المينورسو"
+  }
+ },
+ "images": [],
+ "name": "projects/erriwaya-68022/databases/(default)/documents/articles/gj5AZjE22IUxK7Lueknk",
+ "updateTime": "2026-10-30T20:02:23.201692Z"
+}
