@@ -301,7 +301,7 @@
     if (a <= 0) return;
     ctx.save(); ctx.globalAlpha *= a;
     for (let j = 0; j < 2; j++) {
-      const q = ((e * 0.8 + j * 0.5) % 1);
+      const q = (((e * 0.8 + j * 0.5) % 1) + 1) % 1;
       ctx.strokeStyle = col; ctx.lineWidth = 4 * (1 - q);
       ctx.beginPath(); ctx.arc(x, y, r + 46 * q, 0, Math.PI * 2); ctx.stroke();
     }
