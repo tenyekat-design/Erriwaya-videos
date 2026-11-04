@@ -276,6 +276,32 @@
   const STEP = { sign: 0, c10: 1, tiof: 2, murphy: 3, chariot: 4 };
 
   // ---------- scenes (e = seconds since the scene's cut) ----------
+  // opening hook: the strongest fact first, on a dark frame, before the title
+  function sceneTease(e) {
+    ctx.fillStyle = '#0A1C45'; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.globalAlpha = 2.2; ctx.drawImage(DOTS, 0, ((e * 8) % 36) - 36); ctx.drawImage(DOTS, 0, ((e * 8) % 36) - 36 + H); ctx.restore();
+    const r = ctx.createRadialGradient(W / 2, H * 0.42, 40, W / 2, H * 0.42, W * 0.75);
+    r.addColorStop(0, 'rgba(16,185,129,0.22)'); r.addColorStop(1, 'rgba(16,185,129,0)');
+    ctx.fillStyle = r; ctx.fillRect(0, 0, W, H);
+    logo(M + logoW(LOGO_H) / 2, Y(10 + LOGO_H / 2), LOGO_H, eout(prog(e, 0, 0.4)), true);
+    // a punch on the first frame: the figure slams in and counts up
+    const cy = Y(520 + EX * 0.45);
+    const hit = 1 + 0.18 * Math.exp(-e * 7) ;
+    ctx.save(); ctx.translate(W / 2, cy); ctx.scale(hit, hit);
+    text(fmt(280 * eout(prog(e, 0.05, 1.4))), 0, 0, 300, C.green2, 'center', eout(prog(e, 0, 0.15)), true);
+    ctx.restore();
+    text('مليون برميل', W / 2, cy + 190, 70, C.white, 'center', eout(prog(e, 0.9, 1.3)));
+    const line = (s, y, col, d, size = 54) => {
+      const a = eout(prog(e, d, d + 0.4));
+      text(s, W / 2, y + (1 - a) * 24, size, col, 'center', a);
+    };
+    line('في حقل اكتُشف قبل 23 عامًا', cy + 330, '#C9D6E8', 1.6, 58);
+    line('ولم يُستغل تجاريًا حتى اليوم', cy + 416, C.white, 2.3, 58);
+    const rw = 260 * eout(prog(e, 2.9, 3.3));
+    ctx.fillStyle = C.red; ctx.fillRect(W / 2 - rw / 2, cy + 486, rw, 8);
+    line('من سيعيد فتحه؟', cy + 580, C.green2, 3.3, 70);
+  }
+
   function sceneHook(e) {
     const img = IMG[I.img.hook];
     photo(img, 0, 0, W, H, [lerp(0.5, 0.42, e / 5), 0.38], 1.2 - 0.1 * eout(prog(e, 0, 5.5)));
@@ -681,7 +707,7 @@
     footer(eout(prog(e, BEAT * 6, BEAT * 6 + 0.6)), I.src.main);
   }
 
-  const SCENES = { hook: sceneHook, map: sceneMap, sign: sceneSign, c10: sceneC10, tiof: sceneTiof, murphy: sceneMurphy,
+  const SCENES = { tease: sceneTease, hook: sceneHook, map: sceneMap, sign: sceneSign, c10: sceneC10, tiof: sceneTiof, murphy: sceneMurphy,
     chariot: sceneChariot, unknown: sceneUnknown, summary: sceneSummary, outro: sceneOutro };
   function drawScene(k, t) {
     const e = t - STARTS[k];
@@ -768,6 +794,15 @@
       const cx = W * (1.05 - 2.4 * q) + W * 0.65 + 80;
       if (cx > -300 && cx < W + 300) logo(cx, H / 2, 240, 1, true);
     },
+    // the hook opens like a shutter: the halves slide up and down with a green seam
+    split(A, B, p) {
+      const q = eio(p);
+      ctx.drawImage(B, 0, 0);
+      const d = (H / 2) * q;
+      ctx.drawImage(A, 0, 0, W, H / 2, 0, -d, W, H / 2);
+      ctx.drawImage(A, 0, H / 2, W, H / 2, 0, H / 2 + d, W, H / 2);
+      ctx.fillStyle = C.green2; ctx.fillRect(0, H / 2 - d - 6, W, 6); ctx.fillRect(0, H / 2 + d, W, 6);
+    },
     // white flash on the final chord
     flash(A, B, p) {
       ctx.drawImage(p < 0.5 ? A : B, 0, 0);
@@ -794,10 +829,10 @@
     }
     ctx = mainCtx;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
-    const f = Math.max(1 - prog(t, 0, 0.3), prog(t, DURATION - 0.8, DURATION));
+    const f = prog(t, DURATION - 0.8, DURATION);
     if (f > 0) { ctx.fillStyle = `rgba(255,255,255,${f})`; ctx.fillRect(0, 0, W, H); }
   }
-  function renderCover() { renderFrame(4.3); }
+  function renderCover() { renderFrame(9.3); }
 
   async function init() {
     await document.fonts.load(font(48));

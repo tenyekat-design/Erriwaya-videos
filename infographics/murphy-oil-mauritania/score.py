@@ -21,9 +21,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TM = json.loads(re.search(r'=\s*(\{.*\});', open(os.path.join(HERE, 'timeline.js')).read(), re.S).group(1))
 SR = 48000
 BEAT, BAR = TM['beat'], TM['bar']
-CUTS = TM['cuts']
-DUR = TM['duration']
-N = int(DUR * SR)
+# an opening hook ('tease') plays before the piece: the piece runs on its own clock, shifted by T0
+T0 = TM['cuts'][0] if TM['scenes'][0] == 'tease' else 0.0
+CUTS = [c - T0 for c in TM['cuts']][1 if T0 else 0:]
+DUR = TM['duration'] - T0
+N = int(TM['duration'] * SR)
 rng = np.random.default_rng(11)
 
 # buses: dry and reverb send, stereo
@@ -41,7 +43,7 @@ def hz(m):
 
 def place(sig, at, gain=1.0, pan=0.0, send=0.0):
     """Mono or stereo signal at time `at`; pan -1 left .. +1 right (or an array of the same length)."""
-    i = int(round(at * SR))
+    i = int(round((at + T0) * SR))
     if i >= N:
         return
     if i < 0:
@@ -400,6 +402,26 @@ for m in (62, 69, 74, 77, 81):
 for k, m in enumerate([86, 81]):
     place(marimba(m), c[8] + BEAT * (3.5 + 0.5 * k), 0.3, send=0.3)
 place(bell(86, 2.0), c[8] + BEAT * 5, 0.35, send=0.4)
+
+# ---------------------------------------------------------------- the hook (before the piece, times < 0)
+if T0:
+    h0 = -T0
+    place(impact(1.2), h0 + 0.02, 0.95, send=0.3)                     # hard hit on the first frame
+    place(crash(2.5), h0 + 0.02, 0.45, send=0.4)
+    place(bass(26, 3.0) * np.exp(-t_(int(3.0 * SR)) * 0.6), h0 + 0.02, 0.7)
+    place(pad([38, 45, 50, 53, 57], T0 + 0.5, cutoff=700, a=0.3, r=0.6), h0, 0.3, send=0.4)   # low D minor drone
+    for k in range(18):                                                # the counter ticks, slowing as 280 lands
+        at = h0 + 0.25 + 1.15 * (1 - (1 - k / 18) ** 1.8)
+        place(tek() * 0.45, at, 0.4, pan=0.25 * (-1) ** k)
+    place(bell(81), h0 + 1.45, 0.55, send=0.4)
+    place(bell(86), h0 + 1.47, 0.3, send=0.4)
+    for k in range(4):                                                 # heartbeat pulse under the lines
+        place(kick(0.9), h0 + 2.0 + k * BEAT, 0.6)
+        place(kick(0.6), h0 + 2.0 + k * BEAT + 0.16, 0.4)
+    place(marimba(74), h0 + 2.2, 0.45, pan=0.3, send=0.3)
+    place(marimba(77), h0 + 3.3, 0.45, pan=-0.3, send=0.3)
+    place(riser(1.6, 300, 9000), -1.6, 0.55, send=0.3)                 # into the title
+    place(whoosh(0.8, 500, 8000), -0.4, 0.5, pan=np.linspace(-0.6, 0.6, int(0.8 * SR)), send=0.2)
 
 # ---------------------------------------------------------------- mix
 ir_n = int(2.4 * SR)
