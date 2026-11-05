@@ -1,7 +1,7 @@
 name: erriwaya
 description: تطبيق الرواية – أخبار وتقارير وفيديوهات.
 publish_to: 'none'
-version: 1.4.5+23
+version: 1.5.0+24
 
 environment:
   sdk: ^3.5.0

@@ -8,6 +8,7 @@ import '../../widgets/article_card.dart';
 import 'compose_screen.dart';
 import 'push_key_screen.dart';
 import 'site_admin_screens.dart';
+import 'social_admin_screens.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -51,6 +52,18 @@ class AdminScreen extends StatelessWidget {
             icon: const Icon(Icons.inbox_outlined),
             onPressed: () => Navigator.of(context)
                 .push(MaterialPageRoute(builder: (_) => const MessagesScreen())),
+          ),
+          IconButton(
+            tooltip: 'تعليقات القراء',
+            icon: const Icon(Icons.forum_outlined),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const CommentsAdminScreen())),
+          ),
+          IconButton(
+            tooltip: 'استطلاعات الرأي',
+            icon: const Icon(Icons.poll_outlined),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const PollsAdminScreen())),
           ),
           IconButton(
             tooltip: 'عن الرواية والاتصال',
