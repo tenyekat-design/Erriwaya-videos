@@ -7,6 +7,7 @@ import '../services/articles_service.dart';
 import '../services/saved_service.dart';
 import '../theme.dart';
 import 'dossier_screen.dart';
+import '../widgets/social.dart';
 
 class ArticleScreen extends StatefulWidget {
   final Article article;
@@ -122,7 +123,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
             const SizedBox(height: 18),
             SelectableText(a.body,
                 style: const TextStyle(fontSize: 17, height: 1.9, color: Brand.ink)),
+            const SizedBox(height: 18),
+            FadeSlideIn(child: ReactionsBar(articleId: a.id)),
             DossierBox(article: a),
+            const SizedBox(height: 24),
+            CommentsSection(articleId: a.id),
           ]),
         ),
       ]),

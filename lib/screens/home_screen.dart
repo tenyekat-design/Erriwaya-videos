@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../widgets/social.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../config.dart';
@@ -77,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _LatestTicker(feed: all)),
             const SliverToBoxAdapter(child: CapitalsBoard()),
             const SliverToBoxAdapter(child: DossiersStrip()),
+            const SliverToBoxAdapter(child: PollCard()),
             SliverToBoxAdapter(
               // الأزرار بارتفاع ثابت يتسع لنصّها (كانت تُضغط في 36 بكسل فينزل النص إلى أسفلها)
               child: SizedBox(
@@ -137,9 +140,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (i == 1) return const _SectionTitle('آخر الأخبار');
                     final o = list[i == 0 ? 0 : i - 1];
                     if (i == 0) {
-                      return o is Article ? ArticleHero(article: o) : HeroCard(video: o as VideoItem);
+                      return FadeSlideIn(
+                          child: PressScale(
+                              child: o is Article ? ArticleHero(article: o) : HeroCard(video: o as VideoItem)));
                     }
-                    return o is Article ? ArticleTile(article: o) : NewsTile(video: o as VideoItem);
+                    return FadeSlideIn(
+                      key: ValueKey(o is Article ? 'a${o.id}' : 'v${(o as VideoItem).id}'),
+                      delayMs: i < 8 ? (i - 2) * 45 : 0,
+                      child: PressScale(
+                          child: o is Article ? ArticleTile(article: o) : NewsTile(video: o as VideoItem)),
+                    );
                   },
                 ),
               ),
