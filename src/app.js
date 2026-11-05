@@ -146,7 +146,7 @@
     Object.assign(L, {
       logoY: BL.logoY, logoH: BL.logoH || L.logoH, lower: B, ticker: BL.ticker, stingY: BL.stingY,
       // photos shown whole (no crop), at most 1.6x their pixel size, on navy above the lower third
-      fit: TL.photos !== 'cover', photo: BL.photo, hookPhoto: BL.hookPhoto, maxUp: 1.6,
+      fit: TL.photos !== 'cover', photo: BL.photo, hookPhoto: BL.hookPhoto, maxUp: 2.0,
       kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
       head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
       caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
@@ -568,10 +568,11 @@
   }
 
   // whole photo inside area A (no crop), scaled by z around its centre, never enlarged past L.maxUp
-  function fitDraw(img, A, z = 1) {
-    const s = Math.min(A.w / img.width, A.h / img.height, L.maxUp || 1.6) * z;
+  function fitDraw(img, A, z = 1, dx = 0, dy = 0) {
+    // sized so the photo stays whole at the largest zoom (1.1) and drift (±22 px) of the camera move
+    const s = Math.min((A.w - 50) / (img.width * 1.1), A.h / (img.height * 1.1), L.maxUp || 2) * z;
     const w = img.width * s, h = img.height * s;
-    const x = A.x + (A.w - w) / 2, y = A.y + (A.h - h) / 2;
+    const x = A.x + (A.w - w) / 2 + dx, y = A.y + (A.h - h) / 2 + dy;
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
     ctx.fillStyle = '#000'; ctx.fillRect(x, y, w, h);
@@ -589,9 +590,16 @@
     const img = IMG[card.img];
     if (L.fit) {
       // the card slides as a whole frame; the photo sits whole in L.photo with a slow, crop-free push
+      // cinematic move of the whole photo (nothing inside it is cropped): a slow push in or pull out
+      // (from the card's first move: zoom b > a pushes in) with a gentle drift, alternating side card to card
       navyBack(x, y, w, h);
-      const z = 1 + 0.03 * clamp((a - card.start) / Math.max(1, card.end - card.start));
-      fitDraw(img, { x: x + L.photo.x, y: y + L.photo.y, w: L.photo.w, h: L.photo.h }, z);
+      const k = CARDS.indexOf(card), dir = k % 2 ? 1 : -1;
+      const pr = clamp((a - card.start + 0.6) / Math.max(1.5, card.end - card.start + 1.2));
+      const e = pr * 0.7 + eio(pr) * 0.3;
+      const m0 = card.moves[0], pushIn = !m0.b || !m0.a || m0.b[2] >= m0.a[2];
+      const z = pushIn ? lerp(1.0, 1.1, e) : lerp(1.1, 1.0, e);
+      const dx = dir * lerp(-22, 22, e), dy = lerp(8, -8, e);
+      fitDraw(img, { x: x + L.photo.x, y: y + L.photo.y, w: L.photo.w, h: L.photo.h }, z, dx, dy);
       return;
     }
     const mv = card.moves;
@@ -1608,7 +1616,7 @@
     // photo: punch-in at the start, slow push, a quick zoom as it hands over to the map
     const f = hk.f || [0.5, 0.5];
     const z = lerp(1.22, 1.06, eout(prog(t, 0, 0.5))) + 0.05 * prog(t, 0.5, HOOK) + 0.25 * ein(out);
-    if (L.fit) { navyBack(0, 0, W, H); fitDraw(img, L.hookPhoto, 1 + 0.04 * prog(t, 0, HOOK) + 0.15 * ein(out)); }
+    if (L.fit) { navyBack(0, 0, W, H); fitDraw(img, L.hookPhoto, lerp(1.0, 1.08, eio(prog(t, 0, HOOK))) + 0.15 * ein(out), lerp(-16, 16, prog(t, 0, HOOK))); }
     else coverDraw(img, 0, 0, W, H, f[0], f[1], z);
     const g = ctx.createLinearGradient(0, H * 0.35, 0, H);
     g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.45, 'rgba(11,31,75,0.72)'); g.addColorStop(1, 'rgba(11,31,75,0.94)');

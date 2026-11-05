@@ -37,7 +37,7 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 ## Fixed decisions
 
 - AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork), inside the safe area.
-- Approved 29 Oct 2026 (current reference, all formats, the default): the "broadcast" look. Photo shown whole (no crop, at most 1.6x its pixel size, slow crop-free push) on navy above the
+- Approved 29 Oct 2026 (current reference, all formats, the default): the "broadcast" look. Photo shown whole (no crop, at most 2x its pixel size, cinematic push in/out and drift of the whole frame) on navy above the
   lower third (user's decision, 5 Nov 2026; `photos: 'cover'` in edition.js brings back the full-frame crop); logo
   at the top (white, soft shadow, no shade, no story counter); lower third = one two-colour story tag (green country, white topic, square
   corners, slanted left edge) on a white headline bar (navy text, no tatweel, no halo) that carries «الموجز الإخباري»
