@@ -128,6 +128,7 @@ class Article {
   final DateTime createdAt;
   final List<String> portals; // معرّفات البوابات التي اختارها المحرر
   final String writer; // كاتب المقال (لمقالات الرأي خاصة)، يظهر «بقلم»
+  final String dossier; // معرّف «ملف الرواية» الذي ينتمي إليه الخبر (خطه الزمني في الموقع)، أو فارغ
 
   Article({
     required this.id,
@@ -140,6 +141,7 @@ class Article {
     required this.createdAt,
     this.portals = const [],
     this.writer = '',
+    this.dossier = '',
   });
 
   Uint8List? _thumbBytes;
@@ -171,6 +173,7 @@ class Article {
         'createdAt': createdAt.toIso8601String(),
         'portals': portals,
         'writer': writer,
+        'dossier': dossier,
       };
 
   factory Article.fromJson(Map<String, dynamic> j) => Article(
@@ -184,6 +187,7 @@ class Article {
         createdAt: DateTime.tryParse((j['createdAt'] ?? '') as String) ?? DateTime.now(),
         portals: ((j['portals'] ?? const []) as List).map((e) => e.toString()).toList(),
         writer: (j['writer'] ?? '') as String,
+        dossier: (j['dossier'] ?? '') as String,
       );
 }
 

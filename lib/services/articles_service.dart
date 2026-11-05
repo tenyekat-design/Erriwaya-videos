@@ -58,6 +58,7 @@ class ArticlesService extends ChangeNotifier {
       createdAt: ts is Timestamp ? ts.toDate() : DateTime.now(),
       portals: ((m['portals'] ?? const []) as List).map((e) => e.toString()).toList(),
       writer: ((m['writer'] ?? '') as String).trim(),
+      dossier: ((m['dossier'] ?? '') as String).trim(),
     );
   }
 
@@ -86,6 +87,7 @@ class ArticlesService extends ChangeNotifier {
     required String author,
     String writer = '',
     List<String> portals = const [],
+    String dossier = '',
   }) async {
     final prepared = await compute(_prepareImages, images);
     final doc = _col.doc();
@@ -100,6 +102,7 @@ class ArticlesService extends ChangeNotifier {
       'author': author,
       'writer': writer,
       'portals': portals,
+      'dossier': dossier,
       'createdAt': FieldValue.serverTimestamp(),
     });
     for (var i = 0; i < prepared.full.length; i++) {
@@ -119,6 +122,7 @@ class ArticlesService extends ChangeNotifier {
     required List<Uint8List> images,
     String writer = '',
     List<String> portals = const [],
+    String dossier = '',
   }) async {
     final prepared = await compute(_prepareImages, images);
     final doc = _col.doc(original.id);
@@ -136,6 +140,7 @@ class ArticlesService extends ChangeNotifier {
       'imageCount': prepared.full.length,
       'writer': writer,
       'portals': portals,
+      'dossier': dossier,
       'updatedAt': FieldValue.serverTimestamp(),
     });
     for (var i = 0; i < prepared.full.length; i++) {
