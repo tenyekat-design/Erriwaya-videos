@@ -698,8 +698,6 @@ function homeView() {
     <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
 
-  <div id="briefSlot"></div>
-
   <section id="latest" aria-label="آخر الأخبار">
     <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
     <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map(([id, name]) => `<button type="button" data-f="${id}" aria-pressed="${id === state.filter}">${esc(name)}</button>`).join("")}</div>
@@ -921,7 +919,7 @@ function route() {
   }
   main.innerHTML = homeView();
   if (h === "portals") { togglePortals(true); window.scrollTo(0, 0); }
-  else if (h === "about" || h === "latest" || h === "brief") document.getElementById(h)?.scrollIntoView();
+  else if (h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
   else if (h === "home") window.scrollTo(0, 0);
 }
 
@@ -1079,4 +1077,3 @@ loadSnapshot().then(() => { if (/^#v-/.test(location.hash)) openVideo(location.h
 setInterval(loadLive, 3 * 60 * 1000);
 })();
 </script>
-<script src="assets/brief.js" defer></script>
