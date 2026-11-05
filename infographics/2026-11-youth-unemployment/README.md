@@ -13,6 +13,10 @@ node infographics/2026-11-youth-unemployment/render.js --stills 9,20   # لقط�
 المخرجات: `output/erriwaya-infographic-youth-unemployment[-story].mp4` والغلاف `-cover.jpg`.
 لا يغيّر شيئا في قالب الموجز: يستعمل `assets/` و`src/map-data.js` و`src/icons.js` كما هي.
 
+الصور في `img/` (من المستخدم، 5 نوفمبر 2026) للتوضيح فقط، بلا تعليق ولا نسبة لمكان أو مصدر:
+العنوان (`job-fair`, `recruiter-booth`)، ليبيا (`interviews`)، الأرقام الرسمية (`job-caravan`)،
+الفجوة بين الجنسين (`vocational-training`)، خارج العمل والدراسة (`employment-office`).
+
 ## المشاهد والأرقام ومصادرها
 
 الشباب = الفئة العمرية من 15 إلى 24 سنة.

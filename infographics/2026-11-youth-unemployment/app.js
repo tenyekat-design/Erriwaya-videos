@@ -130,12 +130,64 @@
     g.drawImage(LOGO, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = C.ink; g.fillRect(0, 0, c.width, c.height);
     return c;
   }
-  function drawLogo(cx, cy, h, alpha = 1) {
+  function drawLogo(cx, cy, h, alpha = 1, white = false) {
     if (alpha <= 0 || !LOGO_INK) return;
-    const w = h * LOGO_INK.width / LOGO_INK.height;
+    const img = white ? LOGO : LOGO_INK, w = h * img.width / img.height;
     ctx.save(); ctx.globalAlpha *= alpha;
-    ctx.drawImage(LOGO_INK, cx - w / 2, cy - h / 2, w, h);
+    if (white) { ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 4; }
+    ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
     ctx.restore();
+  }
+
+  // photos (img/): illustrations only, no captions
+  const IMG = {};
+  ['interviews', 'job-fair', 'recruiter-booth', 'employment-office', 'job-caravan', 'vocational-training'].forEach(n => {
+    IMG[n] = new Image(); IMG[n].src = 'img/' + n + '.jpg';
+  });
+  // cover-fit with a focus point (fx, fy) and a zoom for slow camera moves
+  function photo(name, x, y, w, h, fx = 0.5, fy = 0.5, zoom = 1) {
+    const im = IMG[name];
+    if (!im || !im.naturalWidth) return;
+    const k = Math.max(w / im.width, h / im.height) * zoom, sw = w / k, sh = h / k;
+    const sx = clamp(fx * im.width - sw / 2, 0, im.width - sw), sy = clamp(fy * im.height - sh / 2, 0, im.height - sh);
+    ctx.drawImage(im, sx, sy, sw, sh, x, y, w, h);
+  }
+  // rounded photo card with a white frame and shadow; pops in with p; shade darkens the lower part for text
+  function photoCard(name, x, y, w, h, p, lt, fx, fy, shade = 0) {
+    if (p <= 0) return;
+    const s = lerp(0.9, 1, eback(p));
+    ctx.save(); ctx.globalAlpha *= clamp(p * 2);
+    ctx.translate(x + w / 2, y + h / 2); ctx.scale(s, s); ctx.translate(-x - w / 2, -y - h / 2);
+    shadow(30, 12, 0.18); ctx.fillStyle = '#fff'; rrect(x - 7, y - 7, w + 14, h + 14, 30); ctx.fill(); noShadow();
+    rrect(x, y, w, h, 24); ctx.clip();
+    photo(name, x, y, w, h, fx, fy, 1.04 + lt * 0.012);
+    if (shade) {
+      const g = ctx.createLinearGradient(0, y, 0, y + h);
+      g.addColorStop(0, `rgba(27,38,53,${shade * 0.35})`); g.addColorStop(1, `rgba(27,38,53,${shade})`);
+      ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+    }
+    ctx.restore();
+  }
+  // photo card in the free space left of a scene title
+  function titlePhoto(lt, name, lines, fx, fy) {
+    const lw = Math.max(...lines.map(l => measure(l, 62)));
+    const x = 70, w = Math.min(460, W - 70 - lw - 50 - x);
+    const y = Y(4), h = Y(182) - Y(4);
+    if (w > 160) photoCard(name, x, y, w, h, prog(lt, 0.45, 1.0), lt, fx, fy);
+  }
+  // full-width hero photo at the top of the frame, fading into the background below
+  function hero(draw, y0, y1) {
+    OCTX.setTransform(1, 0, 0, 1, 0, 0); OCTX.globalAlpha = 1; OCTX.globalCompositeOperation = 'source-over';
+    OCTX.clearRect(0, 0, W, H);
+    ctx = OCTX;
+    try { draw(); } finally { ctx = MAIN; }
+    OCTX.setTransform(1, 0, 0, 1, 0, 0);
+    OCTX.globalCompositeOperation = 'destination-in';
+    const g = OCTX.createLinearGradient(0, y0, 0, y1);
+    g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    OCTX.fillStyle = g; OCTX.fillRect(0, 0, W, H);
+    OCTX.globalCompositeOperation = 'source-over';
+    MAIN.drawImage(OFF, 0, 0);
   }
 
   // ---------- map ----------
@@ -296,8 +348,20 @@
     g.addColorStop(0, 'rgba(244,247,250,0.95)'); g.addColorStop(1, 'rgba(244,247,250,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
+    const hy1 = FORMAT === 'story' ? 940 : 650, hy0 = FORMAT === 'story' ? 680 : 420;
+    const tr2 = MAIN.getTransform(), ga2 = MAIN.globalAlpha;
+    hero(() => {
+      ctx.setTransform(tr2); ctx.globalAlpha = ga2;
+      const z = 1.03 + lt * 0.018, x2 = eio(prog(lt, 2.6, 3.4));
+      photo('job-fair', 0, -40, W, hy1 + 40, 0.5, 0.42, z);
+      if (x2 > 0) { ctx.globalAlpha = ga2 * x2; photo('recruiter-booth', 0, -40, W, hy1 + 40, 0.5, 0.45, z); }
+      ctx.globalAlpha = ga2;
+      const g2 = ctx.createLinearGradient(0, 0, 0, hy1);
+      g2.addColorStop(0, 'rgba(27,38,53,0.45)'); g2.addColorStop(0.6, 'rgba(27,38,53,0.2)'); g2.addColorStop(1, 'rgba(27,38,53,0)');
+      ctx.fillStyle = g2; ctx.fillRect(0, 0, W, hy1);
+    }, hy0, hy1);
     const lp = eout(prog(lt, 0.15, 1.0));
-    drawLogo(W / 2, cy - 345 + (1 - lp) * 30, 290, lp);
+    drawLogo(W / 2, (FORMAT === 'story' ? 470 : 250) + (1 - lp) * 30, 290, lp, true);
     const tw = measure('إنفوجرافيك', 32) + 45;
     tag('إنفوجرافيك', W / 2 + tw / 2, cy - 150, 32, prog(lt, 0.9, 1.4), C.blue);
     wipeText('بطالة الشباب', W / 2, cy - 40, 128, C.ink, prog(lt, 1.15, 1.8), 'center');
@@ -448,15 +512,20 @@
   scene(6.0, { acc: C.coral, src: 'المصدر: منظمة العمل الدولية، اتجاهات تشغيل الشباب في العالم 2026', draw(lt) {
     sceneTitle(lt, 'ليبيا', ['شاب من كل اثنين في سوق', 'العمل الليبية بلا وظيفة'], C.coral);
     const p = prog(lt, 0.6, 2.2);
-    bigNumber(fmt(50.1 * eout(p)) + '%', W / 2, Y(430), 210, C.coral, clamp(p * 3));
-    text('نسبة البطالة بين الشباب الليبيين في 2025', W / 2, Y(560), 38, C.ink, 'center', prog(lt, 1.4, 2.0));
-    pictoRow(10, 5, W / 2, Y(740), 120, 34, 1.6, lt, C.coral);
-    text('الأعلى في شمال إفريقيا', W / 2, Y(980), 40, C.coral, 'center', prog(lt, 3.2, 3.8));
+    photoCard('interviews', 70, Y(205), W - 140, Y(605) - Y(205), prog(lt, 0.3, 0.9), lt, 0.55, 0.45, 0.62);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 30;
+    text(fmt(50.1 * eout(p)) + '%', W / 2, Y(420), 200, '#fff', 'center', clamp(p * 3), 'ltr');
+    ctx.restore();
+    ctx.fillStyle = C.coral; const ul = 220 * eout(prog(lt, 1.6, 2.2)); rrect(W / 2 - ul / 2, Y(520), ul, 9, 4.5); ctx.fill();
+    text('نسبة البطالة بين الشباب الليبيين في 2025', W / 2, Y(658), 38, C.ink, 'center', prog(lt, 1.4, 2.0));
+    pictoRow(10, 5, W / 2, Y(812), 108, 34, 1.6, lt, C.coral);
+    text('الأعلى في شمال إفريقيا', W / 2, Y(990), 40, C.coral, 'center', prog(lt, 3.2, 3.8));
   } });
 
   // 5. the latest official national figures
   scene(8.6, { acc: C.green, src: 'المصادر: المندوبية السامية للتخطيط (المغرب) · المعهد الوطني للإحصاء (تونس)', draw(lt) {
     sceneTitle(lt, 'أحدث الأرقام الرسمية', ['بطالة الشباب في 2026', 'وفق الإحصاءات الوطنية'], C.green);
+    titlePhoto(lt, 'job-caravan', ['بطالة الشباب في 2026', 'وفق الإحصاءات الوطنية'], 0.45, 0.45);
     const cards = [
       { id: '504', name: 'المغرب', period: 'الربع الثالث 2026', v: 30.5, prev: 27.2, prevLbl: 'الربع الثاني', up: true, note: 'ارتفاع 3.3 نقاط' },
       { id: '788', name: 'تونس', period: 'الربع الثاني 2026', v: 35.4, prev: 37.5, prevLbl: 'الربع الأول', up: false, note: 'تراجع 2.1 نقطة' },
@@ -507,6 +576,7 @@
   // 6. young women
   scene(7.2, { acc: C.purple, src: 'المصادر: منظمة العمل الدولية (الجزائر 2025) · المعهد الوطني للإحصاء (تونس، الربع الثاني 2026)', draw(lt) {
     sceneTitle(lt, 'الفجوة بين الجنسين', ['الشابات يدفعن', 'الثمن الأكبر'], C.purple);
+    titlePhoto(lt, 'vocational-training', ['الشابات يدفعن', 'الثمن الأكبر'], 0.4, 0.42);
     const groups = [
       { id: '012', name: 'الجزائر', sub: 'تقديرات 2025', f: 45.0, m: 26.5 },
       { id: '788', name: 'تونس', sub: 'الربع الثاني 2026', f: 37.1, m: 34.6 },
@@ -545,10 +615,14 @@
   scene(6.4, { acc: C.orange, src: 'المصدر: منظمة العمل الدولية، اتجاهات تشغيل الشباب في العالم 2026 (بيانات 2025)', draw(lt) {
     sceneTitle(lt, 'خارج العمل والدراسة', ['3 من كل 10 شباب في', 'شمال إفريقيا خارج الحسابات'], C.orange);
     const p = prog(lt, 0.6, 2.0);
-    bigNumber(fmt(NEET_NAFR * eout(p)) + '%', W / 2, Y(420), 190, C.orange, clamp(p * 3));
-    text('لا يعملون ولا يدرسون ولا يتلقون تدريبا', W / 2, Y(545), 40, C.ink, 'center', prog(lt, 1.3, 1.9));
-    pictoRow(10, 3, W / 2, Y(730), 120, 34, 1.5, lt, C.orange);
-    text('المعدل العالمي: 20%', W / 2, Y(975), 38, C.slate, 'center', prog(lt, 3.2, 3.8));
+    photoCard('employment-office', 70, Y(205), W - 140, Y(605) - Y(205), prog(lt, 0.3, 0.9), lt, 0.32, 0.45, 0.62);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 30;
+    text(fmt(NEET_NAFR * eout(p)) + '%', W / 2, Y(420), 190, '#fff', 'center', clamp(p * 3), 'ltr');
+    ctx.restore();
+    ctx.fillStyle = C.orange; const ul = 220 * eout(prog(lt, 1.5, 2.1)); rrect(W / 2 - ul / 2, Y(520), ul, 9, 4.5); ctx.fill();
+    text('لا يعملون ولا يدرسون ولا يتلقون تدريبا', W / 2, Y(658), 40, C.ink, 'center', prog(lt, 1.3, 1.9));
+    pictoRow(10, 3, W / 2, Y(812), 108, 34, 1.5, lt, C.orange);
+    text('المعدل العالمي: 20%', W / 2, Y(990), 38, C.slate, 'center', prog(lt, 3.2, 3.8));
   } });
 
   // 8. sources
@@ -707,6 +781,6 @@
   window.OUTRO = SCENES[SCENES.length - 1].t0;
   Promise.all([
     document.fonts.load(font(40)),
-    new Promise(r => { if (LOGO.complete && LOGO.naturalWidth) r(); else { LOGO.onload = r; LOGO.onerror = r; } }),
+    ...[LOGO, ...Object.values(IMG)].map(im => new Promise(r => { if (im.complete && im.naturalWidth) r(); else { im.onload = r; im.onerror = r; } })),
   ]).then(() => { LOGO_INK = inkLogo(); renderFrame(0); window.READY = true; });
 })();
