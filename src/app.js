@@ -47,7 +47,7 @@
       map: { x: 96, y: 236, w: 704, h: 770, r: 34 },
       dotsH: 1080,
       intro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 470, h: 380 }, titleY: 770 },
-      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 390, h: 280 }, titleY: 590, followY: 712, rowsY: 770 },
+      outro: { lon: 3, w: [78, 72], logo: { cx: 960, cy: 370, h: 260 }, titleY: 560, followY: 664, rowsY: 712, rowGap: 102 },
       cover: { logo: { cx: 1440, cy: 200, h: 230 }, title: [1440, 420, 92], date: [1440, 535, 42], photos: [[80, 80, 900, 560], [80, 670, 435, 330], [545, 670, 435, 330]], chips: { cx: 1440, y: 600, maxW: 760 } },
     },
     // TikTok / Reels / Shorts: content kept clear of the top bar and the caption/buttons at the bottom
@@ -132,16 +132,21 @@
     // the ticker, the inset map and the sting's height
     const BL = {
       feed: { logoY: 58, lower: { x: 30, y: 950, w: 1020, h: 178 }, maxW: 700, capW: 950, ticker: { y: 1236, h: 78 },
-              inset: { x: 40, y: 662 }, stingY: 0.42 },   // map bottom-left, above the story tag (off the faces)
+              inset: { x: 40, y: 662 }, stingY: 0.42,   // map bottom-left, above the story tag (off the faces)
+              photo: { x: 0, y: 200, w: 1080, h: 690 }, hookPhoto: { x: 0, y: 190, w: 1080, h: 560 } },
       story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
-               inset: { x: 40, y: 892 }, stingY: 0.42 },   // map bottom-left, above the story tag (off the faces)
+               inset: { x: 40, y: 892 }, stingY: 0.42,   // map bottom-left, above the story tag (off the faces)
+               photo: { x: 0, y: 300, w: 1080, h: 820 }, hookPhoto: { x: 0, y: 300, w: 1080, h: 700 } },
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
       youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
-                 inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
+                 inset: { x: 96, y: 734 }, stingY: 0.39,   // map bottom-left, level with the headline bar
+                 photo: { x: 200, y: 40, w: 1440, h: 660 }, hookPhoto: { x: 280, y: 40, w: 1360, h: 560 } },   // clear of the logo
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
     Object.assign(L, {
       logoY: BL.logoY, logoH: BL.logoH || L.logoH, lower: B, ticker: BL.ticker, stingY: BL.stingY,
+      // photos shown whole (no crop), at most 1.6x their pixel size, on navy above the lower third
+      fit: TL.photos !== 'cover', photo: BL.photo, hookPhoto: BL.hookPhoto, maxUp: 1.6,
       kicker: { cx: W0 / 2, right: xr, y: B.y - 38 },
       head: { cx: W0 / 2, right: xr - 46, cy: B.y + B.h / 2, maxW: BL.maxW, lineH: 62, panelH: 150, size: [40, 50], color: C.navy },
       caption: { right: xr - 46, cy: B.y + B.h + 38, maxW: BL.capW, sizes: [31, 28, 25], lines: 1, style: 'text' },
@@ -562,8 +567,33 @@
     ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
   }
 
+  // whole photo inside area A (no crop), scaled by z around its centre, never enlarged past L.maxUp
+  function fitDraw(img, A, z = 1) {
+    const s = Math.min(A.w / img.width, A.h / img.height, L.maxUp || 1.6) * z;
+    const w = img.width * s, h = img.height * s;
+    const x = A.x + (A.w - w) / 2, y = A.y + (A.h - h) / 2;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 12;
+    ctx.fillStyle = '#000'; ctx.fillRect(x, y, w, h);
+    ctx.restore();
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, x, y, w, h);
+  }
+  function navyBack(x, y, w, h) {
+    const g = ctx.createLinearGradient(0, y, 0, y + h);
+    g.addColorStop(0, '#132a5c'); g.addColorStop(1, '#081633');
+    ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+  }
+
   function drawCardImage(card, x, y, w, h, a) {
     const img = IMG[card.img];
+    if (L.fit) {
+      // the card slides as a whole frame; the photo sits whole in L.photo with a slow, crop-free push
+      navyBack(x, y, w, h);
+      const z = 1 + 0.03 * clamp((a - card.start) / Math.max(1, card.end - card.start));
+      fitDraw(img, { x: x + L.photo.x, y: y + L.photo.y, w: L.photo.w, h: L.photo.h }, z);
+      return;
+    }
     const mv = card.moves;
     let m = 0;
     for (let i = 0; i < mv.length; i++) if (a >= mv[i].t - 0.25) m = i;
@@ -694,9 +724,10 @@
       const gt = ctx.createLinearGradient(0, 0, 0, th);
       gt.addColorStop(0, 'rgba(11,31,75,0.9)'); gt.addColorStop(LOOK === 'captions' ? 0.6 : 0, `rgba(11,31,75,${LOOK === 'captions' ? 0.7 : 0.85})`); gt.addColorStop(1, 'rgba(11,31,75,0)');
       if (!L.broadcast) { ctx.fillStyle = gt; ctx.fillRect(0, 0, W, th); }  // broadcast: no shade at the top
-      const gb = ctx.createLinearGradient(0, H * 0.5, 0, H);
+      const g0 = L.fit ? L.photo.y + L.photo.h - 40 : H * 0.5;
+      const gb = ctx.createLinearGradient(0, g0, 0, H);
       gb.addColorStop(0, 'rgba(11,31,75,0)'); gb.addColorStop(0.45, `rgba(11,31,75,${L.pro ? 0.45 : 0.8})`); gb.addColorStop(1, `rgba(11,31,75,${L.pro ? 0.7 : 0.96})`);
-      if (!L.blurBg) { ctx.fillStyle = gb; ctx.fillRect(0, H * 0.5, W, H * 0.5); }
+      if (!L.blurBg) { ctx.fillStyle = gb; ctx.fillRect(0, g0, W, H - g0); }
     }
     ctx.restore();
   }
@@ -1577,7 +1608,8 @@
     // photo: punch-in at the start, slow push, a quick zoom as it hands over to the map
     const f = hk.f || [0.5, 0.5];
     const z = lerp(1.22, 1.06, eout(prog(t, 0, 0.5))) + 0.05 * prog(t, 0.5, HOOK) + 0.25 * ein(out);
-    coverDraw(img, 0, 0, W, H, f[0], f[1], z);
+    if (L.fit) { navyBack(0, 0, W, H); fitDraw(img, L.hookPhoto, 1 + 0.04 * prog(t, 0, HOOK) + 0.15 * ein(out)); }
+    else coverDraw(img, 0, 0, W, H, f[0], f[1], z);
     const g = ctx.createLinearGradient(0, H * 0.35, 0, H);
     g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.45, 'rgba(11,31,75,0.72)'); g.addColorStop(1, 'rgba(11,31,75,0.94)');
     ctx.fillStyle = g; ctx.fillRect(0, H * 0.35, W, H * 0.65);
@@ -1638,11 +1670,24 @@
   const SOCIAL = [
     { icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' },
     { icons: ['instagram'], handle: 'ERRIWAYA.MR' },
+    { icons: ['web'], handle: 'erriwaya.com' },
   ];
   function drawIcon(name, x, y, s) {
     ctx.save();
     ctx.fillStyle = C.navy;
     rrect(x, y, s, s, s * 0.3); ctx.fill();
+    if (name === 'web') {
+      // globe for the website
+      const cx = x + s / 2, cy = y + s / 2, r = s * 0.3;
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = s * 0.05;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(cx, cy, r * 0.45, r, 0, 0, 7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
+      ctx.moveTo(cx - r * 0.86, cy - r * 0.5); ctx.lineTo(cx + r * 0.86, cy - r * 0.5);
+      ctx.moveTo(cx - r * 0.86, cy + r * 0.5); ctx.lineTo(cx + r * 0.86, cy + r * 0.5); ctx.stroke();
+      ctx.restore();
+      return;
+    }
     ctx.translate(x + s * 0.22, y + s * 0.22);
     const k = (s * 0.56) / 24;
     ctx.scale(k, k);
@@ -1703,7 +1748,7 @@
     ctx.restore();
     const S = 72, gap = 16;
     SOCIAL.forEach((row, ri) => {
-      const y = L.outro.rowsY + ri * 112;
+      const y = L.outro.rowsY + ri * (L.outro.rowGap || 112);
       ctx.font = font(46); ctx.direction = 'ltr';
       const tw = ctx.measureText(row.handle).width;
       const iw = row.icons.length * S + (row.icons.length - 1) * gap;

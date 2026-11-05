@@ -1,12 +1,12 @@
 // Edition of 5 Nov 2026. All times are in seconds of the ORIGINAL voice-over (voiceover.mp3 in this
 // folder); the template maps them onto the video timeline. Images are files in ./img.
 // voiceover.mp3 = voiceover-original.mp3 (ElevenLabs) with the extra «هو» after «خليفة» removed
-// (122.815 -> 122.90 s, 15 ms crossfade).
+// (122.79 -> 122.922 s of the original, 10 ms crossfade).
 window.TIMELINE = {
   date: 'الخميس 5 نوفمبر 2026',
   title: 'الموجز الإخباري',
   audioCut: 0.0,      // the voice-over starts at "أهلا بكم"
-  audioEnd: 174.267,
+  audioEnd: 174.235,
   intro: 7.0,
   outroAt: 171.12,    // "شكرا لمتابعتكم"
   tail: 3.0,
@@ -25,8 +25,9 @@ window.TIMELINE = {
     { kicker: 'مالي', img: 'ml-officials.jpg', moves: [{ t: 6.54, a: [0.5, 0.4, 1.0], b: [0.5, 0.38, 1.1] }] },
     { kicker: 'تونس', img: 'tn-parliament-arch.jpg', moves: [{ t: 7.63, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.1] }] },
     // Western Sahara
-    { img: 'minurso-laayoune.jpg', moves: [{ t: 8.72, a: [0.5, 0.45, 1.0], b: [0.55, 0.45, 1.14] },
-                                           { t: 19.26, a: [0.62, 0.42, 1.3], b: [0.58, 0.42, 1.18] }] },
+    { img: 'minurso-laayoune.jpg', moves: [{ t: 8.72, a: [0.5, 0.45, 1.0], b: [0.55, 0.45, 1.14] }] },
+    { img: 'ma-king.jpg', moves: [{ t: 19.26, a: [0.5, 0.4, 1.0], b: [0.5, 0.38, 1.1] }] },
+    { img: 'polisario-official.jpg', moves: [{ t: 23.26, a: [0.55, 0.35, 1.0], b: [0.55, 0.32, 1.1] }] },
     // Senegal
     { img: 'sn-assembly.jpg', moves: [{ t: 29.18, a: [0.5, 0.45, 1.0], b: [0.45, 0.5, 1.14] }] },
     { img: 'sn-assembly-session.jpg', moves: [{ t: 38.64, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] },
