@@ -140,7 +140,7 @@
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
       youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
                  inset: { x: 96, y: 734 }, stingY: 0.39,   // map bottom-left, level with the headline bar
-                 photo: { x: 200, y: 40, w: 1440, h: 660 }, hookPhoto: { x: 280, y: 40, w: 1360, h: 560 } },   // clear of the logo
+                 photo: { x: 110, y: 40, w: 1560, h: 600 }, hookPhoto: { x: 280, y: 40, w: 1360, h: 560 } },   // clear of the logo (right) and the story tag (below)
     }[FORMAT] || null;
     const B = BL.lower, xr = B.x + B.w;
     Object.assign(L, {
