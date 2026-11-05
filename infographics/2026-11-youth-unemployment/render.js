@@ -51,23 +51,11 @@ async function renderRange(browser, f0, f1, file) {
   await page.close();
 }
 
-// Music only (no voice-over): the template's intro theme, the quiet bed raised a little, a whoosh at every
-// change of scene and the outro music whose final chord lands as the closing logo and handles appear.
-function buildAudio(duration, starts, outro, file) {
-  const A = p => path.join(ROOT, 'assets', 'audio', p);
-  const ms = s => Math.max(0, Math.round(s * 1000));
-  const OUTRO_HIT = 8.0, land = outro + 2.0, outStart = land - OUTRO_HIT;
-  const hits = starts.slice(1);
-  const f = [
-    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.8,afade=t=out:st=8.5:d=2.5[m]`,
-    `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration},volume=0.42,afade=t=in:st=0:d=2,afade=t=out:st=${outStart - 4.6}:d=2.5,adelay=4600|4600[bed]`,
-    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,adelay=${ms(outStart)}|${ms(outStart)}[out]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=300,volume=0.32,asplit=${hits.length}${hits.map((_, i) => `[w${i}]`).join('')}`,
-    ...hits.map((h, i) => `[w${i}]adelay=${ms(h - 0.5)}|${ms(h - 0.5)}[wd${i}]`),
-    `[m][bed][out]${hits.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + hits.length}:normalize=0:duration=longest,apad,atrim=0:${duration},afade=t=out:st=${duration - 0.8}:d=0.8,alimiter=limit=0.95[mix]`,
-  ].join(';');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav'),
-    '-filter_complex', f, '-map', '[mix]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
+// Music only (no voice-over): the original track from make-music.py (synced to the scenes), generated if missing.
+function buildAudio(duration, file) {
+  const music = path.join(HERE, 'music.wav');
+  if (!fs.existsSync(music)) execFileSync('python3', [path.join(HERE, 'make-music.py'), music], { stdio: 'inherit' });
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', music, '-af', `apad,atrim=0:${duration}`, '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
 }
 
 (async () => {
@@ -85,7 +73,7 @@ function buildAudio(duration, starts, outro, file) {
     return browser.close();
   }
   const probe = await openPage(browser);
-  const { duration, starts, outro } = await probe.evaluate(() => ({ duration: window.DURATION, starts: window.SCENE_STARTS, outro: window.OUTRO }));
+  const duration = await probe.evaluate(() => window.DURATION);
   fs.writeFileSync(COVER, await grab(probe, COVER_T, 'image/jpeg', 0.92));
   await probe.close();
   const F = Math.round(duration * FPS);
@@ -103,7 +91,7 @@ function buildAudio(duration, starts, outro, file) {
   fs.writeFileSync(path.join(tmp, 'list.txt'), parts.filter(Boolean).map(p => `file '${p}'`).join('\n'));
   const video = path.join(tmp, 'video.mp4'), audio = path.join(tmp, 'audio.m4a');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-c', 'copy', video]);
-  buildAudio(duration, starts, outro, audio);
+  buildAudio(duration, audio);
   const av = path.join(tmp, 'av.mp4');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', video, '-i', audio, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', av]);
   // the cover as the file's picture (no -shortest here: the picture stream is a single frame)

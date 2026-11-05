@@ -1,6 +1,6 @@
 // Erriwaya infographic: youth unemployment in the Maghreb (Nov 2026). Draws one frame with renderFrame(t).
 // ?format=feed (1080x1350, Facebook portrait, default) or ?format=story (1080x1920, Reels/Stories/TikTok).
-// Infographic palette (not the news-brief look): light paper background, one vivid colour per country,
+// Infographic palette (not the news-brief look): dark charcoal background, one vivid colour per country,
 // kept the same in every scene (title chips, map, ranking).
 (() => {
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
@@ -9,19 +9,19 @@
 
   // ---------- palette ----------
   const C = {
-    paper: '#FFF8EE', paper2: '#FDEFD9', ink: '#1E1B4B', card: '#FFFFFF',
-    mute: 'rgba(30,27,75,0.64)', faint: 'rgba(30,27,75,0.42)', track: 'rgba(30,27,75,0.07)',
+    paper: '#232B38', paper2: '#11161F', ink: '#F4F6F9', dark: '#151B26', card: '#FFFFFF', panel: '#2B3546',
+    mute: 'rgba(244,246,249,0.68)', faint: 'rgba(244,246,249,0.44)', track: 'rgba(255,255,255,0.08)',
     coral: '#F94144', orange: '#F3722C', amber: '#F8961E', yellow: '#F9C74F', green: '#43AA8B',
-    blue: '#277DA1', slate: '#577590', purple: '#9B5DE5', cyan: '#00BBF9',
+    blue: '#2D8FC4', slate: '#577590', purple: '#9B5DE5', cyan: '#00BBF9',
     up: '#E63946', down: '#2A9D8F',
   };
   // fill: bars / map / chips; text: the same hue dark enough to read on paper; on: text drawn on the fill
   const COUNTRY = {
     '434': { fill: C.coral, text: C.coral, on: '#fff' },
     '788': { fill: C.orange, text: C.orange, on: '#fff' },
-    '012': { fill: C.yellow, text: '#B7860B', on: C.ink },
-    '478': { fill: C.green, text: '#2F8A6E', on: '#fff' },
-    '504': { fill: C.blue, text: C.blue, on: '#fff' },
+    '012': { fill: C.yellow, text: C.yellow, on: C.dark },
+    '478': { fill: C.green, text: '#5CCBA8', on: '#fff' },
+    '504': { fill: C.blue, text: '#5BB4E5', on: '#fff' },
   };
 
   // ---------- data (all checked against the sources listed in README.md) ----------
@@ -87,7 +87,7 @@
     ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
     ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
   }
-  function shadow(blur = 28, y = 10, a = 0.12) { ctx.shadowColor = `rgba(30,27,75,${a})`; ctx.shadowBlur = blur; ctx.shadowOffsetY = y; }
+  function shadow(blur = 28, y = 10, a = 0.12) { ctx.shadowColor = `rgba(0,0,0,${Math.min(0.6, a * 2.5)})`; ctx.shadowBlur = blur; ctx.shadowOffsetY = y; }
   function noShadow() { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; }
   // text: dir rtl by default; align 'right' | 'center' | 'left'
   function text(s, x, y, size, color, align = 'right', alpha = 1, dir = 'rtl') {
@@ -127,7 +127,7 @@
   function inkLogo() {
     const c = document.createElement('canvas'); c.width = LOGO.width; c.height = LOGO.height;
     const g = c.getContext('2d');
-    g.drawImage(LOGO, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = C.ink; g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(LOGO, 0, 0);
     return c;
   }
   function drawLogo(cx, cy, h, alpha = 1) {
@@ -149,7 +149,7 @@
   const WSAHARA = idIndex['732'];
   const VAL = {}; ILO.forEach(c => { VAL[idIndex[c.id]] = c; });
   const FILL = {}; Object.keys(COUNTRY).forEach(id => { FILL[idIndex[id]] = hex(COUNTRY[id].fill); });
-  const LAND = [221, 214, 202];
+  const LAND = [70, 82, 101];
 
   function projector(cam, rect) {
     const k = rect.w / cam.w;
@@ -181,7 +181,7 @@
         if (col) singles.push(sx, sy, col[0], col[1]); else land.rect(sx - sq / 2, sy - sq / 2, sq, sq);
       }
     }
-    ctx.fillStyle = 'rgba(39,125,161,0.16)'; ctx.fill(sea);
+    ctx.fillStyle = 'rgba(140,175,210,0.13)'; ctx.fill(sea);
     ctx.fillStyle = rgb(LAND, landA); ctx.fill(land);
     for (let i = 0; i < singles.length; i += 4) {
       ctx.fillStyle = rgb(singles[i + 2], singles[i + 3]);
@@ -218,9 +218,31 @@
       const p = eback(prog(lt, t0 + i * 0.07, t0 + i * 0.07 + 0.45));
       const lit = i < on && lt > t0 + 0.6 + i * 0.1;
       ctx.save(); ctx.translate(x, y); ctx.scale(p, p);
-      person(0, 0, h, lit ? color : 'rgba(30,27,75,0.14)');
+      person(0, 0, h, lit ? color : 'rgba(255,255,255,0.14)');
       ctx.restore();
     }
+  }
+
+  // web icon: a globe in white strokes
+  function globe(x, y, r) {
+    ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = r * 0.16;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x, y, r * 0.45, r, 0, 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - r * 0.86, y - r * 0.5); ctx.lineTo(x + r * 0.86, y - r * 0.5);
+    ctx.moveTo(x - r * 0.86, y + r * 0.5); ctx.lineTo(x + r * 0.86, y + r * 0.5); ctx.stroke();
+    ctx.restore();
+  }
+  // website pill: globe + erriwaya.com
+  function sitePill(cx, cy, size, alpha) {
+    if (alpha <= 0) return;
+    const s = 'erriwaya.com', tw = measure(s, size), r = size * 0.42, w = tw + r * 2 + size * 1.5, h = size * 1.7;
+    ctx.save(); ctx.globalAlpha *= alpha;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)'; rrect(cx - w / 2, cy - h / 2, w, h, h / 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1.5; ctx.stroke();
+    globe(cx - w / 2 + size * 0.6 + r, cy, r);
+    ctx.restore();
+    text(s, cx - w / 2 + size * 1.0 + r * 2, cy + 2, size, C.ink, 'left', alpha, 'ltr');
   }
 
   // tag pill (scene colour, white text), grows from the right
@@ -271,7 +293,7 @@
     // keep the centre readable
     const cy = FORMAT === 'story' ? 960 : 700;
     const g = ctx.createRadialGradient(W / 2, cy, 80, W / 2, cy, 620);
-    g.addColorStop(0, 'rgba(255,248,238,0.95)'); g.addColorStop(1, 'rgba(255,248,238,0)');
+    g.addColorStop(0, 'rgba(30,37,49,0.95)'); g.addColorStop(1, 'rgba(30,37,49,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     const lp = eout(prog(lt, 0.15, 1.0));
@@ -296,6 +318,7 @@
       }
       x -= ws[i] + gap;
     });
+    sitePill(W / 2, cy + 410, 30, eout(prog(lt, 3.1, 3.6)));
   } });
 
   // 1. the region against the world
@@ -310,7 +333,7 @@
     const total = cols.length * cw + (cols.length - 1) * gap;
     for (let g = 0; g <= 30; g += 10) {
       const y = base - maxH * g / 30;
-      ctx.fillStyle = 'rgba(30,27,75,0.08)'; ctx.fillRect(110, y, W - 220, 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(110, y, W - 220, 2);
       text(g + '%', 100, y, 24, C.faint, 'right', prog(lt, 0.6, 1.0), 'ltr');
     }
     cols.forEach((c, i) => {
@@ -337,14 +360,14 @@
     const P = masked(rect, 70, () => {
       ctx.setTransform(tr); ctx.globalAlpha = ga * mp;
       const P = drawGrid(cam, rect, (ci, lon, my) => {
-        if (ci === WSAHARA) return [[190, 182, 168], 0.7];
+        if (ci === WSAHARA) return [[96, 106, 122], 0.8];
         if (!MAGHREB.has(ci)) return null;
         const c = VAL[ci], e = lt - startOf[ci];
         const d = Math.hypot(lon - c.at[0], my - mercY(c.at[1]));
         const a = clamp((e * 22 - d) / 3);
-        return [mix([205, 197, 184], FILL[ci], a), 1];
+        return [mix([78, 92, 112], FILL[ci], a), 1];
       });
-      strokeLines(P, MD.borders, 'rgba(255,255,255,0.9)', 2);
+      strokeLines(P, MD.borders, 'rgba(17,22,31,0.9)', 2);
       return P;
     });
     // labels: white cards, value in ink, name in the country's colour
@@ -368,7 +391,7 @@
       ctx.fillStyle = C.card; rrect(-bw / 2, -bh / 2, bw, bh, 16); ctx.fill();
       noShadow();
       ctx.fillStyle = COUNTRY[c.id].fill; rrect(-bw / 2, bh / 2 - 9, bw, 9, 4); ctx.fill();
-      text(big, 0, -12, 46, C.ink, 'center', 1, 'ltr');
+      text(big, 0, -12, 46, C.dark, 'center', 1, 'ltr');
       text(c.name, 0, 26, 26, COUNTRY[c.id].text, 'center');
       ctx.restore();
     });
@@ -445,7 +468,7 @@
       if (p <= 0) return;
       const x = 70 + (1 - p) * 80, w = W - 140;
       ctx.save(); ctx.globalAlpha = p;
-      shadow(34, 14, 0.12); ctx.fillStyle = C.card; rrect(x, y, w, ch, 26); ctx.fill(); noShadow();
+      shadow(34, 14, 0.12); ctx.fillStyle = C.panel; rrect(x, y, w, ch, 26); ctx.fill(); noShadow();
       ctx.fillStyle = K.fill; rrect(x + w - 14, y + 26, 14, ch - 52, 7); ctx.fill();
       text(c.name, x + w - 48, y + 62, 54, K.text);
       text(c.period, x + w - 48, y + 124, 32, C.mute);
@@ -495,7 +518,7 @@
       const ap = prog(lt, t0 - 0.1, t0 + 0.4);
       text(g.name, xr, y + 48, 48, C.ink, 'right', ap);
       text(g.sub, xr, y + 102, 26, C.mute, 'right', ap);
-      [['الشابات', g.f, C.purple, '#fff'], ['الشبان', g.m, C.cyan, C.ink]].forEach(([lbl, v, col, on], k) => {
+      [['الشابات', g.f, C.purple, '#fff'], ['الشبان', g.m, C.cyan, C.dark]].forEach(([lbl, v, col, on], k) => {
         const by = y + 30 + k * 82;
         const p = eio(prog(lt, t0 + k * 0.2, t0 + 1.1 + k * 0.2));
         const w = span * v / maxV * p;
@@ -559,7 +582,7 @@
       drawGrid(cam, orect, (ci) => (MAGHREB.has(ci) ? [FILL[ci], 1] : null), 0.5);
     });
     const g = ctx.createRadialGradient(W / 2, cy + 120, 60, W / 2, cy + 120, 600);
-    g.addColorStop(0, 'rgba(255,248,238,0.96)'); g.addColorStop(1, 'rgba(255,248,238,0)');
+    g.addColorStop(0, 'rgba(30,37,49,0.96)'); g.addColorStop(1, 'rgba(30,37,49,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     // the header logo glides to the centre
     const gp = eio(prog(lt, 0.1, 1.1));
@@ -568,7 +591,7 @@
     rainbow(W / 2, cy + 280, 220, 7, prog(lt, 1.1, 1.7));
     text('تابعونا على', W / 2, cy + 360, 30, C.mute, 'center', eout(prog(lt, 1.3, 1.8)));
     const S = 72, gap = 16;
-    [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }].forEach((row, ri) => {
+    [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }, { icons: ['web'], handle: 'erriwaya.com', web: true }].forEach((row, ri) => {
       const y = cy + 420 + ri * 112;
       const tw = measure(row.handle, 46);
       const iw = row.icons.length * S + (row.icons.length - 1) * gap, total = iw + 30 + tw, x0 = W / 2 - total / 2;
@@ -579,13 +602,14 @@
       row.icons.forEach((ic, i) => {
         const ip = eback(prog(lt, 1.55 + ri * 0.25 + i * 0.08, 2.0 + ri * 0.25 + i * 0.08));
         ctx.save(); ctx.translate(x0 + i * (S + gap) + S / 2, y + S / 2); ctx.scale(ip, ip);
-        ctx.fillStyle = C.ink; rrect(-S / 2, -S / 2, S, S, S * 0.3); ctx.fill();
+        ctx.fillStyle = row.web ? C.coral : C.dark; rrect(-S / 2, -S / 2, S, S, S * 0.3); ctx.fill();
+        if (ic === 'web') { globe(0, 0, S * 0.3); ctx.restore(); return; }
         ctx.translate(-S / 2 + S * 0.22, -S / 2 + S * 0.22); ctx.scale(S * 0.56 / 24, S * 0.56 / 24);
         ctx.fillStyle = '#fff'; ctx.fill(new Path2D(window.ICONS[ic]));
         ctx.restore();
       });
       ctx.restore();
-      text(row.handle, x0 + iw + 30 + (1 - eout(rp)) * 20, y + S / 2 + 3, 46, C.ink, 'left', eout(rp), 'ltr');
+      text(row.handle, x0 + iw + 30 + (1 - eout(rp)) * 20, y + S / 2 + 3, 46, C.dark, 'left', eout(rp), 'ltr');
     });
   } });
 
@@ -602,7 +626,7 @@
     g.addColorStop(0, C.paper); g.addColorStop(1, C.paper2);
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const step = 36, off = (t * 6) % step;
-    ctx.fillStyle = 'rgba(30,27,75,0.06)';
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
     for (let y = -step + off; y < H + step; y += step) for (let x = (Math.floor(y / step) % 2) * step / 2; x < W; x += step) ctx.fillRect(x, y, 2.5, 2.5);
     const blob = (x, y, r, a) => {
       const rg = ctx.createRadialGradient(x, y, 10, x, y, r);
@@ -630,14 +654,16 @@
     drawLogo(L.logo.x, L.logo.y, L.logo.h);
     const lw = L.logo.h * LOGO.width / LOGO.height;
     const xr = L.logo.x - lw / 2 - 26;
-    ctx.fillStyle = 'rgba(30,27,75,0.2)'; ctx.fillRect(xr, L.logo.y - 34, 2, 68);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(xr, L.logo.y - 34, 2, 68);
     text('بطالة الشباب في المغرب العربي', xr - 22, L.logo.y - 14, 32, C.ink);
     text('إنفوجرافيك · نوفمبر 2026', xr - 22, L.logo.y + 24, 24, C.coral);
+    ctx.save(); ctx.globalAlpha *= 0.9; globe(84, L.logo.y, 13); ctx.restore();
+    text('erriwaya.com', 108, L.logo.y + 2, 28, C.mute, 'left', 0.9, 'ltr');
     // progress: one segment per content scene, right to left, each in its scene colour
     const n = CONTENT.length, gap = 10, x0 = 70, x1 = W - 70, sw = (x1 - x0 - gap * (n - 1)) / n;
     CONTENT.forEach((s, i) => {
       const x = x1 - (i + 1) * sw - i * gap;
-      ctx.fillStyle = 'rgba(30,27,75,0.1)'; rrect(x, L.prog, sw, 7, 3.5); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.1)'; rrect(x, L.prog, sw, 7, 3.5); ctx.fill();
       const f = prog(t, s.t0, s.t1);
       if (f > 0) { ctx.fillStyle = s.acc; rrect(x + sw * (1 - f), L.prog, sw * f, 7, 3.5); ctx.fill(); }
     });
