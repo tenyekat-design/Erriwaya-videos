@@ -1,6 +1,6 @@
 // Erriwaya infographic: youth unemployment in the Maghreb (Nov 2026). Draws one frame with renderFrame(t).
 // ?format=feed (1080x1350, Facebook portrait, default) or ?format=story (1080x1920, Reels/Stories/TikTok).
-// Infographic palette (not the news-brief look): dark charcoal background, one vivid colour per country,
+// Infographic palette (not the news-brief look): cool light background (blue-grey white), one vivid colour per country,
 // kept the same in every scene (title chips, map, ranking).
 (() => {
   const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
@@ -9,8 +9,8 @@
 
   // ---------- palette ----------
   const C = {
-    paper: '#232B38', paper2: '#11161F', ink: '#F4F6F9', dark: '#151B26', card: '#FFFFFF', panel: '#2B3546',
-    mute: 'rgba(244,246,249,0.68)', faint: 'rgba(244,246,249,0.44)', track: 'rgba(255,255,255,0.08)',
+    paper: '#F4F7FA', paper2: '#DFE6EE', ink: '#1B2635', dark: '#1B2635', card: '#FFFFFF', panel: '#FFFFFF',
+    mute: 'rgba(27,38,53,0.66)', faint: 'rgba(27,38,53,0.45)', track: 'rgba(27,38,53,0.07)',
     coral: '#F94144', orange: '#F3722C', amber: '#F8961E', yellow: '#F9C74F', green: '#43AA8B',
     blue: '#2D8FC4', slate: '#577590', purple: '#9B5DE5', cyan: '#00BBF9',
     up: '#E63946', down: '#2A9D8F',
@@ -19,9 +19,9 @@
   const COUNTRY = {
     '434': { fill: C.coral, text: C.coral, on: '#fff' },
     '788': { fill: C.orange, text: C.orange, on: '#fff' },
-    '012': { fill: C.yellow, text: C.yellow, on: C.dark },
-    '478': { fill: C.green, text: '#5CCBA8', on: '#fff' },
-    '504': { fill: C.blue, text: '#5BB4E5', on: '#fff' },
+    '012': { fill: C.yellow, text: '#B7860B', on: C.dark },
+    '478': { fill: C.green, text: '#2F8A6E', on: '#fff' },
+    '504': { fill: C.blue, text: '#1F6F9E', on: '#fff' },
   };
 
   // ---------- data (all checked against the sources listed in README.md) ----------
@@ -87,7 +87,7 @@
     ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
     ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
   }
-  function shadow(blur = 28, y = 10, a = 0.12) { ctx.shadowColor = `rgba(0,0,0,${Math.min(0.6, a * 2.5)})`; ctx.shadowBlur = blur; ctx.shadowOffsetY = y; }
+  function shadow(blur = 28, y = 10, a = 0.12) { ctx.shadowColor = `rgba(27,38,53,${a})`; ctx.shadowBlur = blur; ctx.shadowOffsetY = y; }
   function noShadow() { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; }
   // text: dir rtl by default; align 'right' | 'center' | 'left'
   function text(s, x, y, size, color, align = 'right', alpha = 1, dir = 'rtl') {
@@ -127,7 +127,7 @@
   function inkLogo() {
     const c = document.createElement('canvas'); c.width = LOGO.width; c.height = LOGO.height;
     const g = c.getContext('2d');
-    g.drawImage(LOGO, 0, 0);
+    g.drawImage(LOGO, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = C.ink; g.fillRect(0, 0, c.width, c.height);
     return c;
   }
   function drawLogo(cx, cy, h, alpha = 1) {
@@ -149,7 +149,7 @@
   const WSAHARA = idIndex['732'];
   const VAL = {}; ILO.forEach(c => { VAL[idIndex[c.id]] = c; });
   const FILL = {}; Object.keys(COUNTRY).forEach(id => { FILL[idIndex[id]] = hex(COUNTRY[id].fill); });
-  const LAND = [70, 82, 101];
+  const LAND = [200, 209, 220];
 
   function projector(cam, rect) {
     const k = rect.w / cam.w;
@@ -181,7 +181,7 @@
         if (col) singles.push(sx, sy, col[0], col[1]); else land.rect(sx - sq / 2, sy - sq / 2, sq, sq);
       }
     }
-    ctx.fillStyle = 'rgba(140,175,210,0.13)'; ctx.fill(sea);
+    ctx.fillStyle = 'rgba(45,143,196,0.15)'; ctx.fill(sea);
     ctx.fillStyle = rgb(LAND, landA); ctx.fill(land);
     for (let i = 0; i < singles.length; i += 4) {
       ctx.fillStyle = rgb(singles[i + 2], singles[i + 3]);
@@ -218,14 +218,14 @@
       const p = eback(prog(lt, t0 + i * 0.07, t0 + i * 0.07 + 0.45));
       const lit = i < on && lt > t0 + 0.6 + i * 0.1;
       ctx.save(); ctx.translate(x, y); ctx.scale(p, p);
-      person(0, 0, h, lit ? color : 'rgba(255,255,255,0.14)');
+      person(0, 0, h, lit ? color : 'rgba(27,38,53,0.14)');
       ctx.restore();
     }
   }
 
   // web icon: a globe in white strokes
-  function globe(x, y, r) {
-    ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = r * 0.16;
+  function globe(x, y, r, col = '#fff') {
+    ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = r * 0.16;
     ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(x, y, r * 0.45, r, 0, 0, 7); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.stroke();
@@ -238,9 +238,9 @@
     if (alpha <= 0) return;
     const s = 'erriwaya.com', tw = measure(s, size), r = size * 0.42, w = tw + r * 2 + size * 1.5, h = size * 1.7;
     ctx.save(); ctx.globalAlpha *= alpha;
-    ctx.fillStyle = 'rgba(255,255,255,0.08)'; rrect(cx - w / 2, cy - h / 2, w, h, h / 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1.5; ctx.stroke();
-    globe(cx - w / 2 + size * 0.6 + r, cy, r);
+    ctx.fillStyle = 'rgba(27,38,53,0.08)'; rrect(cx - w / 2, cy - h / 2, w, h, h / 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(27,38,53,0.18)'; ctx.lineWidth = 1.5; ctx.stroke();
+    globe(cx - w / 2 + size * 0.6 + r, cy, r, C.blue);
     ctx.restore();
     text(s, cx - w / 2 + size * 1.0 + r * 2, cy + 2, size, C.ink, 'left', alpha, 'ltr');
   }
@@ -293,15 +293,15 @@
     // keep the centre readable
     const cy = FORMAT === 'story' ? 960 : 700;
     const g = ctx.createRadialGradient(W / 2, cy, 80, W / 2, cy, 620);
-    g.addColorStop(0, 'rgba(30,37,49,0.95)'); g.addColorStop(1, 'rgba(30,37,49,0)');
+    g.addColorStop(0, 'rgba(244,247,250,0.95)'); g.addColorStop(1, 'rgba(244,247,250,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     const lp = eout(prog(lt, 0.15, 1.0));
     drawLogo(W / 2, cy - 330 + (1 - lp) * 30, 230, lp);
     const tw = measure('إنفوجرافيك', 32) + 45;
-    tag('إنفوجرافيك', W / 2 + tw / 2, cy - 150, 32, prog(lt, 0.9, 1.4), C.coral);
+    tag('إنفوجرافيك', W / 2 + tw / 2, cy - 150, 32, prog(lt, 0.9, 1.4), C.blue);
     wipeText('بطالة الشباب', W / 2, cy - 40, 128, C.ink, prog(lt, 1.15, 1.8), 'center');
-    wipeText('في المغرب العربي', W / 2, cy + 90, 92, C.coral, prog(lt, 1.4, 2.05), 'center');
+    wipeText('في المغرب العربي', W / 2, cy + 90, 92, C.blue, prog(lt, 1.4, 2.05), 'center');
     rainbow(W / 2, cy + 166, 300, 9, prog(lt, 1.8, 2.4));
     text('الشباب من 15 إلى 24 سنة · أحدث الأرقام حتى نوفمبر 2026', W / 2, cy + 225, 34, C.mute, 'center', eout(prog(lt, 2.0, 2.6)));
     // the five countries, each in its colour
@@ -333,7 +333,7 @@
     const total = cols.length * cw + (cols.length - 1) * gap;
     for (let g = 0; g <= 30; g += 10) {
       const y = base - maxH * g / 30;
-      ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(110, y, W - 220, 2);
+      ctx.fillStyle = 'rgba(27,38,53,0.08)'; ctx.fillRect(110, y, W - 220, 2);
       text(g + '%', 100, y, 24, C.faint, 'right', prog(lt, 0.6, 1.0), 'ltr');
     }
     cols.forEach((c, i) => {
@@ -360,14 +360,14 @@
     const P = masked(rect, 70, () => {
       ctx.setTransform(tr); ctx.globalAlpha = ga * mp;
       const P = drawGrid(cam, rect, (ci, lon, my) => {
-        if (ci === WSAHARA) return [[96, 106, 122], 0.8];
+        if (ci === WSAHARA) return [[176, 185, 198], 0.85];
         if (!MAGHREB.has(ci)) return null;
         const c = VAL[ci], e = lt - startOf[ci];
         const d = Math.hypot(lon - c.at[0], my - mercY(c.at[1]));
         const a = clamp((e * 22 - d) / 3);
-        return [mix([78, 92, 112], FILL[ci], a), 1];
+        return [mix([196, 205, 216], FILL[ci], a), 1];
       });
-      strokeLines(P, MD.borders, 'rgba(17,22,31,0.9)', 2);
+      strokeLines(P, MD.borders, 'rgba(255,255,255,0.95)', 2);
       return P;
     });
     // labels: white cards, value in ink, name in the country's colour
@@ -582,7 +582,7 @@
       drawGrid(cam, orect, (ci) => (MAGHREB.has(ci) ? [FILL[ci], 1] : null), 0.5);
     });
     const g = ctx.createRadialGradient(W / 2, cy + 120, 60, W / 2, cy + 120, 600);
-    g.addColorStop(0, 'rgba(30,37,49,0.96)'); g.addColorStop(1, 'rgba(30,37,49,0)');
+    g.addColorStop(0, 'rgba(244,247,250,0.96)'); g.addColorStop(1, 'rgba(244,247,250,0)');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     // the header logo glides to the centre
     const gp = eio(prog(lt, 0.1, 1.1));
@@ -602,7 +602,7 @@
       row.icons.forEach((ic, i) => {
         const ip = eback(prog(lt, 1.55 + ri * 0.25 + i * 0.08, 2.0 + ri * 0.25 + i * 0.08));
         ctx.save(); ctx.translate(x0 + i * (S + gap) + S / 2, y + S / 2); ctx.scale(ip, ip);
-        ctx.fillStyle = row.web ? C.coral : C.dark; rrect(-S / 2, -S / 2, S, S, S * 0.3); ctx.fill();
+        ctx.fillStyle = row.web ? C.blue : C.dark; rrect(-S / 2, -S / 2, S, S, S * 0.3); ctx.fill();
         if (ic === 'web') { globe(0, 0, S * 0.3); ctx.restore(); return; }
         ctx.translate(-S / 2 + S * 0.22, -S / 2 + S * 0.22); ctx.scale(S * 0.56 / 24, S * 0.56 / 24);
         ctx.fillStyle = '#fff'; ctx.fill(new Path2D(window.ICONS[ic]));
@@ -619,22 +619,22 @@
   // ---------- background: paper, faint dot grid, two soft blobs in the scene colour, drifting shapes ----------
   const SHAPES = Array.from({ length: 14 }, (_, i) => {
     const r = n => { const x = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return x - Math.floor(x); };
-    return { x: r(1) * W, y: r(2) * H, s: 8 + r(3) * 16, k: Math.floor(r(4) * 3), c: [C.coral, C.yellow, C.green, C.blue, C.purple, C.orange][i % 6], sp: 6 + r(5) * 10, ph: r(6) * 6.28 };
+    return { x: r(1) * W, y: r(2) * H, s: 8 + r(3) * 16, k: Math.floor(r(4) * 3), c: [C.blue, C.slate, C.green, C.blue, C.orange, C.slate][i % 6], sp: 6 + r(5) * 10, ph: r(6) * 6.28 };
   });
   function background(t, acc) {
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, C.paper); g.addColorStop(1, C.paper2);
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const step = 36, off = (t * 6) % step;
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillStyle = 'rgba(27,38,53,0.06)';
     for (let y = -step + off; y < H + step; y += step) for (let x = (Math.floor(y / step) % 2) * step / 2; x < W; x += step) ctx.fillRect(x, y, 2.5, 2.5);
-    const blob = (x, y, r, a) => {
+    const blob = (x, y, r, a, col) => {
       const rg = ctx.createRadialGradient(x, y, 10, x, y, r);
-      rg.addColorStop(0, tint(acc, a)); rg.addColorStop(1, tint(acc, 0));
+      rg.addColorStop(0, tint(col, a)); rg.addColorStop(1, tint(col, 0));
       ctx.fillStyle = rg; ctx.fillRect(x - r, y - r, r * 2, r * 2);
     };
-    blob(80 + Math.sin(t * 0.3) * 40, 260, 560, 0.16);
-    blob(W - 60, H - 220 + Math.cos(t * 0.25) * 40, 620, 0.12);
+    blob(80 + Math.sin(t * 0.3) * 40, 260, 560, 0.14, C.blue);
+    blob(W - 60, H - 220 + Math.cos(t * 0.25) * 40, 620, 0.1, C.green);
     // small geometric confetti: rings, dots and plus signs drifting upwards
     SHAPES.forEach(s => {
       const y = ((s.y - t * s.sp) % H + H) % H, x = s.x + Math.sin(t * 0.6 + s.ph) * 14;
@@ -654,16 +654,16 @@
     drawLogo(L.logo.x, L.logo.y, L.logo.h);
     const lw = L.logo.h * LOGO.width / LOGO.height;
     const xr = L.logo.x - lw / 2 - 26;
-    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(xr, L.logo.y - 34, 2, 68);
+    ctx.fillStyle = 'rgba(27,38,53,0.2)'; ctx.fillRect(xr, L.logo.y - 34, 2, 68);
     text('بطالة الشباب في المغرب العربي', xr - 22, L.logo.y - 14, 32, C.ink);
-    text('إنفوجرافيك · نوفمبر 2026', xr - 22, L.logo.y + 24, 24, C.coral);
-    ctx.save(); ctx.globalAlpha *= 0.9; globe(84, L.logo.y, 13); ctx.restore();
+    text('إنفوجرافيك · نوفمبر 2026', xr - 22, L.logo.y + 24, 24, C.blue);
+    ctx.save(); ctx.globalAlpha *= 0.9; globe(84, L.logo.y, 13, C.blue); ctx.restore();
     text('erriwaya.com', 108, L.logo.y + 2, 28, C.mute, 'left', 0.9, 'ltr');
     // progress: one segment per content scene, right to left, each in its scene colour
     const n = CONTENT.length, gap = 10, x0 = 70, x1 = W - 70, sw = (x1 - x0 - gap * (n - 1)) / n;
     CONTENT.forEach((s, i) => {
       const x = x1 - (i + 1) * sw - i * gap;
-      ctx.fillStyle = 'rgba(255,255,255,0.1)'; rrect(x, L.prog, sw, 7, 3.5); ctx.fill();
+      ctx.fillStyle = 'rgba(27,38,53,0.1)'; rrect(x, L.prog, sw, 7, 3.5); ctx.fill();
       const f = prog(t, s.t0, s.t1);
       if (f > 0) { ctx.fillStyle = s.acc; rrect(x + sw * (1 - f), L.prog, sw * f, 7, 3.5); ctx.fill(); }
     });
