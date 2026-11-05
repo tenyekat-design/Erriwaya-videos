@@ -163,7 +163,7 @@ def _page(a, others, now):
         brand_css=brand.CSS, head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year)
 
 
-def build(out_dir, arts, now=None):
+def build(out_dir, arts, now=None, extra_rows=()):
     now = now or datetime.now(timezone.utc)
     arts = [a for a in arts if a.get("id") and a.get("title")]
     os.makedirs(os.path.join(out_dir, "news"), exist_ok=True)
@@ -175,6 +175,7 @@ def build(out_dir, arts, now=None):
     stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     rows = [f"  <url><loc>{SITE}/</loc><lastmod>{stamp}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
     rows += [f"  <url><loc>{SITE}/{p}</loc><priority>0.5</priority></url>" for p in STATIC]
+    rows += list(extra_rows)   # ملفات الرواية (dossiers.py)
     for a in arts:
         d = _date(a)
         lm = f"<lastmod>{d.strftime('%Y-%m-%dT%H:%M:%SZ')}</lastmod>" if d else ""

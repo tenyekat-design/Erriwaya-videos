@@ -318,9 +318,16 @@ def main():
     except Exception as e:  # noqa: BLE001
         print("articles:", e)
         arts = data["articles"] = prev.get("articles", [])
+    files_rows = []
+    try:
+        import dossiers
+        files_rows = dossiers.build(out_dir, arts, data["videos"], NOW)
+        print("dossiers=%d" % len(files_rows))
+    except Exception as e:  # noqa: BLE001
+        print("dossiers:", e)
     try:
         import news_pages
-        print("news pages=%d recent=%d" % news_pages.build(out_dir, arts, NOW))
+        print("news pages=%d recent=%d" % news_pages.build(out_dir, arts, NOW, files_rows))
     except Exception as e:  # noqa: BLE001
         print("news pages:", e)
     try:
