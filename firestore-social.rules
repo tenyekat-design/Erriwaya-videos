@@ -1,0 +1,49 @@
+    // ── تفاعل القراء (الموقع والتطبيق) ──
+    // تُلصق هذه الكتل داخل: match /databases/{database}/documents { ... } بجانب القواعد الحالية.
+
+    // التفاعلات: مرة واحدة لكل قارئ على كل خبر، لا تعديل ولا حذف إلا للمحرر
+    match /reactions/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['a', 'r', 't'])
+        && request.resource.data.a is string && request.resource.data.a.size() <= 40
+        && request.resource.data.r in ['like', 'love', 'wow', 'sad', 'angry']
+        && request.resource.data.t == request.time
+        && id.matches(request.resource.data.a + '_[0-9a-f]{16}')
+        && exists(/databases/$(database)/documents/articles/$(request.resource.data.a));
+      allow update, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
+
+    // التعليقات: يكتبها أي قارئ، ولا تُقرأ إلا بعد موافقة المحرر (ok = true)
+    match /comments/{id} {
+      allow read: if resource.data.ok == true
+        || (request.auth != null && request.auth.token.email == 'tenyekat@gmail.com');
+      allow create: if request.resource.data.keys().hasOnly(['a', 'name', 'text', 'ok', 't'])
+        && request.resource.data.ok == false
+        && request.resource.data.a is string && request.resource.data.a.size() <= 40
+        && request.resource.data.name is string && request.resource.data.name.size() >= 1 && request.resource.data.name.size() <= 40
+        && request.resource.data.text is string && request.resource.data.text.size() >= 2 && request.resource.data.text.size() <= 600
+        && request.resource.data.t == request.time
+        && exists(/databases/$(database)/documents/articles/$(request.resource.data.a));
+      allow update: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ok']);
+      allow delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
+
+    // الاستطلاعات: ينشئها المحرر ويقرؤها الجميع
+    match /polls/{id} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
+
+    // الأصوات: صوت واحد لكل قارئ في كل استطلاع مفتوح
+    match /votes/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['p', 'o', 't'])
+        && request.resource.data.p is string && request.resource.data.p.size() <= 40
+        && request.resource.data.o is int && request.resource.data.o >= 0
+        && request.resource.data.o < get(/databases/$(database)/documents/polls/$(request.resource.data.p)).data.options.size()
+        && get(/databases/$(database)/documents/polls/$(request.resource.data.p)).data.active == true
+        && request.resource.data.t == request.time
+        && id.matches(request.resource.data.p + '_[0-9a-f]{16}');
+      allow delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
