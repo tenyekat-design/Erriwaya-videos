@@ -316,6 +316,72 @@ footer small { opacity: .7 }
 .foot-links a { opacity: .9; text-decoration: underline; text-underline-offset: 4px }
 .foot-links a:hover { opacity: 1 }
 
+/* ── ملفات الرواية: نفس CSS في scripts/dossiers.py (الصفحات الثابتة) ── */
+.dz { --red: var(--breaking) }
+.dz { padding-block: 22px 36px; display: grid; gap: 20px }
+.dz-crumb { font-size: 14px; color: var(--muted) } .dz-crumb a { color: var(--link); text-decoration: none }
+.dz h1 { margin: 0; font-size: 36px; line-height: 1.35; text-wrap: balance }
+.dz-lede { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--muted); font-size: 14px }
+.dz-live { display: inline-flex; align-items: center; gap: 6px; color: var(--red); font-weight: 600 }
+.dz-live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red) }
+.dz-live.done { color: var(--muted) } .dz-live.done::before { background: var(--muted) }
+.dz-por { display: flex; gap: 6px; flex-wrap: wrap }
+.dz-por a { background: var(--chip); color: var(--link); border-radius: 999px; padding: 1px 10px; font-size: 13px; text-decoration: none }
+.dz-know { background: var(--surface); border: 1px solid var(--line); border-inline-start: 4px solid var(--brand); border-radius: 8px; padding: 16px 20px; display: grid; gap: 8px }
+.dz-know h2 { margin: 0; font-size: 21px; line-height: 1.3 }
+.dz-know ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; line-height: 1.8 }
+.dz-share { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px }
+.dz-share a, .dz-share button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--brand); background: none; color: var(--link); font: 600 14px/1.4 inherit; text-decoration: none; cursor: pointer }
+.dz-share .solid { background: var(--brand); color: var(--on-brand) }
+.dz-steps { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); position: relative; margin: 4px 0 0; padding: 0; list-style: none }
+.dz-steps::before { content: ""; position: absolute; top: 9px; inset-inline: calc(50% / var(--n, 4)); height: 2px; background: var(--line) }
+.dz-steps li { display: grid; justify-items: center; text-align: center; gap: 2px; position: relative; padding-inline: 6px }
+.dz-steps i { width: 14px; height: 14px; border-radius: 50%; background: var(--brand); outline: 4px solid var(--paper); margin-top: 2px }
+.dz-steps .next i { background: var(--paper); border: 2px dashed var(--brand) }
+.dz-steps b { font-size: 16px; line-height: 1.3; margin-top: 4px } .dz-steps span { font-size: 13px; color: var(--muted); line-height: 1.5 }
+.dz-h { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2px solid var(--ink); padding-bottom: 6px }
+.dz-h h2 { margin: 0; font-size: 26px; line-height: 1.2 } .dz-h span { color: var(--link); font-size: 14px }
+.dz-tl { list-style: none; margin: 0; padding: 0; position: relative }
+.dz-tl::before { content: ""; position: absolute; top: 6px; bottom: 6px; inset-inline-start: 7px; width: 2px; background: var(--line) }
+.dz-day h3 { margin: 0; font-size: 18px; line-height: 1; color: var(--link); padding: 18px 30px 8px; position: relative }
+.dz-day h3::before { content: ""; position: absolute; inset-inline-start: 1px; top: 16px; width: 14px; height: 14px; border-radius: 3px; background: var(--brand) }
+.dz-ev { position: relative; padding-inline-start: 30px; padding-block: 6px }
+.dz-ev::before { content: ""; position: absolute; inset-inline-start: 3px; top: 26px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface); border: 2px solid var(--link); box-sizing: border-box; width: 12px; height: 12px }
+.dz-ev > a { display: grid; grid-template-columns: minmax(0, 1fr) 160px; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; align-items: start; color: var(--ink); text-decoration: none }
+.dz-ev > a:hover { border-color: var(--link) } .dz-ev > a:hover h4 { color: var(--link) }
+.dz-m { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted) }
+.dz-kind { background: var(--chip); color: var(--link); padding: 0 8px; border-radius: 4px; font-weight: 600 }
+.dz-kind.v { background: rgb(200 16 46 / .1); color: var(--red) }
+.dz-new { background: #F6D365; color: #13201F; padding: 0 8px; border-radius: 4px; font-weight: 600 }
+.dz-ev h4 { margin: 4px 0 2px; font-size: 17px; font-weight: 600; line-height: 1.6 }
+.dz-ev p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.dz-th { aspect-ratio: 16/10; border-radius: 6px; overflow: hidden; background: var(--brand); position: relative; display: grid; place-items: center }
+.dz-th img { width: 100%; height: 100%; object-fit: cover } .dz-th img.logo { width: 34%; height: auto; object-fit: contain }
+.dz-play { position: absolute; inset-inline-start: 8px; bottom: 8px; background: rgb(0 0 0 / .65); color: #fff; border-radius: 999px; font-size: 12px; padding: 2px 10px }
+.dz-ev.key::before { inset-inline-start: 1px; width: 16px; height: 16px; background: var(--red); border-color: var(--red); box-shadow: 0 0 0 4px rgb(200 16 46 / .15) }
+.dz-ev.key > a { border-color: var(--red); grid-template-columns: minmax(0, 1fr) 250px }
+.dz-ev.key h4 { font-size: 21px; line-height: 1.45 }
+.dz-flag { display: inline-block; background: var(--red); color: #fff; font-size: 14px; line-height: 1; padding: 5px 9px 3px; border-radius: 3px; margin-bottom: 6px }
+.dz-end { text-align: center; color: var(--muted); font-size: 14px; margin: 8px 0 0 }
+@media (max-width: 640px) {
+  .dz h1 { font-size: 28px }
+  .dz-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px } .dz-steps::before { display: none }
+  .dz-ev > a, .dz-ev.key > a { grid-template-columns: minmax(0, 1fr) } .dz-th { order: -1 }
+  .dz-ev.key h4 { font-size: 19px }
+}
+.dz-in { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; background: var(--chip); border-inline-start: 4px solid var(--brand); border-radius: 6px; padding: 12px 16px; color: var(--ink) }
+.dz-in b { font: 19px/1.4 var(--f-display) } .dz-in span { color: var(--link); font-size: 14px; margin-inline-start: auto }
+.files { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px }
+.fcard { display: grid; gap: 6px; align-content: start; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--brand); border-radius: 8px; padding: 14px 16px }
+.fcard:hover { border-color: var(--link) } .fcard:hover h3 { color: var(--link) }
+.fcard .ftop { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted) }
+.fcard .ftop .k { color: var(--breaking); font-weight: 600 } .fcard .ftop .k.done { color: var(--muted) }
+.fcard h3 { font: 21px/1.4 var(--f-display) }
+.fcard p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.fcard .last { border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden }
+.fcard .last em { font-style: normal; color: var(--muted) }
+.dz-new { background: #F6D365; color: #13201F; padding: 0 8px; border-radius: 4px; font-weight: 600; font-size: 13px }
+
 /* ── article view ── */
 .article { max-width: 760px; margin-inline: auto; display: grid; gap: 18px }
 .article .back { display: inline-flex; align-items: center; gap: 6px; justify-self: start; color: var(--link); font-weight: 500; background: none; border: 0; padding: 0 }
@@ -355,6 +421,7 @@ footer small { opacity: .7 }
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 12h10M7 15.5h6"/></symbol>
     <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2h-1"/><path d="M7 8h7M7 12h7M7 16h4"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
     <symbol id="i-report" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 17v-3M12 17v-6M15 17v-2"/></symbol>
@@ -419,6 +486,7 @@ footer small { opacity: .7 }
     <a href="#s-reports"><svg class="ic"><use href="#i-report"/></svg>التقارير</a>
     <a href="#s-investigations"><svg class="ic"><use href="#i-docsearch"/></svg>التحقيقات</a>
     <a href="#s-opinion"><svg class="ic"><use href="#i-pen"/></svg>الرأي الحر</a>
+    <a href="#files"><svg class="ic"><use href="#i-folder"/></svg>الملفات</a>
     <a href="#videos"><svg class="ic"><use href="#i-play"/></svg>فيديو</a>
     <a href="#about"><svg class="ic"><use href="#i-info"/></svg>من نحن</a>
   </nav>
@@ -588,7 +656,7 @@ addEventListener("resize", () => { clearTimeout(flaps.rs); flaps.rs = setTimeout
 function normArticle(a) {
   return { kind: "a", id: a.id, title: a.title || "", body: a.body || "", category: a.category || "", writer: (a.writer || "").trim(),
     breaking: !!a.breaking, thumb: a.thumb || "", images: a.images || [], imageCount: a.imageCount ?? (a.images || []).length,
-    portals: a.portals || [], date: a.createdAt || null };
+    portals: a.portals || [], dossier: a.dossier || "", date: a.createdAt || null };
 }
 function normVideo(v) {
   return { kind: "v", id: v.id, title: cleanTitle(v.title), rawTitle: v.title || "", short: !!v.short, views: v.views || 0, date: v.published || null };
@@ -710,6 +778,8 @@ function homeView() {
     <a class="lead-main" href="${hrefOf(lead)}"${tgt(lead)}>${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
     <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
+
+  ${filesStrip()}
 
   <section id="latest" aria-label="آخر الأخبار">
     <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
@@ -886,6 +956,7 @@ function articleView(a) {
     ${a.writer ? `<p class="by">بقلم: ${esc(a.writer)}</p>` : ""}
     <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
     <div class="body">${paras}</div>
+    ${fileBox(a)}
     <div class="tools share">
       <span class="share-l">شارك الخبر</span>
       <a class="sh wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(a.title + " — " + newsUrl(a))}" aria-label="مشاركة على واتساب" title="واتساب"><svg class="si"><use href="#s-whatsapp"/></svg></a>
@@ -897,7 +968,112 @@ function articleView(a) {
   </article>`;
 }
 
+// ── ملفات الرواية ──
+// files/index.json يبنيه scripts/dossiers.py من dossiers.json كل نصف ساعة: لكل ملف عنوانه وملخصه ومحطاته وقائمة مواده.
+// الأخبار المنشورة بعد آخر بناء تُلحق هنا بالقواعد نفسها (كلمات match منذ since، أو حقل dossier في الخبر).
+const files = { list: [], loading: null };
+function loadFiles() {
+  return files.loading ||= fetch("files/index.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : [])
+    .catch(() => []).then(l => { files.list = l; });
+}
+const AR_MONTHS = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+const AR_DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+const utc = d => new Date(d);   // نواكشوط على توقيت غرينتش
+const dayName = d => { const t = utc(d); return `${AR_DAYS[t.getUTCDay()]} ${t.getUTCDate()} ${AR_MONTHS[t.getUTCMonth()]}`; };
+const longDate = iso => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${AR_MONTHS[m - 1]} ${y}`; };
+const hhmm = d => { const t = utc(d); return `${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`; };
+const fileUrl = dz => `https://erriwaya.com/files/${dz.id}.html`;
+const liveMatch = (dz, a) => !(dz.exclude || []).includes(a.id) && (a.dossier === dz.id
+  || (a.date && a.date.slice(0, 10) >= (dz.since || "") && (dz.match || []).some(w => fold(`${a.title} ${a.body}`).includes(fold(w)))));
+function fileItems(dz) {
+  const pool = new Map();
+  (search.index || []).forEach(a => pool.set("a" + a.id, a));
+  state.articles.forEach(a => pool.set("a" + a.id, a));
+  state.videos.forEach(v => pool.set("v" + v.id, v));
+  const out = [], have = new Set();
+  for (const [k, id] of dz.items || []) { const it = pool.get(k + id); if (it) { out.push(it); have.add(k + id); } }
+  for (const a of state.articles) if (!have.has("a" + a.id) && liveMatch(dz, a)) out.push(a);
+  return out.sort((x, y) => new Date(y.date || 0) - new Date(x.date || 0));
+}
+const missing = dz => (dz.items || []).some(([k, id]) => k === "a" && !state.articles.some(a => a.id === id)) && !search.index;
+const fileOf = a => files.list.find(dz => (dz.items || []).some(([k, id]) => k === "a" && id === a.id) || liveMatch(dz, a));
+// «جديد»: ما نُشر في الملف منذ آخر زيارة للقارئ (محفوظ في متصفحه فقط)
+const SEEN = "erriwaya-files-seen";
+const seenAt = dz => (store.get(SEEN) || {})[dz.id] || 0;
+const newCount = (dz, items) => { const s = seenAt(dz); return s ? items.filter(i => new Date(i.date || 0) > s).length : 0; };
+function markSeen(dz, items) {
+  const m = store.get(SEEN) || {};
+  m[dz.id] = Math.max(Date.now(), items[0] ? +new Date(items[0].date) : 0);
+  store.set(SEEN, m);
+}
+
+function fileCard(dz) {
+  const items = fileItems(dz), last = items[0], n = newCount(dz, items), live = (dz.status || "active") === "active";
+  return `<a class="fcard" href="#f-${esc(dz.id)}">
+    <div class="ftop"><span class="k${live ? "" : " done"}">${live ? "ملف متواصل" : "ملف مغلق"}</span><span>${items.length} مادة</span>${n ? `<span class="dz-new">${n} جديد</span>` : ""}</div>
+    <h3>${esc(dz.title)}</h3>
+    ${dz.summary?.[0] ? `<p>${esc(dz.summary[0])}</p>` : ""}
+    ${last ? `<div class="last"><em>آخر ما نُشر ${esc(timeAgo(last.date))}: </em>${esc(titleOf(last))}</div>` : ""}
+  </a>`;
+}
+function filesStrip() {
+  const live = files.list.filter(dz => (dz.status || "active") === "active");
+  if (!live.length) return "";
+  return `<section aria-label="ملفات الرواية">
+    <div class="sec-h"><h2>ملفات الرواية</h2><a href="#files">كل الملفات</a></div>
+    <div class="files">${live.slice(0, 3).map(fileCard).join("")}</div>
+  </section>`;
+}
+function filesView() {
+  const list = [...files.list].sort((a, b) => ((b.status || "active") === "active") - ((a.status || "active") === "active") || String(b.latest).localeCompare(String(a.latest)));
+  return `<section>
+    <button class="btn" type="button" data-back style="margin-bottom:16px">${ic("back")}الرئيسية</button>
+    <div class="sec-h"><h2>ملفات الرواية</h2><span>القضايا المتواصلة وكل ما نُشر عنها</span></div>
+    <div class="files">${list.map(fileCard).join("") || `<p class="empty">لا ملفات بعد.</p>`}</div>
+  </section>`;
+}
+function fileBox(a) {
+  const dz = fileOf(a);
+  return dz ? `<a class="dz-in" href="#f-${esc(dz.id)}">هذا الخبر ضمن ملف: <b>${esc(dz.title)}</b><span>الخط الزمني الكامل ‹</span></a>` : "";
+}
+function dossierView(dz) {
+  const items = fileItems(dz), seen = fileSeen, key = dz.key || {};
+  const steps = dz.steps || [], live = (dz.status || "active") === "active";
+  let day = "", rows = "";
+  for (const it of items) {
+    const d = dayName(it.date);
+    if (d !== day) { day = d; rows += `<li class="dz-day"><h3>${d}</h3></li>`; }
+    const k = key[it.id], fresh = seen && new Date(it.date) > seen;
+    const src = thumbOf(it);
+    const th = it.kind === "v"
+      ? `<div class="dz-th"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.className='logo';this.onerror=null;this.src='${LOGO}'"><span class="dz-play">فيديو</span></div>`
+      : src ? `<div class="dz-th"><img src="${esc(src)}" alt="" loading="lazy" onerror="imgErr(this)"></div>` : "";
+    rows += `<li class="dz-ev${k ? " key" : ""}"><a href="${hrefOf(it)}"${tgt(it)}><div>
+      ${k ? `<span class="dz-flag">محطة بارزة: ${esc(k)}</span>` : ""}
+      <div class="dz-m">${it.kind === "v" ? `<span class="dz-kind v">فيديو</span>` : `<span class="dz-kind">خبر</span>`}<time>${hhmm(it.date)}</time>${fresh ? `<span class="dz-new">جديد</span>` : ""}</div>
+      <h4>${esc(titleOf(it))}</h4><p>${esc(it.kind === "v" ? "تقرير مصور على قناة الرواية في يوتيوب." : excerpt(it.body))}</p></div>${th}</a></li>`;
+  }
+  markSeen(dz, items);   // «جديد» يبقى ظاهراً طوال هذه الزيارة (fileSeen حُفظ عند الدخول)
+  const share = encodeURIComponent(fileUrl(dz));
+  return `<article class="dz">
+    <div class="dz-crumb"><a href="#home">الرئيسية</a> ‹ <a href="#files">ملفات الرواية</a></div>
+    <h1>${esc(dz.title)}</h1>
+    <div class="dz-lede"><span class="dz-live${live ? "" : " done"}">${live ? "ملف متواصل" : "ملف مغلق"}</span>
+      ${dz.updated ? `<span>آخر تحديث: ${longDate(dz.updated)}</span>` : ""}<span>${items.length} مادة</span>
+      <span class="dz-por">${(dz.portals || []).map(p => PORTALS.find(x => x[0] === p)).filter(Boolean).map(p => `<a href="#p-${p[0]}">${esc(p[1])}</a>`).join("")}</span></div>
+    ${dz.summary?.length ? `<section class="dz-know"><h2>ما تحتاج معرفته</h2><ul>${dz.summary.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      <div class="dz-share"><a class="solid" href="https://wa.me/?text=${encodeURIComponent(dz.title + " — " + fileUrl(dz))}" target="_blank" rel="noopener">مشاركة الملف على واتساب</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=${share}" target="_blank" rel="noopener">فيسبوك</a>
+      <button type="button" data-copy="${esc(fileUrl(dz))}">نسخ الرابط</button></div></section>` : ""}
+    ${steps.length ? `<ol class="dz-steps" style="--n:${steps.length}" aria-label="المحطات الرئيسية">${steps.map(s => `<li class="${s.next ? "next" : ""}"><i></i><b>${longDate(s.d).replace(/ \d{4}$/, "")}</b><span>${esc(s.t)}${s.next ? " (قادمة)" : ""}</span></li>`).join("")}</ol>` : ""}
+    <section aria-label="الخط الزمني"><div class="dz-h"><h2>الخط الزمني</h2><span>الأحدث أولاً</span></div>
+      <ol class="dz-tl">${rows || `<li class="empty">لا مواد في هذا الملف بعد.</li>`}</ol>
+      ${dz.since ? `<p class="dz-end">بداية الملف: ${longDate(dz.since)}</p>` : ""}</section>
+  </article>`;
+}
+
 // ── التوجيه ──
+let lastFile = "", fileSeen = 0;
 function route() {
   const h = location.hash.slice(1) || "home";
   document.querySelectorAll("#nav a").forEach(a => a.setAttribute("aria-current", a.getAttribute("href") === "#" + h ? "page" : "false"));
@@ -928,6 +1104,15 @@ function route() {
       window.scrollTo(0, 0); return;
     }
   }
+  if (h === "files") { main.innerHTML = filesView(); document.title = "ملفات الرواية | الرواية"; window.scrollTo(0, 0); return; }
+  if ((m = h.match(/^f-([\w-]+)$/))) {
+    const dz = files.list.find(x => x.id === m[1]);
+    if (!dz) { main.innerHTML = `<p class="empty">جارٍ تحميل الملف…</p>`; return; }
+    if (missing(dz)) loadIndex().then(() => { if (location.hash === "#f-" + dz.id) refresh(); });
+    if (lastFile !== dz.id) { lastFile = dz.id; fileSeen = seenAt(dz); window.scrollTo(0, 0); }
+    main.innerHTML = dossierView(dz); document.title = `ملف: ${dz.title} | الرواية`; return;
+  }
+  lastFile = "";
   if (h === "videos") {
     main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
   }
@@ -1024,6 +1209,7 @@ async function loadSnapshot() {
     const d = store.get("erriwaya-snap");
     if (d) { state.articles = (d.articles || []).map(normArticle); state.videos = (d.videos || []).map(normVideo); state.site = d.site || {}; state.weather = d.weather || {}; }
   }
+  await loadFiles();
   tickClock(); refresh();
 }
 
