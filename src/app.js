@@ -132,9 +132,9 @@
     // the ticker, the inset map and the sting's height
     const BL = {
       feed: { logoY: 58, lower: { x: 30, y: 950, w: 1020, h: 178 }, maxW: 700, capW: 950, ticker: { y: 1236, h: 78 },
-              inset: { x: 40, y: 214 }, stingY: 0.42 },
+              inset: { x: 40, y: 662 }, stingY: 0.42 },   // map bottom-left, above the story tag (off the faces)
       story: { logoY: 150, lower: { x: 40, y: 1180, w: 990, h: 178 }, maxW: 690, capW: 940, ticker: { y: 1466, h: 78 },
-               inset: { x: 40, y: 330 }, stingY: 0.42 },
+               inset: { x: 40, y: 892 }, stingY: 0.42 },   // map bottom-left, above the story tag (off the faces)
       // youtube: the logo scaled with the frame's area (1920x1080 vs 1080x1350)
       youtube: { logoY: 76, logoH: 158, lower: { x: 520, y: 730, w: 1304, h: 160 }, maxW: 900, capW: 1200, ticker: { y: 988, h: 70 },
                  inset: { x: 96, y: 734 }, stingY: 0.39 },   // map bottom-left, level with the headline bar
