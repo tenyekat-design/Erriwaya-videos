@@ -580,7 +580,31 @@
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, x, y, w, h);
   }
-  function navyBack(x, y, w, h) {
+  // backdrop behind a whole photo: the same photo, blurred and darkened, filling the frame
+  // (blurred once per image on a small canvas, then scaled up)
+  const BLURRED = new Map();
+  function blurredOf(img) {
+    let c = BLURRED.get(img);
+    if (!c) {
+      const sw = 160, sh = Math.max(1, Math.round(160 * img.height / img.width));
+      const tmp = document.createElement('canvas'); tmp.width = sw; tmp.height = sh;
+      tmp.getContext('2d').drawImage(img, 0, 0, sw, sh);
+      c = document.createElement('canvas'); c.width = sw; c.height = sh;
+      const g = c.getContext('2d'); g.filter = 'blur(6px)'; g.drawImage(tmp, 0, 0); g.filter = 'none';
+      BLURRED.set(img, c);
+    }
+    return c;
+  }
+  function navyBack(x, y, w, h, img) {
+    if (img) {
+      ctx.save();
+      ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+      ctx.imageSmoothingQuality = 'high';
+      coverDraw(blurredOf(img), x - w * 0.06, y - h * 0.06, w * 1.12, h * 1.12, 0.5, 0.5, 1);
+      ctx.fillStyle = 'rgba(11,31,75,0.5)'; ctx.fillRect(x, y, w, h);
+      ctx.restore();
+      return;
+    }
     const g = ctx.createLinearGradient(0, y, 0, y + h);
     g.addColorStop(0, '#132a5c'); g.addColorStop(1, '#081633');
     ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
@@ -592,7 +616,7 @@
       // the card slides as a whole frame; the photo sits whole in L.photo with a slow, crop-free push
       // cinematic move of the whole photo (nothing inside it is cropped): a slow push in or pull out
       // (from the card's first move: zoom b > a pushes in) with a gentle drift, alternating side card to card
-      navyBack(x, y, w, h);
+      navyBack(x, y, w, h, img);
       const k = CARDS.indexOf(card), dir = k % 2 ? 1 : -1;
       const pr = clamp((a - card.start + 0.6) / Math.max(1.5, card.end - card.start + 1.2));
       const e = pr * 0.7 + eio(pr) * 0.3;
@@ -1616,7 +1640,7 @@
     // photo: punch-in at the start, slow push, a quick zoom as it hands over to the map
     const f = hk.f || [0.5, 0.5];
     const z = lerp(1.22, 1.06, eout(prog(t, 0, 0.5))) + 0.05 * prog(t, 0.5, HOOK) + 0.25 * ein(out);
-    if (L.fit) { navyBack(0, 0, W, H); fitDraw(img, L.hookPhoto, lerp(1.0, 1.08, eio(prog(t, 0, HOOK))) + 0.15 * ein(out), lerp(-16, 16, prog(t, 0, HOOK))); }
+    if (L.fit) { navyBack(0, 0, W, H, img); fitDraw(img, L.hookPhoto, lerp(1.0, 1.08, eio(prog(t, 0, HOOK))) + 0.15 * ein(out), lerp(-16, 16, prog(t, 0, HOOK))); }
     else coverDraw(img, 0, 0, W, H, f[0], f[1], z);
     const g = ctx.createLinearGradient(0, H * 0.35, 0, H);
     g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(0.45, 'rgba(11,31,75,0.72)'); g.addColorStop(1, 'rgba(11,31,75,0.94)');
