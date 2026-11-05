@@ -6,6 +6,7 @@ import '../models.dart';
 import '../services/articles_service.dart';
 import '../services/saved_service.dart';
 import '../theme.dart';
+import 'dossier_screen.dart';
 
 class ArticleScreen extends StatefulWidget {
   final Article article;
@@ -121,6 +122,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
             const SizedBox(height: 18),
             SelectableText(a.body,
                 style: const TextStyle(fontSize: 17, height: 1.9, color: Brand.ink)),
+            DossierBox(article: a),
           ]),
         ),
       ]),

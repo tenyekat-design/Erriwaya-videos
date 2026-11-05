@@ -13,6 +13,7 @@ import 'screens/portals_screen.dart';
 import 'screens/saved_screen.dart';
 import 'screens/videos_screen.dart';
 import 'services/articles_service.dart';
+import 'services/dossiers_service.dart';
 import 'services/firebase_boot.dart';
 import 'services/push_service.dart';
 import 'services/site_service.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
   // الشبكة والإشعارات بعد ظهور الواجهة حتى لا يتأخر فتح التطبيق.
   unawaited(VideosController.instance.start());
   unawaited(ArticlesService.instance.start());
+  unawaited(DossiersService.instance.list());
   unawaited(SiteService.instance.start());
   unawaited(WeatherService.instance.start());
   unawaited(PushService.init());

@@ -11,6 +11,7 @@ import '../widgets/article_card.dart';
 import '../widgets/capitals_board.dart';
 import '../widgets/states.dart';
 import '../widgets/video_card.dart';
+import 'dossier_screen.dart';
 import 'search_screen.dart';
 import 'settings_sheet.dart';
 
@@ -75,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _BreakingBanner()),
             SliverToBoxAdapter(child: _LatestTicker(feed: all)),
             const SliverToBoxAdapter(child: CapitalsBoard()),
+            const SliverToBoxAdapter(child: DossiersStrip()),
             SliverToBoxAdapter(
               // الأزرار بارتفاع ثابت يتسع لنصّها (كانت تُضغط في 36 بكسل فينزل النص إلى أسفلها)
               child: SizedBox(
