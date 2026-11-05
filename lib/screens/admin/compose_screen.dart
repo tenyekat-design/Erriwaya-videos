@@ -8,6 +8,7 @@ import '../../config.dart';
 import '../../models.dart';
 import '../../portals.dart';
 import '../../services/articles_service.dart';
+import '../../services/dossiers_service.dart';
 import '../../services/push_sender.dart';
 import '../../theme.dart';
 
@@ -27,6 +28,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
   String _category = '';
   bool _breaking = false;
   final Set<String> _portals = {};
+  String _dossier = '';
+  List<DossierRef>? _dossiers; // null أثناء التحميل
   final List<Uint8List> _images = [];
   bool _busy = false;
   String _status = '';
@@ -37,6 +40,9 @@ class _ComposeScreenState extends State<ComposeScreen> {
   @override
   void initState() {
     super.initState();
+    DossiersService.instance.list().then((l) {
+      if (mounted) setState(() => _dossiers = l);
+    });
     final a = widget.editing;
     if (a != null) {
       _title.text = a.title;
@@ -45,6 +51,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
       _category = AppConfig.canonicalCategory(a.category) ?? '';
       _breaking = a.breaking;
       _portals.addAll(a.portals);
+      _dossier = a.dossier;
       _loadingImages = a.imageCount > 0;
       ArticlesService.instance.images(a).then((imgs) {
         if (!mounted) return;
@@ -94,6 +101,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
           images: _images,
           writer: _writer.text.trim(),
           portals: _portals.toList(),
+          dossier: _dossier,
         );
         if (!mounted) return;
         Navigator.of(context).pop();
@@ -115,6 +123,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
         author: FirebaseAuth.instance.currentUser?.email ?? '',
         writer: _writer.text.trim(),
         portals: _portals.toList(),
+        dossier: _dossier,
       );
       var msg = 'نُشر الخبر.';
       if (_breaking) {
@@ -130,6 +139,40 @@ class _ComposeScreenState extends State<ComposeScreen> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  /// «ملفات الرواية»: يُلحق الخبر بالخط الزمني لقضية متواصلة في الموقع.
+  Widget _dossierField() {
+    final list = _dossiers;
+    final known = list ?? const <DossierRef>[];
+    final items = <DropdownMenuItem<String>>[
+      const DropdownMenuItem(value: '', child: Text('بدون ملف')),
+      for (final d in known)
+        DropdownMenuItem(
+          value: d.id,
+          child: Text(d.active ? d.title : '${d.title} (مغلق)', overflow: TextOverflow.ellipsis),
+        ),
+      // ملف محفوظ في الخبر لم يعد في القائمة: يبقى ظاهراً كي لا يضيع عند الحفظ
+      if (_dossier.isNotEmpty && !known.any((d) => d.id == _dossier))
+        DropdownMenuItem(value: _dossier, child: Text(_dossier)),
+    ];
+    return DropdownButtonFormField<String>(
+      key: ValueKey('dossier-${list?.length}'),
+      initialValue: _dossier,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: 'الملف',
+        helperText: list == null
+            ? 'جارٍ تحميل الملفات من الموقع…'
+            : known.isEmpty
+                ? 'لا ملفات منشورة في الموقع بعد'
+                : 'يُضاف الخبر إلى الخط الزمني لهذا الملف في الموقع',
+        helperMaxLines: 2,
+        border: const OutlineInputBorder(),
+      ),
+      items: items,
+      onChanged: (v) => setState(() => _dossier = v ?? ''),
+    );
   }
 
   void _snack(String m) =>
@@ -201,6 +244,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
             child: Text('إن لم تختر بوابة، يظهر الخبر في بوابة الدولة المذكورة في عنوانه.',
                 style: TextStyle(fontSize: 12.5, color: Brand.muted)),
           ),
+          const SizedBox(height: 16),
+          _dossierField(),
           const SizedBox(height: 8),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,

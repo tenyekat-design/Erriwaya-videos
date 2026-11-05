@@ -110,7 +110,7 @@ class _SettingsState extends State<_Settings> {
           ListTile(
             leading: Image.asset('assets/images/logo_white.png', height: 32, color: Brand.green),
             title: const Text('الرواية'),
-            subtitle: const Text('الإصدار 1.4.3'),
+            subtitle: const Text('الإصدار 1.4.4'),
           ),
         ])),
       ),
