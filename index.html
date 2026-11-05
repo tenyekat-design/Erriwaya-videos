@@ -415,7 +415,64 @@ footer small { opacity: .7 }
 
 .skeleton { background: linear-gradient(90deg, var(--chip), var(--line), var(--chip)); background-size: 200% 100%; animation: sk 1.4s infinite; border-radius: 6px }
 @keyframes sk { to { background-position: -200% 0 } }
-@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } }
+
+/* ── تفاعل القراء ── */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+.reacts { display: grid; gap: 10px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow) }
+.reacts .re-l { font-weight: 600 } .reacts .re-l em { font-style: normal; color: var(--muted); font-weight: 400 }
+.re-row { display: flex; flex-wrap: wrap; gap: 8px }
+.re { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); color: var(--ink); font: inherit; font-size: 15px; cursor: pointer; transition: transform .18s cubic-bezier(.3,1.6,.5,1), background .2s, border-color .2s }
+.re .e { font-size: 20px; line-height: 1; transition: transform .25s cubic-bezier(.3,1.8,.5,1) }
+.re b { font-family: "Segoe UI", Tahoma, sans-serif; font-size: 14px; color: var(--muted) }
+.re b:empty { display: none }
+.re:not([disabled]):hover { transform: translateY(-2px); border-color: var(--brand) }
+.re:not([disabled]):hover .e { transform: scale(1.25) rotate(-8deg) }
+.re:active:not([disabled]) { transform: scale(.94) }
+.re[disabled] { cursor: default; opacity: .72 }
+.re.on { opacity: 1; background: var(--brand); border-color: var(--brand); color: var(--on-brand) } .re.on b { color: var(--on-brand) }
+.re.pop .e { animation: rePop .6s cubic-bezier(.3,1.8,.5,1) }
+@keyframes rePop { 0% { transform: scale(1) } 35% { transform: scale(1.7) rotate(-12deg) } 70% { transform: scale(.9) } 100% { transform: scale(1) } }
+@media (max-width: 600px) { .re .t { display: none } .re { padding: 6px 12px } }
+
+.comments { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 18px }
+.comments h2 { margin: 0; font: 26px/1.4 var(--f-display) } .comments h2 span { font-size: 16px; color: var(--muted) }
+.comments .muted { margin: 0; color: var(--muted) }
+.c-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px }
+.c { display: grid; grid-template-columns: 40px 1fr; gap: 10px; animation: cIn .35s ease-out both }
+.c.pend { opacity: .65 }
+.c .av { width: 40px; height: 40px; border-radius: 50%; background: var(--brand); color: var(--on-brand); display: grid; place-items: center; font-weight: 700 }
+.c-h { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap } .c-h span { color: var(--muted); font-size: 13px }
+.c p { margin: 2px 0 0; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere }
+@keyframes cIn { from { opacity: 0; transform: translateY(8px) } }
+.c-form { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px }
+.c-form input, .c-form textarea { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; resize: vertical; transition: border-color .2s, box-shadow .2s }
+.c-form input:focus, .c-form textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgb(0 74 73 / .15) }
+.c-f { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap }
+.c-f .status { font-size: 14px; color: var(--muted) } .c-f .status.ok { color: var(--link) } .c-f .status.err { color: var(--breaking) }
+
+.poll { background: var(--brand); color: var(--on-brand); border-radius: 14px; padding: 20px; display: grid; gap: 12px; box-shadow: var(--shadow) }
+.poll-k { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; opacity: .85 } .poll-k .ic { width: 18px; height: 18px }
+.poll h2 { margin: 0; font: 26px/1.5 var(--f-display) }
+.poll-o { display: grid; gap: 8px }
+.po { position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 48px; padding: 10px 16px; border-radius: 10px; background: rgb(255 255 255 / .1); border: 1px solid rgb(255 255 255 / .22); color: inherit; font: inherit; font-size: 17px; text-align: start }
+button.po { cursor: pointer; transition: background .2s, transform .18s, border-color .2s }
+button.po:hover { background: rgb(255 255 255 / .18); border-color: rgb(255 255 255 / .5); transform: translateX(-3px) }
+button.po:active { transform: scale(.98) }
+.po .bar { position: absolute; inset: 0 0 0 auto; width: var(--w); background: rgb(255 255 255 / .2); transition: width .9s cubic-bezier(.2,.8,.2,1) }
+.poll-o.done:not(.grow) .po .bar { width: 0 }
+.po.me { border-color: #fff } .po.me .bar { background: var(--breaking) }
+.po .lbl, .po b { position: relative } .po b { font-family: "Segoe UI", Tahoma, sans-serif } .po em { font-style: normal; font-size: 13px; opacity: .85 }
+.poll-n { margin: 0; font-size: 14px; opacity: .8 }
+
+/* ── الحركة ── */
+.rv { opacity: 0; transform: translateY(16px) }
+.rv.on { opacity: 1; transform: none; transition: opacity .55s ease-out var(--d, 0ms), transform .55s cubic-bezier(.2,.8,.2,1) var(--d, 0ms) }
+.card .media img, .lead-main .media img, .rail .th img { transition: transform .5s cubic-bezier(.2,.8,.2,1) }
+.card:hover .media img, .lead-main:hover .media img, .rail a:hover .th img { transform: scale(1.05) }
+.card { transition: transform .25s cubic-bezier(.2,.8,.2,1) } .card:hover { transform: translateY(-3px) }
+.card:active, .lead-main:active { transform: scale(.985) }
+.btn, .chips button { transition: transform .15s, background .2s, color .2s } .btn:active, .chips button:active { transform: scale(.95) }
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } .rv { opacity: 1; transform: none } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -453,6 +510,7 @@ footer small { opacity: .7 }
     <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z" fill="currentColor" stroke="none"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="m10 13 4.5-4.5"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
     <!-- social icons: Font Awesome Free 6.5.2 brands, CC BY 4.0, fontawesome.com -->
     <symbol id="s-youtube" viewBox="0 0 576 512"><path fill="currentColor" d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></symbol>
@@ -781,6 +839,8 @@ function homeView() {
 
   ${filesStrip()}
 
+  ${pollBox()}
+
   <section id="latest" aria-label="آخر الأخبار">
     <div class="sec-h"><h2>آخر الأخبار</h2><span>${filtered.length} مادة</span></div>
     <div class="chips" role="toolbar" aria-label="التصنيفات">${filters.map(([id, name]) => `<button type="button" data-f="${id}" aria-pressed="${id === state.filter}">${esc(name)}</button>`).join("")}</div>
@@ -956,6 +1016,7 @@ function articleView(a) {
     ${a.writer ? `<p class="by">بقلم: ${esc(a.writer)}</p>` : ""}
     <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
     <div class="body">${paras}</div>
+    ${reactBox(a)}
     ${fileBox(a)}
     <div class="tools share">
       <span class="share-l">شارك الخبر</span>
@@ -965,6 +1026,7 @@ function articleView(a) {
       <a class="sh xx" target="_blank" rel="noopener" href="https://x.com/intent/post?url=${encodeURIComponent(newsUrl(a))}&text=${encodeURIComponent(a.title)}" aria-label="مشاركة على إكس" title="إكس"><svg class="si"><use href="#s-x"/></svg></a>
       <button class="sh cp" type="button" data-copy="${esc(newsUrl(a))}" aria-label="نسخ رابط الخبر" title="نسخ الرابط">${ic("link")}</button>
     </div>
+    ${commentsBox(a)}
   </article>`;
 }
 
@@ -1082,8 +1144,8 @@ function route() {
   if ((m = h.match(/^a-([\w-]+)$/))) {
     const a = state.articles.find(x => x.id === m[1]);
     main.innerHTML = a ? articleView(a) : `<p class="empty">جارٍ تحميل الخبر…</p>`;
-    if (a) { document.title = a.title + " | الرواية"; loadImages(a); }
-    window.scrollTo(0, 0); return;
+    if (a) { document.title = a.title + " | الرواية"; loadImages(a); loadReacts(a); loadComments(a); const cf = $("#cform"); if (cf && !cf.name.value) cf.name.value = store.get("erriwaya-name") || ""; }
+    if (a) reveal(); window.scrollTo(0, 0); return;
   }
   document.title = "الرواية";
   if ((m = h.match(/^v-([\w-]{11})$/))) { openVideo(m[1]); if (!$("#main").children.length) main.innerHTML = homeView(); return; }
@@ -1117,6 +1179,7 @@ function route() {
     main.innerHTML = listView("فيديو الرواية", "من قناة يوتيوب @ERRIWAYA", state.videos.filter(v => !v.short)); window.scrollTo(0, 0); return;
   }
   main.innerHTML = homeView();
+  loadPoll(); reveal();
   if (h === "portals") { togglePortals(true); window.scrollTo(0, 0); }
   else if (h === "about" || h === "latest") document.getElementById(h)?.scrollIntoView();
   else if (h === "home") window.scrollTo(0, 0);
@@ -1127,7 +1190,7 @@ function onHash() {
   const h = location.hash;
   if (/^#v-/.test(h)) { const id = h.slice(3); openVideo(id); return; }
   closeVideo(false);
-  if (h !== lastHash) { lastHash = h; if (h !== "#portals") togglePortals(false); if (!h.startsWith("#q=")) toggleSearch(false); route(); }
+  if (h !== lastHash) { lastHash = h; if (h !== "#portals") togglePortals(false); if (!h.startsWith("#q=")) toggleSearch(false); revealNext = true; route(); reveal(); }
 }
 
 // ── الفيديو ──
@@ -1221,6 +1284,184 @@ function refresh() {
   const y = window.scrollY; lastHash = location.hash; route(); window.scrollTo(0, y);
 }
 
+
+// ── تفاعل القراء: التفاعلات والتعليقات والاستطلاعات ──
+// كلها في Firestore عبر REST دون تسجيل دخول. لكل متصفح معرّف عشوائي (cid) يمنع تكرار التفاعل والتصويت،
+// ومعرّف المستند = <الخبر أو الاستطلاع>_<cid> وقواعد الأمان تسمح بالإنشاء مرة واحدة فقط.
+// التعليقات لا تظهر إلا بعد موافقة المحرر من لوحة التطبيق (ok = true).
+const REACTS = [["like", "أعجبني", "👍"], ["love", "أحببته", "❤️"], ["wow", "مدهش", "😮"], ["sad", "محزن", "😢"], ["angry", "مستفز", "😠"]];
+const DOCS = `projects/${PROJECT}/databases/(default)/documents`;
+const CID = (() => {
+  let c = store.get("erriwaya-cid");
+  if (!/^[0-9a-f]{16}$/.test(c || "")) { c = Array.from(crypto.getRandomValues(new Uint8Array(8)), b => b.toString(16).padStart(2, "0")).join(""); store.set("erriwaya-cid", c); }
+  return c;
+})();
+const social = { reacts: {}, comments: {}, poll: null, pollLoading: null, votes: {} };
+const fv = v => typeof v === "number" ? { integerValue: String(v) } : typeof v === "boolean" ? { booleanValue: v } : { stringValue: String(v) };
+async function fsCommit(path, fields) {
+  const body = { writes: [{ update: { name: `${DOCS}/${path}`, fields: Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, fv(v)])) },
+    currentDocument: { exists: false }, updateTransforms: [{ fieldPath: "t", setToServerValue: "REQUEST_TIME" }] }] };
+  const r = await withTimeout(fetch(`${FS.replace(/\/documents$/, "")}/documents:commit`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }), 10000);
+  if (!r.ok) throw new Error(r.status);
+}
+const eq = (f, v) => ({ fieldFilter: { field: { fieldPath: f }, op: "EQUAL", value: fv(v) } });
+const and = (...fs) => fs.length === 1 ? fs[0] : { compositeFilter: { op: "AND", filters: fs } };
+async function fsCount(coll, ...filters) {
+  const q = { structuredAggregationQuery: { structuredQuery: { from: [{ collectionId: coll }], where: and(...filters) }, aggregations: [{ alias: "n", count: {} }] } };
+  const r = await withTimeout(fetch(`${FS}:runAggregationQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(q) }), 8000);
+  if (!r.ok) throw new Error(r.status);
+  const j = await r.json();
+  return +(j[0]?.result?.aggregateFields?.n?.integerValue || 0);
+}
+async function fsQuery(coll, where, limit = 50) {
+  const q = { structuredQuery: { from: [{ collectionId: coll }], where, limit } };
+  const r = await withTimeout(fetch(`${FS}:runQuery`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(q) }), 8000);
+  if (!r.ok) throw new Error(r.status);
+  return (await r.json()).filter(x => x.document).map(x => fsDoc(x.document));
+}
+const nf = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + " ألف" : String(n);
+const mine = () => store.get("erriwaya-reacts") || {};
+
+// التفاعلات
+function reactBox(a) {
+  const r = social.reacts[a.id], my = mine()[a.id], total = r ? Object.values(r).reduce((x, y) => x + y, 0) : 0;
+  return `<div class="reacts" id="reacts" data-aid="${esc(a.id)}">
+    <span class="re-l">${my ? "شكراً لتفاعلك" : "ما رأيك في الخبر؟"}${total ? ` <em>· ${nf(total)} تفاعل</em>` : ""}</span>
+    <div class="re-row" role="group" aria-label="تفاعل مع الخبر">${REACTS.map(([k, label, e]) =>
+      `<button type="button" class="re${my === k ? " on" : ""}" data-react="${k}" aria-pressed="${my === k}" ${my ? "disabled" : ""} title="${label}"><span class="e" aria-hidden="true">${e}</span><span class="t">${label}</span><b>${r && r[k] ? nf(r[k]) : ""}</b></button>`).join("")}</div>
+  </div>`;
+}
+async function loadReacts(a) {
+  if (social.reacts[a.id]) return;
+  try {
+    const ns = await Promise.all(REACTS.map(([k]) => fsCount("reactions", eq("a", a.id), eq("r", k))));
+    social.reacts[a.id] = Object.fromEntries(REACTS.map(([k], i) => [k, ns[i]]));
+    paintSocial(a);
+  } catch {}
+}
+async function react(btn) {
+  const box = btn.closest("#reacts"), aid = box.dataset.aid, k = btn.dataset.react;
+  if (mine()[aid]) return;
+  const m = mine(); m[aid] = k; store.set("erriwaya-reacts", m);
+  const r = social.reacts[aid] ||= Object.fromEntries(REACTS.map(([x]) => [x, 0]));
+  r[k] = (r[k] || 0) + 1;
+  const a = state.articles.find(x => x.id === aid);
+  if (a) paintSocial(a, k);
+  try { await fsCommit(`reactions/${aid}_${CID}`, { a: aid, r: k }); } catch {}
+}
+
+// التعليقات
+function commentsBox(a) {
+  const list = social.comments[a.id], pending = (store.get("erriwaya-pending") || []).filter(c => c.a === a.id);
+  const shown = [...(list || []), ...pending.filter(p => !(list || []).some(c => c.text === p.text && c.name === p.name))];
+  return `<section class="comments" id="comments" aria-label="تعليقات القراء">
+    <h2>التعليقات${list && list.length ? ` <span>${list.length}</span>` : ""}</h2>
+    ${list === undefined ? `<p class="muted">جارٍ تحميل التعليقات…</p>` : !shown.length ? `<p class="muted">لا تعليقات بعد. كن أول من يعلّق.</p>` : ""}
+    <ol class="c-list">${shown.map(c => `<li class="c${c.ok ? "" : " pend"}"><span class="av" aria-hidden="true">${esc((c.name || "؟").trim().charAt(0))}</span><div><div class="c-h"><strong>${esc(c.name)}</strong><span>${c.ok ? timeAgo(c.t) : "قيد المراجعة"}</span></div><p>${esc(c.text)}</p></div></li>`).join("")}</ol>
+    <form class="c-form" id="cform" data-aid="${esc(a.id)}">
+      <label class="sr" for="cname">الاسم</label>
+      <input id="cname" name="name" maxlength="40" placeholder="اسمك" autocomplete="name" required>
+      <label class="sr" for="ctext">التعليق</label>
+      <textarea id="ctext" name="text" maxlength="600" rows="3" placeholder="اكتب تعليقك…" required></textarea>
+      <div class="c-f"><span class="status" id="cfStatus">تظهر التعليقات بعد مراجعة فريق الرواية.</span><button class="btn" type="submit">${ic("send")}إرسال</button></div>
+    </form>
+  </section>`;
+}
+async function loadComments(a) {
+  if (social.comments[a.id]) return;
+  try {
+    const docs = await fsQuery("comments", and(eq("a", a.id), eq("ok", true)), 100);
+    social.comments[a.id] = docs.sort((x, y) => String(x.t).localeCompare(String(y.t)));
+    const ok = social.comments[a.id];
+    store.set("erriwaya-pending", (store.get("erriwaya-pending") || []).filter(p => !ok.some(c => c.text === p.text && c.name === p.name)));
+    paintSocial(a);
+  } catch { social.comments[a.id] = []; paintSocial(a); }
+}
+async function sendComment(form) {
+  const st = $("#cfStatus"), aid = form.dataset.aid;
+  const name = form.name.value.trim().slice(0, 40), text = form.text.value.trim().slice(0, 600);
+  if (!name || text.length < 2) { st.className = "status err"; st.textContent = "اكتب اسمك وتعليقك."; return; }
+  st.className = "status"; st.textContent = "جارٍ الإرسال…";
+  try {
+    const id = Array.from(crypto.getRandomValues(new Uint8Array(10)), b => b.toString(16).padStart(2, "0")).join("");
+    await fsCommit(`comments/${id}`, { a: aid, name, text, ok: false });
+    const p = store.get("erriwaya-pending") || []; p.push({ a: aid, name, text }); store.set("erriwaya-pending", p.slice(-30));
+    store.set("erriwaya-name", name);
+    form.text.value = "";
+    const a = state.articles.find(x => x.id === aid);
+    if (a) { paintSocial(a); const s = $("#cfStatus"); if (s) { s.className = "status ok"; s.textContent = "وصل تعليقك، وسيظهر بعد المراجعة. شكراً لك."; } }
+  } catch { st.className = "status err"; st.textContent = "تعذّر الإرسال الآن. أعد المحاولة بعد قليل."; }
+}
+
+// يعيد رسم التفاعلات والتعليقات وحدها دون المساس ببقية الصفحة أو بما يكتبه القارئ
+function paintSocial(a, popped) {
+  if (location.hash !== `#a-${a.id}`) return;
+  const rb = $("#reacts"); if (rb) { rb.outerHTML = reactBox(a); if (popped) $(`#reacts [data-react="${popped}"]`)?.classList.add("pop"); }
+  const cb = $("#comments");
+  if (cb) {
+    const f = cb.querySelector("form"), name = f?.name.value, text = f?.text.value, focus = document.activeElement?.id;
+    cb.outerHTML = commentsBox(a);
+    const nf2 = $("#cform");
+    if (nf2) { nf2.name.value = name || store.get("erriwaya-name") || ""; nf2.text.value = text || ""; if (focus === "ctext" || focus === "cname") $("#" + focus).focus(); }
+  }
+}
+
+// الاستطلاعات: يظهر في الرئيسية آخر استطلاع مفتوح
+async function loadPoll() {
+  return social.pollLoading ||= (async () => {
+    try {
+      const ps = (await fsQuery("polls", eq("active", true), 5)).sort((x, y) => String(y.t).localeCompare(String(x.t)));
+      const p = ps[0]; if (!p || !Array.isArray(p.options) || p.options.length < 2) return;
+      social.poll = p;
+      await countVotes(p);
+      const el = $("#poll"); if (el) el.outerHTML = pollBox();
+    } catch {}
+  })();
+}
+async function countVotes(p) {
+  const ns = await Promise.all(p.options.map((_, i) => fsCount("votes", eq("p", p.id), eq("o", i))));
+  social.votes[p.id] = ns;
+}
+function pollBox(anim = false) {
+  const p = social.poll;
+  if (!p) return `<div id="poll" hidden></div>`;
+  const myv = (store.get("erriwaya-votes") || {})[p.id], ns = social.votes[p.id] || p.options.map(() => 0);
+  const total = ns.reduce((x, y) => x + y, 0), show = myv !== undefined;
+  return `<section class="poll" id="poll" aria-label="استطلاع الرأي" data-pid="${esc(p.id)}">
+    <div class="poll-k">${ic("chart")}استطلاع الرأي</div>
+    <h2>${esc(p.q)}</h2>
+    <div class="poll-o${show ? (anim ? " done" : " done grow") : ""}">${p.options.map((o, i) => {
+      const pc = total ? Math.round(ns[i] * 100 / total) : 0;
+      return show
+        ? `<div class="po${myv === i ? " me" : ""}"><span class="bar" style="--w:${pc}%"></span><span class="lbl">${esc(o)}${myv === i ? ` <em>اختيارك</em>` : ""}</span><b>${pc}%</b></div>`
+        : `<button type="button" class="po" data-vote="${i}"><span class="lbl">${esc(o)}</span></button>`;
+    }).join("")}</div>
+    <p class="poll-n">${show ? `${nf(total)} صوت` : "اختر إجابة لترى النتائج"}</p>
+  </section>`;
+}
+async function vote(btn) {
+  const box = btn.closest("#poll"), p = social.poll, i = +btn.dataset.vote;
+  if (!p || box.dataset.pid !== p.id) return;
+  const v = store.get("erriwaya-votes") || {}; if (v[p.id] !== undefined) return;
+  v[p.id] = i; store.set("erriwaya-votes", v);
+  const ns = social.votes[p.id] ||= p.options.map(() => 0); ns[i]++;
+  box.outerHTML = pollBox(true);
+  setTimeout(() => $("#poll .poll-o")?.classList.add("grow"), 40);
+  try { await fsCommit(`votes/${p.id}_${CID}`, { p: p.id, o: i }); } catch {}
+}
+
+// ── الحركة: ظهور تدريجي للعناصر عند التمرير ──
+let revealIO = null, revealNext = true;
+function reveal() {
+  if (!revealNext) return; revealNext = false;
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  revealIO ||= new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("on"); revealIO.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
+  let n = 0;
+  document.querySelectorAll("#main .card, #main .sec-h, #main .lead-main, #main .rail a, #main .fcard, #main .poll, #main .short, #main .article > *").forEach(el => {
+    el.classList.add("rv"); el.style.setProperty("--d", `${Math.min(n++ % 6, 5) * 50}ms`); revealIO.observe(el);
+  });
+}
+
 // ── نموذج المراسلة ──
 async function sendMessage(form) {
   const st = $("#cStatus");
@@ -1253,6 +1494,8 @@ document.addEventListener("click", e => {
   if (e.target.id === "moreBtn") { state.shown += 12; const y = scrollY; route(); scrollTo(0, y); return; }
   if (e.target.closest("[data-back]")) { location.hash = "home"; return; }
   if (e.target.id === "closeV" || e.target.id === "modal") { closeVideo(); return; }
+  const rb = e.target.closest("[data-react]"); if (rb) { react(rb); return; }
+  const vb = e.target.closest("[data-vote]"); if (vb) { vote(vb); return; }
   const c = e.target.closest("[data-copy]");
   if (c) {
     const done = () => { const t = c.innerHTML; c.innerHTML = c.classList.contains("sh") ? ic("check") : "نُسخ"; setTimeout(() => c.innerHTML = t, 1400); };
@@ -1261,6 +1504,7 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("submit", e => {
   if (e.target.id === "contact") { e.preventDefault(); sendMessage(e.target); }
+  if (e.target.id === "cform") { e.preventDefault(); sendComment(e.target); }
   if (e.target.id === "searchForm") {
     e.preventDefault();
     const q = $("#q").value.trim();
