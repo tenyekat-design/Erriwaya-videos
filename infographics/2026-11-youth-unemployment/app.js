@@ -37,8 +37,8 @@
 
   // ---------- layout ----------
   const L = FORMAT === 'story'
-    ? { logo: { x: 960, y: 200, h: 112 }, top: 330, bot: 1530, src: 1572, prog: 1618 }
-    : { logo: { x: 960, y: 92, h: 104 }, top: 196, bot: 1222, src: 1258, prog: 1302 };
+    ? { logo: { x: 952, y: 206, h: 168 }, top: 330, bot: 1530, src: 1572, prog: 1618 }
+    : { logo: { x: 952, y: 98, h: 152 }, top: 196, bot: 1222, src: 1258, prog: 1302 };
   const SP = (L.bot - L.top) / 1026;          // vertical spread: scenes are laid out on a 1026 px block
   const Y = y => L.top + y * SP;
 
@@ -297,7 +297,7 @@
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     const lp = eout(prog(lt, 0.15, 1.0));
-    drawLogo(W / 2, cy - 330 + (1 - lp) * 30, 230, lp);
+    drawLogo(W / 2, cy - 345 + (1 - lp) * 30, 290, lp);
     const tw = measure('إنفوجرافيك', 32) + 45;
     tag('إنفوجرافيك', W / 2 + tw / 2, cy - 150, 32, prog(lt, 0.9, 1.4), C.blue);
     wipeText('بطالة الشباب', W / 2, cy - 40, 128, C.ink, prog(lt, 1.15, 1.8), 'center');
@@ -586,13 +586,13 @@
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     // the header logo glides to the centre
     const gp = eio(prog(lt, 0.1, 1.1));
-    drawLogo(lerp(L.logo.x, W / 2, gp), lerp(L.logo.y, cy, gp), lerp(L.logo.h, 300, gp));
-    text('بطالة الشباب في المغرب العربي', W / 2, cy + 230, 50, C.ink, 'center', eout(prog(lt, 0.9, 1.5)));
-    rainbow(W / 2, cy + 280, 220, 7, prog(lt, 1.1, 1.7));
-    text('تابعونا على', W / 2, cy + 360, 30, C.mute, 'center', eout(prog(lt, 1.3, 1.8)));
+    drawLogo(lerp(L.logo.x, W / 2, gp), lerp(L.logo.y, cy, gp), lerp(L.logo.h, 360, gp));
+    text('بطالة الشباب في المغرب العربي', W / 2, cy + 250, 50, C.ink, 'center', eout(prog(lt, 0.9, 1.5)));
+    rainbow(W / 2, cy + 300, 220, 7, prog(lt, 1.1, 1.7));
+    text('تابعونا على', W / 2, cy + 375, 30, C.mute, 'center', eout(prog(lt, 1.3, 1.8)));
     const S = 72, gap = 16;
     [{ icons: ['facebook', 'tiktok', 'youtube'], handle: 'ERRIWAYA' }, { icons: ['instagram'], handle: 'ERRIWAYA.MR' }, { icons: ['web'], handle: 'erriwaya.com', web: true }].forEach((row, ri) => {
-      const y = cy + 420 + ri * 112;
+      const y = cy + 430 + ri * 108;
       const tw = measure(row.handle, 46);
       const iw = row.icons.length * S + (row.icons.length - 1) * gap, total = iw + 30 + tw, x0 = W / 2 - total / 2;
       const rp = prog(lt, 1.5 + ri * 0.25, 2.1 + ri * 0.25);
@@ -654,8 +654,8 @@
     drawLogo(L.logo.x, L.logo.y, L.logo.h);
     const lw = L.logo.h * LOGO.width / LOGO.height;
     const xr = L.logo.x - lw / 2 - 26;
-    ctx.fillStyle = 'rgba(27,38,53,0.2)'; ctx.fillRect(xr, L.logo.y - 34, 2, 68);
-    text('بطالة الشباب في المغرب العربي', xr - 22, L.logo.y - 14, 32, C.ink);
+    ctx.fillStyle = 'rgba(27,38,53,0.2)'; ctx.fillRect(xr, L.logo.y - 38, 2, 76);
+    text('بطالة الشباب في المغرب العربي', xr - 22, L.logo.y - 16, 34, C.ink);
     text('إنفوجرافيك · نوفمبر 2026', xr - 22, L.logo.y + 24, 24, C.blue);
     ctx.save(); ctx.globalAlpha *= 0.9; globe(84, L.logo.y, 13, C.blue); ctx.restore();
     text('erriwaya.com', 108, L.logo.y + 2, 28, C.mute, 'left', 0.9, 'ltr');
