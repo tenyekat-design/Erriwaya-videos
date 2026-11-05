@@ -330,9 +330,6 @@ footer small { opacity: .7 }
 .dz-know { background: var(--surface); border: 1px solid var(--line); border-inline-start: 4px solid var(--brand); border-radius: 8px; padding: 16px 20px; display: grid; gap: 8px }
 .dz-know h2 { margin: 0; font-size: 21px; line-height: 1.3 }
 .dz-know ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; line-height: 1.8 }
-.dz-share { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px }
-.dz-share a, .dz-share button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--brand); background: none; color: var(--link); font: 600 14px/1.4 inherit; text-decoration: none; cursor: pointer }
-.dz-share .solid { background: var(--brand); color: var(--on-brand) }
 .dz-steps { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); position: relative; margin: 4px 0 0; padding: 0; list-style: none }
 .dz-steps::before { content: ""; position: absolute; top: 9px; inset-inline: calc(50% / var(--n, 4)); height: 2px; background: var(--line) }
 .dz-steps li { display: grid; justify-items: center; text-align: center; gap: 2px; position: relative; padding-inline: 6px }
@@ -400,6 +397,7 @@ footer small { opacity: .7 }
 .sh.wa { background: #25D366 } .sh.fb { background: #1877F2 } .sh.tg { background: #229ED9 }
 .sh.xx { background: #000 } .sh.cp { background: var(--brand) }
 @media (prefers-color-scheme: dark) { .sh.xx { background: #2a2a2a } }
+.dz-sh { display: flex; flex-wrap: wrap; gap: 10px }
 @media (max-width: 600px) { .article h1 { font-size: 30px } .article .body { font-size: 18px } }
 
 /* ── video modal ── */
@@ -1123,10 +1121,15 @@ function dossierView(dz) {
     <div class="dz-lede"><span class="dz-live${live ? "" : " done"}">${live ? "ملف متواصل" : "ملف مغلق"}</span>
       ${dz.updated ? `<span>آخر تحديث: ${longDate(dz.updated)}</span>` : ""}<span>${items.length} مادة</span>
       <span class="dz-por">${(dz.portals || []).map(p => PORTALS.find(x => x[0] === p)).filter(Boolean).map(p => `<a href="#p-${p[0]}">${esc(p[1])}</a>`).join("")}</span></div>
-    ${dz.summary?.length ? `<section class="dz-know"><h2>ما تحتاج معرفته</h2><ul>${dz.summary.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-      <div class="dz-share"><a class="solid" href="https://wa.me/?text=${encodeURIComponent(dz.title + " — " + fileUrl(dz))}" target="_blank" rel="noopener">مشاركة الملف على واتساب</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=${share}" target="_blank" rel="noopener">فيسبوك</a>
-      <button type="button" data-copy="${esc(fileUrl(dz))}">نسخ الرابط</button></div></section>` : ""}
+    <div class="tools share dz-sh">
+      <span class="share-l">شارك الملف</span>
+      <a class="sh wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(dz.title + " — " + fileUrl(dz))}" aria-label="مشاركة الملف على واتساب" title="واتساب"><svg class="si"><use href="#s-whatsapp"/></svg></a>
+      <a class="sh fb" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=${share}" aria-label="مشاركة الملف على فيسبوك" title="فيسبوك"><svg class="si"><use href="#s-facebook"/></svg></a>
+      <a class="sh tg" target="_blank" rel="noopener" href="https://t.me/share/url?url=${share}&text=${encodeURIComponent(dz.title)}" aria-label="مشاركة الملف على تيليغرام" title="تيليغرام"><svg class="si"><use href="#s-telegram"/></svg></a>
+      <a class="sh xx" target="_blank" rel="noopener" href="https://x.com/intent/post?url=${share}&text=${encodeURIComponent(dz.title)}" aria-label="مشاركة الملف على إكس" title="إكس"><svg class="si"><use href="#s-x"/></svg></a>
+      <button class="sh cp" type="button" data-copy="${esc(fileUrl(dz))}" aria-label="نسخ رابط الملف" title="نسخ الرابط">${ic("link")}</button>
+    </div>
+    ${dz.summary?.length ? `<section class="dz-know"><h2>ما تحتاج معرفته</h2><ul>${dz.summary.map(x => `<li>${esc(x)}</li>`).join("")}</ul></section>` : ""}
     ${steps.length ? `<ol class="dz-steps" style="--n:${steps.length}" aria-label="المحطات الرئيسية">${steps.map(s => `<li class="${s.next ? "next" : ""}"><i></i><b>${longDate(s.d).replace(/ \d{4}$/, "")}</b><span>${esc(s.t)}${s.next ? " (قادمة)" : ""}</span></li>`).join("")}</ol>` : ""}
     <section aria-label="الخط الزمني"><div class="dz-h"><h2>الخط الزمني</h2><span>الأحدث أولاً</span></div>
       <ol class="dz-tl">${rows || `<li class="empty">لا مواد في هذا الملف بعد.</li>`}</ol>

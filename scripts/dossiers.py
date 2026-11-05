@@ -118,6 +118,12 @@ img {{ max-width:100%; display:block }}
 
 # مشترك بين الصفحة الثابتة والموقع (الموقع يضيف نسخة منه في index.html)
 CSS = """
+.dz-sh { display: flex; flex-wrap: wrap; align-items: center; gap: 10px }
+.dz-sh .share-l { color: var(--muted); font-size: 15px; margin-inline-end: 4px }
+.sh { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; color: #fff; text-decoration: none }
+.sh:hover { filter: brightness(1.08) }
+.sh svg { width: 20px; height: 20px }
+.sh.wa { background: #25D366 } .sh.fb { background: #1877F2 } .sh.tg { background: #229ED9 } .sh.xx { background: #000 }
 .dz { padding-block: 22px 36px; display: grid; gap: 20px }
 .dz-crumb { font-size: 14px; color: var(--muted) } .dz-crumb a { color: var(--link); text-decoration: none }
 .dz h1 { margin: 0; font-size: 36px; line-height: 1.35; text-wrap: balance }
@@ -130,9 +136,6 @@ CSS = """
 .dz-know { background: var(--surface); border: 1px solid var(--line); border-inline-start: 4px solid var(--brand); border-radius: 8px; padding: 16px 20px; display: grid; gap: 8px }
 .dz-know h2 { margin: 0; font-size: 21px; line-height: 1.3 }
 .dz-know ul { margin: 0; padding-inline-start: 20px; display: grid; gap: 6px; line-height: 1.8 }
-.dz-share { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px }
-.dz-share a, .dz-share button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--brand); background: none; color: var(--link); font: 600 14px/1.4 inherit; text-decoration: none; cursor: pointer }
-.dz-share .solid { background: var(--brand); color: var(--on-brand) }
 .dz-steps { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); position: relative; margin: 4px 0 0; padding: 0; list-style: none }
 .dz-steps::before { content: ""; position: absolute; top: 9px; inset-inline: calc(50% / var(--n, 4)); height: 2px; background: var(--line) }
 .dz-steps li { display: grid; justify-items: center; text-align: center; gap: 2px; position: relative; padding-inline: 6px }
@@ -210,6 +213,25 @@ def _page(dz, items, now):
                        ld=json.dumps(ld, ensure_ascii=False).replace("</", "<\\/"), body=body.replace("{share}", quote(url, safe="")))
 
 
+
+def _icon(k):
+    vb, d = brand.ICONS.get(k, ("0 0 1 1", ""))
+    return f'<svg viewBox="{vb}" aria-hidden="true"><path fill="currentColor" d="{d}"/></svg>'
+
+
+def _share(dz, url):
+    """أيقونات مشاركة الملف (كما تحت الأخبار)."""
+    from urllib.parse import quote as q
+    u, t = q(url, safe=""), q(dz["title"], safe="")
+    wa = q(f'{dz["title"]} — {url}', safe="")
+    links = [("wa", "واتساب", "whatsapp", f"https://wa.me/?text={wa}"),
+             ("fb", "فيسبوك", "facebook", f"https://www.facebook.com/sharer/sharer.php?u={u}"),
+             ("tg", "تيليغرام", "telegram", f"https://t.me/share/url?url={u}&text={t}"),
+             ("xx", "إكس", "x", f"https://x.com/intent/post?url={u}&text={t}")]
+    return ('<div class="share dz-sh"><span class="share-l">شارك الملف</span>' + "".join(
+        f'<a class="sh {c}" href="{e(h)}" target="_blank" rel="noopener" aria-label="مشاركة الملف على {ar}" title="{ar}">{_icon(k)}</a>'
+        for c, ar, k, h in links) + "</div>")
+
 def view_html(dz, n, rows, prefix, url):
     """جسم صفحة الملف. الموقع يبني الجسم نفسه في index.html (dossierView) من files/index.json."""
     steps = dz.get("steps", [])
@@ -220,8 +242,8 @@ def view_html(dz, n, rows, prefix, url):
   <h1>{e(dz["title"])}</h1>
   <div class="dz-lede"><span class="dz-live{"" if live else " done"}">{"ملف متواصل" if live else "ملف مغلق"}</span>
     {f'<span>آخر تحديث: {_long(dz["updated"])}</span>' if dz.get("updated") else ""}<span>{n} مادة</span><span class="dz-por">{por}</span></div>
-  {f'''<section class="dz-know"><h2>ما تحتاج معرفته</h2><ul>{"".join(f"<li>{e(s)}</li>" for s in dz["summary"])}</ul>
-    <div class="dz-share"><a class="solid" href="https://wa.me/?text={{share}}" target="_blank" rel="noopener">مشاركة الملف على واتساب</a><a href="https://www.facebook.com/sharer/sharer.php?u={{share}}" target="_blank" rel="noopener">فيسبوك</a></div></section>''' if dz.get("summary") else ""}
+  {_share(dz, url)}
+  {f'''<section class="dz-know"><h2>ما تحتاج معرفته</h2><ul>{"".join(f"<li>{e(s)}</li>" for s in dz["summary"])}</ul></section>''' if dz.get("summary") else ""}
   {f'<ol class="dz-steps" style="--n:{len(steps)}" aria-label="المحطات الرئيسية">' + "".join(
       f'<li class="{"next" if s.get("next") else ""}"><i></i><b>{_long(s["d"]).rsplit(" ", 1)[0]}</b><span>{e(s["t"])}{" (قادمة)" if s.get("next") else ""}</span></li>'
       for s in steps) + "</ol>" if steps else ""}
