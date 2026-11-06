@@ -36,20 +36,24 @@ Do not change the template (src/, assets/, tools/) unless the user asks; only ad
 
 ## Fixed decisions
 
+- Approved 7 Nov 2026 (editions/2026-11-07 is the reference): faces stay clear of the inset map and the lower third;
+  re-frame a card, or make a raised copy of the photo (`<name>-up.jpg`) when its faces sit too low; logos are padded
+  on a white canvas (`<name>-full.jpg`) so they show whole in all three formats.
+
 - AL-Quds font, logo assets/logo-mark.png (white mask from the official artwork), inside the safe area.
 - Approved 29 Oct 2026 (current reference, all formats, the default): the "broadcast" look. Full-frame photo; logo
   at the top (white, soft shadow, no shade, no story counter); lower third = one two-colour story tag (green country, white topic, square
   corners, slanted left edge) on a white headline bar (navy text, no tatweel, no halo) that carries «الموجز الإخباري»
   and the date at its left end, then a navy strip with the spoken words (from subtitles.txt, the spoken word in
-  green); a navy ticker titled «الأخبار» crawling all the stories at a steady pace; small inset map in the top corner
-  (YouTube: bottom-left, level with the headline bar); no date/number chips.
+  green); a navy ticker titled «الأخبار» crawling all the stories at a steady pace; small inset map at the left just above the
+  headline bar, off the faces (approved 7 Nov 2026; YouTube: bottom-left, level with the headline bar); no date/number chips.
   Text has no motion: headlines cross-fade; the bar slides out and back in between stories while a navy square with
   the story number, country and topic slides in from the right and leaves to the left. The opening hook uses the
   same tag. Three formats (feed, youtube, story) with a cover each; description, chapters and .srt with every
   edition. Re-render 2026-10-25 to compare when changing the look. `--look classic` renders the white layout
   approved on 28 Oct; the other `--look` values in src/app.js were trials (feed only).
 - Intro from Nouakchott with the city list in src/app.js (`INTRO_CITIES`); outro with ERRIWAYA (Facebook, TikTok,
-  YouTube) and ERRIWAYA.MR (Instagram).
+  YouTube) and ERRIWAYA.MR (Instagram), then www.erriwaya.com under them (approved 7 Nov 2026).
 - Audio (tools/render.js): synthesized intro theme, quiet bed, whoosh in the pause before each chapter, outro music
   whose final chord lands as the closing logo and social icons appear; all music ducks under the voice. Western Sahara is drawn whole as a
   separate territory (user's decision, 4 Nov 2026): tools/build-map.js gives it Morocco's cells south of 27°40'N
