@@ -64,7 +64,7 @@ def ad_slot(pos, prefix=""):
                  '<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>')
     else:
         inner = (f'<a class="adhouse" href="{prefix}advertise.html"><div><strong>مساحتك الإعلانية هنا</strong>'
-                 '<span class="s">اعرض علامتك أمام قرّاء الرواية في موريتانيا والمنطقة</span></div>'
+                 '<span class="s">اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span></div>'
                  '<span class="go">أعلن معنا</span></a>')
     return f'<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>{inner}</aside>'
 
