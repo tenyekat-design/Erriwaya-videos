@@ -26,7 +26,13 @@ SOCIAL = [  # (المنصة، الاسم العربي، الرابط، المع�
 ]
 EMAIL = "contact@erriwaya.com"
 PAGES = [("about.html", "من نحن"), ("editorial-policy.html", "السياسة التحريرية"),
-         ("corrections.html", "سياسة التصحيحات"), ("privacy.html", "سياسة الخصوصية")]
+         ("corrections.html", "سياسة التصحيحات"), ("privacy.html", "سياسة الخصوصية"),
+         ("advertise.html", "أعلن معنا")]
+
+# ── إعلانات جوجل (AdSense) ──
+# بعد إنشاء حساب AdSense، ضع هنا معرّف الناشر كما يظهر في الحساب (مثل "pub-1234567890123456")،
+# فيُضاف كود الإعلانات التلقائية إلى كل صفحات الموقع ويُنشأ ملف ads.txt تلقائياً. فارغ = لا إعلانات.
+ADSENSE = ""
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -86,7 +92,22 @@ def footer(prefix="", year_html='<span id="yr"></span>'):
 def head_links(prefix=""):
     """أيقونة الهاتف وملف التثبيت على الشاشة الرئيسية."""
     return (f'<link rel="apple-touch-icon" href="{prefix}assets/apple-touch-icon.png">'
-            f'<link rel="manifest" href="{prefix}manifest.webmanifest">' + GA)
+            f'<link rel="manifest" href="{prefix}manifest.webmanifest">' + GA + ads_head())
+
+
+def ads_head():
+    """كود AdSense (تحقق الملكية + الإعلانات التلقائية)، أو لا شيء إن لم يُضبط المعرّف."""
+    if not ADSENSE:
+        return ""
+    pub = "ca-" + ADSENSE.removeprefix("ca-")
+    return (f'<meta name="google-adsense-account" content="{pub}">'
+            f'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={pub}" '
+            'crossorigin="anonymous"></script>')
+
+
+def ads_txt():
+    """محتوى ملف ads.txt الذي تطلبه جوجل في جذر الموقع."""
+    return f"google.com, {ADSENSE.removeprefix('ca-')}, DIRECT, f08c47fec0942fa0\n" if ADSENSE else ""
 
 
 # إحصاءات Google Analytics نفسها التي في الصفحة الرئيسية، لتُحسب زيارات صفحات الأخبار الثابتة والصفحات التعريفية
@@ -122,3 +143,11 @@ if __name__ == "__main__":
             with open(os.path.join(out, f), "w", encoding="utf-8") as fh:
                 fh.write(apply(html))
             print("page", f)
+    # الصفحة الرئيسية (تُجمَّع قبل هذا الأمر) وملف ads.txt
+    idx = os.path.join(out, "index.html")
+    if ADSENSE and os.path.exists(idx):
+        h = open(idx, encoding="utf-8").read()
+        if "adsbygoogle.js" not in h:
+            open(idx, "w", encoding="utf-8").write(h.replace("<style>", ads_head() + "\n<style>", 1))
+        open(os.path.join(out, "ads.txt"), "w", encoding="utf-8").write(ads_txt())
+        print("adsense", ADSENSE)

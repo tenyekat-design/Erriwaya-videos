@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 
 SITE = "https://erriwaya.com"
 NAME = "شبكة الرواية الإعلامية"
-STATIC = ["about.html", "editorial-policy.html", "corrections.html", "privacy.html"]
+STATIC = ["about.html", "editorial-policy.html", "corrections.html", "privacy.html", "advertise.html"]
 PORTALS = {"mr": "موريتانيا", "ma": "المغرب", "dz": "الجزائر", "tn": "تونس", "ly": "ليبيا", "eh": "الصحراء",
            "az": "أزواد", "sn": "السنغال", "ml": "مالي", "ne": "النيجر", "td": "تشاد", "gm": "غامبيا"}
 
