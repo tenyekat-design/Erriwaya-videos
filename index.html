@@ -473,6 +473,7 @@ button.po:active { transform: scale(.98) }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } .rv { opacity: 1; transform: none } }
 
 .adbox { margin:22px 0; text-align:center }
+.adbox:first-child { margin:14px 0 18px }
 .adbox .ad-l { display:block; font-size:12px; color:var(--muted); letter-spacing:.5px; margin-bottom:6px }
 .adbox ins { display:block; min-height:90px }
 .adhouse { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
@@ -842,12 +843,11 @@ function homeView() {
   const filtered = state.filter === "all" ? items.filter(i => i !== lead) : items.filter(i => inSection(state.filter, i));
   const shorts = state.videos.filter(v => v.short).slice(0, 16);
   return `
+  ${adSlot("top")}
   <section class="lead" aria-label="الأبرز">
     <a class="lead-main" href="${hrefOf(lead)}"${tgt(lead)}>${media(lead, true)}${metaLine(lead)}<h1>${esc(lead.title)}</h1>${lead.kind === "a" ? `<p>${esc(excerpt(lead.body))}</p>` : ""}</a>
     <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
-
-  ${adSlot("top")}
 
   ${filesStrip()}
 
