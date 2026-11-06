@@ -96,7 +96,7 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
 .more ul {{ list-style:none; padding:0; margin:0 0 28px }}
 .more li {{ border-bottom:1px solid var(--line); padding-block:10px }}
 .more a {{ color:var(--ink); text-decoration:none }}
-{brand_css}
+{brand_css}{ad_css}
 </style>
 </head>
 <body>
@@ -107,6 +107,7 @@ h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
   <h1 class="ew-t">{title}</h1>
   {gallery}
   <div class="body">{paras}</div>
+  {ad}
   <div class="tools share">
     <span class="share-l">شارك الخبر</span>
     <a class="sh wa" href="https://wa.me/?text={wa}" target="_blank" rel="noopener" aria-label="مشاركة على واتساب" title="واتساب">{ic_wa}</a>
@@ -175,7 +176,7 @@ def _page(a, others, now):
         published_meta=f'<meta property="article:published_time" content="{d.isoformat()}">' if d else "",
         ld=json.dumps(ld, ensure_ascii=False).replace("</", "<\\/"), kickers=kickers, time=time, gallery=gallery,
         paras=paras, header=brand.header("../"), footer=brand.footer("../", str(now.year)),
-        brand_css=brand.CSS, head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year,
+        brand_css=brand.CSS, ad_css=brand.AD_CSS, ad=brand.ad_slot("article", "../"), head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year,
         ic_wa=_svg("whatsapp"), ic_fb=_svg("facebook"), ic_tg=_svg("telegram"), ic_x=_svg("x"))
 
 

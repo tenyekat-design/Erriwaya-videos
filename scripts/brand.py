@@ -6,6 +6,7 @@
 تشغيل: python3 scripts/brand.py pages _site   ← ينسخ الصفحات الثابتة مع الرأس والتذييل الموحّدين.
 """
 import os
+import json
 import re
 import sys
 
@@ -33,6 +34,40 @@ PAGES = [("about.html", "من نحن"), ("editorial-policy.html", "السياس�
 # بعد إنشاء حساب AdSense، ضع هنا معرّف الناشر كما يظهر في الحساب (مثل "pub-1234567890123456")،
 # فيُضاف كود الإعلانات التلقائية إلى كل صفحات الموقع ويُنشأ ملف ads.txt تلقائياً. فارغ = لا إعلانات.
 ADSENSE = "pub-4766412706858185"
+
+# أرقام «الوحدات الإعلانية» من AdSense (Ads ← By ad unit ← Display ads) لكل خانة في الموقع.
+# ما دامت فارغة تعرض الخانة إعلان «أعلن معنا» الداخلي؛ وعند وضع الرقم تعرض إعلانات جوجل فيها.
+AD_SLOTS = {"top": "", "mid": "", "article": ""}
+
+AD_CSS = """
+.adbox { margin:22px 0; text-align:center }
+.adbox .ad-l { display:block; font-size:12px; color:var(--muted); letter-spacing:.5px; margin-bottom:6px }
+.adbox ins { display:block; min-height:90px }
+.adhouse { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:18px 22px; border:1px dashed var(--line); border-radius:14px; background:var(--surface);
+  text-decoration:none; color:var(--ink); text-align:start; min-height:90px }
+.adhouse strong { display:block; font-size:19px; color:var(--brand, #004A49) }
+.adhouse span.s { color:var(--muted); font-size:15px }
+.adhouse .go { background:var(--brand, #004A49); color:#fff; border-radius:999px; padding:9px 20px; font-size:15px; white-space:nowrap }
+:root[data-theme="dark"] .adhouse strong { color:#7FD1C7 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .adhouse strong { color:#7FD1C7 } }
+"""
+
+
+def ad_slot(pos, prefix=""):
+    """خانة إعلانية: وحدة AdSense إن ضُبط رقمها، وإلا إعلان «أعلن معنا» الداخلي."""
+    sid = AD_SLOTS.get(pos, "")
+    if ADSENSE and sid:
+        pub = "ca-" + ADSENSE.removeprefix("ca-")
+        inner = (f'<ins class="adsbygoogle" data-ad-client="{pub}" data-ad-slot="{sid}" '
+                 'data-ad-format="auto" data-full-width-responsive="true"></ins>'
+                 '<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>')
+    else:
+        inner = (f'<a class="adhouse" href="{prefix}advertise.html"><div><strong>مساحتك الإعلانية هنا</strong>'
+                 '<span class="s">اعرض علامتك أمام قرّاء الرواية في موريتانيا والمنطقة</span></div>'
+                 '<span class="go">أعلن معنا</span></a>')
+    return f'<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>{inner}</aside>'
+
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -148,6 +183,9 @@ if __name__ == "__main__":
     if ADSENSE and os.path.exists(idx):
         h = open(idx, encoding="utf-8").read()
         if "adsbygoogle.js" not in h:
-            open(idx, "w", encoding="utf-8").write(h.replace("<style>", ads_head() + "\n<style>", 1))
+            h = h.replace("<style>", ads_head() + "\n<style>", 1)
+        # أرقام الخانات الإعلانية من AD_SLOTS أعلاه
+        h = re.sub(r"const AD_SLOTS = \{[^}]*\};", lambda _: "const AD_SLOTS = " + json.dumps(AD_SLOTS) + ";", h, count=1)
+        open(idx, "w", encoding="utf-8").write(h)
         open(os.path.join(out, "ads.txt"), "w", encoding="utf-8").write(ads_txt())
         print("adsense", ADSENSE)

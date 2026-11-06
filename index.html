@@ -471,6 +471,18 @@ button.po:active { transform: scale(.98) }
 .card:active, .lead-main:active { transform: scale(.985) }
 .btn, .chips button { transition: transform .15s, background .2s, color .2s } .btn:active, .chips button:active { transform: scale(.95) }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } html { scroll-behavior: auto } .rv { opacity: 1; transform: none } }
+
+.adbox { margin:22px 0; text-align:center }
+.adbox .ad-l { display:block; font-size:12px; color:var(--muted); letter-spacing:.5px; margin-bottom:6px }
+.adbox ins { display:block; min-height:90px }
+.adhouse { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:18px 22px; border:1px dashed var(--line); border-radius:14px; background:var(--surface);
+  text-decoration:none; color:var(--ink); text-align:start; min-height:90px }
+.adhouse strong { display:block; font-size:19px; color:var(--brand, #004A49) }
+.adhouse span.s { color:var(--muted); font-size:15px }
+.adhouse .go { background:var(--brand, #004A49); color:#fff; border-radius:999px; padding:9px 20px; font-size:15px; white-space:nowrap }
+:root[data-theme="dark"] .adhouse strong { color:#7FD1C7 }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .adhouse strong { color:#7FD1C7 } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -835,6 +847,8 @@ function homeView() {
     <div class="rail"><h3>الأحدث</h3>${rail.map(it => `<a href="${hrefOf(it)}"${tgt(it)}><div class="th">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" loading="lazy" onerror="imgErr(this)">` : `<div class="ph"><img src="${LOGO}" alt=""></div>`}</div><div>${metaLine(it)}<strong>${esc(it.title)}</strong></div></a>`).join("")}</div>
   </section>
 
+  ${adSlot("top")}
+
   ${filesStrip()}
 
   ${pollBox()}
@@ -845,6 +859,8 @@ function homeView() {
     <div class="feed">${filtered.slice(0, state.shown).map(card).join("") || `<p class="empty">لا مواد في هذا التصنيف بعد.</p>`}</div>
     ${filtered.length > state.shown ? `<div class="more"><button class="btn" type="button" id="moreBtn">${ic("plus")}المزيد من الأخبار</button></div>` : ""}
   </section>
+
+  ${adSlot("mid")}
 
   ${weatherSection()}
 
@@ -1003,6 +1019,23 @@ function listView(title, sub, items, back = true, empty = "") {
 // رابط الخبر الدائم: صفحة ثابتة تقرؤها محركات البحث وتعرض بطاقة صحيحة عند المشاركة
 const newsUrl = a => `https://erriwaya.com/news/${a.id}.html`;
 
+// ── الخانات الإعلانية (أرقامها تُضبط في scripts/brand.py → AD_SLOTS) ──
+const AD_CLIENT = "ca-pub-4766412706858185";
+const AD_SLOTS = {"top": "", "mid": "", "article": ""};
+function adSlot(pos) {
+  const sid = AD_SLOTS[pos];
+  const inner = sid
+    ? `<ins class="adsbygoogle" data-ad-client="${AD_CLIENT}" data-ad-slot="${sid}" data-ad-format="auto" data-full-width-responsive="true"></ins>`
+    : `<a class="adhouse" href="advertise.html"><div><strong>مساحتك الإعلانية هنا</strong><span class="s">اعرض علامتك أمام قرّاء الرواية في موريتانيا والمنطقة</span></div><span class="go">أعلن معنا</span></a>`;
+  return `<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>${inner}</aside>`;
+}
+function fillAds() {
+  document.querySelectorAll("ins.adsbygoogle:not([data-adsbygoogle-status])").forEach(() => {
+    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+  });
+}
+addEventListener("DOMContentLoaded", () => { const m = document.getElementById("main"); if (m) new MutationObserver(fillAds).observe(m, { childList: true }); });
+
 function articleView(a) {
   const imgs = a.images.length ? a.images : [];
   const paras = a.body.split(/\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
@@ -1014,6 +1047,7 @@ function articleView(a) {
     ${a.writer ? `<p class="by">بقلم: ${esc(a.writer)}</p>` : ""}
     <div class="gallery" id="gallery">${imgs.length ? imgs.map(src => `<img src="${esc(src)}" alt="">`).join("") : a.thumb ? `<img src="data:image/jpeg;base64,${a.thumb}" alt="">` : ""}</div>
     <div class="body">${paras}</div>
+    ${adSlot("article")}
     ${reactBox(a)}
     ${fileBox(a)}
     <div class="tools share">
