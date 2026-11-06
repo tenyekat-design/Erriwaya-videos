@@ -20,15 +20,15 @@ window.TIMELINE = {
     { img: 'un-helicopter.jpg', moves: [{ t: 14.00, a: [0.5, 0.5, 1.0], b: [0.55, 0.5, 1.1] }] },
     // Mauritania: telecom fines
     { img: 'mr-mattel.jpg', moves: [{ t: 16.94, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.1] }] },
-    { img: 'mr-mauritel.jpg', moves: [{ t: 21.40, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
-    { img: 'mr-chinguitel.webp', moves: [{ t: 24.20, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
+    { img: 'mr-mauritel-full.jpg', moves: [{ t: 21.40, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.05] }] },
+    { img: 'mr-chinguitel-full.jpg', moves: [{ t: 24.20, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.05] }] },
     { img: 'mr-mattel.jpg', moves: [{ t: 31.38, a: [0.5, 0.5, 1.15], b: [0.5, 0.5, 1.0] }] },
     // Mauritania - Morocco military visits
     { img: 'mr-ma-navy-shield.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 40.22, a: [0.5, 0.5, 1.0], b: [0.53, 0.45, 1.12] }] },
     { img: 'mr-ma-navy-casablanca.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 47.60, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.12] }] },
     { img: 'ma-navy-nouakchott.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 51.20, a: [0.5, 0.45, 1.0], b: [0.45, 0.4, 1.12] }] },
-    { img: 'mr-ma-kenitra.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 54.60, a: [0.5, 0.6, 1.0], b: [0.55, 0.7, 1.2] }] },
-    { img: 'ma-g5-college.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 59.36, a: [0.5, 0.5, 1.0], b: [0.7, 0.45, 1.2] }] },
+    { img: 'mr-ma-kenitra.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 54.60, a: [0.47, 0.5, 1.0], b: [0.47, 0.5, 1.06] }] },
+    { img: 'ma-g5-college.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 59.36, a: [0.62, 0.5, 1.0], b: [0.75, 0.5, 1.08] }] },
     { img: 'mr-ma-navy-shield.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 63.28, a: [0.53, 0.4, 1.3], b: [0.53, 0.4, 1.15] }] },
     // Mauritania: UN commission, Medina
     { img: 'mr-un-lghdhaf.jpg', moves: [{ t: 68.58, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.15] }] },
@@ -36,8 +36,8 @@ window.TIMELINE = {
     { img: 'medina.webp', moves: [{ t: 85.36, a: [0.5, 0.5, 1.0], b: [0.5, 0.55, 1.12] }] },
     // Sahel
     { img: 'ml-ne-goita-tiani.jpg', moves: [{ t: 92.58, a: [0.5, 0.4, 1.0], b: [0.5, 0.35, 1.12] }] },
-    { img: 'ml-bf-goita-traore.jpg', moves: [{ t: 96.66, a: [0.5, 0.45, 1.0], b: [0.5, 0.4, 1.12] },
-                                            { t: 103.80, a: [0.4, 0.4, 1.3], b: [0.62, 0.4, 1.3] }] },
+    { img: 'ml-bf-goita-traore.jpg', moves: [{ t: 96.66, a: [0.26, 0.45, 1.0], b: [0.3, 0.45, 1.05] },
+                                            { t: 101.82, a: [0.64, 0.45, 1.0], b: [0.68, 0.45, 1.05] }] },
     // Tunisia
     { img: 'tn-kasbah.jpg', moves: [{ t: 109.50, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.12] }] },
     { img: 'amnesty.jpg', moves: [{ t: 113.50, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.08] }] },
@@ -47,7 +47,7 @@ window.TIMELINE = {
     { img: 'tn-journalist-2.jpg', moves: [{ t: 131.20, a: [0.5, 0.4, 1.0], b: [0.5, 0.38, 1.1] }] },
     // wrap-up
     { img: 'mr-ma-navy-casablanca.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 133.96, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
-    { img: 'ml-bf-goita-traore.jpg', moves: [{ t: 136.40, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
+    { img: 'ml-bf-goita-traore.jpg', moves: [{ t: 136.40, a: [0.64, 0.45, 1.0], b: [0.66, 0.45, 1.06] }] },
     { img: 'tn-kasbah.jpg', moves: [{ t: 138.90, a: [0.5, 0.5, 1.05], b: [0.5, 0.5, 1.15] }] },
   ],
 
