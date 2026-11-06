@@ -1729,6 +1729,17 @@
       ctx.fillText(row.handle, x0 + iw + 30 + (1 - eout(rp)) * 20, y + S / 2 + 3);
       ctx.restore();
     });
+    // the website, under the social rows
+    const wp = prog(o, 2.0, 2.6);
+    if (wp > 0) {
+      const wy = Math.min(L.outro.rowsY + SOCIAL.length * 112 + 34, H - 44);
+      ctx.save();
+      ctx.globalAlpha = eout(wp);
+      ctx.font = font(44); ctx.direction = 'ltr'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = C.navy;
+      ctx.fillText('www.erriwaya.com', W / 2, wy + (1 - eout(wp)) * 16);
+      ctx.restore();
+    }
   }
 
   // ---------- cover (thumbnail) ----------

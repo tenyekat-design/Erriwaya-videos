@@ -27,7 +27,7 @@ window.TIMELINE = {
     { img: 'mr-ma-navy-shield.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 40.22, a: [0.5, 0.5, 1.0], b: [0.53, 0.45, 1.12] }] },
     { img: 'mr-ma-navy-casablanca.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 47.60, a: [0.5, 0.55, 1.0], b: [0.5, 0.6, 1.12] }] },
     { img: 'ma-navy-nouakchott.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 51.20, a: [0.5, 0.45, 1.0], b: [0.45, 0.4, 1.12] }] },
-    { img: 'mr-ma-kenitra.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 54.60, a: [0.47, 0.5, 1.0], b: [0.47, 0.5, 1.06] }] },
+    { img: 'mr-ma-kenitra-up.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 54.60, a: [0.5, 0.5, 1.0], b: [0.5, 0.45, 1.05] }] },
     { img: 'ma-g5-college.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 59.36, a: [0.62, 0.5, 1.0], b: [0.75, 0.5, 1.08] }] },
     { img: 'mr-ma-navy-shield.jpg', credit: 'الجيش الموريتاني', moves: [{ t: 63.28, a: [0.53, 0.4, 1.3], b: [0.53, 0.4, 1.15] }] },
     // Mauritania: UN commission, Medina
