@@ -484,6 +484,25 @@ button.po:active { transform: scale(.98) }
 .adhouse .go { background:var(--brand, #004A49); color:#fff; border-radius:999px; padding:9px 20px; font-size:15px; white-space:nowrap }
 :root[data-theme="dark"] .adhouse strong { color:#7FD1C7 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .adhouse strong { color:#7FD1C7 } }
+/* الخانة الإعلانية المتحركة */
+.adhouse { position:relative; overflow:hidden; isolation:isolate }
+.adhouse::before { content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(110deg, transparent 30%, rgba(0,74,73,.10) 45%, rgba(208,16,43,.08) 55%, transparent 70%);
+  background-size:250% 100%; animation:adSweep 4.5s ease-in-out infinite }
+.adhouse { border-style:solid; border-width:2px; border-color:transparent;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,
+    linear-gradient(90deg,#004A49,#D0102B,#004A49) border-box; background-size:auto, 300% 100%; animation:adBorder 6s linear infinite }
+.adhouse .rot { position:relative; display:block; height:2.9em; overflow:hidden; margin-top:4px }
+.adhouse .rot span { position:absolute; inset:0; color:var(--muted); font-size:15px; line-height:1.45; opacity:0; animation:adRot 9s infinite }
+.adhouse .rot span:nth-child(2) { animation-delay:3s } .adhouse .rot span:nth-child(3) { animation-delay:6s }
+.adhouse .go { animation:adPulse 2.4s ease-in-out infinite }
+@keyframes adSweep { 0% { background-position:150% 0 } 100% { background-position:-100% 0 } }
+@keyframes adBorder { 0% { background-position:0 0, 0 0 } 100% { background-position:0 0, 300% 0 } }
+@keyframes adRot { 0% { opacity:0; transform:translateY(60%) } 5%,30% { opacity:1; transform:none } 35%,100% { opacity:0; transform:translateY(-60%) } }
+@keyframes adPulse { 0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(0,74,73,.45) } 50% { transform:scale(1.05); box-shadow:0 0 0 10px rgba(0,74,73,0) } }
+@media (prefers-reduced-motion: reduce) { .adhouse, .adhouse::before, .adhouse .go { animation:none }
+  .adhouse .rot span { animation:none } .adhouse .rot span:first-child { opacity:1 } }
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1026,7 +1045,7 @@ function adSlot(pos) {
   const sid = AD_SLOTS[pos];
   const inner = sid
     ? `<ins class="adsbygoogle" data-ad-client="${AD_CLIENT}" data-ad-slot="${sid}" data-ad-format="auto" data-full-width-responsive="true"></ins>`
-    : `<a class="adhouse" href="advertise.html"><div><strong>مساحتك الإعلانية هنا</strong><span class="s">اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span></div><span class="go">أعلن معنا</span></a>`;
+    : `<a class="adhouse" href="advertise.html"><div><strong>مساحتك الإعلانية هنا</strong><span class="rot"><span>اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><span>في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><span>مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span></span></div><span class="go">أعلن معنا</span></a>`;
   return `<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>${inner}</aside>`;
 }
 function fillAds() {
