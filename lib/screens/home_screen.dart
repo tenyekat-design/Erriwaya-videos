@@ -9,6 +9,7 @@ import '../services/articles_service.dart';
 import '../services/push_service.dart';
 import '../services/videos_controller.dart';
 import '../theme.dart';
+import '../widgets/ad_slot.dart';
 import '../widgets/article_card.dart';
 import '../widgets/capitals_board.dart';
 import '../widgets/states.dart';
@@ -77,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SliverToBoxAdapter(child: _BreakingBanner()),
             SliverToBoxAdapter(child: _LatestTicker(feed: all)),
+            const SliverToBoxAdapter(child: AdSlot()),
             const SliverToBoxAdapter(child: CapitalsBoard()),
             const SliverToBoxAdapter(child: DossiersStrip()),
             const SliverToBoxAdapter(child: PollCard()),

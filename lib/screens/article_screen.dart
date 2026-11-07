@@ -6,6 +6,7 @@ import '../models.dart';
 import '../services/articles_service.dart';
 import '../services/saved_service.dart';
 import '../theme.dart';
+import '../widgets/ad_slot.dart';
 import 'dossier_screen.dart';
 import '../widgets/social.dart';
 
@@ -123,7 +124,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
             const SizedBox(height: 18),
             SelectableText(a.body,
                 style: const TextStyle(fontSize: 17, height: 1.9, color: Brand.ink)),
-            const SizedBox(height: 18),
+            const SizedBox(height: 8),
+            const AdSlot(margin: EdgeInsets.symmetric(vertical: 10)),
+            const SizedBox(height: 8),
             FadeSlideIn(child: ReactionsBar(articleId: a.id)),
             DossierBox(article: a),
             const SizedBox(height: 24),
