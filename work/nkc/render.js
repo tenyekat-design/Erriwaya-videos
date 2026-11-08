@@ -29,16 +29,16 @@ async function grab(page, t, type = 'image/jpeg') {
 function buildAudio(duration, transitions, outro, file) {
   const A = p => path.join(ROOT, 'assets', 'audio', p);
   const ms = s => Math.max(0, Math.round(s * 1000));
-  const OUTRO_HIT = 8.0, LAND = outro + 2.1;
+  // music synthesized for this video (work/nkc/make-music.py), timed to the scenes
+  const music = path.join(__dirname, 'music.wav');
+  execFileSync('python3', [path.join(__dirname, 'make-music.py'), String(duration), music], { stdio: 'inherit' });
   const f = [
-    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume='if(lt(t,7),0.8,0.8*max(0.15,1-(t-7)*0.35))':eval=frame[m]`,
-    `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:${duration},volume=0.5,afade=t=in:st=0:d=3,afade=t=out:st=${LAND - OUTRO_HIT - 6.5}:d=2.5,adelay=6000|6000[bed]`,
-    `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,adelay=${ms(LAND - OUTRO_HIT)}|${ms(LAND - OUTRO_HIT)}[out]`,
-    `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=300,volume=0.3,asplit=${transitions.length}${transitions.map((_, i) => `[w${i}]`).join('')}`,
+    `[0:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.9[m]`,
+    `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=300,volume=0.25,asplit=${transitions.length}${transitions.map((_, i) => `[w${i}]`).join('')}`,
     ...transitions.map((h, i) => `[w${i}]adelay=${ms(h - 0.3)}|${ms(h - 0.3)}[wd${i}]`),
-    `[m][bed][out]${transitions.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + transitions.length}:normalize=0:duration=longest,apad,atrim=0:${duration},afade=t=out:st=${duration - 1.2}:d=1.2,loudnorm=I=-10.5:TP=-1:LRA=11[mix]`,
+    `[m]${transitions.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${1 + transitions.length}:normalize=0:duration=longest,apad,atrim=0:${duration},loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.84:level=false[mix]`,
   ].join(';');
-  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav'),
+  execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', music, '-i', A('whoosh.wav'),
     '-filter_complex', f, '-map', '[mix]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);
 }
 
