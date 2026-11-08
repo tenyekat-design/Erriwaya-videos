@@ -262,16 +262,47 @@ scene(35.6, 44.6, lt => {
   source('المصدر: دراسات حول عمران نواكشوط (Cahiers Géographiques de l’Ouest)', prog(lt, 0.5, 1));
 });
 
+// 6b. what was achieved (brief), before the problems
+const GOOD = [['الماء', 'مشروع آفطوط الساحلي ينقل مياه نهر السنغال'], ['السكن', 'إعادة هيكلة أحياء الكزرة والكبة'], ['النقل', 'مطار أم التونسي الدولي (2016)']];
+scene(44.6, 51.6, lt => {
+  washBg('hook', lt / 7, 0.18);
+  rise('ما تحقق', W - 64, 270, 72, lt, 0.2, C.navy, 'right');
+  rise('خطوات لم تواكب النمو', W - 64, 350, 40, lt, 0.4, C.gray, 'right');
+  bar(W - 64, 395, 160, eout(prog(lt, 0.5, 1.1)));
+  GOOD.forEach(([k, line], i) => {
+    const t0 = 0.8 + i * 0.7, p = eout(prog(lt, t0, t0 + 0.5));
+    if (p <= 0) return;
+    const y = 500 + i * 200;
+    ctx.save(); ctx.globalAlpha *= p; ctx.translate((1 - p) * -30, 0);
+    ctx.shadowColor = 'rgba(11,31,75,0.10)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 10;
+    ctx.fillStyle = 'rgba(255,255,255,0.95)'; rrect(64, y, W - 128, 160, 22); ctx.fill();
+    ctx.shadowColor = 'transparent';
+    // check mark
+    ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(W - 130, y + 80, 36, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(W - 147, y + 80); ctx.lineTo(W - 135, y + 93); ctx.lineTo(W - 112, y + 67); ctx.stroke();
+    ctx.restore();
+    text(k, W - 190, y + 52, 32, C.green, 'right', p);
+    text(line, W - 190, y + 105, 42, C.navy, 'right', p);
+  });
+  // turn to the problems
+  const kp = eout(prog(lt, 4.2, 4.7));
+  if (kp > 0) {
+    ctx.save(); ctx.globalAlpha *= kp; ctx.translate(W / 2, 1170); ctx.scale(lerp(1.2, 1, kp), lerp(1.2, 1, kp));
+    ctx.fillStyle = C.navy; rrect(-(W - 200) / 2, -48, W - 200, 96, 12); ctx.fill(); ctx.restore();
+    text('لكن المشاكل أكبر', W / 2, 1172, 52, '#fff', 'center', kp);
+  }
+});
+
 // 7. the problems: a photo card and one number each
 const PROB = [
   { img: 'pr0', tag: 'الصرف الصحي', pre: 'أقل من', big: '5%', l1: 'من الأسر مربوطة بشبكة الصرف الصحي', src: 'المصدر: جهة نواكشوط' },
   { img: 'pr1', tag: 'النظافة', pre: 'لا تتجاوز', big: '25%', l1: 'نسبة جمع النفايات المنزلية (تقدير 2004)', src: 'المصدر: مجموعة نواكشوط الحضرية' },
-  { img: 'pr2', tag: 'الأحياء العشوائية', pre: 'أكثر من', big: '190 ألف', l1: 'ساكن في أحياء الكزرة (تقدير 2008)', src: 'المصدر: Gret، دراسة إعادة الهيكلة' },
   { img: 'pr3', tag: 'الفيضانات', pre: '', big: '60%', l1: 'من المدينة على أقل من متر فوق سطح البحر', src: 'المصدر: Comptes Rendus Géoscience (2017)' },
   { img: 'pr4', tag: 'زحف البحر', pre: '', big: '21', l1: 'ثغرة في الشريط الساحلي، ثلاث منها حرجة', src: 'المصدر: البنك الدولي، برنامج WACA' },
   { img: 'pr5', tag: 'الماء', pre: 'صيف', big: '2023', l1: 'صنابير شبه جافة في أحياء كبرى لأسابيع', src: 'المصدر: Afrik21' },
 ];
-const PD = 5.0, P0 = 44.6;
+const PD = 5.0, P0 = 51.6;
 const PCARD = { x: 64, y: 210, w: W - 128, h: 560 };
 PROB.forEach((p, i) => {
   scene(P0 + i * PD, P0 + (i + 1) * PD, lt => {
