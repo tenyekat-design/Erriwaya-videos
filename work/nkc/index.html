@@ -30,6 +30,15 @@ for (const k of Object.keys(window.CREDITS)) IMG[k] = await loadImg('img/' + win
 
 // ---------- drawing helpers ----------
 function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+// a full-frame photo, washed out under white, behind a data slide
+function washBg(key, k, alpha = 0.22) {
+  lightBg();
+  const img = IMG[key]; if (!img) return;
+  const z = lerp(1.04, 1.14, k), sc = Math.max(W / img.width, H / img.height) * z;
+  const iw = img.width * sc, ih = img.height * sc;
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.filter = 'grayscale(0.3)';
+  ctx.drawImage(img, (W - iw) / 2, (H - ih) / 2, iw, ih); ctx.filter = 'none'; ctx.restore();
+}
 function lightBg() {
   const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#EEF2F7');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
@@ -120,7 +129,7 @@ scene(0, 4.6, lt => {
 
 // 2. share of the country
 scene(4.6, 10.4, lt => {
-  lightBg();
+  washBg('close', lt / 6);
   const cx = W / 2, cy = 600, R = 250;
   const p = eio(prog(lt, 0.5, 2.2)), share = 29.4;
   ctx.save(); ctx.lineCap = 'butt';
@@ -170,7 +179,7 @@ scene(15.4, 20.6, lt => {
 // 5. population chart
 const DATA = [[1977, 134704], [1988, 393325], [2000, 558195], [2013, 958399], [2023, 1446761]];
 scene(20.6, 35.6, lt => {
-  lightBg();
+  washBg('hook', lt / 15, 0.16);
   rise('سكان نواكشوط', W - 64, 270, 72, lt, 0.2, C.navy, 'right');
   rise('حسب التعدادات الرسمية', W - 64, 350, 40, lt, 0.4, C.gray, 'right');
   bar(W - 64, 395, 160, eout(prog(lt, 0.5, 1.1)));
@@ -224,7 +233,7 @@ scene(20.6, 35.6, lt => {
 // 6. successive governments, plans on paper
 const PLANS = [['1959', 'مخطط لوكونت الأول'], ['1970', 'المخطط التوجيهي'], ['1982', 'مخطط عمراني جديد'], ['2015', 'مخطط توجيهي حتى 2030']];
 scene(35.6, 44.6, lt => {
-  lightBg();
+  washBg('arch1', lt / 9, 0.2);
   rise('حكومات متعاقبة', W - 64, 270, 72, lt, 0.2, C.navy, 'right');
   rise('وخطط على الورق', W - 64, 355, 60, lt, 0.5, C.green, 'right');
   bar(W - 64, 405, 160, eout(prog(lt, 0.7, 1.3)));
@@ -253,32 +262,32 @@ scene(35.6, 44.6, lt => {
   source('المصدر: دراسات حول عمران نواكشوط (Cahiers Géographiques de l’Ouest)', prog(lt, 0.5, 1));
 });
 
-// 7. the problems, one number each
+// 7. the problems: a photo card and one number each
 const PROB = [
-  { tag: 'الصرف الصحي', pre: 'أقل من', big: '5%', l1: 'من الأسر مربوطة', l2: 'بشبكة الصرف الصحي', src: 'المصدر: جهة نواكشوط' },
-  { tag: 'الأحياء العشوائية', pre: 'أكثر من', big: '190 ألف', l1: 'ساكن في أحياء الكزرة', l2: 'العشوائية (تقدير 2008)', src: 'المصدر: Gret، دراسة إعادة الهيكلة' },
-  { tag: 'الفيضانات', pre: '', big: '60%', l1: 'من مساحة المدينة على أقل', l2: 'من متر فوق سطح البحر', src: 'المصدر: Comptes Rendus Géoscience (2017)' },
-  { tag: 'زحف البحر', pre: '', big: '21', l1: 'ثغرة في الشريط الساحلي', l2: 'ثلاث منها حرجة', src: 'المصدر: البنك الدولي، برنامج WACA' },
-  { tag: 'الماء', pre: 'صيف', big: '2023', l1: 'صنابير شبه جافة في أحياء', l2: 'كبرى لأسابيع', src: 'المصدر: Afrik21' },
+  { img: 'pr0', tag: 'الصرف الصحي', pre: 'أقل من', big: '5%', l1: 'من الأسر مربوطة بشبكة الصرف الصحي', src: 'المصدر: جهة نواكشوط' },
+  { img: 'pr1', tag: 'النظافة', pre: 'لا تتجاوز', big: '25%', l1: 'نسبة جمع النفايات المنزلية (تقدير 2004)', src: 'المصدر: مجموعة نواكشوط الحضرية' },
+  { img: 'pr2', tag: 'الأحياء العشوائية', pre: 'أكثر من', big: '190 ألف', l1: 'ساكن في أحياء الكزرة (تقدير 2008)', src: 'المصدر: Gret، دراسة إعادة الهيكلة' },
+  { img: 'pr3', tag: 'الفيضانات', pre: '', big: '60%', l1: 'من المدينة على أقل من متر فوق سطح البحر', src: 'المصدر: Comptes Rendus Géoscience (2017)' },
+  { img: 'pr4', tag: 'زحف البحر', pre: '', big: '21', l1: 'ثغرة في الشريط الساحلي، ثلاث منها حرجة', src: 'المصدر: البنك الدولي، برنامج WACA' },
+  { img: 'pr5', tag: 'الماء', pre: 'صيف', big: '2023', l1: 'صنابير شبه جافة في أحياء كبرى لأسابيع', src: 'المصدر: Afrik21' },
 ];
 const PD = 5.0, P0 = 44.6;
+const PCARD = { x: 64, y: 210, w: W - 128, h: 560 };
 PROB.forEach((p, i) => {
   scene(P0 + i * PD, P0 + (i + 1) * PD, lt => {
     lightBg();
-    // big faint index number in the background
-    textLTR(String(i + 1), 64, 760, 520, 'rgba(11,31,75,0.04)', 'left');
-    text('مشاكل مزمنة', W - 64, 270, 40, C.gray, 'right', 1);
-    for (let j = 0; j < PROB.length; j++) { ctx.fillStyle = j === i ? C.acc : 'rgba(11,31,75,0.15)'; rrect(W - 64 - (j + 1) * 46 + 10, 310, 36, 8, 4); ctx.fill(); }
-    tag(p.tag, W - 64, 400, prog(lt, 0.1, 0.55), 40);
-    if (p.pre) rise(p.pre, W - 64, 560, 56, lt, 0.3, C.navy, 'right');
+    card(p.img, lt / 5.5, i % 2 ? [0.42, 0.5, 1.16, 0.58, 0.5, 1.04] : [0.58, 0.5, 1.04, 0.42, 0.5, 1.16], PCARD);
+    tag(p.tag, W - 64, PCARD.y + PCARD.h - 70, prog(lt, 0.1, 0.55), 40);
+    for (let j = 0; j < PROB.length; j++) { ctx.fillStyle = j === i ? C.acc : 'rgba(11,31,75,0.15)'; rrect(64 + j * 46, 830, 36, 8, 4); ctx.fill(); }
+    text('مشاكل مزمنة', W - 64, 836, 34, C.gray, 'right', 1);
+    if (p.pre) rise(p.pre, W - 64, 925, 50, lt, 0.3, C.navy, 'right');
     const bp = eout(prog(lt, 0.4, 1.0));
     ctx.save(); ctx.globalAlpha *= bp;
-    ctx.font = F(220); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = C.green; ctx.fillText(p.big, W - 64, 720 + (1 - bp) * 30);
+    ctx.font = F(170); ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = C.green; ctx.fillText(p.big, W - 64, 1040 + (1 - bp) * 30);
     ctx.restore();
-    rise(p.l1, W - 64, 920, 62, lt, 0.9, C.navy, 'right');
-    rise(p.l2, W - 64, 1005, 62, lt, 1.1, C.navy, 'right');
-    bar(W - 64, 1065, 200, eout(prog(lt, 1.3, 1.9)));
+    rise(p.l1, W - 64, 1170, 48, lt, 0.9, C.navy, 'right');
+    bar(W - 64, 1220, 200, eout(prog(lt, 1.3, 1.9)));
     source(p.src, prog(lt, 0.6, 1.1));
   });
 });

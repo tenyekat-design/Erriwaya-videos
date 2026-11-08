@@ -10,5 +10,11 @@ window.CREDITS = {
   m3: { file: 'user/u05.jpg', short: '' },
   m4: { file: 'user/u04.jpg', short: '' },
   m5: { file: 'user/u06.jpg', short: '' },
+  pr0: { file: 'user/u01.jpg', short: '' },
+  pr1: { file: 'user/u02.jpg', short: '' },
+  pr2: { file: 'user/u03.jpg', short: '' },
+  pr3: { file: 'user/u01.jpg', short: '' },
+  pr4: { file: 'user/u02.jpg', short: '' },
+  pr5: { file: 'user/u03.jpg', short: '' },
   close: { file: 'user/u02.jpg', short: '' },
 };
