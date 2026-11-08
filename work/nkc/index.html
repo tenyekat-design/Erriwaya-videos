@@ -63,10 +63,18 @@ function card(key, k, mv, box = CARD) {
     ctx.drawImage(img, ix, iy, iw, ih); ctx.filter = 'none';
   } else { ctx.fillStyle = '#DDE3EC'; ctx.fillRect(x, y, w, h); }
   ctx.restore();
+  if (w < 500) { ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 7; rrect(x, y, w, h, r); ctx.stroke(); ctx.restore(); }
   const c = window.CREDITS[key];
   if (c && c.short && img) textLTR(c.short, x + 24, y + h - 26, 20, 'rgba(255,255,255,0.9)', 'left', 1, true);
 }
 const CARD = { x: 64, y: 210, w: W - 128, h: 660 };
+function archiveAt(x, y) {
+  ctx.save(); ctx.font = F(24); ctx.direction = 'rtl';
+  const tw = ctx.measureText('أرشيف').width;
+  ctx.fillStyle = 'rgba(11,31,75,0.78)'; rrect(x + 16, y + 16, tw + 28, 40, 7); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('أرشيف', x + 16 + (tw + 28) / 2, y + 37); ctx.restore();
+}
 // small 'archive' label in the card's top-left corner
 function archive() {
   ctx.save(); ctx.font = F(28); ctx.direction = 'rtl';
@@ -107,7 +115,7 @@ function tag(str, xr, y, p, size = 34) {
 }
 function bar(x, y, w, p, color = C.acc) { if (p <= 0) return; ctx.fillStyle = color; rrect(x - w * p, y, w * p, 7, 3.5); ctx.fill(); }
 function logo(a = 1) {
-  const h = 118, w = h * LOGO.width / LOGO.height, x = 64, y = 56;
+  const h = 156, w = h * LOGO.width / LOGO.height, x = 60, y = 32;
   ctx.save(); ctx.globalAlpha *= a; ctx.drawImage(LOGO_NAVY, x, y, w, h); ctx.restore();
 }
 function source(str, a = 1) { text(str, W - 64, H - 40, 24, 'rgba(22,35,63,0.55)', 'right', a); }
@@ -249,8 +257,9 @@ scene(35.6, 44.6, lt => {
     ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(xr - 234, y, 12 * p, 0, 7); ctx.fill();
     ctx.restore();
     textLTR(yr, xr, y, 56, C.navy, 'right', p);
-    text(name, xr - 270, y, 46, C.ink, 'right', p);
+    text(name, xr - 270, y, 42, C.ink, 'right', p);
   });
+  { const ap = eout(prog(lt, 0.6, 1.2)); ctx.save(); ctx.globalAlpha *= ap; card('arch1', lt / 9, [0.5, 0.5, 1.05, 0.5, 0.5, 1.15], { x: 64, y: 470 + (1 - ap) * 20, w: 230, h: 380 }); archiveAt(64, 470); ctx.restore(); }
   rise('ثم مخطط آخر بأفق 2040', xr - 270, top + PLANS.length * step - 10, 40, lt, 3.6, C.gray, 'right');
   const kp = eout(prog(lt, 4.6, 5.1));
   if (kp > 0) {
@@ -263,8 +272,8 @@ scene(35.6, 44.6, lt => {
 });
 
 // 6b. what was achieved (brief), before the problems
-const GOOD = [['الماء', 'مشروع آفطوط الساحلي ينقل مياه نهر السنغال'], ['السكن', 'إعادة هيكلة أحياء الكزرة والكبة'], ['النقل', 'مطار أم التونسي الدولي (2016)']];
-scene(44.6, 51.6, lt => {
+const GOOD = [['الماء', 'مشروع آفطوط الساحلي ينقل مياه نهر السنغال'], ['العمران', 'مناطق ومبانٍ عصرية جديدة'], ['النقل', 'مطار أم التونسي الدولي (2016)']];
+scene(44.6, 50.1, lt => {
   washBg('hook', lt / 7, 0.18);
   rise('ما تحقق', W - 64, 270, 72, lt, 0.2, C.navy, 'right');
   rise('خطوات لم تواكب النمو', W - 64, 350, 40, lt, 0.4, C.gray, 'right');
@@ -285,12 +294,33 @@ scene(44.6, 51.6, lt => {
     text(k, W - 190, y + 52, 32, C.green, 'right', p);
     text(line, W - 190, y + 105, 42, C.navy, 'right', p);
   });
-  // turn to the problems
-  const kp = eout(prog(lt, 4.2, 4.7));
+});
+
+// 6c. modern areas and buildings: a large card and a smaller overlapping one
+const MOD = ['m1', 'm4', 'm2', 'm3', 'm6', 'm5'];
+const MS = 1.4;
+scene(50.1, 58.5, lt => {
+  lightBg();
+  const i = Math.min(MOD.length - 1, Math.floor(lt / MS)), li = lt - i * MS;
+  const big = { x: 64, y: 210, w: W - 128, h: 700 };
+  if (i > 0 && li < 0.3) card(MOD[i - 1], 1, [0.5, 0.5, 1.02, 0.5, 0.5, 1.12], big);
+  ctx.save(); ctx.globalAlpha *= i > 0 ? eio(prog(li, 0, 0.3)) : 1;
+  card(MOD[i], li / (MS + 0.3), i % 2 ? [0.45, 0.5, 1.12, 0.55, 0.5, 1.02] : [0.55, 0.5, 1.02, 0.45, 0.5, 1.12], big);
+  ctx.restore();
+  // the next photo previewed in a small card overlapping the corner
+  const nx = MOD[(i + 1) % MOD.length], sp = eout(prog(li, 0.2, 0.6));
+  ctx.save(); ctx.globalAlpha *= sp;
+  card(nx, li / MS, [0.5, 0.5, 1.05, 0.5, 0.5, 1.1], { x: 100, y: 760 + (1 - sp) * 20, w: 380, h: 250 });
+  ctx.restore();
+  tag('ما تحقق', W - 64, 960, prog(lt, 0.2, 0.7));
+  rise('مناطق ومبانٍ عصرية', W - 64, 1095, 70, lt, 0.4, C.navy, 'right');
+  rise('واجهة جديدة لأجزاء من العاصمة', W - 64, 1180, 44, lt, 0.7, C.gray, 'right');
+  const kp = eout(prog(lt, 7.0, 7.5));
   if (kp > 0) {
-    ctx.save(); ctx.globalAlpha *= kp; ctx.translate(W / 2, 1170); ctx.scale(lerp(1.2, 1, kp), lerp(1.2, 1, kp));
-    ctx.fillStyle = C.navy; rrect(-(W - 200) / 2, -48, W - 200, 96, 12); ctx.fill(); ctx.restore();
-    text('لكن المشاكل أكبر', W / 2, 1172, 52, '#fff', 'center', kp);
+    ctx.save(); ctx.globalAlpha *= kp; ctx.fillStyle = 'rgba(255,255,255,0.86)'; ctx.fillRect(0, 0, W, H);
+    ctx.translate(W / 2, H / 2); ctx.scale(lerp(1.2, 1, kp), lerp(1.2, 1, kp));
+    ctx.fillStyle = C.navy; rrect(-(W - 200) / 2, -60, W - 200, 120, 14); ctx.fill(); ctx.restore();
+    text('لكن المشاكل أكبر', W / 2, H / 2 + 2, 64, '#fff', 'center', kp);
   }
 });
 
@@ -298,16 +328,19 @@ scene(44.6, 51.6, lt => {
 const PROB = [
   { img: 'pr0', tag: 'الصرف الصحي', pre: 'أقل من', big: '5%', l1: 'من الأسر مربوطة بشبكة الصرف الصحي', src: 'المصدر: جهة نواكشوط' },
   { img: 'pr1', tag: 'النظافة', pre: 'لا تتجاوز', big: '25%', l1: 'نسبة جمع النفايات المنزلية (تقدير 2004)', src: 'المصدر: مجموعة نواكشوط الحضرية' },
+  { img: 'pr2', tag: 'الأحياء العشوائية', pre: 'عمليات إزالة', big: 'متكررة', l1: 'لكن القضاء على العشوائيات ظل صعباً', src: 'المصدر: Gret' },
   { img: 'pr3', tag: 'الفيضانات', pre: '', big: '60%', l1: 'من المدينة على أقل من متر فوق سطح البحر', src: 'المصدر: Comptes Rendus Géoscience (2017)' },
   { img: 'pr4', tag: 'زحف البحر', pre: '', big: '21', l1: 'ثغرة في الشريط الساحلي، ثلاث منها حرجة', src: 'المصدر: البنك الدولي، برنامج WACA' },
   { img: 'pr5', tag: 'الماء', pre: 'صيف', big: '2023', l1: 'صنابير شبه جافة في أحياء كبرى لأسابيع', src: 'المصدر: Afrik21' },
 ];
-const PD = 5.0, P0 = 51.6;
+const PD = 4.6, P0 = 58.5;
 const PCARD = { x: 64, y: 210, w: W - 128, h: 560 };
 PROB.forEach((p, i) => {
   scene(P0 + i * PD, P0 + (i + 1) * PD, lt => {
     lightBg();
     card(p.img, lt / 5.5, i % 2 ? [0.42, 0.5, 1.16, 0.58, 0.5, 1.04] : [0.58, 0.5, 1.04, 0.42, 0.5, 1.16], PCARD);
+    const ip = eout(prog(lt, 0.5, 0.9)), k2 = p.img + 'b';
+    if (IMG[k2]) { ctx.save(); ctx.globalAlpha *= ip; card(k2, lt / 5, [0.5, 0.5, 1.05, 0.5, 0.5, 1.15], { x: 100, y: PCARD.y + PCARD.h - 230 + (1 - ip) * 20, w: 330, h: 210 }); ctx.restore(); }
     tag(p.tag, W - 64, PCARD.y + PCARD.h - 70, prog(lt, 0.1, 0.55), 40);
     for (let j = 0; j < PROB.length; j++) { ctx.fillStyle = j === i ? C.acc : 'rgba(11,31,75,0.15)'; rrect(64 + j * 46, 830, 36, 8, 4); ctx.fill(); }
     text('مشاكل مزمنة', W - 64, 836, 34, C.gray, 'right', 1);
