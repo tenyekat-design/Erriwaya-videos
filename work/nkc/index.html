@@ -125,9 +125,11 @@ function tag(str, xr, y, p, size = 34) {
   ctx.restore();
 }
 function bar(x, y, w, p, color = C.acc) { if (p <= 0) return; ctx.fillStyle = color; rrect(x - w * p, y, w * p, 7, 3.5); ctx.fill(); }
+// logo inside each format's safe area (canvas coordinates): feed 4:5, story clear of the app bars, youtube 5% title-safe
+const LOGO_BOX = { feed: { x: 64, y: 48, h: 140 }, story: { x: 64, y: 170, h: 156 }, youtube: { x: 96, y: 54, h: 150 } }[FORMAT];
 function logo(a = 1) {
-  const h = 156, w = h * LOGO.width / LOGO.height, x = 60, y = 32;
-  ctx.save(); ctx.globalAlpha *= a; ctx.drawImage(LOGO_NAVY, x, y, w, h); ctx.restore();
+  const { x, y, h } = LOGO_BOX, w = h * LOGO.width / LOGO.height;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= a; ctx.drawImage(LOGO_NAVY, x, y, w, h); ctx.restore();
 }
 function source(str, a = 1) { text(str, W - 64, H - 40, 24, 'rgba(22,35,63,0.55)', 'right', a); }
 
@@ -409,8 +411,7 @@ const CHAPTERS = [[0, 'البداية'], [4.6, 'حصة العاصمة'], [10.4, 
 function panel(t, a) {
   if (a <= 0) return;
   ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = a;
-  const h = 160, w = h * LOGO.width / LOGO.height;
-  ctx.drawImage(LOGO_NAVY, 96, 38, w, h);
+  logo(1);
   const xr = PAGE.x - 70;
   text('نواكشوط', xr, 330, 110, C.navy, 'right');
   text('عاصمة تكبر.. ومشاكلها تكبر معها', xr, 430, 42, C.gray, 'right');
