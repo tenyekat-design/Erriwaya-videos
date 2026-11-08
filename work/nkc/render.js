@@ -10,9 +10,11 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((acc, v, i, arr) =>
   if (v.startsWith('--')) acc.push([v.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : true]);
   return acc;
 }, []));
-const FPS = 30, W = 1080, H = 1350, WORKERS = 4;
-const OUT = path.resolve(ROOT, args.out || 'output/erriwaya-nouakchott-infographic.mp4');
-const PAGE = 'file://' + path.join(__dirname, 'index.html');
+const FORMAT = String(args.format || 'feed');
+const [W, H] = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
+const FPS = 30, WORKERS = 4;
+const OUT = path.resolve(ROOT, args.out || `output/erriwaya-nouakchott-infographic${FORMAT === 'feed' ? '' : '-' + FORMAT}.mp4`);
+const PAGE = 'file://' + path.join(__dirname, 'index.html') + '?format=' + FORMAT;
 
 async function openPage(browser) {
   const page = await browser.newPage({ viewport: { width: W, height: H } });
@@ -61,7 +63,7 @@ function buildAudio(duration, transitions, outro, file) {
   }
   await probe.close();
   const N = Math.round(duration * FPS);
-  const tmp = path.join(ROOT, 'frames', 'nkc'); fs.mkdirSync(tmp, { recursive: true });
+  const tmp = path.join(ROOT, 'frames', 'nkc-' + FORMAT); fs.mkdirSync(tmp, { recursive: true });
   let done = 0;
   await Promise.all([...Array(WORKERS).keys()].map(async w => {
     const page = await openPage(browser);

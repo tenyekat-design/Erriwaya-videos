@@ -7,8 +7,15 @@
 <script src="credits.js"></script>
 <script>
 (async () => {
+// scenes are laid out on a 1080x1350 (feed) page; youtube and story place that page on a larger canvas
 const W = 1080, H = 1350;
-const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const FORMAT = new URLSearchParams(location.search).get('format') || 'feed';
+const [CW, CH] = { feed: [1080, 1350], youtube: [1920, 1080], story: [1080, 1920] }[FORMAT];
+const cv = document.getElementById('c'); cv.width = CW; cv.height = CH;
+const ctx = cv.getContext('2d');
+// page transform: youtube = page scaled to the full height on the right, a side panel on the left; story = page centred
+const PAGE = FORMAT === 'youtube' ? { s: CH / H, x: CW - W * CH / H - 40, y: 0 } : FORMAT === 'story' ? { s: 1, x: 0, y: (CH - H) / 2 } : { s: 1, x: 0, y: 0 };
+const pageT = () => ctx.setTransform(PAGE.s, 0, 0, PAGE.s, PAGE.x, PAGE.y);
 const C = { navy: '#0B1F4B', navy2: '#142E66', green: '#0A8F65', acc: '#10B981', ink: '#16233F', gray: '#5B6478', light: '#F3F5F9' };
 const F = s => `${s}px AlQuds`;
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -34,18 +41,22 @@ function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 function washBg(key, k, alpha = 0.22) {
   lightBg();
   const img = IMG[key]; if (!img) return;
-  const z = lerp(1.04, 1.14, k), sc = Math.max(W / img.width, H / img.height) * z;
+  const z = lerp(1.04, 1.14, k), sc = Math.max(CW / img.width, CH / img.height) * z;
   const iw = img.width * sc, ih = img.height * sc;
-  ctx.save(); ctx.globalAlpha *= alpha; ctx.filter = 'grayscale(0.3)';
-  ctx.drawImage(img, (W - iw) / 2, (H - ih) / 2, iw, ih); ctx.filter = 'none'; ctx.restore();
+  const m = ctx.getTransform();
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha *= alpha; ctx.filter = 'grayscale(0.3)';
+  ctx.drawImage(img, (CW - iw) / 2, (CH - ih) / 2, iw, ih); ctx.filter = 'none'; ctx.restore(); ctx.setTransform(m);
 }
 function lightBg() {
-  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#EEF2F7');
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const m = ctx.getTransform();
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const g = ctx.createLinearGradient(0, 0, 0, CH); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#EEF2F7');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, CW, CH);
   // faint green glow in a corner keeps the white from looking flat
-  const r = ctx.createRadialGradient(W * 0.1, H * 0.95, 20, W * 0.1, H * 0.95, 700);
+  const r = ctx.createRadialGradient(CW * 0.1, CH * 0.95, 20, CW * 0.1, CH * 0.95, 700);
   r.addColorStop(0, 'rgba(16,185,129,0.10)'); r.addColorStop(1, 'rgba(16,185,129,0)');
-  ctx.fillStyle = r; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = r; ctx.fillRect(0, 0, CW, CH);
+  ctx.restore(); ctx.setTransform(m);
 }
 // photo inside a rounded card with a slow push/pan; mv = [fx0,fy0,z0, fx1,fy1,z1]
 function card(key, k, mv, box = CARD) {
@@ -393,15 +404,39 @@ scene(OUTRO, DURATION + 1, o => {
   textLTR('www.erriwaya.com', W / 2, 1160 + (1 - wp) * 16, 44, C.navy, 'center', wp);
 });
 
+// youtube side panel: logo, title and the chapter list with the current one highlighted
+const CHAPTERS = [[0, 'البداية'], [4.6, 'حصة العاصمة'], [10.4, 'التأسيس والنزوح'], [20.6, 'نمو السكان'], [35.6, 'خطط على الورق'], [44.6, 'ما تحقق'], [58.5, 'مشاكل مزمنة'], [86.1, 'مدينة تنتظر']];
+function panel(t, a) {
+  if (a <= 0) return;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = a;
+  const h = 160, w = h * LOGO.width / LOGO.height;
+  ctx.drawImage(LOGO_NAVY, 96, 38, w, h);
+  const xr = PAGE.x - 70;
+  text('نواكشوط', xr, 330, 110, C.navy, 'right');
+  text('عاصمة تكبر.. ومشاكلها تكبر معها', xr, 430, 42, C.gray, 'right');
+  ctx.fillStyle = C.acc; rrect(xr - 160, 478, 160, 7, 3.5); ctx.fill();
+  let cur = 0; CHAPTERS.forEach(([c], i) => { if (t >= c) cur = i; });
+  CHAPTERS.forEach(([c, name], i) => {
+    const y = 570 + i * 58, on = i === cur;
+    ctx.fillStyle = on ? C.acc : 'rgba(11,31,75,0.15)'; rrect(xr - 10, y - 18, 10, 36, 5); ctx.fill();
+    text(name, xr - 30, y + 2, on ? 38 : 32, on ? C.navy : 'rgba(22,35,63,0.45)', 'right');
+  });
+  ctx.restore();
+}
 function renderFrame(t) {
-  ctx.globalAlpha = 1; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = 1; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, CW, CH);
   for (const s of SC) {
     if (t < s.start || t > s.end + FADE) continue;
     const a = (s.start === 0 ? 1 : eio(prog(t, s.start + 0.1, s.start + FADE))) * (1 - eio(prog(t, s.end, s.end + 0.3)));
+    pageT();
+    // the outro is centred on the whole canvas
+    if (s.start === OUTRO && FORMAT === 'youtube') ctx.setTransform(PAGE.s, 0, 0, PAGE.s, (CW - W * PAGE.s) / 2, 0);
     ctx.save(); ctx.globalAlpha = a; s.draw(t - s.start); ctx.restore();
   }
   const la = (1 - prog(t, OUTRO, OUTRO + 0.4)) * prog(t, 0.1, 0.6);
-  if (la > 0) logo(la);
+  pageT();
+  if (FORMAT === 'youtube') panel(t, la); else if (la > 0) logo(la);
 }
 window.renderFrame = renderFrame;
 window.DURATION = DURATION; window.OUTRO = OUTRO;
