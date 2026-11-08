@@ -36,7 +36,7 @@ function buildAudio(duration, transitions, outro, file) {
     `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.7,adelay=${ms(LAND - OUTRO_HIT)}|${ms(LAND - OUTRO_HIT)}[out]`,
     `[3:a]aformat=sample_rates=48000:channel_layouts=stereo,highpass=f=300,volume=0.3,asplit=${transitions.length}${transitions.map((_, i) => `[w${i}]`).join('')}`,
     ...transitions.map((h, i) => `[w${i}]adelay=${ms(h - 0.3)}|${ms(h - 0.3)}[wd${i}]`),
-    `[m][bed][out]${transitions.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + transitions.length}:normalize=0:duration=longest,apad,atrim=0:${duration},afade=t=out:st=${duration - 1.2}:d=1.2,loudnorm=I=-14:TP=-1:LRA=11[mix]`,
+    `[m][bed][out]${transitions.map((_, i) => `[wd${i}]`).join('')}amix=inputs=${3 + transitions.length}:normalize=0:duration=longest,apad,atrim=0:${duration},afade=t=out:st=${duration - 1.2}:d=1.2,loudnorm=I=-10.5:TP=-1:LRA=11[mix]`,
   ].join(';');
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', A('intro-music.wav'), '-stream_loop', '-1', '-i', A('bed.wav'), '-i', A('outro-music.wav'), '-i', A('whoosh.wav'),
     '-filter_complex', f, '-map', '[mix]', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', file]);

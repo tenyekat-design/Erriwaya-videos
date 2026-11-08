@@ -58,6 +58,14 @@ function card(key, k, mv, box = CARD) {
   if (c && c.short && img) textLTR(c.short, x + 24, y + h - 26, 20, 'rgba(255,255,255,0.9)', 'left', 1, true);
 }
 const CARD = { x: 64, y: 210, w: W - 128, h: 660 };
+// small 'archive' label in the card's top-left corner
+function archive() {
+  ctx.save(); ctx.font = F(28); ctx.direction = 'rtl';
+  const tw = ctx.measureText('أرشيف').width;
+  ctx.fillStyle = 'rgba(11,31,75,0.78)'; rrect(CARD.x + 24, CARD.y + 24, tw + 36, 48, 8); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('أرشيف', CARD.x + 24 + (tw + 36) / 2, CARD.y + 50); ctx.restore();
+}
 function text(str, x, y, size, color = C.navy, align = 'center', a = 1) {
   ctx.save(); ctx.globalAlpha *= a;
   ctx.font = F(size); ctx.direction = 'rtl'; ctx.textAlign = align; ctx.textBaseline = 'middle';
@@ -136,7 +144,11 @@ scene(4.6, 10.4, lt => {
 // 3. 1958
 scene(10.4, 15.4, lt => {
   lightBg();
-  card('centre', lt / 5.5, [0.45, 0.5, 1.04, 0.55, 0.5, 1.16]);
+  // two archive shots: the early city, then the flag-lined road
+  const sw = 2.6;
+  if (lt < sw + 0.4) card('arch1', lt / (sw + 0.4), [0.5, 0.45, 1.02, 0.5, 0.55, 1.12]);
+  if (lt > sw) { ctx.save(); ctx.globalAlpha *= eio(prog(lt, sw, sw + 0.4)); card('arch3', (lt - sw) / 3, [0.45, 0.5, 1.12, 0.55, 0.5, 1.02]); ctx.restore(); }
+  archive();
   const n = Math.round(lerp(1940, 1958, eout(prog(lt, 0.2, 1.4))));
   textLTR(String(n), W - 64, 1000, 150, C.navy, 'right', prog(lt, 0.1, 0.5));
   rise('بداية تشييد العاصمة', W - 64, 1130, 62, lt, 0.9, C.navy, 'right');
@@ -144,24 +156,11 @@ scene(10.4, 15.4, lt => {
   bar(W - 64, 1260, 200, eout(prog(lt, 1.5, 2.1)));
 });
 
-// 4. droughts of the 1970s (drawn: sun and dunes)
+// 4. droughts of the 1970s (archive photo: tents at the edge of the city)
 scene(15.4, 20.6, lt => {
   lightBg();
-  const sp = eout(prog(lt, 0.1, 1.2));
-  ctx.save();
-  const sg = ctx.createRadialGradient(W * 0.68, 470, 10, W * 0.68, 470, 330);
-  sg.addColorStop(0, `rgba(245,190,90,${0.95 * sp})`); sg.addColorStop(0.45, `rgba(250,210,130,${0.55 * sp})`); sg.addColorStop(1, 'rgba(250,220,150,0)');
-  ctx.fillStyle = sg; ctx.fillRect(0, 100, W, 760);
-  ctx.fillStyle = `rgba(245,180,70,${sp})`; ctx.beginPath(); ctx.arc(W * 0.68, 470 + (1 - sp) * 60, 110, 0, 7); ctx.fill();
-  const dune = (y0, amp, ph, color, k) => {
-    ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, H);
-    for (let x = 0; x <= W; x += 10) ctx.lineTo(x, y0 + Math.sin(x / 260 + ph + k * 0.4) * amp);
-    ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
-  };
-  const dk = lt / 5;
-  dune(720, 40, 0.5, '#F2DDB4', dk); dune(780, 55, 2.1, '#E9CC97', dk * 1.3); dune(850, 35, 4.0, '#E0BC80', dk * 1.6);
-  ctx.restore();
-  ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.fillRect(0, 880, W, H - 880);
+  card('arch2', lt / 5.5, [0.5, 0.5, 1.15, 0.5, 0.48, 1.02]);
+  archive();
   tag('السبعينيات', W - 64, 930, prog(lt, 0.15, 0.65));
   rise('موجات الجفاف تدفع', W - 64, 1070, 70, lt, 0.5, C.navy, 'right');
   rise('سكان البادية نحو المدينة', W - 64, 1160, 70, lt, 0.8, C.green, 'right');
