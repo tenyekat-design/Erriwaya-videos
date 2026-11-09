@@ -96,6 +96,16 @@ AD_CSS = """
 @keyframes adBubble { 0% { transform:translateY(0) scale(.6); opacity:0 } 15% { opacity:1 } 100% { transform:translateY(-150px) scale(1.25); opacity:0 } }
 @media (max-width:520px) { .adhouse { padding:16px } .adhouse .go { margin-inline-start:auto } .adhouse .mega { width:48px; height:48px; border-radius:14px } .adhouse .mega svg { width:24px; height:24px } }
 @media (prefers-reduced-motion: reduce) { .adhouse .mega, .adhouse .mega i, .adhouse strong, .adhouse .go svg, .adhouse .fx i { animation:none } .adhouse .fx { display:none } }
+/* الكلام يجري داخل الخانة كشريط أخبار */
+.adhouse .mq { display:block; overflow:hidden; margin-top:6px;
+  mask-image:linear-gradient(to left,transparent,#000 22px,#000 calc(100% - 22px),transparent);
+  -webkit-mask-image:linear-gradient(to left,transparent,#000 22px,#000 calc(100% - 22px),transparent) }
+.adhouse .mq-t { display:inline-flex; align-items:center; white-space:nowrap; width:max-content; animation:adMarq 22s linear infinite; color:var(--muted); font-size:15.5px; line-height:1.6 }
+.adhouse .mq-t > * { padding-inline-end:16px }
+.adhouse .mq-t i { font-style:normal; color:#C8102E; font-size:12px }
+.adhouse:hover .mq-t { animation-play-state:paused }
+@keyframes adMarq { from { transform:translateX(0) } to { transform:translateX(50%) } }
+@media (prefers-reduced-motion: reduce) { .adhouse .mq-t { animation:none; white-space:normal } .adhouse .mq-t [aria-hidden] { display:none } }
 """
 
 
@@ -109,7 +119,7 @@ def ad_slot(pos, prefix=""):
                  '<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>')
     else:
         inner = (f'<a class="adhouse" href="{prefix}advertise.html"><span class="mega" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l5 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><i></i><i></i></span><div><strong>مساحتك الإعلانية هنا</strong>'
-                 '<span class="rot"><span>اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><span>في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><span>مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span></span></div>'
+                 '<span class="mq"><span class="mq-t"><span>اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><i>✦</i><span>في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><i>✦</i><span>مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span><i>✦</i><span aria-hidden="true">اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><i aria-hidden="true">✦</i><span aria-hidden="true">في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><i aria-hidden="true">✦</i><span aria-hidden="true">مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span><i aria-hidden="true">✦</i></span></span></div>'
                  '<span class="go">أعلن معنا<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></span><span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>')
     return f'<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>{inner}</aside>'
 
