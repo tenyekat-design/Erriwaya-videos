@@ -1,7 +1,6 @@
 // Edition of 9 Nov 2026. All times are in seconds of the ORIGINAL voice-over (voiceover.mp3 in this
 // folder). Voice: ElevenLabs "Hamida" (AI), three parts: opening 0 - 12.04, body 12.74 - 194.45,
-// closing 195.20 - end. The virtual anchor (grey suit, navy tie) presents the opening and the closing:
-// the anchor-grey cards are replaced by the lip-synced clips after rendering (editions/2026-11-08/anchor/).
+// closing 195.20 - end. Edition without the anchor (user's decision): teaser photos open and close it.
 // ml-sn-flags is a drawn card (tools/flags.py): the Goita photos supplied show a Beninese visitor, not
 // Cheikh Niang, so they are not used.
 window.TIMELINE = {
@@ -16,12 +15,13 @@ window.TIMELINE = {
   hook: { img: 'mr-parliament-wide.jpg', f: [0.45, 0.45], kicker: 'موريتانيا', topic: 'سياسة',
           text: 'دعوات نيابية لتمكين الغزواني من مأمورية ثالثة' },
 
-  cover: { imgs: ['anchor-grey.jpg'] },
-
   cards: [
-    { img: 'anchor-grey.jpg', moves: [{ t: 0.0, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.0] }] },
+    // opening teasers
+    { kicker: 'موريتانيا', img: 'mr-parliament-wide.jpg', moves: [{ t: 0.0, a: [0.5, 0.45, 1.12], b: [0.45, 0.45, 1.0] }] },
+    { kicker: 'المغرب', img: 'ma-ecuador-bourita.jpg', moves: [{ t: 3.14, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
+    { kicker: 'تونس', img: 'tn-dam-low.jpg', moves: [{ t: 8.24, a: [0.5, 0.45, 1.0], b: [0.55, 0.45, 1.1] }] },
     // Mauritania: third-term calls
-    { kicker: 'موريتانيا', img: 'mr-parliament-wide.jpg', moves: [{ t: 12.68, a: [0.45, 0.45, 1.0], b: [0.45, 0.4, 1.12] }] },
+    { kicker: 'موريتانيا', img: 'mr-parliament-wide.jpg', moves: [{ t: 12.68, a: [0.45, 0.4, 1.0], b: [0.4, 0.38, 1.12] }] },
     { img: 'mr-government-benches.jpg', moves: [{ t: 21.00, a: [0.6, 0.35, 1.0], b: [0.65, 0.35, 1.1] }] },
     { img: 'mr-jamila-nahah.jpg', moves: [{ t: 30.54, a: [0.5, 0.18, 1.0], b: [0.5, 0.16, 1.06] }] },
     { img: 'mr-parliament-wide.jpg', moves: [{ t: 34.58, a: [0.3, 0.5, 1.2], b: [0.5, 0.45, 1.05] }] },
@@ -54,7 +54,8 @@ window.TIMELINE = {
     { img: 'tn-dam-kammoun.jpg', credit: 'Zaher Kammoun', moves: [{ t: 176.88, a: [0.5, 0.4, 1.0], b: [0.55, 0.4, 1.08] }] },
     { img: 'tn-desalination.jpg', moves: [{ t: 181.10, a: [0.5, 0.45, 1.0], b: [0.5, 0.45, 1.1] }] },
     { img: 'tn-dam-low.jpg', moves: [{ t: 185.52, a: [0.65, 0.45, 1.2], b: [0.5, 0.45, 1.05] }] },
-    { img: 'anchor-grey.jpg', moves: [{ t: 195.20, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.0] }] },
+    // closing
+    { img: 'dz-apn-vote.jpg', moves: [{ t: 195.20, a: [0.5, 0.4, 1.1], b: [0.5, 0.4, 1.0] }] },
   ],
 
   headlines: [
