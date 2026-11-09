@@ -30,7 +30,7 @@ adb shell input swipe 150 1300 950 1300 300
 shot 03b-page3-hafs 4
 adb shell input swipe 950 1300 150 1300 300
 sleep 2
-adb shell input tap 540 1100
+adb shell input tap 900 1100
 shot 04-ayah-tafsir 6
 python3 android-ci/tap.py "نسخ ومشاركة" && shot 04b-copy-sheet 3
 python3 android-ci/tap.py "من آية إلى آية" && shot 04c-copy-range 3

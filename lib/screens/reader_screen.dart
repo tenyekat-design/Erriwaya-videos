@@ -257,17 +257,20 @@ class _MushafPageState extends State<_MushafPage> {
                     final lastOfRun = li + 1 >= lay.lines.length || lay.lines[li + 1].first >= s.end;
                     final natural = line.fold<double>(0, (t, i) => t + words[i].w100 * lay.fs / 100) +
                         (line.length - 1) * _space * lay.fs;
-                    final full = !(lastOfRun && natural < box.maxWidth * .8);
+                    // الفاتحة وأول البقرة: أسطر متوسّطة بمسافات طبيعية؛ وغيرهما: أسطر ممتلئة من الحافة إلى الحافة
+                    final full = !ornate && !(lastOfRun && natural < box.maxWidth * .8) && line.length > 1;
+                    final wordsW = natural - (line.length - 1) * _space * lay.fs;
+                    final gap = full ? (box.maxWidth - wordsW) / (line.length - 1) - 1.5 : _space * lay.fs;
                     rows.add(SizedBox(
                       height: lay.lineH,
                       child: Row(
                         textDirection: TextDirection.rtl,
                         mainAxisAlignment: full ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
                         children: [
-                          for (var k = 0; k < line.length; k++) ...[
-                            if (!full && k > 0) SizedBox(width: _space * lay.fs),
-                            _wordWidget(words[line[k]], style, colors),
-                          ],
+                          // كل كلمة تأخذ نصف الفراغ على جانبيها، فيصير الضغط على أي موضع في السطر ضغطاً على آية
+                          for (var k = 0; k < line.length; k++)
+                            _wordWidget(words[line[k]], style, colors,
+                                EdgeInsets.only(right: k == 0 ? 0 : gap / 2, left: k == line.length - 1 ? 0 : gap / 2)),
                         ],
                       ),
                     ));
@@ -289,15 +292,16 @@ class _MushafPageState extends State<_MushafPage> {
     );
   }
 
-  Widget _wordWidget(_Word w, TextStyle style, PageColors colors) {
+  Widget _wordWidget(_Word w, TextStyle style, PageColors colors, EdgeInsets pad) {
     final a = w.ayah;
     final on = widget.selected?.index == a.index ||
         (widget.playing != null && widget.playing!.$1 == a.surah && widget.playing!.$2 == a.number);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => widget.onTap(a),
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: on ? colors.highlight : null, borderRadius: BorderRadius.circular(4)),
+      child: Container(
+        padding: pad,
+        color: on ? colors.highlight : null,
         child: Text(w.text, style: style, textDirection: TextDirection.rtl, softWrap: false),
       ),
     );
