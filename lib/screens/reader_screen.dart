@@ -64,10 +64,11 @@ class _ReaderScreenState extends State<ReaderScreen> {
         final audio = Audio.instance;
         return Scaffold(
           appBar: AppBar(
-            title: Column(children: [
-              Text('سورة ${_surah.name}', style: const TextStyle(fontSize: 19, color: Colors.white)),
+            toolbarHeight: 68,
+            title: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text('سورة ${_surah.name}', style: const TextStyle(fontSize: 19, height: 1.3, color: Colors.white)),
               Text('الجزء ${juzName(q.juzOfPage(_riwaya, _page))} · ${_riwaya.short}',
-                  style: const TextStyle(fontSize: 12.5, color: Colors.white70)),
+                  style: const TextStyle(fontSize: 13, height: 1.3, color: Colors.white70)),
             ]),
             actions: [
               IconButton(
