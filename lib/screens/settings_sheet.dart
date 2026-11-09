@@ -84,11 +84,11 @@ class _SettingsSheet extends StatelessWidget {
           Text(
             'نصّ المصحف وخطّاه (رواية حفص عن عاصم، ورواية ورش عن نافع) من مجمّع الملك فهد لطباعة المصحف الشريف. '
             'التلاوات الكاملة من mp3quran.net، وتلاوة الآية الواحدة من everyayah.com. '
-            'إصدار شبكة الرواية الإعلامية.',
+            'زخارف الصفحات على طراز نقوش ولاتة. إصدار شبكة الرواية الإعلامية.',
             style: TextStyle(fontSize: 13, height: 1.7, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
-          Text('الإصدار 1.1.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+          Text('الإصدار 1.2.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
         ]),
       ),
     );

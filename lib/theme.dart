@@ -11,9 +11,9 @@ class Brand {
 /// ألوان صفحة المصحف: ورق فاتح دافئ نهاراً، وداكن هادئ ليلاً.
 class PageColors {
   const PageColors(this.paper, this.ink, this.frame, this.muted, this.highlight);
-  final Color paper, ink, frame, muted, highlight;
-  static const light = PageColors(Color(0xFFFBF7EC), Color(0xFF1B1A17), Brand.gold, Color(0xFF6E6656), Color(0x3326A69A));
-  static const dark = PageColors(Color(0xFF111A19), Color(0xFFE9E3D2), Color(0xFFC9A95A), Color(0xFF9AA7A3), Color(0x4426A69A));
+  final Color paper, ink, frame, muted, highlight; // frame: لون الطين لإطارات السور وخطوط اللوحة
+  static const light = PageColors(Color(0xFFFBF7EC), Color(0xFF1B1A17), Color(0xFF9A4426), Color(0xFF6E6656), Color(0x3326A69A));
+  static const dark = PageColors(Color(0xFF111A19), Color(0xFFE9E3D2), Color(0xFFD48A62), Color(0xFF9AA7A3), Color(0x4426A69A));
   static PageColors of(BuildContext c) => Theme.of(c).brightness == Brightness.dark ? dark : light;
 }
 
