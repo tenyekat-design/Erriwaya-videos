@@ -40,6 +40,13 @@ python3 android-ci/tap.py "الثاني" && shot 06b-warsh-juz2 5
 adb shell input keyevent KEYCODE_BACK
 sleep 2
 python3 android-ci/tap.py "السور" && sleep 2
+# صفحتا ورش المزخرفتان: البقرة (٢) أولاً ثم الفاتحة (١)
+python3 android-ci/tap.py "البَقَرَة" && shot 06c-warsh-p2-ornate 6
+adb shell input keyevent KEYCODE_BACK
+sleep 2
+python3 android-ci/tap.py "الفَاتِحة" && shot 06d-warsh-p1-ornate 6
+adb shell input keyevent KEYCODE_BACK
+sleep 2
 python3 android-ci/tap.py "متابعة القراءة" && shot 07-fatiha-warsh 5
 dismiss
 adb shell input swipe 150 1300 950 1300 300
