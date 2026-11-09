@@ -119,10 +119,12 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: bash android-ci/shots.sh
       - name: Attach screenshots to the release
+        if: always()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: mushaf-v1.0.${{ github.run_number }}
           make_latest: false
+          fail_on_unmatched_files: false
           files: |
             shots/*.png
             shots/flutter-log.txt

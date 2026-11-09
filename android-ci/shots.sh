@@ -3,7 +3,10 @@
 set -x
 PKG=mr.erriwaya.erriwaya_mushaf
 mkdir -p shots
-shot() { sleep "${2:-3}"; adb exec-out screencap -p > "shots/$1.png"; }
+alive() { timeout 10 adb get-state >/dev/null 2>&1; }
+finish() { timeout 30 adb logcat -d > shots/logcat.txt 2>/dev/null; grep -iE "flutter" shots/logcat.txt | tail -200 > shots/flutter-log.txt; ls -la shots; exit 0; }
+# المحاكي قد يتوقف فجأة: نحفظ ما التُقط ونخرج بدل الانتظار حتى نهاية الوقت
+shot() { sleep "${2:-3}"; alive || { echo "emulator gone before $1"; finish; }; timeout 20 adb exec-out screencap -p > "shots/$1.png"; }
 dismiss() { python3 android-ci/tap.py "Wait" >/dev/null 2>&1 || true; }
 adb install -r mushaf-x86_64.apk
 adb logcat -c
@@ -51,7 +54,4 @@ python3 android-ci/tap.py "بحث" && shot 11-search 4
 adb shell input keyevent KEYCODE_BACK
 sleep 2
 python3 android-ci/tap.py "الإعدادات" && shot 12-settings 4
-adb logcat -d > shots/logcat.txt
-grep -iE "flutter" shots/logcat.txt | tail -200 > shots/flutter-log.txt
-ls -la shots
-exit 0
+finish
