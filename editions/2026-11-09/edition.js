@@ -5,6 +5,7 @@
 // Cheikh Niang, so they are not used.
 // YouTube (16:9) crops the photos vertically: some cards get their own framing there (YT ? youtube : feed).
 const YT = /format=youtube/.test(location.search);
+const ST = /format=story/.test(location.search);   // 1080x1920: one face per frame in wide photos
 window.TIMELINE = {
   date: 'الاثنين 9 نوفمبر 2026',
   title: 'الموجز الإخباري',
@@ -42,8 +43,8 @@ window.TIMELINE = {
     { img: 'sn-faye-stairs.jpg', moves: [{ t: 94.00, a: [0.55, 0.3, 1.0], b: [0.55, 0.28, 1.1] }] },
     { img: 'sn-faye-forum.jpg', moves: [{ t: 103.12, a: [0.5, 0.35, 1.0], b: [0.5, 0.33, 1.1] }] },
     // Morocco: Ecuador backs Morocco's position on Western Sahara
-    { img: 'ma-ecuador-bourita.jpg', moves: [YT ? { t: 107.06, a: [0.5, 0.0, 1.0], b: [0.5, 0.0, 1.04] } : { t: 107.06, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
-    { img: 'ma-ecuador-bourita.jpg', moves: [YT ? { t: 116.96, a: [0.4, 0.0, 1.08], b: [0.6, 0.0, 1.08] } : { t: 116.96, a: [0.3, 0.3, 1.25], b: [0.7, 0.3, 1.25] }] },
+    { img: 'ma-ecuador-bourita.jpg', moves: [ST ? { t: 107.06, a: [0.33, 0.3, 1.0], b: [0.35, 0.28, 1.06] } : YT ? { t: 107.06, a: [0.5, 0.0, 1.0], b: [0.5, 0.0, 1.04] } : { t: 107.06, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
+    { img: 'ma-ecuador-bourita.jpg', moves: [ST ? { t: 116.96, a: [0.35, 0.3, 1.08], b: [0.64, 0.3, 1.08] } : YT ? { t: 116.96, a: [0.4, 0.0, 1.08], b: [0.6, 0.0, 1.08] } : { t: 116.96, a: [0.3, 0.3, 1.25], b: [0.7, 0.3, 1.25] }] },
     // Libya: salary protests in Tripoli
     { img: 'ly-tripoli-protest.jpg', moves: [{ t: 126.82, a: [0.5, 0.4, 1.0], b: [0.45, 0.4, 1.1] }] },
     { img: 'ly-audit-bureau.jpg', moves: [{ t: 135.50, a: [0.5, 0.4, 1.0], b: [0.5, 0.38, 1.1] }] },
