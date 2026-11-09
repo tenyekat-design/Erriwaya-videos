@@ -31,6 +31,41 @@ def words(s):
 hafs = [[a['sora'], a['aya_no'], a['page'], a['jozz'], a['aya_text'].strip(), a['line_start'], a['line_end']] for a in H]
 search = [a['aya_text_emlaey'] for a in H]
 
+# ── «لا» في ورش ──
+# خطّ ورش لا يصل اللام بالألف إذا جاءت حركة اللام بينهما، فتظهر «لَا» حرفين منفصلين.
+# للرسم نستعمل حروف «لا» الجاهزة في الخطّ (U+FEF5…FEFC) ثم الحركات بعدها.
+LA = {'ا': ('\uFEFB', '\uFEFC'), 'أ': ('\uFEF7', '\uFEF8'), 'إ': ('\uFEF9', '\uFEFA'), 'آ': ('\uFEF5', '\uFEF6')}
+RIGHT_JOINING = set('اأإآٱدذرزوؤةء')
+
+
+def is_mark(c):
+    return unicodedata.category(c) in ('Mn', 'Me') or c in '\u06E5\u06E6'
+
+
+def lam_alef(t):
+    out, i = [], 0
+    while i < len(t):
+        c = t[i]
+        if c == 'ل':
+            j = i + 1
+            while j < len(t) and is_mark(t[j]):
+                j += 1
+            if j < len(t) and t[j] in LA:
+                # الحرف السابق (بعد تخطي الحركات): هل يتصل بما بعده؟
+                k = len(out) - 1
+                while k >= 0 and is_mark(out[k]):
+                    k -= 1
+                prev = out[k] if k >= 0 else ' '
+                joins = unicodedata.category(prev) == 'Lo' and prev not in RIGHT_JOINING and '\u0600' <= prev <= '\u06FF'
+                out.append(LA[t[j]][1 if joins else 0])
+                out.extend(t[i + 1:j])          # حركات اللام
+                i = j + 1
+                continue
+        out.append(c)
+        i += 1
+    return ''.join(out)
+
+
 # ── ورش: كل آية تُربط بآيات حفص التي تشاركها كلماتها (للتفسير)، بمحاذاة مواضع الكلمات داخل السورة ──
 hpos = defaultdict(list)   # سورة → [(بداية, نهاية, رقم آية حفص)]
 for a in H:
@@ -48,7 +83,8 @@ for a in W:
     m = [k for (b, e, k) in hpos[s] if b < hi - 0.5 and e > lo + 0.5] or \
         [min(hpos[s], key=lambda x: abs((x[0] + x[1]) / 2 - (lo + hi) / 2))[2]]
     le = a['line_end'] if a['line_end'] >= a['line_start'] else 15   # آية تمتدّ إلى الصفحة التالية
-    warsh.append([s, a['aya_no'], int(str(a['page']).split('-')[0]), a['jozz'], a['aya_text'].strip(), m, a['line_start'], le])
+    warsh.append([s, a['aya_no'], int(str(a['page']).split('-')[0]), a['jozz'], a['aya_text'].strip(), m, a['line_start'], le,
+                  lam_alef(a['aya_text'].strip())])
 
 # ── السور ──
 surahs = []
