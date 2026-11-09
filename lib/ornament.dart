@@ -30,16 +30,18 @@ class PageFrame extends StatelessWidget {
 
 /// ألوان ولاتة.
 class Oualata {
-  const Oualata(this.wall, this.lime, this.ink);
-  final Color wall; // الطين الأحمر
+  const Oualata(this.wall, this.wallLight, this.lime, this.ink);
+  final Color wall; // الطين الأحمر (أطراف الجدار)
+  final Color wallLight; // الطين في وسط الجدار (تدرّج دافئ)
   final Color lime; // الجصّ الأبيض
   final Color ink; // البنّي الداكن للخطوط على الأبيض
-  static const light = Oualata(Color(0xFFB4522F), Color(0xFFF7F0E2), Color(0xFF6E2A1C));
-  static const dark = Oualata(Color(0xFF7A3524), Color(0xFFE6DAC3), Color(0xFF5A2316));
-  static const yellow = Color(0xFFF2C230);
-  static const red = Color(0xFFD2362B);
-  static const green = Color(0xFF3E9A4A);
-  static const blue = Color(0xFF1F5FB8);
+  static const light = Oualata(Color(0xFFA9512F), Color(0xFFC67250), Color(0xFFFBF4E6), Color(0xFF5E2617));
+  static const dark = Oualata(Color(0xFF5E2B1C), Color(0xFF7B3D28), Color(0xFFE3D5BC), Color(0xFF4A1C10));
+  // ألوان الدوائر، متناسقة مع الطين ومع أخضر التطبيق: زعفراني، أحمر طيني، أخضر مزرق، نيلي
+  static const yellow = Color(0xFFE7B743);
+  static const red = Color(0xFFC24A32);
+  static const green = Color(0xFF1E7B73);
+  static const blue = Color(0xFF2C4F8F);
 }
 
 class _FramePainter extends CustomPainter {
@@ -58,9 +60,9 @@ class _FramePainter extends CustomPainter {
   // ───────── الصفحات العادية ─────────
   void _regular(Canvas canvas, Size size) {
     final outer = (Offset.zero & size).deflate(6);
-    const w = 14.0;
+    const w = 14.0, ro = 18.0, ri = 9.0;
     final inner = outer.deflate(w);
-    _band(canvas, outer, inner, o.wall);
+    _band(canvas, outer, inner, o.wall, ro: ro, ri: ri, wall: true);
 
     // خط موجيّ أبيض في منتصف الشريط
     final wave = Paint()
@@ -68,27 +70,27 @@ class _FramePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
       ..strokeCap = StrokeCap.round;
-    _waveAround(canvas, outer.deflate(w / 2), w, 3.2, 15, wave, dots: o.lime);
+    _waveAround(canvas, outer.deflate(w / 2), ro, 3.2, 15, wave, dots: o.lime);
 
     // خطّ بنّي رفيع داخل الإطار
-    canvas.drawRect(
-        inner.deflate(3),
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(inner.deflate(3), const Radius.circular(6)),
         Paint()
           ..color = c.frame.withValues(alpha: .7)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1);
 
-    // الزوايا: مربع أبيض فيه صليب ولاتيّ
-    for (final p in _corners(outer, w)) {
-      final sq = Rect.fromCenter(center: p, width: w + 4, height: w + 4);
-      canvas.drawRect(sq, Paint()..color = o.lime);
-      canvas.drawRect(
-          sq,
+    // الزوايا: قرص جصّي أبيض فيه صليب ولاتيّ، على قوس الزاوية
+    for (final p in _corners(outer, w, inset: 2.5)) {
+      canvas.drawCircle(p, w * .72, Paint()..color = o.lime);
+      canvas.drawCircle(
+          p,
+          w * .72,
           Paint()
             ..color = o.ink
             ..style = PaintingStyle.stroke
             ..strokeWidth = 1);
-      _cross(canvas, p, (w + 4) * .42, o.ink, o.lime);
+      _cross(canvas, p, w * .5, o.ink, o.lime);
     }
   }
 
@@ -99,25 +101,26 @@ class _FramePainter extends CustomPainter {
     final mid = outer.deflate(wallW);
     final inner = mid.deflate(limeW);
 
+    const ro = 30.0, rm = 16.0, ri = 10.0;
     // الجدار الطيني
-    _band(canvas, outer, mid, o.wall);
+    _band(canvas, outer, mid, o.wall, ro: ro, ri: rm, wall: true);
     // معيّنات بيضاء على الجدار
     _diamondsAlong(canvas, outer, wallW);
 
     // الإطار الأبيض بخطه الموجيّ البنّي (كإطار الباب)
-    _band(canvas, mid, inner, o.lime);
+    _band(canvas, mid, inner, o.lime, ro: rm, ri: ri);
     final brown = Paint()
       ..color = o.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.3;
-    canvas.drawRect(mid, brown);
-    canvas.drawRect(inner, brown);
-    _waveAround(canvas, mid.deflate(limeW / 2), limeW, 2.6, 13,
+    canvas.drawRRect(RRect.fromRectAndRadius(mid, const Radius.circular(rm)), brown);
+    canvas.drawRRect(RRect.fromRectAndRadius(inner, const Radius.circular(ri)), brown);
+    _waveAround(canvas, mid.deflate(limeW / 2), rm + 4, 2.6, 13,
         brown..strokeCap = StrokeCap.round, dots: o.ink);
 
-    // دوائر ملوّنة في زوايا الجدار
-    for (final p in _corners(outer, wallW)) {
-      _medallion(canvas, p, wallW * .82);
+    // دوائر ملوّنة في زوايا الجدار، داخل حدود الشاشة
+    for (final p in _corners(outer, wallW, inset: 4)) {
+      _medallion(canvas, p, wallW * .64);
     }
 
     // لوحة النصّ
@@ -126,24 +129,32 @@ class _FramePainter extends CustomPainter {
 
   // ───────── أدوات الرسم ─────────
 
-  List<Offset> _corners(Rect r, double w) => [
-        Offset(r.left + w / 2, r.top + w / 2),
-        Offset(r.right - w / 2, r.top + w / 2),
-        Offset(r.left + w / 2, r.bottom - w / 2),
-        Offset(r.right - w / 2, r.bottom - w / 2),
-      ];
+  List<Offset> _corners(Rect r, double w, {double inset = 0}) {
+    final d = w / 2 + inset;
+    return [
+      Offset(r.left + d, r.top + d),
+      Offset(r.right - d, r.top + d),
+      Offset(r.left + d, r.bottom - d),
+      Offset(r.right - d, r.bottom - d),
+    ];
+  }
 
-  void _band(Canvas canvas, Rect outer, Rect inner, Color color) {
+  /// شريط بين مستطيلين مستديري الزوايا؛ الجدار يتدرّج من وسطه الأفتح إلى أطرافه.
+  void _band(Canvas canvas, Rect outer, Rect inner, Color color, {double ro = 0, double ri = 0, bool wall = false}) {
+    final paint = Paint()..color = color;
+    if (wall) {
+      paint.shader = RadialGradient(colors: [o.wallLight, o.wall], radius: .75).createShader(outer);
+    }
     canvas.drawPath(
         Path()
           ..fillType = PathFillType.evenOdd
-          ..addRect(outer)
-          ..addRect(inner),
-        Paint()..color = color);
+          ..addRRect(RRect.fromRectAndRadius(outer, Radius.circular(ro)))
+          ..addRRect(RRect.fromRectAndRadius(inner, Radius.circular(ri))),
+        paint);
   }
 
   /// خطّ موجيّ يجري على الجوانب الأربعة لمستطيل (r هو مسار منتصف الشريط)، مع نقاط في بطون الموج.
-  void _waveAround(Canvas canvas, Rect r, double w, double amp, double period, Paint p, {Color? dots}) {
+  void _waveAround(Canvas canvas, Rect r, double cornerGap, double amp, double period, Paint p, {Color? dots}) {
     final dot = Paint()..color = dots ?? p.color;
     void side(Offset a, Offset b) {
       final len = (b - a).distance;
@@ -169,7 +180,7 @@ class _FramePainter extends CustomPainter {
       }
     }
 
-    final g = w * .55; // نترك الزوايا للمربعات/الدوائر
+    final g = cornerGap; // نترك الزوايا المقوّسة للأقراص والدوائر
     side(Offset(r.left + g, r.top), Offset(r.right - g, r.top));
     side(Offset(r.left + g, r.bottom), Offset(r.right - g, r.bottom));
     side(Offset(r.left, r.top + g), Offset(r.left, r.bottom - g));
@@ -190,7 +201,7 @@ class _FramePainter extends CustomPainter {
       }
     }
 
-    final m = w / 2, g = w * 1.25;
+    final m = w / 2, g = w * 1.45;
     side(Offset(outer.left + g, outer.top + m), Offset(outer.right - g, outer.top + m), false);
     side(Offset(outer.left + g, outer.bottom - m), Offset(outer.right - g, outer.bottom - m), false);
     side(Offset(outer.left + m, outer.top + g), Offset(outer.left + m, outer.bottom - g), true);

@@ -139,6 +139,49 @@ class _MushafPageState extends State<_MushafPage> {
     super.dispose();
   }
 
+  /// حجم الخط الذي تتسع به الصفحة كلها دون تمرير، محفوظ لكل صفحة ومقاس.
+  static final Map<String, double> _fitCache = {};
+
+  /// يبحث عن أكبر حجم خط (حتى الحجم المختار في الإعدادات) تتسع به الصفحة في المساحة المتاحة.
+  double _fit(List<_Seg> segs, double maxFs, double w, double h, TextScaler scaler, bool ornate) {
+    final key = '${widget.riwaya.name}/${widget.page}/${w.round()}x${h.round()}/$maxFs/${scaler.scale(10)}';
+    final hit = _fitCache[key];
+    if (hit != null) return hit;
+    double measure(double fs) {
+      var total = 0.0;
+      for (final s in segs) {
+        if (s.banner != null) {
+          total += _bannerH;
+          continue;
+        }
+        final style = TextStyle(fontFamily: widget.riwaya.font, fontSize: fs, height: _lineH);
+        final tp = TextPainter(
+          text: TextSpan(text: s.text, style: style),
+          textDirection: TextDirection.rtl,
+          textAlign: s.basmala || ornate ? TextAlign.center : TextAlign.justify,
+          textScaler: scaler,
+        )..layout(maxWidth: w);
+        total += tp.height + (s.basmala ? 2 : 0);
+        tp.dispose();
+      }
+      return total;
+    }
+
+    var lo = 12.0, hi = maxFs;
+    if (measure(hi) <= h) {
+      lo = hi;
+    } else {
+      for (var i = 0; i < 9; i++) {
+        final mid = (lo + hi) / 2;
+        measure(mid) <= h ? lo = mid : hi = mid;
+      }
+    }
+    return _fitCache[key] = lo;
+  }
+
+  static const _lineH = 1.95;
+  static const _bannerH = 78.0;
+
   @override
   Widget build(BuildContext context) {
     _clear();
@@ -148,40 +191,27 @@ class _MushafPageState extends State<_MushafPage> {
     final scale = Settings.instance.fontScale;
     final ayat = q.byPage[r]![widget.page - 1];
     final ornate = widget.page <= 2; // الفاتحة وأول البقرة مزخرفتان كما في المصحف المطبوع
-    final textStyle = TextStyle(fontFamily: r.font, fontSize: 23 * scale, height: 2.05, color: colors.ink);
+    final scaler = MediaQuery.textScalerOf(context);
 
-    final blocks = <Widget>[];
-    var spans = <InlineSpan>[];
-    void flush() {
-      if (spans.isEmpty) return;
-      blocks.add(Text.rich(TextSpan(children: spans),
-          textAlign: ornate ? TextAlign.center : TextAlign.justify, textDirection: TextDirection.rtl));
-      spans = [];
+    // مقاطع الصفحة: شريط سورة، بسملة، أو تتابع آيات
+    final segs = <_Seg>[];
+    var run = <Ayah>[];
+    void flushRun() {
+      if (run.isEmpty) return;
+      segs.add(_Seg.run(run));
+      run = [];
     }
 
     for (final a in ayat) {
       if (a.number == 1) {
-        flush();
-        blocks.add(SurahBanner(surah: q.surah(a.surah), riwaya: r, colors: colors));
+        flushRun();
+        segs.add(_Seg.banner(q.surah(a.surah)));
         final hasBasmala = a.surah != 9 && !(r == Riwaya.hafs && a.surah == 1);
-        if (hasBasmala) {
-          blocks.add(Padding(
-            padding: const EdgeInsets.only(bottom: 2),
-            child: Text(r.basmala, textAlign: TextAlign.center, style: textStyle),
-          ));
-        }
+        if (hasBasmala) segs.add(_Seg.basmala(r.basmala));
       }
-      final sel = widget.selected?.index == a.index;
-      final play = widget.playing != null && widget.playing!.$1 == a.surah && widget.playing!.$2 == a.number;
-      final tap = TapGestureRecognizer()..onTap = () => widget.onTap(a);
-      _taps.add(tap);
-      spans.add(TextSpan(
-        text: '${a.text} ',
-        recognizer: tap,
-        style: textStyle.copyWith(backgroundColor: sel || play ? colors.highlight : null),
-      ));
+      run.add(a);
     }
-    flush();
+    flushRun();
 
     final pageNo = Text(ar(widget.page), style: TextStyle(color: colors.muted, fontSize: 15));
     return Container(
@@ -193,25 +223,85 @@ class _MushafPageState extends State<_MushafPage> {
           ornate: ornate,
           child: Column(children: [
             Expanded(
-              child: LayoutBuilder(
-                builder: (context, box) => SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+              child: LayoutBuilder(builder: (context, box) {
+                final fs = _fit(segs, 23 * scale, box.maxWidth, box.maxHeight - 6, scaler, ornate);
+                final textStyle = TextStyle(fontFamily: r.font, fontSize: fs, height: _lineH, color: colors.ink);
+                final blocks = <Widget>[
+                  for (final s in segs)
+                    if (s.banner != null)
+                      SizedBox(height: _bannerH, child: SurahBanner(surah: s.banner!, riwaya: r, colors: colors))
+                    else if (s.basmala)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(s.text, textAlign: TextAlign.center, style: textStyle),
+                      )
+                    else
+                      Text.rich(
+                        TextSpan(children: [
+                          for (final a in s.ayat)
+                            TextSpan(
+                              text: '${a.text} ',
+                              recognizer: (TapGestureRecognizer()..onTap = () => widget.onTap(a)).also(_taps.add),
+                              style: textStyle.copyWith(
+                                backgroundColor: widget.selected?.index == a.index ||
+                                        (widget.playing != null &&
+                                            widget.playing!.$1 == a.surah &&
+                                            widget.playing!.$2 == a.number)
+                                    ? colors.highlight
+                                    : null,
+                              ),
+                            ),
+                        ]),
+                        textAlign: ornate ? TextAlign.center : TextAlign.justify,
+                        textDirection: TextDirection.rtl,
+                      ),
+                ];
+                // تمرير احتياطي فقط إن لم تتسع الصفحة حتى بأصغر خط
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 3),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: ornate ? box.maxHeight - 8 : 0),
+                    constraints: BoxConstraints(minHeight: box.maxHeight - 6),
                     child: Column(
-                      mainAxisAlignment: ornate ? MainAxisAlignment.center : MainAxisAlignment.start,
+                      mainAxisAlignment: ornate ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: blocks,
+                      children: ornate ? blocks : [Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks)],
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
             ),
             Padding(padding: const EdgeInsets.only(top: 2), child: pageNo),
           ]),
         ),
       ),
     );
+  }
+}
+
+/// مقطع من الصفحة: شريط سورة، أو بسملة، أو تتابع آيات.
+class _Seg {
+  _Seg.banner(this.banner)
+      : basmala = false,
+        ayat = const [],
+        text = '';
+  _Seg.basmala(this.text)
+      : banner = null,
+        basmala = true,
+        ayat = const [];
+  _Seg.run(this.ayat)
+      : banner = null,
+        basmala = false,
+        text = ayat.map((a) => '${a.text} ').join();
+  final Surah? banner;
+  final bool basmala;
+  final List<Ayah> ayat;
+  final String text;
+}
+
+extension _Also<T> on T {
+  T also(void Function(T) f) {
+    f(this);
+    return this;
   }
 }
 

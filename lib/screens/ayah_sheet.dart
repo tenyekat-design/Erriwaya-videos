@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'copy_sheet.dart';
 import '../audio.dart';
 import '../data.dart';
 import '../settings.dart';
@@ -91,14 +92,9 @@ class _AyahSheet extends StatelessWidget {
               label: Text(s.isBookmarked(ayah.surah, _hafsRef) ? 'محفوظة' : 'علامة'),
             ),
             OutlinedButton.icon(
-              onPressed: () => _copy(context, _quote(plain, surah.name), 'نُسخت الآية'),
-              icon: const Icon(Icons.copy_rounded),
-              label: const Text('نسخ'),
-            ),
-            OutlinedButton.icon(
-              onPressed: () => Share.share(_quote(plain, surah.name), subject: 'سورة ${surah.name}'),
-              icon: const Icon(Icons.share_rounded),
-              label: const Text('مشاركة'),
+              onPressed: () => showCopySheet(context, ayah, riwaya),
+              icon: const Icon(Icons.copy_all_rounded),
+              label: const Text('نسخ ومشاركة'),
             ),
           ]),
           const SizedBox(height: 18),

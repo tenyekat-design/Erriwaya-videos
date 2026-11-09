@@ -1,7 +1,7 @@
 name: erriwaya_mushaf
 description: مصحف المحظرة – القرآن الكريم بروايتي حفص وورش، مع التفسير والتلاوة.
 publish_to: 'none'
-version: 1.2.0+3
+version: 1.3.0+4
 
 environment:
   sdk: ^3.5.0

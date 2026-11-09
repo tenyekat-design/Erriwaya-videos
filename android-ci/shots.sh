@@ -32,6 +32,10 @@ adb shell input swipe 950 1300 150 1300 300
 sleep 2
 adb shell input tap 540 1100
 shot 04-ayah-tafsir 6
+python3 android-ci/tap.py "نسخ ومشاركة" && shot 04b-copy-sheet 3
+python3 android-ci/tap.py "من آية إلى آية" && shot 04c-copy-range 3
+adb shell input keyevent KEYCODE_BACK
+sleep 2
 adb shell input keyevent KEYCODE_BACK
 sleep 2
 python3 android-ci/tap.py "استمع إلى السورة" && shot 05-reciters 14
