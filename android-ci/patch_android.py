@@ -16,6 +16,10 @@ if "android.permission.INTERNET" not in m:
 # تشغيل التلاوة عبر http(s) من خوادم التلاوات
 if "usesCleartextTraffic" not in m:
     m = m.replace("<application", '<application android:usesCleartextTraffic="true"', 1)
+# الرسم بـ Skia بدل Impeller: أثبت على محاكيات أندرويد وعلى الهواتف القديمة
+if "EnableImpeller" not in m:
+    m = re.sub(r"(<application[^>]*>\n)", lambda mm: mm.group(1) +
+               '        <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false" />\n', m, count=1)
 with open(manifest_path, "w", encoding="utf-8") as f:
     f.write(m)
 

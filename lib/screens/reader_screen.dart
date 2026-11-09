@@ -148,7 +148,7 @@ class _MushafPageState extends State<_MushafPage> {
     final scale = Settings.instance.fontScale;
     final ayat = q.byPage[r]![widget.page - 1];
     final ornate = widget.page <= 2; // الفاتحة وأول البقرة مزخرفتان كما في المصحف المطبوع
-    final textStyle = TextStyle(fontFamily: r.font, fontSize: (ornate ? 25 : 23) * scale, height: 2.05, color: colors.ink);
+    final textStyle = TextStyle(fontFamily: r.font, fontSize: 23 * scale, height: 2.05, color: colors.ink);
 
     final blocks = <Widget>[];
     var spans = <InlineSpan>[];

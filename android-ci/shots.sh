@@ -4,7 +4,7 @@ set -x
 PKG=mr.erriwaya.erriwaya_mushaf
 mkdir -p shots
 alive() { timeout 10 adb get-state >/dev/null 2>&1; }
-finish() { grep -iE "flutter|FATAL|SIGSEGV|SIGABRT|crash|tombstone|DEBUG  " shots/live-log.txt | tail -300 > shots/flutter-log.txt; ls -la shots; exit 0; }
+finish() { find shots -size 0 -delete; grep -iE "flutter|FATAL|SIGSEGV|SIGABRT|crash|tombstone|DEBUG  " shots/live-log.txt | tail -300 > shots/flutter-log.txt; ls -la shots; exit 0; }
 # المحاكي قد يتوقف فجأة: نحفظ ما التُقط ونخرج بدل الانتظار حتى نهاية الوقت
 shot() { sleep "${2:-3}"; alive || { echo "emulator gone before $1"; finish; }; timeout 20 adb exec-out screencap -p > "shots/$1.png"; }
 dismiss() { python3 android-ci/tap.py "Wait" >/dev/null 2>&1 || true; }
@@ -45,11 +45,10 @@ python3 android-ci/tap.py "الثاني" && shot 06b-warsh-juz2 5
 adb shell input keyevent KEYCODE_BACK
 sleep 2
 python3 android-ci/tap.py "السور" && sleep 2
-# صفحتا ورش المزخرفتان: البقرة (٢) أولاً ثم الفاتحة (١)
-python3 android-ci/tap.py "البَقَرَة" && shot 06c-warsh-p2-ornate 6
-adb shell input keyevent KEYCODE_BACK
-sleep 2
-python3 android-ci/tap.py "الفَاتِحة" && shot 06d-warsh-p1-ornate 6
+# صفحتا ورش المزخرفتان: الفاتحة (١) من قائمة السور، ثم السحب إلى أول البقرة (٢)
+python3 android-ci/tap.py "الفَاتِحة" && shot 06c-warsh-p1-ornate 6
+adb shell input swipe 150 1300 950 1300 300
+shot 06d-warsh-p2-ornate 5
 adb shell input keyevent KEYCODE_BACK
 sleep 2
 python3 android-ci/tap.py "متابعة القراءة" && shot 07-fatiha-warsh 5
