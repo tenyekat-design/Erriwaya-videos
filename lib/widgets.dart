@@ -87,52 +87,87 @@ class _StarPainter extends CustomPainter {
   bool shouldRepaint(covariant _StarPainter old) => old.color != color;
 }
 
-/// شريط اسم السورة في الصفحة: إطار مزخرف بذهبي خفيف.
+/// شريط اسم السورة في الصفحة: يشغل سطراً واحداً كما في المصحف المطبوع.
+/// خرطوشة مستطيلة بحدّين رفيعين بلون الطين، وفي طرفيها نجمتان ثمانيتان، ومعلومات السورة صغيرة على الجانبين.
 class SurahBanner extends StatelessWidget {
-  const SurahBanner({super.key, required this.surah, required this.riwaya, required this.colors});
+  const SurahBanner({super.key, required this.surah, required this.riwaya, required this.colors, this.height = 44});
   final Surah surah;
   final Riwaya riwaya;
   final PageColors colors;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 6, bottom: 4),
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: colors.frame, width: 1.2),
-        borderRadius: BorderRadius.circular(6),
-        gradient: LinearGradient(colors: [
-          colors.frame.withValues(alpha: .05),
-          colors.frame.withValues(alpha: .16),
-          colors.frame.withValues(alpha: .05),
-        ]),
-      ),
-      child: Row(children: [
-        const SizedBox(width: 10),
-        _Diamond(color: colors.frame),
-        Expanded(
-          child: Column(children: [
-            Text('سُورَةُ ${surah.name}',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: riwaya.font, fontSize: 24, color: colors.ink, height: 1.7)),
-            Text('${surah.makki ? 'مكية' : 'مدنية'} · آياتها ${ar(surah.count(riwaya))}',
-                style: TextStyle(fontSize: 12.5, color: colors.muted, height: 1.2)),
-          ]),
+    final h = height * .82;
+    final small = TextStyle(fontSize: (h * .26).clamp(9, 12.5).toDouble(), color: colors.muted, height: 1);
+    return Center(
+      child: SizedBox(
+        height: h,
+        child: CustomPaint(
+          painter: _CartouchePainter(colors.frame),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: h * .9),
+            child: Row(children: [
+              Text(surah.makki ? 'مكية' : 'مدنية', style: small),
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text('سُورَةُ ${surah.name}',
+                      style: TextStyle(fontFamily: riwaya.font, fontSize: h * .52, color: colors.ink, height: 1.25)),
+                ),
+              ),
+              Text('آياتها ${ar(surah.count(riwaya))}', style: small),
+            ]),
+          ),
         ),
-        _Diamond(color: colors.frame),
-        const SizedBox(width: 10),
-      ]),
+      ),
     );
   }
 }
 
-class _Diamond extends StatelessWidget {
-  const _Diamond({required this.color});
+class _CartouchePainter extends CustomPainter {
+  _CartouchePainter(this.color);
   final Color color;
+
   @override
-  Widget build(BuildContext context) => Transform.rotate(
-        angle: math.pi / 4,
-        child: Container(width: 10, height: 10, decoration: BoxDecoration(border: Border.all(color: color, width: 1.4))),
-      );
+  void paint(Canvas canvas, Size size) {
+    final h = size.height;
+    final r = Rect.fromLTWH(h * .5, 0, size.width - h, h);
+    final rr = RRect.fromRectAndRadius(r, Radius.circular(h * .22));
+    canvas.drawRRect(rr, Paint()..color = color.withValues(alpha: .07));
+    canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2);
+    canvas.drawRRect(
+        rr.deflate(3),
+        Paint()
+          ..color = color.withValues(alpha: .45)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .7);
+    // نجمتان ثمانيتان على الطرفين
+    for (final cx in [h * .5, size.width - h * .5]) {
+      final c = Offset(cx, h / 2);
+      final s = h * .34;
+      canvas.drawCircle(c, s * 1.05, Paint()..color = color);
+      _star(canvas, c, s * .78, Paint()..color = const Color(0xFFFBF4E6));
+      canvas.drawCircle(c, s * .22, Paint()..color = color);
+    }
+  }
+
+  void _star(Canvas canvas, Offset o, double r, Paint p) {
+    final path = Path();
+    for (var i = 0; i < 16; i++) {
+      final a = i * math.pi / 8 - math.pi / 2;
+      final rr = i.isEven ? r : r * .62;
+      final pt = o + Offset(math.cos(a), math.sin(a)) * rr;
+      i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
+    }
+    canvas.drawPath(path..close(), p);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CartouchePainter old) => old.color != color;
 }

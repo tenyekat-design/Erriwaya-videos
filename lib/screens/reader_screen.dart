@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../audio.dart';
 import '../data.dart';
@@ -124,96 +123,110 @@ class _MushafPage extends StatefulWidget {
 }
 
 class _MushafPageState extends State<_MushafPage> {
-  final List<TapGestureRecognizer> _taps = [];
+  /// عرض كل كلمة بحجم خط ١٠٠ (يُقاس مرة واحدة، والعرض يتناسب مع حجم الخط).
+  static final Map<String, double> _w100 = {};
+  /// تخطيط كل صفحة لكل مقاس: حجم الخط والأسطر وارتفاع السطر.
+  static final Map<String, _Layout> _cache = {};
 
-  void _clear() {
-    for (final t in _taps) {
-      t.dispose();
-    }
-    _taps.clear();
-  }
-
-  @override
-  void dispose() {
-    _clear();
-    super.dispose();
-  }
-
-  /// حجم الخط الذي تتسع به الصفحة كلها دون تمرير، محفوظ لكل صفحة ومقاس.
-  static final Map<String, double> _fitCache = {};
-
-  /// يبحث عن أكبر حجم خط (حتى الحجم المختار في الإعدادات) تتسع به الصفحة في المساحة المتاحة.
-  double _fit(List<_Seg> segs, double maxFs, double w, double h, TextScaler scaler, bool ornate) {
-    final key = '${widget.riwaya.name}/${widget.page}/${w.round()}x${h.round()}/$maxFs/${scaler.scale(10)}';
-    final hit = _fitCache[key];
-    if (hit != null) return hit;
-    double measure(double fs) {
-      var total = 0.0;
-      for (final s in segs) {
-        if (s.banner != null) {
-          total += _bannerH;
-          continue;
-        }
-        final style = TextStyle(fontFamily: widget.riwaya.font, fontSize: fs, height: _lineH);
+  double _measure(String font, String word) => _w100.putIfAbsent('$font|$word', () {
         final tp = TextPainter(
-          text: TextSpan(text: s.text, style: style),
+          text: TextSpan(text: word, style: TextStyle(fontFamily: font, fontSize: 100, height: 1)),
           textDirection: TextDirection.rtl,
-          textAlign: s.basmala || ornate ? TextAlign.center : TextAlign.justify,
-          textScaler: scaler,
-        )..layout(maxWidth: w);
-        total += tp.height + (s.basmala ? 2 : 0);
+        )..layout();
+        final w = tp.width;
         tp.dispose();
-      }
-      return total;
-    }
+        return w;
+      });
 
-    var lo = 12.0, hi = maxFs;
-    if (measure(hi) <= h) {
-      lo = hi;
-    } else {
-      for (var i = 0; i < 9; i++) {
-        final mid = (lo + hi) / 2;
-        measure(mid) <= h ? lo = mid : hi = mid;
+  static const _space = .26; // مسافة الكلمات بالنسبة لحجم الخط
+  static const _minFs = 11.0;
+
+  /// يوزّع كلمات كل مقطع على أسطر بعرض w (بلا تجاوز)، ويعيد الأسطر.
+  List<List<int>> _pack(List<_Word> words, List<int> runEnds, double fs, double w) {
+    final lines = <List<int>>[];
+    var start = 0;
+    for (final end in runEnds) {
+      var cur = <int>[];
+      var width = 0.0;
+      for (var i = start; i < end; i++) {
+        final ww = words[i].w100 * fs / 100;
+        final add = cur.isEmpty ? ww : ww + _space * fs;
+        if (cur.isNotEmpty && width + add > w) {
+          lines.add(cur);
+          cur = [i];
+          width = ww;
+        } else {
+          cur.add(i);
+          width += add;
+        }
       }
+      if (cur.isNotEmpty) lines.add(cur);
+      start = end;
     }
-    return _fitCache[key] = lo;
+    return lines;
   }
 
-  static const _lineH = 1.95;
-  static const _bannerH = 78.0;
+  _Layout _layout(List<_Word> words, List<int> runEnds, int slots, int target, double w, double h, bool ornate,
+      double maxScale) {
+    final key = '${widget.riwaya.name}/${widget.page}/${w.round()}x${h.round()}/$maxScale';
+    return _cache.putIfAbsent(key, () {
+      final avail = w * .985;
+      // أكبر خط يسمح به ارتفاع السطر لو كانت الأسطر كما في المصحف المطبوع
+      final fsMax = (h / (target + slots) / 1.75).clamp(_minFs, 34.0) * maxScale;
+      int count(double fs) => _pack(words, runEnds, fs, avail).length;
+      var fs = fsMax;
+      if (count(fs) > target) {
+        var lo = _minFs, hi = fsMax;
+        for (var i = 0; i < 10; i++) {
+          final mid = (lo + hi) / 2;
+          count(mid) <= target ? lo = mid : hi = mid;
+        }
+        fs = lo;
+      }
+      final lines = _pack(words, runEnds, fs, avail);
+      var lineH = h / (lines.length + slots);
+      if (ornate) lineH = lineH.clamp(0, fs * 2.3).toDouble(); // الفاتحة وأول البقرة: النصّ في وسط اللوحة
+      // إن صغر السطر عن الخط (صفحة طويلة جداً على شاشة صغيرة) نصغّر الخط ليتّسع
+      if (lineH < fs * 1.6) fs = lineH / 1.6;
+      return _Layout(fs, lineH, _pack(words, runEnds, fs, avail));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    _clear();
     final q = Quran.instance;
     final r = widget.riwaya;
     final colors = PageColors.of(context);
-    final scale = Settings.instance.fontScale;
     final ayat = q.byPage[r]![widget.page - 1];
     final ornate = widget.page <= 2; // الفاتحة وأول البقرة مزخرفتان كما في المصحف المطبوع
-    final scaler = MediaQuery.textScalerOf(context);
 
-    // مقاطع الصفحة: شريط سورة، بسملة، أو تتابع آيات
+    // كلمات الصفحة ومقاطعها: شريط سورة، أو بسملة، أو تتابع آيات
+    final words = <_Word>[];
     final segs = <_Seg>[];
-    var run = <Ayah>[];
-    void flushRun() {
-      if (run.isEmpty) return;
-      segs.add(_Seg.run(run));
-      run = [];
+    final runEnds = <int>[];
+    void closeRun() {
+      if (segs.isNotEmpty && segs.last.isRun && segs.last.end == -1) {
+        segs.last.end = words.length;
+        runEnds.add(words.length);
+      }
     }
 
     for (final a in ayat) {
       if (a.number == 1) {
-        flushRun();
+        closeRun();
         segs.add(_Seg.banner(q.surah(a.surah)));
-        final hasBasmala = a.surah != 9 && !(r == Riwaya.hafs && a.surah == 1);
-        if (hasBasmala) segs.add(_Seg.basmala(r.basmala));
+        if (a.surah != 9 && !(r == Riwaya.hafs && a.surah == 1)) segs.add(_Seg.basmala());
       }
-      run.add(a);
+      if (segs.isEmpty || !segs.last.isRun || segs.last.end != -1) segs.add(_Seg.run(words.length));
+      for (final t in a.text.split(' ')) {
+        if (t.trim().isEmpty) continue;
+        words.add(_Word(a, t, _measure(r.font, t)));
+      }
     }
-    flushRun();
+    closeRun();
+    final slots = segs.where((s) => !s.isRun).length;
+    final target = q.textLines(r, widget.page);
 
-    final pageNo = Text(ar(widget.page), style: TextStyle(color: colors.muted, fontSize: 15));
     return Container(
       color: colors.paper,
       child: SafeArea(
@@ -221,88 +234,109 @@ class _MushafPageState extends State<_MushafPage> {
         child: PageFrame(
           colors: colors,
           ornate: ornate,
-          child: Column(children: [
-            Expanded(
-              child: LayoutBuilder(builder: (context, box) {
-                final fs = _fit(segs, 23 * scale, box.maxWidth, box.maxHeight - 6, scaler, ornate);
-                final textStyle = TextStyle(fontFamily: r.font, fontSize: fs, height: _lineH, color: colors.ink);
-                final blocks = <Widget>[
-                  for (final s in segs)
-                    if (s.banner != null)
-                      SizedBox(height: _bannerH, child: SurahBanner(surah: s.banner!, riwaya: r, colors: colors))
-                    else if (s.basmala)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(s.text, textAlign: TextAlign.center, style: textStyle),
-                      )
-                    else
-                      Text.rich(
-                        TextSpan(children: [
-                          for (final a in s.ayat)
-                            TextSpan(
-                              text: '${a.text} ',
-                              recognizer: (TapGestureRecognizer()..onTap = () => widget.onTap(a)).also(_taps.add),
-                              style: textStyle.copyWith(
-                                backgroundColor: widget.selected?.index == a.index ||
-                                        (widget.playing != null &&
-                                            widget.playing!.$1 == a.surah &&
-                                            widget.playing!.$2 == a.number)
-                                    ? colors.highlight
-                                    : null,
-                              ),
-                            ),
-                        ]),
-                        textAlign: ornate ? TextAlign.center : TextAlign.justify,
+          page: widget.page,
+          child: MediaQuery(
+            // تخطيط المصحف ثابت لا يتأثر بتكبير نصوص النظام؛ الحجم يُختار ليملأ الصفحة
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+            child: LayoutBuilder(builder: (context, box) {
+              final lay = _layout(words, runEnds, slots, target, box.maxWidth, box.maxHeight, ornate,
+                  Settings.instance.fontScale.clamp(.8, 1.2).toDouble());
+              final style = TextStyle(fontFamily: r.font, fontSize: lay.fs, color: colors.ink);
+              final rows = <Widget>[];
+              var li = 0;
+              for (final s in segs) {
+                if (s.banner != null) {
+                  rows.add(SizedBox(
+                      height: lay.lineH,
+                      child: SurahBanner(surah: s.banner!, riwaya: r, colors: colors, height: lay.lineH)));
+                } else if (s.basmala) {
+                  rows.add(SizedBox(height: lay.lineH, child: Center(child: Text(r.basmala, style: style))));
+                } else {
+                  while (li < lay.lines.length && lay.lines[li].first < s.end) {
+                    final line = lay.lines[li];
+                    final lastOfRun = li + 1 >= lay.lines.length || lay.lines[li + 1].first >= s.end;
+                    final natural = line.fold<double>(0, (t, i) => t + words[i].w100 * lay.fs / 100) +
+                        (line.length - 1) * _space * lay.fs;
+                    final full = !(lastOfRun && natural < box.maxWidth * .8);
+                    rows.add(SizedBox(
+                      height: lay.lineH,
+                      child: Row(
                         textDirection: TextDirection.rtl,
+                        mainAxisAlignment: full ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                        children: [
+                          for (var k = 0; k < line.length; k++) ...[
+                            if (!full && k > 0) SizedBox(width: _space * lay.fs),
+                            _wordWidget(words[line[k]], style, colors),
+                          ],
+                        ],
                       ),
-                ];
-                // تمرير احتياطي فقط إن لم تتسع الصفحة حتى بأصغر خط
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: 3),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: box.maxHeight - 6),
-                    child: Column(
-                      mainAxisAlignment: ornate ? MainAxisAlignment.center : MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: ornate ? blocks : [Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks)],
-                    ),
-                  ),
-                );
-              }),
-            ),
-            Padding(padding: const EdgeInsets.only(top: 2), child: pageNo),
-          ]),
+                    ));
+                    li++;
+                  }
+                }
+              }
+              final column = Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: rows,
+              );
+              final used = lay.lineH * rows.length;
+              return used > box.maxHeight + 1 ? SingleChildScrollView(child: column) : column;
+            }),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _wordWidget(_Word w, TextStyle style, PageColors colors) {
+    final a = w.ayah;
+    final on = widget.selected?.index == a.index ||
+        (widget.playing != null && widget.playing!.$1 == a.surah && widget.playing!.$2 == a.number);
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => widget.onTap(a),
+      child: DecoratedBox(
+        decoration: BoxDecoration(color: on ? colors.highlight : null, borderRadius: BorderRadius.circular(4)),
+        child: Text(w.text, style: style, textDirection: TextDirection.rtl, softWrap: false),
       ),
     );
   }
 }
 
-/// مقطع من الصفحة: شريط سورة، أو بسملة، أو تتابع آيات.
+class _Word {
+  _Word(this.ayah, this.text, this.w100);
+  final Ayah ayah;
+  final String text;
+  final double w100;
+}
+
+class _Layout {
+  _Layout(this.fs, this.lineH, this.lines);
+  final double fs, lineH;
+  final List<List<int>> lines;
+}
+
+/// مقطع من الصفحة: شريط سورة، أو بسملة، أو تتابع آيات (كلمات من start إلى end).
 class _Seg {
   _Seg.banner(this.banner)
       : basmala = false,
-        ayat = const [],
-        text = '';
-  _Seg.basmala(this.text)
+        isRun = false,
+        start = 0;
+  _Seg.basmala()
       : banner = null,
         basmala = true,
-        ayat = const [];
-  _Seg.run(this.ayat)
+        isRun = false,
+        start = 0;
+  _Seg.run(this.start)
       : banner = null,
         basmala = false,
-        text = ayat.map((a) => '${a.text} ').join();
+        isRun = true;
   final Surah? banner;
   final bool basmala;
-  final List<Ayah> ayat;
-  final String text;
-}
-
-extension _Also<T> on T {
-  T also(void Function(T) f) {
-    f(this);
-    return this;
-  }
+  final bool isRun;
+  final int start;
+  int end = -1;
 }
 
 /// شريط التلاوة أسفل الصفحة: القارئ، تشغيل/إيقاف، التقدّم.

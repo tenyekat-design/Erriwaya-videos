@@ -30,7 +30,7 @@ class _SettingsSheet extends StatelessWidget {
           const Text('الإعدادات', textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
           const SizedBox(height: 14),
           const Text('حجم خط المصحف', style: TextStyle(fontSize: 16)),
-          Text('أقصى حجم؛ يصغر الخط تلقائياً حين تحتاج الصفحة ذلك لتظهر كاملة.',
+          Text('الصفحة تُرتَّب أسطرها كالمصحف المطبوع وتملأ الشاشة؛ هذا يعدّل الخط قليلاً حول ذلك.',
               style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
           Row(children: [
             const Text('أ', style: TextStyle(fontSize: 14)),
@@ -38,8 +38,8 @@ class _SettingsSheet extends StatelessWidget {
               child: Slider(
                 value: s.fontScale,
                 min: .8,
-                max: 1.8,
-                divisions: 10,
+                max: 1.2,
+                divisions: 8,
                 onChanged: s.setFontScale,
               ),
             ),
@@ -90,7 +90,7 @@ class _SettingsSheet extends StatelessWidget {
             style: TextStyle(fontSize: 13, height: 1.7, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
-          Text('الإصدار 1.3.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+          Text('الإصدار 1.4.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
         ]),
       ),
     );

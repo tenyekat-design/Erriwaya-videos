@@ -27,7 +27,8 @@ def words(s):
 
 
 # ── حفص ──
-hafs = [[a['sora'], a['aya_no'], a['page'], a['jozz'], a['aya_text'].strip()] for a in H]
+# [سورة، آية، صفحة، جزء، نصّ، أول سطر، آخر سطر] — الأسطر من ١٥ سطراً في صفحة مصحف المدينة
+hafs = [[a['sora'], a['aya_no'], a['page'], a['jozz'], a['aya_text'].strip(), a['line_start'], a['line_end']] for a in H]
 search = [a['aya_text_emlaey'] for a in H]
 
 # ── ورش: كل آية تُربط بآيات حفص التي تشاركها كلماتها (للتفسير)، بمحاذاة مواضع الكلمات داخل السورة ──
@@ -46,7 +47,8 @@ for a in W:
     wcur[s] = hi
     m = [k for (b, e, k) in hpos[s] if b < hi - 0.5 and e > lo + 0.5] or \
         [min(hpos[s], key=lambda x: abs((x[0] + x[1]) / 2 - (lo + hi) / 2))[2]]
-    warsh.append([s, a['aya_no'], int(str(a['page']).split('-')[0]), a['jozz'], a['aya_text'].strip(), m])
+    le = a['line_end'] if a['line_end'] >= a['line_start'] else 15   # آية تمتدّ إلى الصفحة التالية
+    warsh.append([s, a['aya_no'], int(str(a['page']).split('-')[0]), a['jozz'], a['aya_text'].strip(), m, a['line_start'], le])
 
 # ── السور ──
 surahs = []

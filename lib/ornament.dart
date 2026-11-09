@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'data.dart';
 import 'theme.dart';
 
 /// زخارف صفحات المصحف على طراز زخارف ولاتة (موريتانيا)، مرسومة بالكود.
@@ -8,22 +9,45 @@ import 'theme.dart';
 ///   وفي كل زاوية مربع أبيض فيه صليب ولاتيّ بنّي.
 /// - صفحتا الفاتحة وأول البقرة (١ و٢): جدار طينيّ عريض تتوالى عليه معيّنات بيضاء مزخرفة
 ///   (كالنقوش الجصّية على جدران ولاتة)، وفي زواياه دوائر ملوّنة كالتي تحيط بأبوابها،
-///   ثم إطار أبيض فيه خطّ موجيّ بنّي، ثم لوحة النصّ بقوسين مفصّصين.
+///   ثم إطار أبيض فيه خطّ موجيّ بنّي، ثم لوحة النصّ بخطّين رفيعين ونجمتين.
+/// - رقم الصفحة على الإطار السفلي.
 class PageFrame extends StatelessWidget {
-  const PageFrame({super.key, required this.colors, required this.ornate, required this.child});
+  const PageFrame({super.key, required this.colors, required this.ornate, required this.page, required this.child});
   final PageColors colors;
   final bool ornate;
+  final int page;
   final Widget child;
 
   /// المسافة بين حافة الصفحة والنصّ.
   static EdgeInsets inset(bool ornate) =>
-      ornate ? const EdgeInsets.fromLTRB(60, 86, 60, 82) : const EdgeInsets.fromLTRB(28, 26, 28, 22);
+      ornate ? const EdgeInsets.fromLTRB(58, 70, 58, 70) : const EdgeInsets.fromLTRB(27, 25, 27, 25);
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final o = dark ? Oualata.dark : Oualata.light;
     return CustomPaint(
-      painter: _FramePainter(colors, ornate, Theme.of(context).brightness == Brightness.dark),
-      child: Padding(padding: inset(ornate), child: child),
+      painter: _FramePainter(colors, ornate, dark),
+      child: Stack(children: [
+        Positioned.fill(child: Padding(padding: inset(ornate), child: child)),
+        // رقم الصفحة على الإطار السفلي، فلا يزاحم النصّ
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: ornate ? 44 : 4,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 1),
+              decoration: BoxDecoration(
+                color: o.lime,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: o.ink, width: .8),
+              ),
+              child: Text(ar(page), style: TextStyle(fontSize: 12, height: 1.35, color: o.ink)),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -97,7 +121,7 @@ class _FramePainter extends CustomPainter {
   // ───────── الفاتحة وأول البقرة ─────────
   void _ornate(Canvas canvas, Size size) {
     final outer = (Offset.zero & size).deflate(5);
-    const wallW = 34.0, limeW = 12.0;
+    const wallW = 30.0, limeW = 11.0;
     final mid = outer.deflate(wallW);
     final inner = mid.deflate(limeW);
 
@@ -124,7 +148,7 @@ class _FramePainter extends CustomPainter {
     }
 
     // لوحة النصّ
-    _panel(canvas, inner.deflate(12));
+    _panel(canvas, inner.deflate(7));
   }
 
   // ───────── أدوات الرسم ─────────
@@ -348,49 +372,40 @@ class _FramePainter extends CustomPainter {
     }
   }
 
-  /// لوحة النصّ في الصفحتين الأوليين: قوس مفصّص أعلاها وأسفلها، معيّن ولاتيّ على تاج كل قوس،
-  /// وصلبان صغيرة في الزوايا.
+  /// لوحة النصّ في الصفحتين الأوليين: مستطيل مستدير الزوايا بخطّين رفيعين،
+  /// ونجمة ثمانية في منتصف الضلع الأعلى (ورقم الصفحة على الأسفل).
   void _panel(Canvas canvas, Rect r) {
-    final archW = r.width * .44;
-    const archH = 24.0;
-    final top = r.top + archH, bottom = r.bottom - archH;
-    final cx = r.center.dx;
-    final p = Path()
-      ..moveTo(r.left, top)
-      ..lineTo(cx - archW / 2, top);
-    _lobes(p, Offset(cx - archW / 2, top), Offset(cx + archW / 2, top), -archH);
-    p
-      ..lineTo(r.right, top)
-      ..lineTo(r.right, bottom)
-      ..lineTo(cx + archW / 2, bottom);
-    _lobes(p, Offset(cx + archW / 2, bottom), Offset(cx - archW / 2, bottom), archH);
-    p
-      ..lineTo(r.left, bottom)
-      ..close();
-    canvas.drawPath(p, Paint()..color = c.paper);
-    canvas.drawPath(
-        p,
+    final rr = RRect.fromRectAndRadius(r, const Radius.circular(12));
+    canvas.drawRRect(rr, Paint()..color = c.paper);
+    canvas.drawRRect(
+        rr,
         Paint()
           ..color = c.frame
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.6);
-
-    _arabesque(canvas, Offset(cx, r.top + 6), 9, c.frame, c.paper);
-    _arabesque(canvas, Offset(cx, r.bottom - 6), 9, c.frame, c.paper);
-    for (final q in [Offset(r.left, top), Offset(r.right, top), Offset(r.left, bottom), Offset(r.right, bottom)]) {
-      canvas.drawCircle(q, 8, Paint()..color = c.paper);
-      _cross(canvas, q, 6.5, c.frame, c.paper);
+          ..strokeWidth = 1.4);
+    canvas.drawRRect(
+        rr.deflate(4),
+        Paint()
+          ..color = c.frame.withValues(alpha: .4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .7);
+    for (final y in [r.top]) {
+      final p = Offset(r.center.dx, y);
+      canvas.drawCircle(p, 9, Paint()..color = c.paper);
+      _star8(canvas, p, 8, c.frame);
+      canvas.drawCircle(p, 2.4, Paint()..color = c.paper);
     }
   }
 
-  /// قوس مفصّص من ثلاثة فصوص بين نقطتين (h سالبة = إلى الأعلى).
-  void _lobes(Path p, Offset a, Offset b, double h) {
-    final pts = [for (var i = 0; i <= 3; i++) Offset.lerp(a, b, i / 3)!];
-    for (var i = 0; i < 3; i++) {
-      final mid = Offset.lerp(pts[i], pts[i + 1], .5)!;
-      final lift = i == 1 ? h : h * .62;
-      p.quadraticBezierTo(mid.dx, mid.dy + lift * 2 - (pts[i].dy - a.dy), pts[i + 1].dx, pts[i + 1].dy);
+  void _star8(Canvas canvas, Offset o0, double r, Color color) {
+    final path = Path();
+    for (var i = 0; i < 16; i++) {
+      final a = i * math.pi / 8 - math.pi / 2;
+      final rr = i.isEven ? r : r * .6;
+      final pt = o0 + Offset(math.cos(a), math.sin(a)) * rr;
+      i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
     }
+    canvas.drawPath(path..close(), Paint()..color = color);
   }
 
   @override

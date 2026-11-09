@@ -15,7 +15,8 @@ extension RiwayaX on Riwaya {
 }
 
 class Ayah {
-  const Ayah(this.index, this.surah, this.number, this.page, this.juz, this.text, this.hafsAyat);
+  const Ayah(this.index, this.surah, this.number, this.page, this.juz, this.text, this.hafsAyat,
+      [this.lineStart = 1, this.lineEnd = 15]);
   final int index; // الترتيب داخل الرواية (يبدأ من 0)
   final int surah;
   final int number;
@@ -23,6 +24,7 @@ class Ayah {
   final int juz;
   final String text; // نصّ الآية مع علامة رقمها في آخرها (يرسمها الخطّ)
   final List<int> hafsAyat; // أرقام آيات حفص المقابلة (للتفسير والبحث)؛ في حفص هي الآية نفسها
+  final int lineStart, lineEnd; // أسطر الآية في صفحة المصحف المطبوع (١–١٥)
 }
 
 class Surah {
@@ -79,11 +81,11 @@ class Quran {
     ];
     final hafs = <Ayah>[
       for (var i = 0; i < h.length; i++)
-        Ayah(i, h[i][0], h[i][1], h[i][2], h[i][3], h[i][4], [h[i][1] as int])
+        Ayah(i, h[i][0], h[i][1], h[i][2], h[i][3], h[i][4], [h[i][1] as int], h[i][5], h[i][6])
     ];
     final warsh = <Ayah>[
       for (var i = 0; i < w.length; i++)
-        Ayah(i, w[i][0], w[i][1], w[i][2], w[i][3], w[i][4], List<int>.from(w[i][5]))
+        Ayah(i, w[i][0], w[i][1], w[i][2], w[i][3], w[i][4], List<int>.from(w[i][5]), w[i][6], w[i][7])
     ];
     ayat = {Riwaya.hafs: hafs, Riwaya.warsh: warsh};
     byPage = {for (final r in Riwaya.values) r: _paginate(ayat[r]!)};
@@ -123,6 +125,17 @@ class Quran {
     final list = ayat[r]!;
     return list.firstWhere((a) => a.surah == surah && a.hafsAyat.contains(hafsNumber),
         orElse: () => list.firstWhere((a) => a.surah == surah));
+  }
+
+  /// عدد أسطر النصّ في الصفحة كما في المصحف المطبوع (دون أسطر أسماء السور والبسملة).
+  int textLines(Riwaya r, int page) {
+    final lines = <int>{};
+    for (final a in byPage[r]![page - 1]) {
+      for (var l = a.lineStart; l <= (a.lineEnd < a.lineStart ? 15 : a.lineEnd); l++) {
+        lines.add(l);
+      }
+    }
+    return lines.isEmpty ? 15 : lines.length;
   }
 
   int juzOfPage(Riwaya r, int page) {

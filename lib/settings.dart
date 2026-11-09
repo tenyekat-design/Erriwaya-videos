@@ -32,7 +32,7 @@ class Settings extends ChangeNotifier {
   Future<void> load() async {
     _p = await SharedPreferences.getInstance();
     riwaya = _p.getString('riwaya') == 'warsh' ? Riwaya.warsh : Riwaya.hafs;
-    fontScale = _p.getDouble('fontScale') ?? 1.0;
+    fontScale = (_p.getDouble('fontScale') ?? 1.0).clamp(.8, 1.2).toDouble();
     themeMode = ThemeMode.values[(_p.getInt('theme') ?? 0).clamp(0, 2)];
     tafsir = _p.getString('tafsir') ?? 'muyassar';
     for (final r in Riwaya.values) {
