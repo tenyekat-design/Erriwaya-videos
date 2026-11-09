@@ -69,7 +69,33 @@ AD_CSS = """
 @keyframes adPulse { 0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(0,74,73,.45) } 50% { transform:scale(1.05); box-shadow:0 0 0 10px rgba(0,74,73,0) } }
 @media (prefers-reduced-motion: reduce) { .adhouse, .adhouse::before, .adhouse .go { animation:none }
   .adhouse .rot span { animation:none } .adhouse .rot span:first-child { opacity:1 } }
-
+/* حركة أكثر في خانة الإعلان: مكبّر صوت يهتز وتخرج منه موجات، عنوان يلمع، سهم يتقدّم، فقاعات تصعد */
+.adhouse > div { flex:1 1 220px; min-width:0 }
+.adhouse .mega { flex:none; position:relative; width:58px; height:58px; border-radius:16px; background:#004A49; color:#fff;
+  display:grid; place-items:center; animation:megaSwing 2.4s ease-in-out infinite; transform-origin:60% 70% }
+.adhouse .mega svg { width:30px; height:30px }
+.adhouse .mega i { position:absolute; inset:0; border-radius:16px; border:2px solid #C8102E; opacity:0; animation:megaRing 2.4s ease-out infinite }
+.adhouse .mega i + i { animation-delay:1.2s }
+.adhouse strong { background:linear-gradient(90deg,#004A49 0%,#004A49 38%,#C8102E 50%,#004A49 62%,#004A49 100%);
+  background-size:250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:adShine 3s linear infinite }
+:root[data-theme="dark"] .adhouse strong { background-image:linear-gradient(90deg,#7FD1C7 0%,#7FD1C7 38%,#FF6B7F 50%,#7FD1C7 62%,#7FD1C7 100%) }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .adhouse strong { background-image:linear-gradient(90deg,#7FD1C7 0%,#7FD1C7 38%,#FF6B7F 50%,#7FD1C7 62%,#7FD1C7 100%) } }
+.adhouse .go { display:inline-flex; align-items:center; gap:8px }
+.adhouse .go svg { width:18px; height:18px; animation:goArrow 1.1s ease-in-out infinite }
+.adhouse:hover .go { background:#C8102E }
+.adhouse .fx { position:absolute; inset:0; z-index:-1; pointer-events:none; overflow:hidden }
+.adhouse .fx i { position:absolute; bottom:-14px; width:9px; height:9px; border-radius:50%; background:rgba(0,74,73,.22); animation:adBubble 5.5s linear infinite }
+.adhouse .fx i:nth-child(1) { right:8%; animation-delay:0s } .adhouse .fx i:nth-child(2) { right:22%; width:6px; height:6px; background:rgba(200,16,46,.25); animation-delay:1.4s }
+.adhouse .fx i:nth-child(3) { right:38%; animation-delay:2.6s; animation-duration:6.5s } .adhouse .fx i:nth-child(4) { right:52%; width:12px; height:12px; animation-delay:.7s }
+.adhouse .fx i:nth-child(5) { right:66%; width:6px; height:6px; background:rgba(200,16,46,.25); animation-delay:3.3s } .adhouse .fx i:nth-child(6) { right:80%; animation-delay:2s; animation-duration:4.8s }
+.adhouse .fx i:nth-child(7) { right:92%; width:7px; height:7px; animation-delay:4s }
+@keyframes megaSwing { 0%,55%,100% { transform:rotate(0) scale(1) } 8% { transform:rotate(-14deg) scale(1.08) } 16% { transform:rotate(11deg) scale(1.08) } 24% { transform:rotate(-8deg) } 32% { transform:rotate(5deg) } 40% { transform:rotate(-2deg) } }
+@keyframes megaRing { 0% { transform:scale(1); opacity:.75 } 100% { transform:scale(1.65); opacity:0 } }
+@keyframes adShine { from { background-position:100% 0 } to { background-position:-150% 0 } }
+@keyframes goArrow { 0%,100% { transform:translateX(0) } 50% { transform:translateX(-6px) } }
+@keyframes adBubble { 0% { transform:translateY(0) scale(.6); opacity:0 } 15% { opacity:1 } 100% { transform:translateY(-150px) scale(1.25); opacity:0 } }
+@media (max-width:520px) { .adhouse { padding:16px } .adhouse .go { margin-inline-start:auto } .adhouse .mega { width:48px; height:48px; border-radius:14px } .adhouse .mega svg { width:24px; height:24px } }
+@media (prefers-reduced-motion: reduce) { .adhouse .mega, .adhouse .mega i, .adhouse strong, .adhouse .go svg, .adhouse .fx i { animation:none } .adhouse .fx { display:none } }
 """
 
 
@@ -82,9 +108,9 @@ def ad_slot(pos, prefix=""):
                  'data-ad-format="auto" data-full-width-responsive="true"></ins>'
                  '<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>')
     else:
-        inner = (f'<a class="adhouse" href="{prefix}advertise.html"><div><strong>مساحتك الإعلانية هنا</strong>'
+        inner = (f'<a class="adhouse" href="{prefix}advertise.html"><span class="mega" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l5 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><i></i><i></i></span><div><strong>مساحتك الإعلانية هنا</strong>'
                  '<span class="rot"><span>اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><span>في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><span>مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span></span></div>'
-                 '<span class="go">أعلن معنا</span></a>')
+                 '<span class="go">أعلن معنا<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></span><span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>')
     return f'<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>{inner}</aside>'
 
 
