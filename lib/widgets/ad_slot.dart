@@ -119,7 +119,7 @@ class _AdSlotState extends State<AdSlot> with TickerProviderStateMixin {
                               const SizedBox(width: 8),
                               Transform.translate(
                                 offset: Offset(reduce ? 0 : -5 * (0.5 - 0.5 * math.cos(t * 2 * math.pi * 11)), 0),
-                                child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                                child: const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
                               ),
                             ]),
                           ),
