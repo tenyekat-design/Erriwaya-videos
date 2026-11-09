@@ -228,7 +228,7 @@ class _MushafPageState extends State<_MushafPage> {
         if (a.surah != 9 && !(r == Riwaya.hafs && a.surah == 1)) segs.add(_Seg.basmala());
       }
       if (segs.isEmpty || !segs.last.isRun || segs.last.end != -1) segs.add(_Seg.run(words.length));
-      for (final t in a.text.split(' ')) {
+      for (final t in a.shown.split(' ')) {
         if (t.trim().isEmpty) continue;
         words.add(_Word(a, t, _measure(r.font, t)));
       }

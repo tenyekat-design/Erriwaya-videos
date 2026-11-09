@@ -15,8 +15,8 @@ extension RiwayaX on Riwaya {
 }
 
 class Ayah {
-  const Ayah(this.index, this.surah, this.number, this.page, this.juz, this.text, this.hafsAyat,
-      [this.lineStart = 1, this.lineEnd = 15]);
+  const Ayah(this.index, this.surah, this.number, this.page, this.juz, this.text, this.hafsAyat, this.lineStart,
+      this.lineEnd, this.shown);
   final int index; // الترتيب داخل الرواية (يبدأ من 0)
   final int surah;
   final int number;
@@ -25,7 +25,17 @@ class Ayah {
   final String text; // نصّ الآية مع علامة رقمها في آخرها (يرسمها الخطّ)
   final List<int> hafsAyat; // أرقام آيات حفص المقابلة (للتفسير والبحث)؛ في حفص هي الآية نفسها
   final int lineStart, lineEnd; // أسطر الآية في صفحة المصحف المطبوع (١–١٥)
+
+
+  /// النصّ كما يُرسم بخطّ الرواية (في ورش تُصحَّح «لا»، انظر [fixLamAlef]). النسخ والبحث يستعملان [text].
+  final String shown;
 }
+
+final _lamAlef = RegExp('\u0644([\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08F0-\u08F3]+)([\u0627\u0623\u0625\u0622])');
+
+/// خطّ ورش من المجمّع يضع حركة اللام في «لَا» فوق الألف إذا جاءت الحركة بين اللام والألف.
+/// للرسم فقط ننقل حركات اللام بعد الألف («لَا» ← «لاَ»)، فيرسم الخطّ «لا» متصلة والحركة فوق اللام.
+String fixLamAlef(String t) => t.replaceAllMapped(_lamAlef, (m) => '\u0644${m[2]}${m[1]}');
 
 class Surah {
   const Surah(this.n, this.name, this.en, this.makki, this.hafsCount, this.warshCount, this.hafsPage, this.warshPage);
@@ -81,11 +91,12 @@ class Quran {
     ];
     final hafs = <Ayah>[
       for (var i = 0; i < h.length; i++)
-        Ayah(i, h[i][0], h[i][1], h[i][2], h[i][3], h[i][4], [h[i][1] as int], h[i][5], h[i][6])
+        Ayah(i, h[i][0], h[i][1], h[i][2], h[i][3], h[i][4], [h[i][1] as int], h[i][5], h[i][6], h[i][4])
     ];
     final warsh = <Ayah>[
       for (var i = 0; i < w.length; i++)
-        Ayah(i, w[i][0], w[i][1], w[i][2], w[i][3], w[i][4], List<int>.from(w[i][5]), w[i][6], w[i][7])
+        Ayah(i, w[i][0], w[i][1], w[i][2], w[i][3], w[i][4], List<int>.from(w[i][5]), w[i][6], w[i][7],
+            fixLamAlef(w[i][4]))
     ];
     ayat = {Riwaya.hafs: hafs, Riwaya.warsh: warsh};
     byPage = {for (final r in Riwaya.values) r: _paginate(ayat[r]!)};

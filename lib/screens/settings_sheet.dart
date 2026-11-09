@@ -49,7 +49,7 @@ class _SettingsSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(color: PageColors.of(context).paper, borderRadius: BorderRadius.circular(12)),
             child: Text(
-              Quran.instance.ayat[s.riwaya]![1].text,
+              Quran.instance.ayat[s.riwaya]![1].shown,
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: s.riwaya.font, fontSize: 23 * s.fontScale, height: 2, color: PageColors.of(context).ink),
@@ -90,7 +90,7 @@ class _SettingsSheet extends StatelessWidget {
             style: TextStyle(fontSize: 13, height: 1.7, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
-          Text('الإصدار 1.4.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+          Text('الإصدار 1.4.1', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
         ]),
       ),
     );

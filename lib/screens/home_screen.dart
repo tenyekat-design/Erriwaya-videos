@@ -206,7 +206,7 @@ class _Bookmarks extends StatelessWidget {
               leading: Icon(Icons.bookmark, color: scheme.primary),
               title: Text('سورة ${q.surah(b.surah).name} · آية ${ar(riwaya == Riwaya.hafs ? b.ayah : a.number)}',
                   style: const TextStyle(fontSize: 17)),
-              subtitle: Text(a.text, maxLines: 1, overflow: TextOverflow.ellipsis,
+              subtitle: Text(a.shown, maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontFamily: riwaya.font, fontSize: 18, color: scheme.onSurfaceVariant)),
               trailing: IconButton(
                 tooltip: 'حذف العلامة',

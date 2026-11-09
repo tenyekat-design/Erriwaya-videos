@@ -90,7 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     final h = _res[i - 1];
                     final a = q.locate(r, h.surah, h.number);
                     return ListTile(
-                      title: Text(a.text,
+                      title: Text(a.shown,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontFamily: r.font, fontSize: 20, height: 1.9)),

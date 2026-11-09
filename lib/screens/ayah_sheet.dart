@@ -70,7 +70,7 @@ class _AyahSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: colors.frame.withValues(alpha: .5)),
             ),
-            child: Text(ayah.text,
+            child: Text(ayah.shown,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: riwaya.font, fontSize: 24, height: 2, color: colors.ink)),
           ),
