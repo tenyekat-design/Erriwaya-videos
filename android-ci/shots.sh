@@ -12,7 +12,12 @@ adb install -r mushaf-x86_64.apk
 adb logcat -c
 # سجلّ حيّ يبقى حتى لو توقّف المحاكي
 (adb logcat -v time > shots/live-log.txt 2>&1 &)
-adb shell monkey -p $PKG -c android.intent.category.LAUNCHER 1
+# تشغيل مضمون: نكرر حتى يصبح التطبيق في الواجهة
+for i in 1 2 3; do
+  adb shell am start -W -n $PKG/.MainActivity
+  sleep 8
+  adb shell dumpsys activity activities | grep -q "mResumedActivity.*$PKG" && break
+done
 sleep 15
 dismiss
 shot 01-home 2
