@@ -3,6 +3,8 @@
 // closing 195.20 - end. Edition without the anchor (user's decision): teaser photos open and close it.
 // ml-sn-flags is a drawn card (tools/flags.py): the Goita photos supplied show a Beninese visitor, not
 // Cheikh Niang, so they are not used.
+// YouTube (16:9) crops the photos vertically: some cards get their own framing there (YT ? youtube : feed).
+const YT = /format=youtube/.test(location.search);
 window.TIMELINE = {
   date: 'الاثنين 9 نوفمبر 2026',
   title: 'الموجز الإخباري',
@@ -18,17 +20,18 @@ window.TIMELINE = {
   cards: [
     // opening teasers
     { kicker: 'موريتانيا', img: 'mr-parliament-wide.jpg', moves: [{ t: 0.0, a: [0.5, 0.45, 1.12], b: [0.45, 0.45, 1.0] }] },
-    { kicker: 'المغرب', img: 'ma-ecuador-bourita.jpg', moves: [{ t: 3.14, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
+    { kicker: 'المغرب', img: 'ma-ecuador-bourita.jpg', moves: [YT ? { t: 3.14, a: [0.5, 0.0, 1.0], b: [0.5, 0.0, 1.04] } : { t: 3.14, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
     { kicker: 'تونس', img: 'tn-dam-low.jpg', moves: [{ t: 8.24, a: [0.5, 0.45, 1.0], b: [0.55, 0.45, 1.1] }] },
     // Mauritania: third-term calls
     { kicker: 'موريتانيا', img: 'mr-parliament-wide.jpg', moves: [{ t: 12.68, a: [0.45, 0.4, 1.0], b: [0.4, 0.38, 1.12] }] },
     { img: 'mr-government-benches.jpg', moves: [{ t: 21.00, a: [0.6, 0.35, 1.0], b: [0.65, 0.35, 1.1] }] },
-    { img: 'mr-jamila-nahah.jpg', moves: [{ t: 30.54, a: [0.5, 0.18, 1.0], b: [0.5, 0.16, 1.06] }] },
+    { img: 'mr-cheikh-ould-amine.jpg', moves: [YT ? { t: 27.16, a: [0.5, 0.3, 1.0], b: [0.5, 0.3, 1.06] } : { t: 27.16, a: [0.55, 0.35, 1.0], b: [0.55, 0.33, 1.08] }] },
+    { img: 'mr-jamila-nahah.jpg', moves: [YT ? { t: 30.54, a: [0.5, 0.27, 1.0], b: [0.5, 0.26, 1.04] } : { t: 30.54, a: [0.5, 0.18, 1.0], b: [0.5, 0.16, 1.06] }] },
     { img: 'mr-parliament-wide.jpg', moves: [{ t: 34.58, a: [0.3, 0.5, 1.2], b: [0.5, 0.45, 1.05] }] },
     // Mauritania: electricity company fires
-    { img: 'mr-mp-sidi-maouloud.jpg', moves: [{ t: 43.46, a: [0.45, 0.3, 1.0], b: [0.45, 0.28, 1.1] }] },
+    { img: 'mr-mp-sidi-maouloud.jpg', moves: [YT ? { t: 43.46, a: [0.45, 0.0, 1.0], b: [0.45, 0.0, 1.03] } : { t: 43.46, a: [0.45, 0.3, 1.0], b: [0.45, 0.28, 1.1] }] },
     { img: 'mr-government-benches.jpg', moves: [{ t: 52.16, a: [0.35, 0.55, 1.15], b: [0.6, 0.5, 1.15] }] },
-    { img: 'mr-mp-sidi-maouloud.jpg', moves: [{ t: 59.46, a: [0.45, 0.28, 1.12], b: [0.45, 0.3, 1.0] }] },
+    { img: 'mr-mp-sidi-maouloud.jpg', moves: [YT ? { t: 59.46, a: [0.45, 0.0, 1.03], b: [0.45, 0.0, 1.0] } : { t: 59.46, a: [0.45, 0.28, 1.12], b: [0.45, 0.3, 1.0] }] },
     // Mali: Goita receives Senegal's foreign minister
     { img: 'ml-sn-flags.jpg', moves: [{ t: 63.62, a: [0.5, 0.5, 1.0], b: [0.5, 0.5, 1.06] }] },
     { img: 'ml-goita-faye.jpg', moves: [{ t: 70.16, a: [0.5, 0.35, 1.0], b: [0.5, 0.33, 1.1] }] },
@@ -39,8 +42,8 @@ window.TIMELINE = {
     { img: 'sn-faye-stairs.jpg', moves: [{ t: 94.00, a: [0.55, 0.3, 1.0], b: [0.55, 0.28, 1.1] }] },
     { img: 'sn-faye-forum.jpg', moves: [{ t: 103.12, a: [0.5, 0.35, 1.0], b: [0.5, 0.33, 1.1] }] },
     // Morocco: Ecuador backs Morocco's position on Western Sahara
-    { img: 'ma-ecuador-bourita.jpg', moves: [{ t: 107.06, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
-    { img: 'ma-ecuador-bourita.jpg', moves: [{ t: 116.96, a: [0.3, 0.3, 1.25], b: [0.7, 0.3, 1.25] }] },
+    { img: 'ma-ecuador-bourita.jpg', moves: [YT ? { t: 107.06, a: [0.5, 0.0, 1.0], b: [0.5, 0.0, 1.04] } : { t: 107.06, a: [0.5, 0.3, 1.0], b: [0.5, 0.28, 1.08] }] },
+    { img: 'ma-ecuador-bourita.jpg', moves: [YT ? { t: 116.96, a: [0.4, 0.0, 1.08], b: [0.6, 0.0, 1.08] } : { t: 116.96, a: [0.3, 0.3, 1.25], b: [0.7, 0.3, 1.25] }] },
     // Libya: salary protests in Tripoli
     { img: 'ly-tripoli-protest.jpg', moves: [{ t: 126.82, a: [0.5, 0.4, 1.0], b: [0.45, 0.4, 1.1] }] },
     { img: 'ly-audit-bureau.jpg', moves: [{ t: 135.50, a: [0.5, 0.4, 1.0], b: [0.5, 0.38, 1.1] }] },
