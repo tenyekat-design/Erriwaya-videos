@@ -4,12 +4,14 @@ set -x
 PKG=mr.erriwaya.erriwaya_mushaf
 mkdir -p shots
 alive() { timeout 10 adb get-state >/dev/null 2>&1; }
-finish() { timeout 30 adb logcat -d > shots/logcat.txt 2>/dev/null; grep -iE "flutter" shots/logcat.txt | tail -200 > shots/flutter-log.txt; ls -la shots; exit 0; }
+finish() { grep -iE "flutter|FATAL|SIGSEGV|SIGABRT|crash|tombstone|DEBUG  " shots/live-log.txt | tail -300 > shots/flutter-log.txt; ls -la shots; exit 0; }
 # المحاكي قد يتوقف فجأة: نحفظ ما التُقط ونخرج بدل الانتظار حتى نهاية الوقت
 shot() { sleep "${2:-3}"; alive || { echo "emulator gone before $1"; finish; }; timeout 20 adb exec-out screencap -p > "shots/$1.png"; }
 dismiss() { python3 android-ci/tap.py "Wait" >/dev/null 2>&1 || true; }
 adb install -r mushaf-x86_64.apk
 adb logcat -c
+# سجلّ حيّ يبقى حتى لو توقّف المحاكي
+(adb logcat -v time > shots/live-log.txt 2>&1 &)
 adb shell monkey -p $PKG -c android.intent.category.LAUNCHER 1
 sleep 15
 dismiss
@@ -33,6 +35,11 @@ adb shell input keyevent KEYCODE_BACK
 sleep 2
 dismiss
 python3 android-ci/tap.py "ورش عن نافع" && shot 06-home-warsh 4
+python3 android-ci/tap.py "الأجزاء" && sleep 2
+python3 android-ci/tap.py "الثاني" && shot 06b-warsh-juz2 5
+adb shell input keyevent KEYCODE_BACK
+sleep 2
+python3 android-ci/tap.py "السور" && sleep 2
 python3 android-ci/tap.py "متابعة القراءة" && shot 07-fatiha-warsh 5
 dismiss
 adb shell input swipe 150 1300 950 1300 300
