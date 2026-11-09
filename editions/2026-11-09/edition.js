@@ -4,8 +4,9 @@
 // ml-sn-flags is a drawn card (tools/flags.py): the Goita photos supplied show a Beninese visitor, not
 // Cheikh Niang, so they are not used.
 // YouTube (16:9) crops the photos vertically: some cards get their own framing there (YT ? youtube : feed).
-const YT = /format=youtube/.test(location.search);
-const ST = /format=story/.test(location.search);   // 1080x1920: one face per frame in wide photos
+const QS = typeof location === "undefined" ? "" : location.search;
+const YT = /format=youtube/.test(QS);
+const ST = /format=story/.test(QS);   // 1080x1920: one face per frame in wide photos
 window.TIMELINE = {
   date: 'الاثنين 9 نوفمبر 2026',
   title: 'الموجز الإخباري',
