@@ -1,0 +1,43 @@
+name: erriwaya_mushaf
+description: مصحف الرواية – القرآن الكريم بروايتي حفص وورش، مع التفسير والتلاوة.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  http: ^1.2.2
+  shared_preferences: ^2.3.2
+  just_audio: ^0.9.42
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/
+    - assets/images/
+  fonts:
+    - family: AlQuds
+      fonts:
+        - asset: assets/fonts/al-quds.otf
+    - family: Hafs
+      fonts:
+        - asset: assets/fonts/UthmanicHafs.ttf
+    - family: Warsh
+      fonts:
+        - asset: assets/fonts/UthmanicWarsh.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: assets/images/icon.png
+  adaptive_icon_background: "#004A49"
+  adaptive_icon_foreground: assets/images/icon_fg.png
+  min_sdk_android: 21
