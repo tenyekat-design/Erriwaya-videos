@@ -85,14 +85,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: mushaf-v1.0.${{ github.run_number }}
-          name: مصحف الرواية – نسخة ${{ github.run_number }}
+          name: مصحف المحظرة – نسخة ${{ github.run_number }}
           target_commitish: ${{ github.sha }}
           files: |
             mushaf.apk
             mushaf-old-phones.apk
           make_latest: false
           body: |
-            ملف تثبيت مصحف الرواية لأندرويد (حفص وورش، التفسير الميسّر والجلالين، التلاوة).
+            ملف تثبيت مصحف المحظرة لأندرويد (حفص وورش، التفسير الميسّر والجلالين، التلاوة).
             حمّل mushaf.apk (لمعظم الهواتف) أو mushaf-old-phones.apk (للهواتف القديمة).
 
   screenshots:

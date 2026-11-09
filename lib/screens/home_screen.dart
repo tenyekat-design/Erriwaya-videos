@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
           length: 3,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('مصحف الرواية'),
+              title: const Text('مصحف المحظرة'),
               leading: IconButton(
                 tooltip: 'الإعدادات',
                 icon: const Icon(Icons.tune),

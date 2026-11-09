@@ -19,7 +19,7 @@ class MushafApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: Settings.instance,
       builder: (context, _) => MaterialApp(
-        title: 'مصحف الرواية',
+        title: 'مصحف المحظرة',
         debugShowCheckedModeBanner: false,
         locale: const Locale('ar'),
         supportedLocales: const [Locale('ar')],
@@ -37,7 +37,7 @@ class MushafApp extends StatelessWidget {
   }
 }
 
-/// شاشة البدء: شعار الرواية على الأخضر حتى تُحمَّل بيانات المصحف.
+/// شاشة البدء: «القرآن الكريم» في نجمة ذهبية على الأخضر حتى تُحمَّل بيانات المصحف.
 class _Boot extends StatefulWidget {
   const _Boot();
   @override
@@ -57,9 +57,9 @@ class _BootState extends State<_Boot> {
           backgroundColor: Brand.green,
           body: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Image.asset('assets/images/logo_white.png', height: 110),
-              const SizedBox(height: 18),
-              const Text('مصحف الرواية', style: TextStyle(color: Colors.white, fontSize: 26)),
+              Image.asset('assets/images/icon_fg.png', height: 190),
+              const SizedBox(height: 4),
+              const Text('مصحف المحظرة', style: TextStyle(color: Colors.white, fontSize: 26)),
               const SizedBox(height: 24),
               if (snap.hasError)
                 Text('تعذّر فتح المصحف: ${snap.error}', style: const TextStyle(color: Colors.white70))

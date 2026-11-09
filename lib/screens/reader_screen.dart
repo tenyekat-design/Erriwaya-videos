@@ -4,6 +4,7 @@ import '../audio.dart';
 import '../data.dart';
 import '../settings.dart';
 import '../theme.dart';
+import '../ornament.dart';
 import '../widgets.dart';
 import 'ayah_sheet.dart';
 import 'home_screen.dart';
@@ -146,13 +147,15 @@ class _MushafPageState extends State<_MushafPage> {
     final colors = PageColors.of(context);
     final scale = Settings.instance.fontScale;
     final ayat = q.byPage[r]![widget.page - 1];
-    final textStyle = TextStyle(fontFamily: r.font, fontSize: 23 * scale, height: 2.05, color: colors.ink);
+    final ornate = widget.page <= 2; // الفاتحة وأول البقرة مزخرفتان كما في المصحف المطبوع
+    final textStyle = TextStyle(fontFamily: r.font, fontSize: (ornate ? 25 : 23) * scale, height: 2.05, color: colors.ink);
 
     final blocks = <Widget>[];
     var spans = <InlineSpan>[];
     void flush() {
       if (spans.isEmpty) return;
-      blocks.add(Text.rich(TextSpan(children: spans), textAlign: TextAlign.justify, textDirection: TextDirection.rtl));
+      blocks.add(Text.rich(TextSpan(children: spans),
+          textAlign: ornate ? TextAlign.center : TextAlign.justify, textDirection: TextDirection.rtl));
       spans = [];
     }
 
@@ -180,22 +183,33 @@ class _MushafPageState extends State<_MushafPage> {
     }
     flush();
 
+    final pageNo = Text(ar(widget.page), style: TextStyle(color: colors.muted, fontSize: 15));
     return Container(
       color: colors.paper,
       child: SafeArea(
         top: false,
-        child: Column(children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: blocks),
+        child: PageFrame(
+          colors: colors,
+          ornate: ornate,
+          child: Column(children: [
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, box) => SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: ornate ? box.maxHeight - 8 : 0),
+                    child: Column(
+                      mainAxisAlignment: ornate ? MainAxisAlignment.center : MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: blocks,
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(bottom: 6, top: 2),
-            child: Text(ar(widget.page), style: TextStyle(color: colors.muted, fontSize: 15)),
-          ),
-        ]),
+            Padding(padding: const EdgeInsets.only(top: 2), child: pageNo),
+          ]),
+        ),
       ),
     );
   }
@@ -242,6 +256,26 @@ class AudioBar extends StatelessWidget {
               Expanded(
                 child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 15)),
               ),
+              if (a.reciter != null && a.surah != null)
+                a.isDownloaded(a.reciter!, a.surah!)
+                    ? const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(Icons.download_done_rounded, color: Brand.green, semanticLabel: 'محمّلة'))
+                    : a.progress[Audio.key(a.reciter!, a.surah!)] != null
+                        ? Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                    value: a.progress[Audio.key(a.reciter!, a.surah!)] == 0
+                                        ? null
+                                        : a.progress[Audio.key(a.reciter!, a.surah!)],
+                                    strokeWidth: 2.5)))
+                        : IconButton(
+                            tooltip: 'تحميل السورة',
+                            icon: const Icon(Icons.download_rounded),
+                            onPressed: () => a.download(a.reciter!, a.surah!)),
               IconButton(tooltip: 'إغلاق التلاوة', icon: const Icon(Icons.close), onPressed: a.stop),
             ]),
             if (a.surah != null) const _Progress(),

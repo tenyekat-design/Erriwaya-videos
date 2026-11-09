@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../audio.dart';
 import '../data.dart';
 import '../settings.dart';
@@ -30,6 +31,19 @@ class _AyahSheet extends StatelessWidget {
 
   /// موضع الآية بعدّ حفص (للعلامات التي تعمل في الروايتين).
   int get _hafsRef => ayah.hafsAyat.first;
+
+  String _quote(String plain, String surah) => '﴿$plain﴾ [سورة $surah: ${ar(ayah.number)}] · رواية ${riwaya.label}';
+
+  String _tafsirText(String plain, String surah, List<(int, String)> list, String kind) {
+    final name = kind == 'jalalayn' ? 'تفسير الجلالين' : 'التفسير الميسّر';
+    final body = list.length > 1 ? list.map((e) => 'الآية ${ar(e.$1)}: ${e.$2}').join('\n\n') : list.first.$2;
+    return '${_quote(plain, surah)}\n\n$name:\n$body';
+  }
+
+  void _copy(BuildContext context, String text, String done) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(done), duration: const Duration(seconds: 2)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,13 +91,14 @@ class _AyahSheet extends StatelessWidget {
               label: Text(s.isBookmarked(ayah.surah, _hafsRef) ? 'محفوظة' : 'علامة'),
             ),
             OutlinedButton.icon(
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: '﴿$plain﴾ [${surah.name}: ${ar(ayah.number)}]'));
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(const SnackBar(content: Text('نُسخت الآية'), duration: Duration(seconds: 2)));
-              },
+              onPressed: () => _copy(context, _quote(plain, surah.name), 'نُسخت الآية'),
               icon: const Icon(Icons.copy_rounded),
               label: const Text('نسخ'),
+            ),
+            OutlinedButton.icon(
+              onPressed: () => Share.share(_quote(plain, surah.name), subject: 'سورة ${surah.name}'),
+              icon: const Icon(Icons.share_rounded),
+              label: const Text('مشاركة'),
             ),
           ]),
           const SizedBox(height: 18),
@@ -129,7 +144,20 @@ class _AyahSheet extends StatelessWidget {
                     ),
                   SelectableText(t, style: const TextStyle(fontSize: 17.5, height: 1.9)),
                 ],
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
+                Wrap(spacing: 8, children: [
+                  TextButton.icon(
+                    onPressed: () => _copy(context, _tafsirText(plain, surah.name, list, s.tafsir), 'نُسخ التفسير'),
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    label: const Text('نسخ التفسير'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => Share.share(_tafsirText(plain, surah.name, list, s.tafsir)),
+                    icon: const Icon(Icons.share_rounded, size: 18),
+                    label: const Text('مشاركة التفسير'),
+                  ),
+                ]),
+                const SizedBox(height: 4),
                 Text(
                   s.tafsir == 'jalalayn'
                       ? 'تفسير الجلالين: جلال الدين المحلي وجلال الدين السيوطي.'

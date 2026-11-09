@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data.dart';
 
@@ -127,7 +129,12 @@ class Audio extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      await player.setUrl(rc.urlFor(s));
+      final f = await fileFor(rc, s);
+      if (await f.exists()) {
+        await player.setFilePath(f.path);
+      } else {
+        await player.setUrl(rc.urlFor(s));
+      }
       player.play();
     } catch (_) {
       error = 'تعذّر تشغيل التلاوة. تأكد من اتصالك بالإنترنت.';
@@ -151,6 +158,89 @@ class Audio extends ChangeNotifier {
       error = 'تعذّر تشغيل الآية. تأكد من اتصالك بالإنترنت.';
       notifyListeners();
     }
+  }
+
+  // ── التحميل للاستماع دون إنترنت ──
+  final Map<String, double> progress = {}; // مفتاح القارئ/السورة → 0..1 أثناء التحميل
+  final Set<String> _done = {};
+  static String key(Reciter rc, int s) => '${rc.id}/$s';
+
+  Future<Directory> _dir() async {
+    final d = Directory('${(await getApplicationDocumentsDirectory()).path}/recitations');
+    if (!await d.exists()) await d.create(recursive: true);
+    return d;
+  }
+
+  Future<File> fileFor(Reciter rc, int s) async =>
+      File('${(await _dir()).path}/${rc.id}_${s.toString().padLeft(3, '0')}.mp3');
+
+  bool isDownloaded(Reciter rc, int s) => _done.contains(key(rc, s));
+
+  /// يقرأ ما حُمّل من قبل (يُستدعى عند فتح قائمة القرّاء).
+  Future<void> scanDownloads() async {
+    final d = await _dir();
+    _done.clear();
+    await for (final e in d.list()) {
+      final m = RegExp(r'(\d+)_(\d{3})\.mp3$').firstMatch(e.path);
+      if (m != null) _done.add('${int.parse(m[1]!)}/${int.parse(m[2]!)}');
+    }
+    notifyListeners();
+  }
+
+  Future<void> download(Reciter rc, int s) async {
+    final k = key(rc, s);
+    if (progress.containsKey(k) || _done.contains(k)) return;
+    progress[k] = 0;
+    notifyListeners();
+    final f = await fileFor(rc, s);
+    final tmp = File('${f.path}.part');
+    final client = http.Client();
+    try {
+      final res = await client.send(http.Request('GET', Uri.parse(rc.urlFor(s))));
+      if (res.statusCode != 200) throw 'HTTP ${res.statusCode}';
+      final total = res.contentLength ?? 0;
+      final sink = tmp.openWrite();
+      var got = 0;
+      var last = DateTime.now();
+      await for (final chunk in res.stream) {
+        sink.add(chunk);
+        got += chunk.length;
+        if (total > 0 && DateTime.now().difference(last).inMilliseconds > 250) {
+          progress[k] = got / total;
+          last = DateTime.now();
+          notifyListeners();
+        }
+      }
+      await sink.close();
+      await tmp.rename(f.path);
+      _done.add(k);
+      error = null;
+    } catch (_) {
+      if (await tmp.exists()) await tmp.delete();
+      error = 'تعذّر تحميل التلاوة. تأكد من اتصالك بالإنترنت.';
+    } finally {
+      client.close();
+      progress.remove(k);
+      notifyListeners();
+    }
+  }
+
+  /// حجم التلاوات المحمّلة بالميغابايت، وحذفها.
+  Future<double> downloadedMb() async {
+    var n = 0;
+    await for (final e in (await _dir()).list()) {
+      if (e is File) n += await e.length();
+    }
+    return n / (1024 * 1024);
+  }
+
+  Future<void> deleteDownloads() async {
+    final d = await _dir();
+    await for (final e in d.list()) {
+      await e.delete();
+    }
+    _done.clear();
+    notifyListeners();
   }
 
   void toggle() => player.playing ? player.pause() : player.play();

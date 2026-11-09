@@ -34,6 +34,12 @@ class _ReciterListState extends State<_ReciterList> {
   late Future<List<Reciter>> _f = Audio.instance.load(widget.riwaya);
 
   @override
+  void initState() {
+    super.initState();
+    Audio.instance.scanDownloads();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final q = Quran.instance;
     final scheme = Theme.of(context).colorScheme;
@@ -91,7 +97,10 @@ class _ReciterListState extends State<_ReciterList> {
               title: Text(rc.name, style: const TextStyle(fontSize: 17)),
               subtitle: Text(rc.moshaf, maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
-              trailing: Icon(Icons.play_circle_fill_rounded, color: Brand.green.withValues(alpha: mine ? 1 : .6), size: 32),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                _DownloadButton(reciter: rc, surah: widget.surah),
+                Icon(Icons.play_circle_fill_rounded, color: Brand.green.withValues(alpha: mine ? 1 : .6), size: 32),
+              ]),
               onTap: () {
                 Settings.instance.setReciter(widget.riwaya, rc.id);
                 Audio.instance.playSurah(widget.riwaya, widget.surah, rc);
@@ -99,6 +108,42 @@ class _ReciterListState extends State<_ReciterList> {
               },
             );
           },
+        );
+      },
+    );
+  }
+}
+
+/// زر تحميل السورة بصوت هذا القارئ للاستماع دون إنترنت: سهم، ثم دائرة تقدّم، ثم علامة صح.
+class _DownloadButton extends StatelessWidget {
+  const _DownloadButton({required this.reciter, required this.surah});
+  final Reciter reciter;
+  final int surah;
+
+  @override
+  Widget build(BuildContext context) {
+    final a = Audio.instance;
+    return ListenableBuilder(
+      listenable: a,
+      builder: (context, _) {
+        final p = a.progress[Audio.key(reciter, surah)];
+        if (a.isDownloaded(reciter, surah)) {
+          return const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(Icons.download_done_rounded, color: Brand.green, semanticLabel: 'محمّلة'),
+          );
+        }
+        if (p != null) {
+          return Padding(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+                width: 22, height: 22, child: CircularProgressIndicator(value: p == 0 ? null : p, strokeWidth: 2.5)),
+          );
+        }
+        return IconButton(
+          tooltip: 'تحميل للاستماع دون إنترنت',
+          icon: const Icon(Icons.download_rounded),
+          onPressed: () => a.download(reciter, surah),
         );
       },
     );
