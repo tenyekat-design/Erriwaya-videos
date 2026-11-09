@@ -106,7 +106,28 @@ AD_CSS = """
 .adhouse:hover .mq-t { animation-play-state:paused }
 @keyframes adMarq { from { transform:translateX(0) } to { transform:translateX(50%) } }
 @media (prefers-reduced-motion: reduce) { .adhouse .mq-t { animation:none; white-space:normal } .adhouse .mq-t [aria-hidden] { display:none } }
+
+/* واتساب داخل خانة الإعلان: الخانة صارت حاوية، والزرّان رابطان مستقلان */
+.adhouse .acts { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+.adhouse .go { text-decoration:none; color:#fff }
+.adhouse .go:hover { background:#C8102E }
+.adhouse .wa { display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; border-radius:999px; padding:9px 18px;
+  font-size:15px; text-decoration:none; white-space:nowrap; animation:waPulse 2.4s ease-in-out 1.2s infinite }
+.adhouse .wa:hover { background:#1EBE5A }
+.adhouse .wa svg { width:19px; height:19px; fill:currentColor; flex:none }
+.adhouse .wa b { font:600 14px/1 "Segoe UI",Tahoma,Arial,sans-serif; direction:ltr; unicode-bidi:isolate }
+@keyframes waPulse { 0%,100% { box-shadow:0 0 0 0 rgba(37,211,102,.55) } 50% { box-shadow:0 0 0 10px rgba(37,211,102,0) } }
+@media (max-width:520px) { .adhouse .acts { width:100% } .adhouse .acts > a { flex:1 1 auto; justify-content:center } }
+@media (prefers-reduced-motion: reduce) { .adhouse .wa { animation:none } }
 """
+
+
+def _wa_svg():
+    """أيقونة واتساب من رموز الصفحة الرئيسية."""
+    if "whatsapp" in ICONS:
+        vb, d = ICONS["whatsapp"]
+        return f'<svg viewBox="{vb}" aria-hidden="true"><path d="{d}"/></svg>'
+    return ""
 
 
 def ad_slot(pos, prefix=""):
@@ -118,9 +139,9 @@ def ad_slot(pos, prefix=""):
                  'data-ad-format="auto" data-full-width-responsive="true"></ins>'
                  '<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>')
     else:
-        inner = (f'<a class="adhouse" href="{prefix}advertise.html"><span class="mega" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l5 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><i></i><i></i></span><div><strong>مساحتك الإعلانية هنا</strong>'
+        inner = (f'<div class="adhouse"><span class="mega" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h2l5 4V5L6 9H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><i></i><i></i></span><div><strong>مساحتك الإعلانية هنا</strong>'
                  '<span class="mq"><span class="mq-t"><span>اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><i>✦</i><span>في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><i>✦</i><span>مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span><i>✦</i><span aria-hidden="true">اعرض علامتك أمام قرّاء الرواية في المنطقة المغاربية والساحل</span><i aria-hidden="true">✦</i><span aria-hidden="true">في الموقع والتطبيق وعلى يوتيوب وفيسبوك وتيك توك</span><i aria-hidden="true">✦</i><span aria-hidden="true">مساحات إعلانية ومحتوى ممول ورعاية فيديوهات</span><i aria-hidden="true">✦</i></span></span></div>'
-                 '<span class="go">أعلن معنا<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></span><span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></a>')
+                 f'<span class="acts"><a class="go" href="{prefix}advertise.html">أعلن معنا<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></a><a class="wa" href="https://wa.me/22249711212?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A5%D8%B9%D9%84%D8%A7%D9%86%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B1%D9%88%D8%A7%D9%8A%D8%A9" target="_blank" rel="noopener" aria-label="راسلنا على واتساب +222 49 71 12 12">{_wa_svg()}واتساب <b>+222 49 71 12 12</b></a></span><span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>')
     return f'<aside class="adbox" aria-label="إعلان"><span class="ad-l">إعلان</span>{inner}</aside>'
 
 
