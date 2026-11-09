@@ -133,7 +133,7 @@ class _AdSlotState extends State<AdSlot> with TickerProviderStateMixin {
                             child: const FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                Icon(Icons.whatsapp, color: Colors.white, size: 19),
+                                _WaIcon(),
                                 SizedBox(width: 6),
                                 Text('واتساب ', style: TextStyle(color: Colors.white, fontSize: 15)),
                                 Text(AdSlot.whatsappNumber,
@@ -360,4 +360,44 @@ class _MarqueeState extends State<_Marquee> {
     )..layout();
     return tp.width;
   }
+}
+
+/// شعار واتساب مبسّط: فقاعة حديث دائرية بذيل في أسفلها، وفي داخلها سماعة هاتف.
+class _WaIcon extends StatelessWidget {
+  const _WaIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 20,
+      height: 20,
+      child: CustomPaint(
+        painter: _WaBubble(),
+        child: const Center(child: Icon(Icons.phone, color: Colors.white, size: 11)),
+      ),
+    );
+  }
+}
+
+class _WaBubble extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeJoin = StrokeJoin.round;
+    final c = Offset(size.width / 2, size.height / 2);
+    final r = size.width / 2 - 1.5;
+    // دائرة مفتوحة عند الزاوية السفلية اليسرى، يكملها ذيل الفقاعة
+    final path = Path()
+      ..addArc(Rect.fromCircle(center: c, radius: r), math.pi * .78, math.pi * 1.72)
+      ..moveTo(c.dx + r * math.cos(math.pi * .78), c.dy + r * math.sin(math.pi * .78))
+      ..lineTo(1, size.height - 1)
+      ..lineTo(c.dx + r * math.cos(math.pi * .5) - 2, c.dy + r);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
