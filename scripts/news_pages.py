@@ -94,41 +94,52 @@ PAGE = """<!doctype html>
 <style>
 @font-face {{ font-family: "Al Quds"; src: url("../assets/al-quds.otf") format("opentype"); font-display: swap;
   unicode-range: U+0020, U+0025, U+0027-0029, U+002C-0039, U+003F, U+0041-005A, U+0061-007A, U+00A0, U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F, U+2010-2015; }}
-:root {{ --brand:#004A49; --brand-deep:#00302F; --on-brand:#F2F7F6; --red:#C8102E; --paper:#F4F7F6; --surface:#fff; --ink:#0F1E1D; --muted:#586A68; --line:#DAE3E1; --link:#00605E; --chip:#E6EEEC }}
-@media (prefers-color-scheme: dark) {{ :root {{ --paper:#071514; --surface:#0D201F; --ink:#E6EFED; --muted:#93A7A4; --line:#1D3432; --link:#6CC5C0; --chip:#15302E; --brand-deep:#002423; color-scheme: dark }} }}
+:root {{ --brand:#004A49; --brand-deep:#00302F; --on-brand:#F2F7F6; --red:#C8102E; --paper:#EEF3F2; --surface:#fff; --ink:#0F1E1D; --muted:#586A68; --line:#DAE3E1; --link:#00605E; --chip:#E6EEEC;
+  --shadow:0 1px 2px rgb(0 40 39 / .05), 0 8px 24px rgb(0 40 39 / .07) }}
+@media (prefers-color-scheme: dark) {{ :root {{ --paper:#061211; --surface:#0D201F; --ink:#E6EFED; --muted:#93A7A4; --line:#1D3432; --link:#6CC5C0; --chip:#15302E; --brand-deep:#002423; --shadow:none; color-scheme: dark }} }}
 * {{ box-sizing: border-box }}
-body {{ margin:0; background:var(--paper); color:var(--ink); font:18px/1.95 "Al Quds","Segoe UI",Tahoma,sans-serif }}
+body {{ margin:0; background:var(--paper); color:var(--ink); font:18px/1.95 "Al Quds","Segoe UI",Tahoma,sans-serif; -webkit-font-smoothing:antialiased }}
 a {{ color:var(--link) }}
 img {{ max-width:100%; display:block }}
-.wrap {{ max-width:760px; margin-inline:auto; padding-inline:16px }}
-article {{ background:var(--surface); margin-block:24px; padding:24px 20px; border-radius:10px; border:1px solid var(--line) }}
-.meta {{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; color:var(--muted); font-size:14px; margin-bottom:10px }}
-.kicker {{ background:var(--chip); color:var(--ink); padding:1px 10px; border-radius:4px; text-decoration:none }}
+.wrap {{ max-width:800px; margin-inline:auto; padding-inline:16px }}
+.crumb {{ display:flex; gap:8px; align-items:center; font-size:14px; color:var(--muted); margin-top:22px }}
+.crumb a {{ color:var(--link); text-decoration:none }}
+article {{ background:var(--surface); margin-block:12px 28px; padding:30px 34px 32px; border-radius:18px; box-shadow:var(--shadow) }}
+.meta {{ display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; color:var(--muted); font-size:14px; margin-bottom:12px }}
+.kicker {{ background:var(--chip); color:var(--link); font-weight:600; padding:2px 11px; border-radius:7px; text-decoration:none }}
 .kicker.red {{ background:var(--red); color:#fff }}
 .by {{ color:var(--ink); font-weight:600 }}
-h1 {{ margin:0 0 18px; font-size:28px; line-height:1.5; text-wrap:balance }}
-.gallery {{ display:grid; gap:10px; margin-bottom:18px }}
-.gallery img {{ width:100%; border-radius:8px }}
-.body p {{ margin:0 0 14px }}
-.tools {{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px }}
-.btn {{ display:inline-flex; padding:8px 16px; border-radius:6px; background:var(--brand); color:var(--on-brand); text-decoration:none; font-size:15px }}
+h1 {{ margin:0 0 22px; font-size:34px; line-height:1.5; text-wrap:balance }}
+.gallery {{ display:grid; gap:12px; margin:0 -34px 22px }}
+.gallery img {{ width:100% }}
+.gallery img:first-child {{ aspect-ratio:16/9; object-fit:cover }}
+.body {{ font-size:19.5px; line-height:2.05 }}
+.body p {{ margin:0 0 1em }}
+.tools {{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:18px; border-top:1px solid var(--line) }}
+.btn {{ display:inline-flex; padding:8px 16px; border-radius:10px; background:var(--brand); color:var(--on-brand); text-decoration:none; font-size:15px }}
 .btn.alt {{ background:var(--chip); color:var(--ink) }}
 .share {{ align-items:center }}
 .share-l {{ color:var(--muted); font-size:15px; margin-inline-end:4px }}
-.sh {{ width:44px; height:44px; display:grid; place-items:center; border-radius:50%; color:#fff; text-decoration:none }}
-.sh:hover {{ filter:brightness(1.08) }}
+.sh {{ width:44px; height:44px; display:grid; place-items:center; border-radius:12px; color:#fff; text-decoration:none; transition:transform .15s }}
+.sh:hover {{ transform:translateY(-2px); filter:brightness(1.08) }}
 .sh svg {{ width:20px; height:20px }}
 .sh.wa {{ background:#25D366 }} .sh.fb {{ background:#1877F2 }} .sh.tg {{ background:#229ED9 }} .sh.xx {{ background:#000 }}
-.more h2 {{ font-size:20px; margin:8px 0 }}
-.more ul {{ list-style:none; padding:0; margin:0 0 28px }}
-.more li {{ border-bottom:1px solid var(--line); padding-block:10px }}
-.more a {{ color:var(--ink); text-decoration:none }}
+.more {{ background:var(--surface); border-radius:18px; box-shadow:var(--shadow); padding:20px 26px 8px; margin-bottom:36px }}
+.more h2 {{ display:flex; align-items:center; gap:10px; font-size:22px; margin:0 0 4px }}
+.more h2::before {{ content:""; width:6px; height:1.05em; border-radius:3px; background:linear-gradient(var(--red) 0 35%, var(--brand) 35%) }}
+.more ul {{ list-style:none; padding:0; margin:0 }}
+.more li {{ border-bottom:1px solid var(--line); padding-block:12px }}
+.more li:last-child {{ border-bottom:0 }}
+.more a {{ color:var(--ink); text-decoration:none; font-weight:600; font-size:16.5px; line-height:1.7 }}
+.more a:hover {{ color:var(--link) }}
+@media (max-width:600px) {{ article {{ padding:22px 18px 24px; border-radius:14px }} .gallery {{ margin-inline:-18px }} h1 {{ font-size:27px }} .body {{ font-size:18.5px }} .more {{ padding-inline:18px }} }}
 {brand_css}{ad_css}
 </style>
 </head>
 <body>
 {header}
 <div class="wrap">
+<nav class="crumb" aria-label="مسار التصفح"><a href="../">الرئيسية</a><span aria-hidden="true">‹</span><span>{crumb}</span></nav>
 <article>
   <div class="meta">{kickers}{time}</div>
   <h1 class="ew-t">{title}</h1>
@@ -204,7 +215,7 @@ def _page(a, others, now):
         ld=json.dumps(ld, ensure_ascii=False).replace("</", "<\\/"), kickers=kickers, time=time, gallery=gallery,
         paras=paras, header=brand.header("../"), footer=brand.footer("../", str(now.year)),
         brand_css=brand.CSS, ad_css=brand.AD_CSS, ad=brand.ad_slot("article", "../"), head_links=brand.head_links("../"), wa=quote(f"{a.get('title', '')} — {url}", safe=""), more=more, year=now.year,
-        ic_wa=_svg("whatsapp"), ic_fb=_svg("facebook"), ic_tg=_svg("telegram"), ic_x=_svg("x"))
+        crumb=e(sections[0] if sections else "الأخبار"), ic_wa=_svg("whatsapp"), ic_fb=_svg("facebook"), ic_tg=_svg("telegram"), ic_x=_svg("x"))
 
 
 REDIRECT = """<!doctype html>

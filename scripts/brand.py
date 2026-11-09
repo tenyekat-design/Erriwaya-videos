@@ -104,17 +104,18 @@ def _icons():
 ICONS = _icons()
 
 CSS = f"""
-.ew-head {{ background:{GREEN}; color:#F2F7F6; border-bottom:3px solid {RED} }}
+.ew-head {{ background:{GREEN}; color:#F2F7F6; border-bottom:3px solid {RED}; box-shadow:0 6px 20px rgb(0 0 0 / .12) }}
 .ew-head .wrap {{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding-block:10px }}
 .ew-brand {{ display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none }}
 .ew-brand img {{ height:44px; width:auto }}
 .ew-brand b {{ font-size:20px; font-weight:normal; opacity:.95 }}
-.ew-head nav a {{ color:#F2F7F6; text-decoration:none; font-size:15px }}
+.ew-head nav a {{ color:#F2F7F6; text-decoration:none; font-size:15px; padding:7px 14px; border-radius:10px; border:1px solid rgb(255 255 255 / .28) }}
+.ew-head nav a:hover {{ background:rgb(255 255 255 / .12) }}
 @media (max-width:420px) {{ .ew-brand img {{ height:38px }} .ew-brand b {{ font-size:16px }} }}
-.ew-foot {{ background:{GREEN_DEEP}; color:#F2F7F6; padding-block:22px; font-size:14px; text-align:center }}
+.ew-foot {{ background:#002524; border-top:3px solid {RED}; color:#F2F7F6; padding-block:22px; font-size:14px; text-align:center }}
 .ew-foot .soc {{ display:flex; justify-content:center; gap:12px; margin-bottom:12px }}
 .ew-foot .soc a {{ width:40px; height:40px; display:grid; place-items:center; border-radius:50%;
-  border:1px solid rgb(255 255 255 / .3); color:#F2F7F6 }}
+  border:1px solid rgb(255 255 255 / .3); border-radius:12px; color:#F2F7F6 }}
 .ew-foot .soc a:hover {{ background:#F2F7F6; color:{GREEN_DEEP} }}
 .ew-foot .soc svg {{ width:17px; height:17px }}
 .ew-foot .links {{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; margin-bottom:8px }}
