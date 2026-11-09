@@ -9,6 +9,7 @@ import html
 import brand
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 SITE = "https://erriwaya.com"
@@ -18,6 +19,32 @@ PORTALS = {"mr": "موريتانيا", "ma": "المغرب", "dz": "الجزائ
            "az": "أزواد", "sn": "السنغال", "ml": "مالي", "ne": "النيجر", "td": "تشاد", "gm": "غامبيا"}
 
 e = lambda x: html.escape(str(x or ""), quote=True)
+
+_HARAKAT = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]")   # تشكيل وتطويل
+_NONWORD = re.compile(r"[^0-9A-Za-z\u0621-\u063A\u0641-\u064A\u0660-\u0669\u06F0-\u06F9]+")
+
+
+def slug(title, words=8, limit=70):
+    """كلمات مقروءة من العنوان للرابط: حروف عربية ولاتينية وأرقام، بلا تشكيل، مفصولة بشرطة."""
+    t = _NONWORD.sub(" ", _HARAKAT.sub("", title or "")).split()
+    out = ""
+    for w in t[:words]:
+        if len(out) + len(w) + 1 > limit:
+            break
+        out = f"{out}-{w}" if out else w
+    return out.lower()
+
+
+def path_of(a):
+    """اسم صفحة الخبر: <id>-<كلمات من العنوان>. يبدأ دائماً بالمعرّف، فيبقى الرابط فريداً وتعمل الروابط القديمة news/<id>.html."""
+    s = slug(a.get("title"))
+    return f"{a['id']}-{s}" if s else a["id"]
+
+
+def url_path(a):
+    """path_of مرمّزاً للروابط (خرائط الموقع وRSS وcanonical تشترط روابط مرمّزة)."""
+    from urllib.parse import quote
+    return quote(path_of(a), safe="-")
 
 
 
@@ -137,7 +164,7 @@ def _section(a):
 
 def _page(a, others, now):
     from urllib.parse import quote
-    url = f"{SITE}/news/{a['id']}.html"
+    url = f"{SITE}/news/{url_path(a)}.html"
     d = _date(a)
     desc = _summary(a.get("body")) or a.get("title", "")
     imgs = a.get("images") or []
@@ -170,7 +197,7 @@ def _page(a, others, now):
     more = ""
     if others:
         more = '<section class="more"><h2>أخبار أخرى</h2><ul>' + "".join(
-            f'<li><a href="{e(o["id"])}.html">{e(o.get("title"))}</a></li>' for o in others) + "</ul></section>"
+            f'<li><a href="{e(url_path(o))}.html">{e(o.get("title"))}</a></li>' for o in others) + "</ul></section>"
     return PAGE.format(
         title=e(a.get("title")), desc=e(desc), url=e(url), url_q=quote(url, safe=""), image=e(image), name=NAME,
         published_meta=f'<meta property="article:published_time" content="{d.isoformat()}">' if d else "",
@@ -180,14 +207,44 @@ def _page(a, others, now):
         ic_wa=_svg("whatsapp"), ic_fb=_svg("facebook"), ic_tg=_svg("telegram"), ic_x=_svg("x"))
 
 
+REDIRECT = """<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>{title} | الرواية</title>
+<link rel="canonical" href="{url}">
+<meta http-equiv="refresh" content="0; url={href}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{title}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{image}">
+<script>location.replace({href_js} + location.hash);</script>
+</head>
+<body><p><a href="{href}">{title}</a></p></body>
+</html>
+"""
+
+
+def _redirect(a):
+    """الرابط القديم news/<id>.html يحوّل إلى الرابط المقروء، فلا تنكسر المنشورات والمشاركات السابقة."""
+    href = f"{url_path(a)}.html"
+    imgs = a.get("images") or []
+    return REDIRECT.format(title=e(a.get("title")), url=e(f"{SITE}/news/{href}"), href=e(href),
+                           href_js=json.dumps(href, ensure_ascii=False),
+                           image=e(f"{SITE}/{imgs[0]}" if imgs else f"{SITE}/assets/og.png"))
+
+
 def build(out_dir, arts, now=None, extra_rows=()):
     now = now or datetime.now(timezone.utc)
     arts = [a for a in arts if a.get("id") and a.get("title")]
     os.makedirs(os.path.join(out_dir, "news"), exist_ok=True)
     for i, a in enumerate(arts):
         others = [o for o in arts[:8] if o["id"] != a["id"]][:6]
-        with open(os.path.join(out_dir, "news", f"{a['id']}.html"), "w", encoding="utf-8") as fh:
+        with open(os.path.join(out_dir, "news", f"{path_of(a)}.html"), "w", encoding="utf-8") as fh:
             fh.write(_page(a, others, now))
+        if path_of(a) != a["id"]:
+            with open(os.path.join(out_dir, "news", f"{a['id']}.html"), "w", encoding="utf-8") as fh:
+                fh.write(_redirect(a))
 
     stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     rows = [f"  <url><loc>{SITE}/</loc><lastmod>{stamp}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
@@ -196,7 +253,7 @@ def build(out_dir, arts, now=None, extra_rows=()):
     for a in arts:
         d = _date(a)
         lm = f"<lastmod>{d.strftime('%Y-%m-%dT%H:%M:%SZ')}</lastmod>" if d else ""
-        rows.append(f"  <url><loc>{SITE}/news/{e(a['id'])}.html</loc>{lm}<priority>0.8</priority></url>")
+        rows.append(f"  <url><loc>{SITE}/news/{e(url_path(a))}.html</loc>{lm}<priority>0.8</priority></url>")
     with open(os.path.join(out_dir, "sitemap.xml"), "w", encoding="utf-8") as fh:
         fh.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                  + "\n".join(rows) + "\n</urlset>\n")
@@ -204,7 +261,7 @@ def build(out_dir, arts, now=None, extra_rows=()):
     # خريطة أخبار جوجل: أخبار آخر يومين فقط (حدّ جوجل)، حتى 1000 خبر.
     recent = [a for a in arts if _date(a) and now - _date(a) < timedelta(days=2)][:1000]
     news_rows = [
-        f"  <url><loc>{SITE}/news/{e(a['id'])}.html</loc><news:news><news:publication><news:name>{NAME}</news:name>"
+        f"  <url><loc>{SITE}/news/{e(url_path(a))}.html</loc><news:news><news:publication><news:name>{NAME}</news:name>"
         f"<news:language>ar</news:language></news:publication><news:publication_date>{_date(a).isoformat()}"
         f"</news:publication_date><news:title>{e(a['title'])}</news:title></news:news></url>" for a in recent]
     with open(os.path.join(out_dir, "news-sitemap.xml"), "w", encoding="utf-8") as fh:
@@ -216,7 +273,7 @@ def build(out_dir, arts, now=None, extra_rows=()):
     items = []
     for a in arts[:30]:
         d = _date(a)
-        url = f"{SITE}/news/{e(a['id'])}.html"
+        url = f"{SITE}/news/{e(url_path(a))}.html"
         img = (a.get("images") or [None])[0]
         items.append(
             f"<item><title>{e(a['title'])}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid>"
@@ -235,7 +292,7 @@ def build(out_dir, arts, now=None, extra_rows=()):
 
     # فهرس البحث: كل الأخبار (العنوان ومقتطف وقسم وتاريخ)، يقرؤه الموقع والتطبيق عند أول بحث.
     index = [{"id": a["id"], "t": a.get("title", ""), "s": _summary(a.get("body"), 400), "c": _section(a),
-              "d": a.get("createdAt"), "w": (a.get("writer") or "").strip(), "p": a.get("portals") or [],
+              "d": a.get("createdAt"), "u": url_path(a), "w": (a.get("writer") or "").strip(), "p": a.get("portals") or [],
               "i": (a.get("images") or [None])[0]} for a in arts]
     with open(os.path.join(out_dir, "search.json"), "w", encoding="utf-8") as fh:
         json.dump(index, fh, ensure_ascii=False, separators=(",", ":"))
@@ -243,6 +300,6 @@ def build(out_dir, arts, now=None, extra_rows=()):
     # خبر نُشر للتو ولم تُبنَ صفحته بعد: صفحة 404 تحوّل news/<id>.html إلى عرضه في الصفحة الرئيسية.
     with open(os.path.join(out_dir, "404.html"), "w", encoding="utf-8") as fh:
         fh.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
-                 '<title>الرواية</title><script>(function(){var m=location.pathname.match(/\\/news\\/([\\w-]+)\\.html$/);'
+                 '<title>الرواية</title><script>(function(){var m=location.pathname.match(/\\/news\\/([A-Za-z0-9_]+)(?:-[^\\/]*)?\\.html$/);'
                  'location.replace("/"+(m?"#a-"+m[1]:""));})();</script></head><body></body></html>\n')
     return len(arts), len(recent)

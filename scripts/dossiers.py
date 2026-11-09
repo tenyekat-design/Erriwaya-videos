@@ -12,6 +12,7 @@ import re
 from datetime import datetime, timezone
 
 import brand
+from news_pages import url_path as _news_path
 
 SITE = "https://erriwaya.com"
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dossiers.json")
@@ -188,7 +189,7 @@ def _page(dz, items, now):
             rows.append(f'<li class="dz-day"><h3>{_day(d)}</h3></li>')
         key = dz.get("key", {}).get(it["id"])
         if k == "a":
-            href = f"../news/{e(it['id'])}.html"
+            href = f"../news/{e(_news_path(it))}.html"
             img = (it.get("images") or [None])[0]
             th = f'<div class="dz-th"><img src="../{e(img)}" alt="" loading="lazy"></div>' if img else ""
             kind, ex = '<span class="dz-kind">خبر</span>', _summary(it.get("body"))
@@ -206,7 +207,7 @@ def _page(dz, items, now):
           "url": url, "inLanguage": "ar", "dateModified": dz.get("updated"),
           "publisher": {"@type": "NewsMediaOrganization", "name": "شبكة الرواية الإعلامية", "url": SITE + "/"},
           "hasPart": [{"@type": "NewsArticle" if k == "a" else "VideoObject", "headline" if k == "a" else "name": it.get("title", "")[:110],
-                       "url": f"{SITE}/news/{it['id']}.html" if k == "a" else f"https://www.youtube.com/watch?v={it['id']}",
+                       "url": f"{SITE}/news/{_news_path(it)}.html" if k == "a" else f"https://www.youtube.com/watch?v={it['id']}",
                        "datePublished" if k == "a" else "uploadDate": d.isoformat()} for k, it, d in items[:30]]}
     return PAGE.format(title=e(dz["title"]), desc=e(desc), url=e(url), image=e(image), css=CSS, brand_css=brand.CSS,
                        head_links=brand.head_links("../"), header=brand.header("../"), footer=brand.footer("../", str(now.year)),
