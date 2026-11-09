@@ -171,9 +171,20 @@ class _MushafPageState extends State<_MushafPage> {
     final key = '${widget.riwaya.name}/${widget.page}/${w.round()}x${h.round()}/$maxScale';
     return _cache.putIfAbsent(key, () {
       final avail = w * .985;
+      int count(double fs) => _pack(words, runEnds, fs, avail).length;
+      if (ornate) {
+        // الفاتحة وأول البقرة: خط كبير يملأ اللوحة طولاً، والأسطر متوسّطة كما في المصحف المطبوع
+        bool fits(double fs) => (count(fs) + slots) * fs * 2.0 <= h;
+        var lo = _minFs, hi = 44.0 * maxScale;
+        for (var i = 0; i < 12; i++) {
+          final mid = (lo + hi) / 2;
+          fits(mid) ? lo = mid : hi = mid;
+        }
+        final lines = _pack(words, runEnds, lo, avail);
+        return _Layout(lo, h / (lines.length + slots), lines);
+      }
       // أكبر خط يسمح به ارتفاع السطر لو كانت الأسطر كما في المصحف المطبوع
       final fsMax = (h / (target + slots) / 1.75).clamp(_minFs, 34.0) * maxScale;
-      int count(double fs) => _pack(words, runEnds, fs, avail).length;
       var fs = fsMax;
       if (count(fs) > target) {
         var lo = _minFs, hi = fsMax;
@@ -184,8 +195,7 @@ class _MushafPageState extends State<_MushafPage> {
         fs = lo;
       }
       final lines = _pack(words, runEnds, fs, avail);
-      var lineH = h / (lines.length + slots);
-      if (ornate) lineH = lineH.clamp(0, fs * 2.3).toDouble(); // الفاتحة وأول البقرة: النصّ في وسط اللوحة
+      final lineH = h / (lines.length + slots);
       // إن صغر السطر عن الخط (صفحة طويلة جداً على شاشة صغيرة) نصغّر الخط ليتّسع
       if (lineH < fs * 1.6) fs = lineH / 1.6;
       return _Layout(fs, lineH, _pack(words, runEnds, fs, avail));
