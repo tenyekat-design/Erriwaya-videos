@@ -6,8 +6,9 @@ mkdir -p shots
 alive() { timeout 10 adb get-state >/dev/null 2>&1; }
 finish() { find shots -size 0 -delete; grep -iE "flutter|FATAL|SIGSEGV|SIGABRT|crash|tombstone|DEBUG  " shots/live-log.txt | tail -300 > shots/flutter-log.txt; ls -la shots; exit 0; }
 # المحاكي قد يتوقف فجأة: نحفظ ما التُقط ونخرج بدل الانتظار حتى نهاية الوقت
-shot() { sleep "${2:-3}"; alive || { echo "emulator gone before $1"; finish; }; timeout 20 adb exec-out screencap -p > "shots/$1.png"; }
+shot() { sleep "${2:-3}"; dismiss; alive || { echo "emulator gone before $1"; finish; }; timeout 20 adb exec-out screencap -p > "shots/$1.png"; }
 dismiss() { python3 android-ci/tap.py "Wait" >/dev/null 2>&1 || true; }
+adb shell settings put global hide_error_dialogs 1
 adb install -r mushaf-x86_64.apk
 adb logcat -c
 # سجلّ حيّ يبقى حتى لو توقّف المحاكي
