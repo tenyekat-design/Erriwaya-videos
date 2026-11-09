@@ -97,7 +97,8 @@ AD_CSS = """
 @media (max-width:520px) { .adhouse { padding:16px } .adhouse .go { margin-inline-start:auto } .adhouse .mega { width:48px; height:48px; border-radius:14px } .adhouse .mega svg { width:24px; height:24px } }
 @media (prefers-reduced-motion: reduce) { .adhouse .mega, .adhouse .mega i, .adhouse strong, .adhouse .go svg, .adhouse .fx i { animation:none } .adhouse .fx { display:none } }
 /* الكلام يجري داخل الخانة كشريط أخبار */
-.adhouse .mq { display:block; overflow:hidden; margin-top:6px;
+.adbox { min-width:0; max-width:100% }
+.adhouse .mq { display:block; overflow:hidden; margin-top:6px; contain:inline-size; width:100%;
   mask-image:linear-gradient(to left,transparent,#000 22px,#000 calc(100% - 22px),transparent);
   -webkit-mask-image:linear-gradient(to left,transparent,#000 22px,#000 calc(100% - 22px),transparent) }
 .adhouse .mq-t { display:inline-flex; align-items:center; white-space:nowrap; width:max-content; animation:adMarq 22s linear infinite; color:var(--muted); font-size:15.5px; line-height:1.6 }
