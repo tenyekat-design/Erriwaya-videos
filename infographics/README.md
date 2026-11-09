@@ -10,6 +10,7 @@ node infographics/render.js --name camels-maghreb --format story   # ستوري/
 node infographics/render.js --name camels-maghreb --stills 3,20,45 # صور للمراجعة في output/stills/
 ```
 
+- `donkeys-maghreb/`: إنفوجرافيك الحمير (بلا صور: خرائط ورموز؛ الرمز من Health Icons برخصة MIT)، يُصيَّر بالأمرين نفسيهما مع `--name donkeys-maghreb`.
 - `camels-maghreb/data.js`: الأرقام والمصادر والصور. `camels-maghreb/app.js`: المشاهد والانتقالات (انتقال مختلف لكل قطع).
 - `camels-maghreb/timeline.js`: التوقيت على شبكة موسيقية (96 نبضة في الدقيقة، كل قطع على بداية مازورة)،
   يقرؤه `app.js` و`score.py` معاً.
