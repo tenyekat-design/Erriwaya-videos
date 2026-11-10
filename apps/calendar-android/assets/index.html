@@ -56,7 +56,19 @@ button{cursor:pointer}
 .cal-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .city-pick{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .city-pick label{font-family:var(--f-display);font-weight:600;color:var(--green)}
-.city-pick select{flex:1;min-width:0;max-width:300px;font-size:1.05rem;font-weight:600;padding:8px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface)}
+.city-pick{cursor:pointer}
+.city-pick select{flex:1;min-width:0;max-width:300px;font-size:1.05rem;font-weight:600;padding:8px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface);pointer-events:none}
+/* the list of cities opens as a sheet of our own (the system's list rules off every row): a rule between wilayas only */
+.cpick{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}
+.cpick-in{width:min(100%,480px);max-height:84vh;display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border-radius:18px 18px 0 0;border-top:3px solid var(--orn);padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+.cpick-h{flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;font-family:var(--f-display);font-weight:700;font-size:1.1rem;color:var(--green)}
+.cpick-h button{border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;padding:6px 8px}
+.cpick-l{overflow-y:auto;overscroll-behavior:contain}
+.cpick-w{padding:10px 14px}
+.cpick-w{border-top:1.5px solid var(--orn)}
+.cpick-w h3{margin:0 4px 4px;font-family:var(--f-display);font-size:.85rem;font-weight:600;color:var(--muted)}
+.cpick-w button{display:block;width:100%;border:0;background:none;color:inherit;font:inherit;font-size:1.08rem;text-align:start;padding:10px 12px;border-radius:10px}
+.cpick-w button[aria-current="true"]{background:var(--green-soft);color:var(--green);font-weight:700}
 
 .card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--orn);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(60,40,0,.05)}
 
@@ -658,6 +670,22 @@ const todayJdn=()=>{const n=nowInfo();return jdnOf(n.y,n.m,n.d)};
 
 /* ---------- render ---------- */
 const $=id=>document.getElementById(id);
+// the city list: grouped by wilaya, a rule between wilayas only; choosing a city sets the <select> and fires its change
+function pickCity(sel){
+  if(document.querySelector('.cpick'))return;
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+  d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المدينة"><div class="cpick-h"><span>اختر المدينة</span><button type="button" data-x aria-label="إغلاق">✕</button></div><div class="cpick-l">`+
+    WILAYAS.map(([w,cs])=>`<section class="cpick-w"><h3>ولاية ${w}</h3>${cs.map(([id,name])=>`<button type="button" data-id="${id}"${id===sel.value?' aria-current="true"':''}>${name}</button>`).join('')}</section>`).join('')+`</div></div>`;
+  const close=()=>{d.remove();document.removeEventListener('keydown',key)},key=e=>{if(e.key==='Escape')close()};
+  d.addEventListener('click',e=>{
+    const b=e.target.closest('button');
+    if(b&&b.dataset.id){close();if(sel.value!==b.dataset.id){sel.value=b.dataset.id;sel.dispatchEvent(new Event('change',{bubbles:true}))}}
+    else if(b||e.target===d)close();
+  });
+  document.addEventListener('keydown',key);document.body.append(d);
+  const on=d.querySelector('[aria-current]');if(on)on.scrollIntoView({block:'center'});
+}
+document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest('.city-pick');if(p){e.preventDefault();pickCity(p.querySelector('select'))}});
 function renderCities(){
   $('citySel').innerHTML=cityOptions(S.city);$('citySel').value=S.city;
 }
