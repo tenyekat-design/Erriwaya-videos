@@ -354,6 +354,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a.hd.hit{display:block;color:inherit;text-decoration:none}
 a.hd.hit small{color:var(--gold);font-weight:600}
 .hd mark{background:var(--gold-soft);color:inherit;border-radius:4px;padding:0 2px;box-shadow:0 0 0 1px var(--orn)}
+
+.adh-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 22px}
+.adh-l{margin:0 0 10px;padding-inline-start:1.6em;font-family:var(--f-naskh);font-size:1.08rem;line-height:2.1}
+.adh-l small,.adh h3 small{font-family:var(--f-body);font-size:.74rem;color:var(--muted);font-weight:400}
+.adh-l .fj{color:var(--gold)}
+.adh-alert{display:grid;gap:8px}
+.adh-alert .pr{display:flex;flex-wrap:wrap;gap:6px 12px}
+.adh-alert label{display:inline-flex;gap:5px;align-items:center;font-size:.9rem}
+.adh-alert .warn{color:var(--red);font-size:.84rem;margin:0}
 /* ---------- qibla ---------- */
 .compass-wrap{display:grid;justify-items:center;gap:10px}
 .compass{width:min(84vw,340px);aspect-ratio:1;max-width:100%;position:relative}
@@ -416,6 +425,15 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     <div class="meta" id="meta"></div>
   </section>
 
+  <details class="intro adh" id="adhanBox">
+    <summary>الأذان والإقامة على مذهب الإمام مالك</summary>
+    <div class="adh-cols">
+      <div><h3>الأذان</h3><ol class="adh-l"><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(الترجيع: بأرفع من الصوت الأول)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</li><li>حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الصَّلَاةِ</li><li>حَيَّ عَلَى الْفَلَاحِ، حَيَّ عَلَى الْفَلَاحِ</li><li><span class="fj">الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ، الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ <small>(في أذان الصبح وحده)</small></span></li><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>لَا إِلَٰهَ إِلَّا اللَّهُ</li></ol></div>
+      <div><h3>الإقامة <small>(وترًا)</small></h3><ol class="adh-l"><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ</li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</li><li>حَيَّ عَلَى الصَّلَاةِ</li><li>حَيَّ عَلَى الْفَلَاحِ</li><li>قَدْ قَامَتِ الصَّلَاةُ</li><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>لَا إِلَٰهَ إِلَّا اللَّهُ</li></ol></div>
+    </div>
+    <p class="note">على مذهب مالك: التكبير في أول الأذان مرتان، وتُرجَّع الشهادتان (تُقالان بصوت منخفض ثم تُعادان بصوت أرفع)، وتُختم بـ«لا إله إلا الله» مرة واحدة. والإقامة وتر، و«قد قامت الصلاة» فيها مرة واحدة.</p>
+  </details>
+
   <section class="card">
     <div class="cal-bar">
       <div class="cal-title">
@@ -458,6 +476,12 @@ a.hd.hit small{color:var(--gold);font-weight:600}
       <div class="row"><label for="sMethod">طريقة الحساب</label><select id="sMethod"></select></div>
       <div class="row"><label for="sAsr">وقت العصر</label><select id="sAsr"><option value="1">الجمهور (المذهب المالكي)</option><option value="2">المذهب الحنفي</option></select></div>
       <div class="row"><label>الإقامة بعد الأذان</label><span class="iqs"><span id="iqBox"></span></span></div>
+      <div class="adh-alert" id="adhAlert" hidden>
+        <div class="row" style="margin:0"><label for="adhOn">تنبيه الأذان</label><label><input type="checkbox" id="adhOn"> عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا</label></div>
+        <div class="pr" id="adhPr"></div>
+        <div class="row2"><button class="btn" id="adhTest">جرّب التنبيه الآن</button></div>
+        <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
+      </div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
@@ -695,7 +719,7 @@ function convG(){const v=$('cG').value;if(!v){$('cGout').textContent='—';retur
 function convH(){const d=+$('cHd').value,m=+$('cHm').value,y=+$('cHy').value;if(!(d>=1&&d<=30&&y>=1318&&y<=1520)){$('cHout').textContent='أدخل يومًا بين 1 و30 وسنة بين 1318 و1520';return}const j=jdnOfHijri(y,m,d);$('cHout').textContent=j?`${DAYS[dowOf(j)]} ${gStr(gOf(j))}`:`شهر ${HM[m-1]} ${y} هـ ليس فيه يوم ${d}`}
 
 /* ---------- events ---------- */
-$('citySel').addEventListener('change',e=>{S.city=e.target.value;store.set('city',S.city);renderCities();renderCal();renderDay()});
+$('citySel').addEventListener('change',e=>{S.city=e.target.value;store.set('city',S.city);renderCities();renderCal();renderDay();pushAdhan()});
 $('grid').addEventListener('click',e=>{const b=e.target.closest('.cell[data-j]');if(b)select(+b.dataset.j,false)});
 $('tbl').addEventListener('click',e=>{const r=e.target.closest('tr[data-j]');if(r){select(+r.dataset.j,false);window.scrollTo({top:0,behavior:'smooth'})}});
 $('prev').addEventListener('click',()=>shift(-1));
@@ -710,8 +734,8 @@ $('sMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}
 $('sMethod').value=S.method;$('sAsr').value=S.asr;$('sAdj').value=S.adj;
 $('iqBox').innerHTML=[['fajr','الفجر'],['dhuhr','الظهر'],['asr','العصر'],['maghrib','المغرب'],['isha','العشاء']].map(([k,n])=>`<label>${n}<input type="number" id="iq-${k}" min="0" max="60" inputmode="numeric" value="${S.iq[k]}" aria-label="دقائق الإقامة بعد أذان ${n}"></label>`).join('');
 $('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');const v=Math.max(0,Math.min(60,parseInt(e.target.value,10)||0));e.target.value=v;S.iq[k]=v;store.set('iq',S.iq);tick()});
-$('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay()});
-$('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay()});
+$('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay();pushAdhan()});
+$('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay();pushAdhan()});
 $('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender()});
 $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
 ['cG'].forEach(id=>$(id).addEventListener('input',convG));
@@ -719,13 +743,40 @@ $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join(''
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-window.APP={cities:CITIES,options:cityOptions,city:()=>city(),setCity(id){if(!CITIES.some(c=>c.id===id))return;S.city=id;store.set('city',id);renderCities();renderCal();renderDay()}};
+window.APP={cities:CITIES,options:cityOptions,city:()=>city(),setCity(id){if(!CITIES.some(c=>c.id===id))return;S.city=id;store.set('city',id);renderCities();renderCal();renderDay();pushAdhan()}};
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
+
+/* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
+const AD=Object.assign({on:false,p:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}},store.get('adhan',{}));
+const ADN={fajr:'الفجر',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'};
+function pushAdhan(){
+  const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
+  const list=[];
+  if(AD.on){
+    const c=city(),t0=todayJdn();
+    for(let d=0;d<14;d++){const g=gOf(t0+d),t=prayerTimes(g.y,g.m,g.d,c);
+      for(const k of Object.keys(ADN)){if(!AD.p[k])continue;const mins=Math.floor(fix(t[k]+.5/60,24)*60);
+        list.push([Date.UTC(g.y,g.m-1,g.d)+mins*60000,`أذان ${ADN[k]} · ${fmt(t[k])}`,`حان وقت صلاة ${ADN[k]} في ${c.name}. ${k==='fajr'?'الصلاة خير من النوم.':'حيّ على الصلاة، حيّ على الفلاح.'}`])}}
+  }
+  try{A.setAdhanSchedule(JSON.stringify(list))}catch(e){}
+}
+(function(){
+  const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
+  $('adhAlert').hidden=false;
+  $('adhOn').checked=AD.on;
+  $('adhPr').innerHTML=Object.entries(ADN).map(([k,n])=>`<label><input type="checkbox" data-k="${k}"${AD.p[k]?' checked':''}> ${n}</label>`).join('');
+  const warn=()=>{try{$('adhWarn').hidden=!AD.on||A.notificationsAllowed()}catch(e){}};
+  $('adhOn').addEventListener('change',e=>{AD.on=e.target.checked;store.set('adhan',AD);if(AD.on)try{A.requestNotifications()}catch(x){}pushAdhan();setTimeout(warn,1500)});
+  $('adhPr').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;AD.p[k]=e.target.checked;store.set('adhan',AD);pushAdhan()});
+  $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يصلك التنبيه عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
+  warn();
+})();
 /* ---------- boot ---------- */
 S.sel=todayJdn();syncViewToSel();
 const n0=nowInfo(),h0=hOfJdn(S.sel);
 $('cG').value=`${n0.y}-${pad(n0.m)}-${pad(n0.d)}`;$('cHd').value=10;$('cHm').value=12;$('cHy').value=h0.y;
 allRender();
+pushAdhan();
 let lastToday=S.sel;
 setInterval(()=>{const tj=todayJdn();if(tj!==lastToday){const follow=S.sel===lastToday;lastToday=tj;if(follow){select(tj,true);return}renderCal()}tick()},1000);
 })();

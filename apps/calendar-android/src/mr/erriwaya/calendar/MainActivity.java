@@ -31,6 +31,27 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
 
+        /** The coming adhan times from the page: [[epochMillis, "title", "text"], ...] ("[]" turns alerts off). */
+        @JavascriptInterface
+        public void setAdhanSchedule(String json) { AdhanReceiver.save(MainActivity.this, json); }
+
+        /** Asks for the notification permission (Android 13+) when the user turns adhan alerts on. */
+        @JavascriptInterface
+        public void requestNotifications() {
+            if (Build.VERSION.SDK_INT >= 33) runOnUiThread(() ->
+                    requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 7));
+        }
+
+        @JavascriptInterface
+        public boolean notificationsAllowed() {
+            return Build.VERSION.SDK_INT < 33
+                    || checkSelfPermission("android.permission.POST_NOTIFICATIONS") == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        }
+
+        /** Shows a test alert now, so the user can hear the adhan sound. */
+        @JavascriptInterface
+        public void testAdhan(String title, String text) { AdhanReceiver.notify(MainActivity.this, title, text); }
+
         /** click, click2 (every tenth) or chime (count complete). */
         @JavascriptInterface
         public void sound(String name) {
