@@ -7,31 +7,43 @@ The JSON is the research data set «تقويم المنازل الموريتان
 reference cycle (it opens with الشرطان on 12 May) with the level of evidence for each date. Its own warnings
 (an arithmetic reference cycle, not an observation) are carried into the app word for word and shown with the data.
 
-Also kept, apart from the cycle: the local anchors quoted from the heritage source (`local_heritage_calendar_legacy`,
-only the entries the file marks as quoted). The climate normals are NOT taken: the file marks them
-`active_for_display: false`, because they were aggregated on the older local calendar, not on this cycle.
+Climate normals (1991–2020, 13 stations). The file holds them for the 28 periods of the older local calendar and marks
+them `active_for_display: false`: they were not aggregated again on this cycle. The two sets of periods are the same
+13-day steps two days apart, so the app shows them re-cut onto the cycle's periods here, day by day: each day of a
+mansion takes the values of the old period it falls in (rain and rainy days as that period's daily share, temperature,
+humidity and wind as a mean over the days). This is an approximation from period means, not a new aggregation from
+the daily records.
+
+What the app keeps per mansion and station: rain total (mm), rainy days >= 1 mm, mean / max / min temperature,
+humidity %, wind m/s.
 """
-import json, pathlib, re
+import datetime, json, pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 d = json.loads((ROOT / 'tools/mansions-2026-research.json').read_text(encoding='utf-8'))
 ms = sorted(d['mansions'], key=lambda m: m['id'])
 assert [m['id'] for m in ms] == list(range(1, 29))
-ev, notes = [], []
-def idx(lst, v):
-    if v not in lst:
-        lst.append(v)
-    return lst.index(v)
-assert d['climate_by_mansion_station_alignment']['active_for_display'] is False, 'climate is now aligned: decide whether to show it'
 md = lambda m: [int(m['start_date'][5:7]), int(m['start_date'][8:10])]
-leg = d['local_heritage_calendar_legacy']
+D = lambda t: datetime.date.fromisoformat(t)
+days = lambda a, b: [a + datetime.timedelta(n) for n in range((b - a).days + 1)]
+# the old periods, by month and day
+st = d['stations']
+old = {}                                   # (month, day) -> {station id: row}
+for c in d['climate_by_mansion_station']:
+    for t in days(D(c['segment_start_2026']), D(c['segment_end_inclusive'])):
+        old.setdefault((t.month, t.day), {})[c['station_id']] = c
+assert len(old) == 365
+span = lambda c: (D(c['segment_end_inclusive']) - D(c['segment_start_2026'])).days + 1
+def climate(m, sid):
+    ds = [old[(t.month, t.day)][sid] for t in days(D(m['start_date']), D(m['end_date_inclusive']))]
+    share = lambda k: round(sum(c[k] / span(c) for c in ds), 2)
+    mean = lambda k: round(sum(c[k] for c in ds) / len(ds), 1)
+    return [share('precipitation_30y_mean_total_mm'), share('rainy_days_ge_1mm_mean_per_year_in_period'),
+            mean('temp_avg_c'), mean('temp_max_daily_avg_c'), mean('temp_min_daily_avg_c'), mean('relative_humidity_pct'), mean('wind_speed_m_s')]
 out = {
-    'label': d['label_ar'], 'warn': d['display_warning_ar'], 'method': d['calendar_method_ar'], 'basis': d['time_reference_uncertain'],
-    'day': d['heritage_day_boundary_note_ar'],
-    'src': [d['sources']['heritage'], d['sources']['heritage_seasons']],
-    'm': [[m['name_ar'], *md(m), idx(ev, m['evidence_level_ar']), idx(notes, m['note_ar'])] for m in ms],
-    'ev': ev, 'notes': notes,
-    'legNote': leg['basis_ar'],
-    'leg': [[m['name_ar'], *md(m), m['evidence_level_ar']] for m in leg['mansions'] if m['evidence_code'].startswith('quoted')],
+    'label': d['label_ar'],
+    'm': [[m['name_ar'], *md(m)] for m in ms],
+    'st': [[s_['name_ar'], s_['approx_latitude'], s_['approx_longitude']] for s_ in st],
+    'c': [[climate(m, s_['id']) for s_ in st] for m in ms],
 }
 js = 'const MNZ=' + json.dumps(out, ensure_ascii=False, separators=(',', ':')) + ';'
 p = ROOT / 'web/index-source.html'
