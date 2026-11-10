@@ -9,25 +9,29 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/** Downloads the Warsh mushaf page images into files/mushaf/ so they open instantly and offline. */
+/** Downloads a mushaf's page images (one folder per narration) so they open instantly and offline. */
 final class MushafDownload {
     private static volatile Thread worker;
     private static volatile boolean stop;
     private static volatile String error = "";
+    private static volatile String running = "";
 
-    static File dir(Context ctx) {
-        File d = new File(ctx.getFilesDir(), "mushaf");
+    /** Warsh keeps the folder it had before the other narrations got page images. */
+    static File dir(Context ctx, String key) {
+        String name = key == null || key.isEmpty() || "warsh".equals(key) ? "mushaf" : "mushaf-" + key.replaceAll("[^a-z]", "");
+        File d = new File(ctx.getFilesDir(), name);
         if (!d.exists()) d.mkdirs();
         return d;
     }
 
-    static synchronized void start(Context ctx, String pattern, int from, int to) {
+    static synchronized void start(Context ctx, String key, String pattern, int from, int to) {
         if (worker != null && worker.isAlive()) return;
+        running = key;
         final Context app = ctx.getApplicationContext();
         stop = false;
         error = "";
         worker = new Thread(() -> {
-            File d = dir(app);
+            File d = dir(app, key);
             for (int n = from; n <= to && !stop; n++) {
                 File f = new File(d, "page" + n + ".png");
                 if (f.exists() && f.length() > 0) continue;
@@ -58,18 +62,18 @@ final class MushafDownload {
 
     static void cancel() { stop = true; }
 
-    static String progress(Context ctx, int total) {
-        File[] fs = dir(ctx).listFiles();
+    static String progress(Context ctx, String key, int total) {
+        File[] fs = dir(ctx, key).listFiles();
         int done = 0;
         long bytes = 0;
         if (fs != null) for (File f : fs) if (f.getName().endsWith(".png")) { done++; bytes += f.length(); }
-        boolean running = worker != null && worker.isAlive();
-        return done + "," + total + "," + bytes + "," + running + "," + error;
+        boolean busy = worker != null && worker.isAlive() && key.equals(running);
+        return done + "," + total + "," + bytes + "," + busy + "," + (key.equals(running) ? error : "");
     }
 
-    static void deleteAll(Context ctx) {
-        stop = true;
-        File[] fs = dir(ctx).listFiles();
+    static void deleteAll(Context ctx, String key) {
+        if (key.equals(running)) stop = true;
+        File[] fs = dir(ctx, key).listFiles();
         if (fs != null) for (File f : fs) f.delete();
     }
 }

@@ -43,26 +43,26 @@ public class MainActivity extends Activity {
                     requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 7));
         }
 
-        /** Local copy of a Warsh mushaf page ("" if not downloaded), as a file:// URL. */
+        /** Local copy of a mushaf page ("" if not downloaded), as a file:// URL; key = warsh, qaloon or hafs. */
         @JavascriptInterface
-        public String mushafPage(int n) {
-            java.io.File f = new java.io.File(new java.io.File(getFilesDir(), "mushaf"), "page" + n + ".png");
+        public String mushafPage(String key, int n) {
+            java.io.File f = new java.io.File(MushafDownload.dir(MainActivity.this, key), "page" + n + ".png");
             return f.exists() && f.length() > 0 ? Uri.fromFile(f).toString() : "";
         }
 
         /** Downloads every page (url pattern with {n}, pages from..to) into the app's files, in the background. */
         @JavascriptInterface
-        public void downloadMushaf(String pattern, int from, int to) { MushafDownload.start(MainActivity.this, pattern, from, to); }
+        public void downloadMushaf(String key, String pattern, int from, int to) { MushafDownload.start(MainActivity.this, key, pattern, from, to); }
 
         @JavascriptInterface
         public void cancelMushaf() { MushafDownload.cancel(); }
 
         /** "done,total,bytes,running,error" */
         @JavascriptInterface
-        public String mushafProgress() { return MushafDownload.progress(MainActivity.this, 638); }
+        public String mushafProgress(String key, int total) { return MushafDownload.progress(MainActivity.this, key, total); }
 
         @JavascriptInterface
-        public void deleteMushaf() { MushafDownload.deleteAll(MainActivity.this); }
+        public void deleteMushaf(String key) { MushafDownload.deleteAll(MainActivity.this, key); }
 
         /** Exact alarms: Android 12+ lets the user allow them in Settings ("Alarms & reminders"). */
         @JavascriptInterface

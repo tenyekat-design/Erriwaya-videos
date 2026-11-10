@@ -280,6 +280,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .pimg img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 .pimg .empty{padding:12px;line-height:1.9}
 
+/* Qalun and Hafs: the Madinah mushaf pages carry their own ornament; a quiet mount around them */
+.page.m{border:1px solid var(--orn);background:#FFFFFF;padding:4px;border-radius:4px;box-shadow:0 8px 22px rgba(20,40,30,.14)}
+.page.m::before,.page.m .plabel,.page.m .pmed{display:none}
 /* ---------- hadith + hisn ---------- */
 .hd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;scroll-margin-top:70px}
 .hd.mark{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
@@ -842,7 +845,14 @@ const RW={
 };
 let rw=st.get('rw','warsh');if(!RW[rw])rw='warsh';  // an old 'mohammadi' choice falls back to Warsh, which now shows those pages
 const qkey=()=>'quran-'+rw;
-const IMG=()=>rw==='warsh';  // Warsh is read in the Moroccan printed mushaf (page images)
+const IMG=()=>rw==='warsh';  // Warsh is read in the Moroccan printed mushaf (page images, own pagination)
+// Qalun and Hafs are read in the Madinah printed mushaf (King Fahd Complex): page n is the same page n as the text data
+const PAGESRC={
+  qaloon:{url:'https://raw.githubusercontent.com/Zohanur2026/zohanur-mushaf-pages-qaloon/a177f67a2d505f70cf9ebdc6f9eb6915686167d8/{n}.jpg',offset:0,count:604,
+    src:'صفحات مصحف المدينة برواية قالون (مجمع الملك فهد) من GitHub، وتحتاج إلى اتصال بالإنترنت؛ ودونه تُعرض الصفحة من النص المضمَّن.'},
+  hafs:{url:'https://raw.githubusercontent.com/QuranHub/quran-pages-images/9661ebcedfbac858f1e3b33e9b66be235b200014/kfgqpc/hafs-wasat/{n}.jpg',offset:0,count:604,
+    src:'صفحات مصحف المدينة برواية حفص (مجمع الملك فهد، عن مجموعة QuranHub المفتوحة) من GitHub، وتحتاج إلى اتصال بالإنترنت؛ ودونه تُعرض الصفحة من النص المضمَّن.'}
+};
 const NPAGES=()=>IMG()?638:604;
 const setQF=el=>el.style.setProperty('--qf',`"${RW[rw].f}",serif`);
 const QP={},qIndex={};
@@ -864,20 +874,21 @@ function quranList(el){
       <input class="search" id="qSearch" type="search" placeholder="ابحث عن سورة أو كلمة في الآيات" autocomplete="off">
       <div id="dlBox"></div>
       <div id="qOut"></div>
-      <p class="src">${IMG()?'صفحات المصحف من موقع مؤسسة محمد السادس لنشر المصحف الشريف (mushaf.ma)، وتحتاج إلى اتصال بالإنترنت.':`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
+      <p class="src">${IMG()?'صفحات المصحف من موقع مؤسسة محمد السادس لنشر المصحف الشريف (mushaf.ma)، وتحتاج إلى اتصال بالإنترنت.':PAGESRC[rw]?PAGESRC[rw].src:`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
     el.querySelectorAll('[data-rw]').forEach(b=>b.onclick=()=>{rw=b.dataset.rw;st.set('rw',rw);quranList(el)});
     const A=window.AndroidApp;
-    if(M&&A&&typeof A.downloadMushaf==='function'){
+    const SET=M?{url:M.url,offset:M.offset,count:M.count}:PAGESRC[rw];
+    if(SET&&A&&typeof A.downloadMushaf==='function'){
       const box=$('dlBox');let timer=0;
       const mb=b=>(b/1048576).toFixed(0);
-      const draw=()=>{let pr=['0','638','0','false',''];try{pr=A.mushafProgress().split(',')}catch(e){}
+      const draw=()=>{let pr=['0',String(SET.count),'0','false',''];try{pr=A.mushafProgress(rw,SET.count).split(',')}catch(e){}
         const done=+pr[0],tot=+pr[1],run=pr[3]==='true',err=pr[4];
-        if(done>=tot){box.innerHTML=`<div class="dl ok">صفحات ورش كلها محفوظة في الهاتف (${mb(+pr[2])} ميغابايت)، فتُفتح فورًا ودون إنترنت. <button class="btn" id="dlDel">حذفها</button></div>`;$('dlDel').onclick=()=>{A.deleteMushaf();draw()};clearInterval(timer);timer=0;return}
+        if(done>=tot){box.innerHTML=`<div class="dl ok">صفحات ${R_.n} كلها محفوظة في الهاتف (${mb(+pr[2])} ميغابايت)، فتُفتح فورًا ودون إنترنت. <button class="btn" id="dlDel">حذفها</button></div>`;$('dlDel').onclick=()=>{A.deleteMushaf(rw);draw()};clearInterval(timer);timer=0;return}
         box.innerHTML=run
           ?`<div class="dl"><div>جارٍ تحميل الصفحات: ${done} من ${tot} (${mb(+pr[2])} ميغابايت)</div><div class="bar2"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div><button class="btn" id="dlStop">إيقاف</button></div>`
-          :`<div class="dl"><div>${done?`حُفظت ${done} صفحة من ${tot}. `:''}حمّل صفحات ورش إلى الهاتف لتُفتح فورًا ودون إنترنت.${err?` <span class="warn">(انقطع التحميل: تحقق من الاتصال)</span>`:''}</div><button class="btn primary" id="dlGo">${done?'أكمل التحميل':'حمّل المصحف كاملًا'}</button></div>`;
+          :`<div class="dl"><div>${done?`حُفظت ${done} صفحة من ${tot}. `:''}حمّل صفحات ${R_.n} إلى الهاتف (نحو ${SET.count>600?'185':'190'} ميغابايت) لتُفتح فورًا ودون إنترنت.${err?` <span class="warn">(انقطع التحميل: تحقق من الاتصال)</span>`:''}</div><button class="btn primary" id="dlGo">${done?'أكمل التحميل':'حمّل المصحف كاملًا'}</button></div>`;
         if(run){$('dlStop').onclick=()=>{A.cancelMushaf();setTimeout(draw,400)};if(!timer)timer=setInterval(()=>{if(!document.body.contains(box)){clearInterval(timer);timer=0;return}draw()},1000)}
-        else{clearInterval(timer);timer=0;$('dlGo').onclick=()=>{A.downloadMushaf(M.url,1+M.offset,M.count+M.offset);setTimeout(draw,600)}}};
+        else{clearInterval(timer);timer=0;$('dlGo').onclick=()=>{A.downloadMushaf(rw,SET.url,1+SET.offset,SET.count+SET.offset);setTimeout(draw,600)}}};
       draw();
     }
     const out=$('qOut');
@@ -905,7 +916,10 @@ function quranList(el){
 }
 let fitTimer=0;
 function quranPage(el,p,s,a){
-  if(IMG())return mohammadiPage(el,p,s,a);
+  if(IMG()||PAGESRC[rw])return imagePage(el,p,s,a);
+  quranTextPage(el,p,s,a);
+}
+function quranTextPage(el,p,s,a){
   el.classList.add('paged');setQF(el);
   need(qkey()).then(Q=>{
     const P=pagesOf(Q);p=Math.min(604,Math.max(1,p|0));
@@ -963,19 +977,23 @@ function quranPage(el,p,s,a){
 
 /* ---------- Warsh: the Moroccan printed mushaf (Mohammed VI Foundation), page images from mushaf.ma in a zellige frame ---------- */
 let MP=null; // pages[p] = [[sura, aya], ...]
-const PCACHE=new Map();  // page -> preloaded Image
-function mohammadiPage(el,p,s,a){
+const PCACHE=new Map();  // page -> preloaded Image (cleared when the narration changes)
+let PCKEY='';
+function imagePage(el,p,s,a){
   el.classList.add('paged');setQF(el);
-  Promise.all([need('quran-warsh'),need('mohammadi')]).then(([Q,M])=>{
+  const key=rw,warsh=IMG();
+  Promise.all([need(qkey()),warsh?need('mohammadi'):null]).then(([Q,Mw])=>{
+    const M=warsh?Mw:PAGESRC[key];
     p=Math.min(M.count,Math.max(1,p|0));
-    if(!MP){MP=[];M.pages.forEach((P,i)=>P.forEach((pg,j)=>{(MP[pg]=MP[pg]||[]).push([i+1,j+1])}))}
-    const items=MP[p]||[];
+    let items;
+    if(warsh){if(!MP){MP=[];Mw.pages.forEach((P,i)=>P.forEach((pg,j)=>{(MP[pg]=MP[pg]||[]).push([i+1,j+1])}))}items=MP[p]||[]}
+    else items=pagesOf(Q)[p]||[];
     const names=[...new Set(items.map(x=>x[0]))].map(x=>Q.suras[x-1].n);
     const juz=items.length?Q.suras[items[0][0]-1].v[items[0][1]-1][2]:'';
-    const url=n=>{const A=window.AndroidApp;let loc='';try{if(A&&typeof A.mushafPage==='function')loc=A.mushafPage(n+M.offset)}catch(e){}return loc||M.url.replace('{n}',n+M.offset)};
-    el.innerHTML=bar('#quran',`رواية ورش عن نافع <small>صفحة ${p} من ${M.count}</small>`)+
-      `<div class="page z" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<i></i>الجزء ${juz}`:''}</span>
-        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" alt="صفحة ${p} من المصحف برواية ورش" hidden></div>
+    const url=n=>{const A=window.AndroidApp;let loc='';try{if(A&&typeof A.mushafPage==='function')loc=A.mushafPage(key,n+M.offset)}catch(e){}return loc||M.url.replace('{n}',n+M.offset)};
+    el.innerHTML=bar('#quran',`${RW[key].full} <small>صفحة ${p} من ${M.count}</small>`)+
+      `<div class="page ${warsh?'z':'m'}" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<i></i>الجزء ${juz}`:''}</span>
+        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" alt="صفحة ${p} من المصحف (${RW[key].full})" hidden></div>
         <span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
         <input id="pgGo" type="number" min="1" max="${M.count}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
@@ -984,14 +1002,16 @@ function mohammadiPage(el,p,s,a){
     const fit=()=>{window.scrollTo(0,0);page.style.height=Math.max(380,Math.floor(window.innerHeight-page.getBoundingClientRect().top-$('pnav').offsetHeight-34))+'px'};
     fit();window.onresize=()=>{if(location.hash.startsWith('#page-'))fit()};
     img.onload=()=>{img.hidden=false;msg.hidden=true};
-    img.onerror=()=>{msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات مصحف ورش تُحمَّل من موقع مؤسسة محمد السادس (mushaf.ma)، فتحتاج إلى اتصال بالإنترنت.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
+    img.onerror=()=>{if(!warsh){quranTextPage(el,p,s,a);return}  // no internet: the same page from the bundled text
+      msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات مصحف ورش تُحمَّل من موقع مؤسسة محمد السادس (mushaf.ma)، فتحتاج إلى اتصال بالإنترنت.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
+    if(PCKEY!==key){PCACHE.clear();PCKEY=key}
     const ready=PCACHE.get(p);
     if(ready&&ready.complete&&ready.naturalWidth){img.src=ready.src;img.hidden=false;msg.hidden=true}else img.src=url(p);
     // keep the next and previous pages loaded and decoded, so turning a page is instant
     [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=M.count&&!PCACHE.has(n)){const im=new Image();im.decoding='async';im.src=url(n);PCACHE.set(n,im)}});
     for(const k of [...PCACHE.keys()])if(Math.abs(k-p)>6)PCACHE.delete(k);
     $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=M.count)location.hash='#page-'+v});
-    img.addEventListener('click',()=>{if(items.length){st.set('lastAya.'+rw,[items[0][0],items[0][1],p]);msg.hidden=false;msg.textContent='حُفظ موضع القراءة: صفحة '+p;setTimeout(()=>{msg.hidden=true},1500)}});
+    img.addEventListener('click',()=>{if(items.length){st.set('lastAya.'+key,[items[0][0],items[0][1],p]);msg.hidden=false;msg.textContent='حُفظ موضع القراءة: صفحة '+p;setTimeout(()=>{msg.hidden=true},1500)}});
     let x0=null,y0=0;
     page.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
     page.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
