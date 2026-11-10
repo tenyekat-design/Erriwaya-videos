@@ -3,6 +3,8 @@ package mr.erriwaya.calendar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,11 +22,22 @@ public class MainActivity extends Activity {
     private WebView web;
     /** True while the tasbih page asks to count with the volume keys. */
     private volatile boolean volumeKeysCount = false;
+    /** Tasbih sounds (assets/sounds/*.wav), played natively for a reliable, low-latency click. */
+    private SoundPool pool;
+    private int sClick, sClick2, sChime;
 
     /** Bridge the page calls as window.AndroidApp. */
     public class Bridge {
         @JavascriptInterface
         public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
+
+        /** click, click2 (every tenth) or chime (count complete). */
+        @JavascriptInterface
+        public void sound(String name) {
+            if (pool == null) return;
+            int id = "chime".equals(name) ? sChime : "click2".equals(name) ? sClick2 : sClick;
+            if (id != 0) pool.play(id, 1f, 1f, 1, 0, 1f);
+        }
 
         /** "40" vibrates 40 ms; "90,70,160" is on, off, on... in ms. */
         @JavascriptInterface
@@ -50,6 +63,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        try {
+            pool = new SoundPool.Builder().setMaxStreams(4).setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()).build();
+            sClick = pool.load(getAssets().openFd("sounds/click.wav"), 1);
+            sClick2 = pool.load(getAssets().openFd("sounds/click2.wav"), 1);
+            sChime = pool.load(getAssets().openFd("sounds/chime.wav"), 1);
+        } catch (Exception e) { pool = null; }
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
         WebSettings s = web.getSettings();
@@ -76,6 +96,12 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         web.saveState(out);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (pool != null) pool.release();
+        super.onDestroy();
     }
 
     @Override
