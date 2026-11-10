@@ -10,7 +10,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.content.res.Configuration;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -20,6 +24,8 @@ import android.webkit.WebViewClient;
 /** The whole calendar lives in assets/index.html; this activity only hosts it, fully offline. */
 public class MainActivity extends Activity {
     private WebView web;
+    private LinearLayout root;
+    private View topBar, bottomBar;
     /** True while the tasbih page asks to count with the volume keys. */
     private volatile boolean volumeKeysCount = false;
     private volatile String pickKind = "adhan";
@@ -35,6 +41,13 @@ public class MainActivity extends Activity {
         /** The coming adhan times from the page: [[epochMillis, "title", "text"], ...] ("[]" turns alerts off). */
         @JavascriptInterface
         public void setAdhanSchedule(String json) { AdhanReceiver.save(MainActivity.this, json); }
+
+        /**
+         * The settings behind the times: {on, p:{fajr..isha}, city, lat, lng, fajr, isha, ishaMin, asr, adj}. With them the app
+         * computes the adhan times itself (they never run out) and draws the home-screen widget.
+         */
+        @JavascriptInterface
+        public void setAdhanConfig(String json) { AdhanReceiver.saveConfig(MainActivity.this, json); }
 
         /** Asks for the notification permission (Android 13+) when the user turns adhan alerts on. */
         @JavascriptInterface
@@ -180,9 +193,79 @@ public class MainActivity extends Activity {
             }
         });
         web.addJavascriptInterface(new Bridge(), "AndroidApp");
-        setContentView(web);
+        // The page sits between two plain strips that take the place of the status and navigation bars: from Android 15 on
+        // the window runs edge to edge (and from targetSdk 36 that cannot be turned off), so without them the page would
+        // slide under the bars. Below Android 15 the strips stay 0 high and the theme colours the bars as before.
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        topBar = new View(this);
+        bottomBar = new View(this);
+        root.addView(topBar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        root.addView(bottomBar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        barColors();
+        setContentView(root);
+        if (Build.VERSION.SDK_INT >= 35) Edge.apply(root, topBar, bottomBar);
+        // Android 13+: the back gesture comes through this callback (onBackPressed is no longer called from targetSdk 36)
+        if (Build.VERSION.SDK_INT >= 33) Back.register(this);
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
+    }
+
+    /** Back: the page's previous view (it navigates by #hash), or out of the app from the first one. */
+    void goBack() {
+        if (web != null && web.canGoBack()) web.goBack();
+        else finish();
+    }
+
+    /** The strips' colours follow the day/night theme (the activity is not restarted when it changes). */
+    private void barColors() {
+        boolean night = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int bg = night ? 0xFF0C1511 : 0xFFF2F5F1;
+        topBar.setBackgroundColor(night ? 0xFF04190F : 0xFF0A3528);
+        bottomBar.setBackgroundColor(bg);
+        root.setBackgroundColor(bg);
+        if (Build.VERSION.SDK_INT >= 35) Edge.lightNavigationIcons(this, !night);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration c) {
+        super.onConfigurationChanged(c);
+        barColors();
+    }
+
+    /** Android 15+ only (kept in its own class so older phones never load these APIs). */
+    static final class Edge {
+        static void apply(final View root, final View top, final View bottom) {
+            root.setOnApplyWindowInsetsListener((v, in) -> {
+                android.graphics.Insets b = in.getInsets(android.view.WindowInsets.Type.systemBars() | android.view.WindowInsets.Type.displayCutout());
+                android.graphics.Insets k = in.getInsets(android.view.WindowInsets.Type.ime());
+                height(top, b.top);
+                height(bottom, Math.max(b.bottom, k.bottom));   // the keyboard pushes the page up instead of covering it
+                v.setPadding(b.left, 0, b.right, 0);
+                return android.view.WindowInsets.CONSUMED;
+            });
+        }
+
+        static void height(View v, int h) {
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
+            if (lp.height != h) { lp.height = h; v.setLayoutParams(lp); }
+        }
+
+        static void lightNavigationIcons(Activity a, boolean dark) {
+            android.view.WindowInsetsController c = a.getWindow().getInsetsController();
+            if (c == null) return;
+            int f = android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+            c.setSystemBarsAppearance(dark ? f : 0, f);
+        }
+    }
+
+    /** Android 13+ only. */
+    static final class Back {
+        static void register(final MainActivity a) {
+            a.getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT, a::goBack);
+        }
     }
 
     @Override
@@ -219,8 +302,5 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (web.canGoBack()) web.goBack();
-        else super.onBackPressed();
-    }
+    public void onBackPressed() { goBack(); }   // Android 12 and older
 }

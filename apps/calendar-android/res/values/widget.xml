@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="w_bg">#FFFCF4</color>
+    <color name="w_line">#C9A44C</color>
+    <color name="w_ink">#1A2620</color>
+    <color name="w_muted">#5F6A60</color>
+    <color name="w_green">#0F5641</color>
+    <color name="w_gold">#8A6A17</color>
+    <color name="w_hi">#0F5641</color>
+    <color name="w_hi_ink">#FBF3DC</color>
+    <string name="widget_name">مواقيت الصلاة والتاريخ</string>
+    <string name="widget_desc">مواقيت اليوم في مدينتك والصلاة القادمة، مع التاريخ الهجري والميلادي</string>
+</resources>

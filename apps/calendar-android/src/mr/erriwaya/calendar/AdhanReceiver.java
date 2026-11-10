@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +27,10 @@ import java.io.OutputStream;
  * and hands them over as a JSON list [[epochMillis, "title", "text", isFajr], ...]; this class keeps that
  * list, sets one alarm for the next entry, raises the adhan when it fires and then sets the following one.
  * After a reboot or an app update the same list is read again.
+ *
+ * The page also hands over the settings behind those times (city, method, which prayers: setAdhanConfig). When they are
+ * there, the next adhan is computed here from them (PrayerCalc, the page's own formulas) and the list is not needed:
+ * the adhan keeps coming however long the app stays closed.
  *
  * The adhan sound is the Maliki adhan bundled in assets/sounds/adhan.m4a, or a recording the user picks on the
  * phone (copied into the app's files); AdhanService plays it in full. If the service cannot start, the
@@ -42,6 +47,7 @@ public class AdhanReceiver extends BroadcastReceiver {
             fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false));
         }
         scheduleNext(ctx);  // also on BOOT_COMPLETED and MY_PACKAGE_REPLACED
+        CalendarWidget.updateAll(ctx);
     }
 
     // ---------- the user's recordings ----------
@@ -127,6 +133,70 @@ public class AdhanReceiver extends BroadcastReceiver {
         scheduleNext(ctx);
     }
 
+    /** The settings the page handed over (see MainActivity.Bridge.setAdhanConfig), or null before the first hand-over. */
+    static JSONObject config(Context ctx) {
+        String c = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("config", null);
+        if (c == null) return null;
+        try { return new JSONObject(c); } catch (Exception e) { return null; }
+    }
+
+    static void saveConfig(Context ctx, String json) {
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("config", json).apply();
+        scheduleNext(ctx);
+        CalendarWidget.updateAll(ctx);
+    }
+
+    static final String[] NAMES = {"الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"};
+    static final String[] KEYS = {"fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"};
+
+    /** The day's six times for the settings in c (hours, UTC = Mauritania's time). */
+    static double[] timesOf(JSONObject c, long epochDay) {
+        int[] g = PrayerCalc.gregorian(epochDay);
+        return PrayerCalc.times(g[0], g[1], g[2], c.optDouble("lat", 18.0858), c.optDouble("lng", -15.9785),
+                c.optDouble("fajr", 18), c.optDouble("isha", 17), c.optInt("ishaMin", 0), c.optDouble("asr", 1));
+    }
+
+    /** The next adhan after `now` for the settings in c: {epochMillis, title, text, isFajr}, or null when none is wanted. */
+    static Object[] nextFromConfig(JSONObject c, long now) {
+        if (!c.optBoolean("on", false)) return null;
+        JSONObject p = c.optJSONObject("p");
+        long day0 = PrayerCalc.fd(now, PrayerCalc.DAY);
+        for (long day = day0; day <= day0 + 2; day++) {
+            double[] t = timesOf(c, day);
+            long best = Long.MAX_VALUE;
+            int bk = -1;
+            for (int k = 0; k < 6; k++) {
+                if (k == PrayerCalc.SUNRISE || (p != null && !p.optBoolean(KEYS[k], true))) continue;
+                int mins = PrayerCalc.minutes(t[k]);
+                if (mins < 0) continue;
+                long at = day * PrayerCalc.DAY + mins * 60000L;
+                if (at > now + 1000 && at < best) { best = at; bk = k; }
+            }
+            if (bk >= 0) {
+                boolean fajr = bk == PrayerCalc.FAJR;
+                return new Object[]{best, "أذان " + NAMES[bk] + " · " + PrayerCalc.fmt(t[bk]),
+                        "حان وقت صلاة " + NAMES[bk] + " في " + c.optString("city", "نواكشوط") + ". "
+                                + (fajr ? "الصلاة خير من النوم." : "حيّ على الصلاة، حيّ على الفلاح."), fajr};
+            }
+        }
+        return null;
+    }
+
+    private static void setAlarm(AlarmManager am, long at, PendingIntent pi) {
+        boolean exact = Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms();
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (exact) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP, at, pi);
+            }
+        } catch (SecurityException e) {   // the permission was withdrawn in between: a few minutes late rather than never
+            if (Build.VERSION.SDK_INT >= 23) am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+            else am.set(AlarmManager.RTC_WAKEUP, at, pi);
+        }
+    }
+
     static void scheduleNext(Context ctx) {
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
         if (am == null) return;
@@ -134,6 +204,18 @@ public class AdhanReceiver extends BroadcastReceiver {
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
         SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         long now = System.currentTimeMillis();
+        JSONObject c = config(ctx);
+        if (c != null) {   // computed here: no list to run out of
+            Object[] n = null;
+            try { n = nextFromConfig(c, now); } catch (Exception ignored) { }
+            if (n != null) {
+                i.putExtra("title", (String) n[1]).putExtra("text", (String) n[2]).putExtra("fajr", (Boolean) n[3]);
+                setAlarm(am, (Long) n[0], PendingIntent.getBroadcast(ctx, 1, i, flags));
+            } else {
+                am.cancel(PendingIntent.getBroadcast(ctx, 1, i, flags));
+            }
+            return;
+        }
         try {
             JSONArray list = new JSONArray(sp.getString("list", "[]"));
             for (int k = 0; k < list.length(); k++) {
@@ -142,13 +224,7 @@ public class AdhanReceiver extends BroadcastReceiver {
                 if (at <= now + 1000) continue;
                 i.putExtra("title", e.getString(1)).putExtra("text", e.getString(2)).putExtra("fajr", e.optBoolean(3, false));
                 PendingIntent pi = PendingIntent.getBroadcast(ctx, 1, i, flags);
-                boolean exact = Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms();
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (exact) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
-                    else am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
-                } else {
-                    am.setExact(AlarmManager.RTC_WAKEUP, at, pi);
-                }
+                setAlarm(am, at, pi);
                 return;
             }
         } catch (Exception ignored) { }

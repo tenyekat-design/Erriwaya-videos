@@ -19,6 +19,8 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Check the app's prayer times against the page's
+        run: apps/calendar-android/tools/check-prayer-calc.sh
       - name: Build APK
         run: apps/calendar-android/build.sh
         env:

@@ -1008,7 +1008,7 @@ $('iqBox').innerHTML=[['fajr','الفجر'],['dhuhr','الظهر'],['asr','ال�
 $('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');const v=Math.max(0,Math.min(60,parseInt(e.target.value,10)||0));e.target.value=v;S.iq[k]=v;store.set('iq',S.iq);tick()});
 $('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay();pushAdhan()});
 $('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay();pushAdhan()});
-$('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender()});
+$('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender();pushAdhan()});
 $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
 ['cG'].forEach(id=>$(id).addEventListener('input',convG));
 ['cHd','cHm','cHy'].forEach(id=>$(id).addEventListener('input',convH));
@@ -1031,6 +1031,10 @@ function pushAdhan(){
         list.push([Date.UTC(g.y,g.m-1,g.d)+mins*60000,`أذان ${ADN[k]} · ${fmt(t[k])}`,`حان وقت صلاة ${ADN[k]} في ${c.name}. ${k==='fajr'?'الصلاة خير من النوم.':'حيّ على الصلاة، حيّ على الفلاح.'}`,k==='fajr'])}}
   }
   try{A.setAdhanSchedule(JSON.stringify(list))}catch(e){}
+  // the app also gets the settings themselves: it computes the times on its own from them (same formulas, PrayerCalc.java),
+  // so the adhan keeps coming however long the app stays closed, and the home-screen widget is drawn from them
+  if(typeof A.setAdhanConfig==='function'){const c=city(),M=METHODS[S.method];
+    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,p:AD.p,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
 }
 (function(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The home-screen widget (CalendarWidget fills it in; the texts here are what the widget picker previews). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wRoot" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:layoutDirection="rtl" android:background="@drawable/widget_bg"
+    android:paddingLeft="12dp" android:paddingRight="12dp" android:paddingTop="10dp" android:paddingBottom="10dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/wHijri" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="1 جمادى الآخرة 1448 هـ" android:textSize="16sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="end" android:textColor="@color/w_green" />
+        <TextView android:id="@+id/wCity" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="نواكشوط" android:textSize="13sp" android:textStyle="bold" android:maxLines="1" android:textColor="@color/w_gold" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/wGreg" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="الأربعاء 11 نوفمبر 2026" android:textSize="12sp" android:maxLines="1" android:ellipsize="end" android:textColor="@color/w_muted" />
+        <TextView android:id="@+id/wNext" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="القادمة: العصر 15:58" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_muted" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:layout_marginTop="6dp" android:orientation="horizontal" android:baselineAligned="false">
+        <LinearLayout android:id="@+id/c0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:orientation="vertical" android:gravity="center" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:id="@+id/n0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="الفجر" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_muted" />
+            <TextView android:id="@+id/t0" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="05:44" android:textSize="15sp" android:textStyle="bold" android:maxLines="1" android:textDirection="ltr" android:textColor="@color/w_ink" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/c1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:orientation="vertical" android:gravity="center" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:id="@+id/n1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="الظهر" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_muted" />
+            <TextView android:id="@+id/t1" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="12:48" android:textSize="15sp" android:textStyle="bold" android:maxLines="1" android:textDirection="ltr" android:textColor="@color/w_ink" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/c2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:orientation="vertical" android:gravity="center" android:paddingTop="4dp" android:paddingBottom="4dp" android:background="@drawable/widget_hi">
+            <TextView android:id="@+id/n2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="العصر" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_hi_ink" />
+            <TextView android:id="@+id/t2" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="15:58" android:textSize="15sp" android:textStyle="bold" android:maxLines="1" android:textDirection="ltr" android:textColor="@color/w_hi_ink" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/c3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:orientation="vertical" android:gravity="center" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:id="@+id/n3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="المغرب" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_muted" />
+            <TextView android:id="@+id/t3" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="18:27" android:textSize="15sp" android:textStyle="bold" android:maxLines="1" android:textDirection="ltr" android:textColor="@color/w_ink" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/c4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:orientation="vertical" android:gravity="center" android:paddingTop="4dp" android:paddingBottom="4dp">
+            <TextView android:id="@+id/n4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="العشاء" android:textSize="12sp" android:maxLines="1" android:textColor="@color/w_muted" />
+            <TextView android:id="@+id/t4" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="19:41" android:textSize="15sp" android:textStyle="bold" android:maxLines="1" android:textDirection="ltr" android:textColor="@color/w_ink" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
