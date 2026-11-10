@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'data.dart';
-import 'illumination.dart';
+import 'madina.dart';
 import 'theme.dart';
 
 /// اختيار الرواية: حفص أو ورش.
@@ -88,8 +88,7 @@ class _StarPainter extends CustomPainter {
   bool shouldRepaint(covariant _StarPainter old) => old.color != color;
 }
 
-/// شريط اسم السورة في الصفحة: يشغل سطراً واحداً كما في المصحف المطبوع.
-/// خرطوشة مذهّبة لازوردية، وفي طرفيها نجمتان ذهبيتان، ومعلومات السورة صغيرة على الجانبين.
+/// شريط اسم السورة في الصفحة: يشغل سطراً واحداً كما في المصحف المطبوع (صفحات ورش).
 class SurahBanner extends StatelessWidget {
   const SurahBanner({super.key, required this.surah, required this.riwaya, required this.colors, this.height = 44});
   final Surah surah;
@@ -99,47 +98,9 @@ class SurahBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = height * .82;
-    final small = TextStyle(fontSize: (h * .26).clamp(9, 12.5).toDouble(), color: Illum.goldLight.withValues(alpha: .85), height: 1);
-    return Center(
-      child: SizedBox(
-        height: h,
-        child: CustomPaint(
-          painter: _CartouchePainter(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: h * 1.05),
-            child: Row(children: [
-              Text(surah.makki ? 'مكية' : 'مدنية', style: small),
-              Expanded(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text('سُورَةُ ${surah.name}',
-                      style: TextStyle(fontFamily: riwaya.font, fontSize: h * .52, color: Illum.goldLight, height: 1.25)),
-                ),
-              ),
-              Text('آياتها ${ar(surah.count(riwaya))}', style: small),
-            ]),
-          ),
-        ),
-      ),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: height * .08),
+      child: CustomPaint(size: Size.infinite, painter: SurahHeaderPainter(surah.n, colors.ink)),
     );
   }
-}
-
-class _CartouchePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final h = size.height;
-    // خرطوشة مذهّبة لازوردية، وفي طرفيها نجمتان ذهبيتان
-    paintCartouche(canvas, size.center(Offset.zero), size.width - h * .5, h, wings: false);
-    for (final cx in [h * .62, size.width - h * .62]) {
-      final c = Offset(cx, h / 2);
-      canvas.drawPath(star8(c, h * .36, h * .25), Paint()..shader = Illum.goldShader(Rect.fromCircle(center: c, radius: h * .36)));
-      canvas.drawPath(star8(c, h * .24, h * .17), Paint()..color = Illum.lapis);
-      paintFlower(canvas, c, h * .12, Illum.crimson);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _CartouchePainter old) => false;
 }

@@ -1,7 +1,7 @@
 name: erriwaya_mushaf
 description: مصحف المحظرة – القرآن الكريم بروايتي حفص وورش، مع التفسير والتلاوة.
 publish_to: 'none'
-version: 1.7.0+10
+version: 1.8.0+11
 
 environment:
   sdk: ^3.5.0
@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/data/
     - assets/images/
+    - assets/qcf/
   fonts:
     - family: AlQuds
       fonts:
@@ -32,6 +33,9 @@ flutter:
     - family: Hafs
       fonts:
         - asset: assets/fonts/UthmanicHafs.ttf
+    - family: SurahNames
+      fonts:
+        - asset: assets/fonts/SurahNames.ttf
     - family: Warsh
       fonts:
         - asset: assets/fonts/UthmanicWarsh.ttf

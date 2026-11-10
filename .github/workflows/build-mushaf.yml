@@ -37,6 +37,17 @@ jobs:
           rm -rf test
           python3 android-ci/patch_android.py . | tee -a build.log
 
+      - name: Mushaf page fonts (WOFF to TTF)
+        run: |
+          pip install --quiet fonttools
+          python3 -c "
+          import glob,os
+          from fontTools.ttLib import TTFont
+          for p in sorted(glob.glob('assets/qcf/*.woff')):
+              f=TTFont(p); f.flavor=None; f.save(p[:-5]+'.ttf'); os.remove(p)
+          print(len(glob.glob('assets/qcf/*.ttf')),'page fonts')
+          " | tee -a build.log
+
       - name: Dependencies and icons
         run: |
           set -o pipefail

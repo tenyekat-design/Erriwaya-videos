@@ -3,8 +3,8 @@ import '../audio.dart';
 import '../data.dart';
 import '../settings.dart';
 import '../theme.dart';
-import '../ornament.dart';
-import '../ornate_page.dart';
+import '../madina.dart';
+import '../qcf.dart';
 import '../widgets.dart';
 import 'ayah_sheet.dart';
 import 'home_screen.dart';
@@ -93,13 +93,15 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   setState(() => _page = i + 1);
                   Settings.instance.setLastPage(_riwaya, i + 1);
                 },
-                itemBuilder: (context, i) => _MushafPage(
-                  page: i + 1,
-                  riwaya: _riwaya,
-                  selected: _selected,
-                  playing: audio.ayah != null && audio.riwaya == _riwaya ? (audio.surah!, audio.ayah!) : null,
-                  onTap: _openAyah,
-                ),
+                itemBuilder: (context, i) {
+                  final playing =
+                      audio.ayah != null && audio.riwaya == _riwaya ? (audio.surah!, audio.ayah!) : null;
+                  // حفص بخطّ مصحف المدينة لكل صفحة؛ ورش بخطّ رواية ورش
+                  return _riwaya == Riwaya.hafs
+                      ? QcfPage(page: i + 1, selected: _selected, playing: playing, onTap: _openAyah)
+                      : _MushafPage(
+                          page: i + 1, riwaya: _riwaya, selected: _selected, playing: playing, onTap: _openAyah);
+                },
               ),
             ),
             if (audio.active || audio.error != null) const AudioBar(),
@@ -239,14 +241,13 @@ class _MushafPageState extends State<_MushafPage> {
     final target = q.textLines(r, widget.page);
     if (ornate) return _ornatePage(words, segs.any((s) => s.basmala), colors);
 
-    return Container(
-      color: colors.paper,
+    return CustomPaint(
+      painter: PaperPainter(colors, widget.page),
       child: SafeArea(
         top: false,
-        child: PageFrame(
-          colors: colors,
-          ornate: ornate,
+        child: PageBody(
           page: widget.page,
+          colors: colors,
           child: MediaQuery(
             // تخطيط المصحف ثابت لا يتأثر بتكبير نصوص النظام؛ الحجم يُختار ليملأ الصفحة
             data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
@@ -374,10 +375,10 @@ class _MushafPageState extends State<_MushafPage> {
             final lineH = (yBot - yTop) / n;
             final style = TextStyle(fontFamily: r.font, fontSize: lay.fs, color: colors.ink);
             final kids = <Widget>[
+              Positioned.fill(child: ColoredBox(color: colors.paper)),
               Positioned.fill(
                 child: CustomPaint(
-                  painter: MedallionPainter(
-                      colors: colors, title: 'سورة ${surah.name}', titleFont: r.font, page: widget.page),
+                  painter: MedallionPainter(colors: colors, surah: surah.n, page: widget.page),
                 ),
               ),
             ];
@@ -574,6 +575,191 @@ class _Progress extends StatelessWidget {
           Text(_fmt(dur), style: const TextStyle(fontSize: 12)),
         ]);
       },
+    );
+  }
+}
+
+
+/// جسم الصفحة العادية: هوامش النصّ، ورقم الصفحة أسفلها كالمصحف المطبوع.
+class PageBody extends StatelessWidget {
+  const PageBody({super.key, required this.page, required this.colors, required this.child});
+  final int page;
+  final PageColors colors;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      Positioned.fill(child: Padding(padding: const EdgeInsets.fromLTRB(14, 14, 14, 26), child: child)),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: 5,
+        child: Text(ar(page),
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 13, height: 1.2, color: colors.muted)),
+      ),
+    ]);
+  }
+}
+
+/// صفحة حفص بخطّ مصحف المدينة: أسطر الصفحة الخمسة عشر كما في المصحف المطبوع،
+/// كل سطر بعرض الصفحة تماماً، والضغط على أي موضع من الآية يفتحها.
+class QcfPage extends StatefulWidget {
+  const QcfPage({super.key, required this.page, required this.selected, required this.playing, required this.onTap});
+  final int page;
+  final Ayah? selected;
+  final (int, int)? playing;
+  final ValueChanged<Ayah> onTap;
+
+  @override
+  State<QcfPage> createState() => _QcfPageState();
+}
+
+class _QcfPageState extends State<QcfPage> {
+  late Future<void> _ready = _load();
+
+  Future<void> _load() async {
+    await Qcf.instance.load();
+    await Qcf.instance.ensure(widget.page);
+  }
+
+  @override
+  void didUpdateWidget(QcfPage old) {
+    super.didUpdateWidget(old);
+    if (old.page != widget.page) _ready = _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = PageColors.of(context);
+    final ornate = widget.page <= 2;
+    return FutureBuilder(
+      future: _ready,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) return ColoredBox(color: colors.paper);
+        final lines = Qcf.instance.page(widget.page);
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+          child: ornate ? _ornate(lines, colors) : _regular(lines, colors),
+        );
+      },
+    );
+  }
+
+  bool _on(Ayah a) =>
+      widget.selected?.index == a.index ||
+      (widget.playing != null && widget.playing!.$1 == a.surah && widget.playing!.$2 == a.number);
+
+  /// سطر نصّ: كل آية فيه قطعة واحدة قابلة للضغط، والسطر كله بعرض width.
+  Widget _textLine(QcfLine l, double fs, double lineH, PageColors colors) {
+    final ayat = Quran.instance.ayat[Riwaya.hafs]!;
+    final style = TextStyle(
+        fontFamily: Qcf.family(widget.page), fontSize: fs, height: 1, color: colors.ink);
+    return SizedBox(
+      height: lineH,
+      child: OverflowBox(
+        maxHeight: double.infinity,
+        maxWidth: double.infinity,
+        child: Row(
+          textDirection: TextDirection.rtl,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (i, glyphs) in l.runs)
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => widget.onTap(ayat[i]),
+                child: Container(
+                  height: lineH,
+                  alignment: Alignment.center,
+                  color: _on(ayat[i]) ? colors.highlight : null,
+                  // رسوم الخطّ تعلو خطّ الأساس، فتُنزَّل قليلاً لتتوسّط السطر
+                  child: Transform.translate(
+                    offset: Offset(0, fs * .33),
+                    child: Text(glyphs, style: style, textDirection: TextDirection.rtl, softWrap: false),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _basmala(double fs, PageColors colors) => Transform.translate(
+        offset: Offset(0, fs * .33),
+        child: Text(Qcf.basmalaGlyphs,
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: Qcf.family(1), fontSize: fs, height: 1, color: colors.ink)),
+      );
+
+  Widget _regular(List<QcfLine> lines, PageColors colors) {
+    final widths = [for (final l in lines) if (l.isText) l.width]..sort();
+    final median = widths.isEmpty ? 40500 : widths[widths.length ~/ 2];
+    return CustomPaint(
+      painter: PaperPainter(colors, widget.page),
+      child: SafeArea(
+        top: false,
+        child: PageBody(
+          page: widget.page,
+          colors: colors,
+          child: LayoutBuilder(builder: (context, box) {
+            final w = box.maxWidth, lineH = box.maxHeight / 15;
+            final normalFs = w / median * Qcf.unitsPerEm;
+            return Column(children: [
+              for (final l in lines)
+                if (l.isHeader)
+                  SizedBox(
+                    height: lineH,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: lineH * .08),
+                      child: CustomPaint(size: Size(w, lineH * .84), painter: SurahHeaderPainter(l.surah, colors.ink)),
+                    ),
+                  )
+                else if (l.basmala)
+                  SizedBox(height: lineH, child: Center(child: _basmala(normalFs * .95, colors)))
+                else
+                  // السطر الممتلئ يُمدّ إلى عرض الصفحة تماماً؛ والقصير (آخر سورة) يبقى بحجمه في الوسط
+                  _textLine(l, l.width > median * .85 ? w / l.width * Qcf.unitsPerEm : normalFs, lineH, colors),
+            ]);
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _ornate(List<QcfLine> lines, PageColors colors) {
+    final text = lines.where((l) => l.isText).toList();
+    final basmala = lines.any((l) => l.basmala);
+    final surah = widget.page == 1 ? 1 : 2;
+    return ColoredBox(
+      color: colors.paper,
+      child: SafeArea(
+        top: false,
+        child: LayoutBuilder(builder: (context, box) {
+          final m = Medallion(box.biggest);
+          final panel = (m.b.width / 2 - m.textInset) * 2 * .96;
+          final maxW = text.fold<int>(0, (a, l) => l.width > a ? l.width : a);
+          final n = text.length + (basmala ? 1 : 0);
+          final lineH = (m.textBottom - m.textTop) / n;
+          // أسطر الفاتحة وأول البقرة مرسومة في الخطّ بأطوال متدرّجة؛ تُكبَّر معاً حتى يملأ أطولها اللوحة
+          final fs = (panel / maxW * Qcf.unitsPerEm).clamp(8.0, lineH * .62).toDouble();
+          final kids = <Widget>[
+            Positioned.fill(child: CustomPaint(painter: MedallionPainter(colors: colors, surah: surah, page: widget.page))),
+          ];
+          var li = 0;
+          if (basmala) {
+            kids.add(Positioned(
+                top: m.textTop, left: 0, right: 0, height: lineH, child: Center(child: _basmala(fs, colors))));
+            li = 1;
+          }
+          for (final l in text) {
+            kids.add(Positioned(
+                top: m.textTop + li * lineH, left: 0, right: 0, height: lineH, child: _textLine(l, fs, lineH, colors)));
+            li++;
+          }
+          return Stack(children: kids);
+        }),
+      ),
     );
   }
 }
