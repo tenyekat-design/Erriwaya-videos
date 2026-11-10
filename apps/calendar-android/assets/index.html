@@ -274,6 +274,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .pager{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
 .pager a{flex:1;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px;color:inherit;text-decoration:none;font-weight:600}
 
+.intro{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--orn);border-radius:12px;padding:4px 16px}
+.intro summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;font-family:var(--f-display);font-weight:700;color:var(--green)}
+.intro summary::-webkit-details-marker{display:none}
+.intro summary::after{content:"‹";transform:rotate(-90deg);transition:transform .15s;color:var(--gold);font-size:1.2rem}
+.intro[open] summary::after{transform:rotate(90deg)}
+.intro p{margin:0 0 10px;line-height:2;font-size:.97rem}
+.intro dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0 0 12px;font-size:.9rem}
+.intro dt{color:var(--muted)}
+.intro dd{margin:0;font-weight:600}
+.intro h3{font-size:.95rem;color:var(--gold);margin:4px 0 6px}
 /* ---------- qibla ---------- */
 .compass-wrap{display:grid;justify-items:center;gap:10px}
 .compass{width:min(84vw,340px);aspect-ratio:1;max-width:100%;position:relative}
@@ -750,11 +760,30 @@ function quranPage(el,p,s,a){
 
 /* ---------- Hadith collections ---------- */
 const COL={bukhari:{sub:'للإمام محمد بن إسماعيل البخاري (ت 256 هـ) · بترقيم فتح الباري'},muwatta:{sub:'للإمام مالك بن أنس (ت 179 هـ) · رواية يحيى بن يحيى الليثي'}};
+const INTRO={
+  bukhari:`<dl><dt>الاسم</dt><dd>الجامع المسند الصحيح المختصر من أمور رسول الله صلى الله عليه وسلم وسننه وأيامه</dd>
+    <dt>المؤلف</dt><dd>أبو عبد الله محمد بن إسماعيل البخاري (194–256 هـ)</dd>
+    <dt>الرواية</dt><dd>رواية محمد بن يوسف الفِرَبْري عن البخاري، وهي أشهر رواياته</dd>
+    <dt>في هذا التطبيق</dt><dd>97 كتابًا، والأحاديث مرقّمة بترقيم فتح الباري (1–7563)</dd></dl>
+    <p>وُلد الإمام البخاري في بخارى سنة 194 هـ، وطلب الحديث صغيرًا، ورحل في طلبه إلى الحجاز والعراق والشام ومصر وخراسان، وتوفي في خَرْتَنْك قرب سمرقند ليلة عيد الفطر سنة 256 هـ.</p>
+    <p>جمع البخاري في كتابه ما صحّ عنده من حديث رسول الله صلى الله عليه وسلم، وانتقاه من حديث كثير سمعه، ومكث في تصنيفه نحو ست عشرة سنة. ورتّبه على الكتب والأبواب، وجعل في تراجم أبوابه فقهه واستنباطه، حتى قيل: «فقه البخاري في تراجمه». وتلقّته الأمة بالقبول، وعدّه جمهور العلماء أصحّ كتاب بعد كتاب الله تعالى.</p>
+    <h3>من أشهر شروحه</h3>
+    <p>فتح الباري لابن حجر العسقلاني، وعمدة القاري لبدر الدين العيني، وإرشاد الساري للقسطلاني.</p>
+    <p>وللصحيح مكانة خاصة في المحاظر الموريتانية، تدريسًا وسردًا.</p>`,
+  muwatta:`<dl><dt>المؤلف</dt><dd>الإمام مالك بن أنس الأصبحي، إمام دار الهجرة (93–179 هـ)</dd>
+    <dt>الرواية</dt><dd>رواية يحيى بن يحيى الليثي الأندلسي (ت 234 هـ)، وهي الرواية المعتمدة في المغرب والأندلس</dd>
+    <dt>في هذا التطبيق</dt><dd>61 كتابًا، والأحاديث والآثار مرقّمة بالتسلسل</dd></dl>
+    <p>وُلد الإمام مالك في المدينة المنورة سنة 93 هـ، وأخذ العلم عن علمائها، وجلس للفتيا والتحديث في مسجد رسول الله صلى الله عليه وسلم، وتوفي بها سنة 179 هـ. وإليه ينتسب المذهب المالكي، مذهب أهل موريتانيا وبلاد المغرب.</p>
+    <p>والموطأ من أوائل ما صُنّف في الحديث والفقه، رتّبه مالك على أبواب الفقه، وجمع فيه الأحاديث المرفوعة، وآثار الصحابة، وأقوال التابعين، وما عليه عمل أهل المدينة، مع اجتهاده ورأيه في مسائل كثيرة. وقد نُقل عن الإمام الشافعي قوله: «ما على ظهر الأرض كتاب بعد كتاب الله أصحّ من كتاب مالك»، وكان ذلك قبل تصنيف الصحيحين.</p>
+    <h3>من أشهر شروحه</h3>
+    <p>التمهيد والاستذكار لابن عبد البر، والمنتقى لأبي الوليد الباجي، وشرح الزرقاني على الموطأ.</p>`
+};
 const hs=()=>st.get('hs',1.06);
 function hadithList(el,c){
   loading(el);
   need(c+'/index').then(I=>{
     el.innerHTML=`<div class="lib-h"><h1>${esc(I.title.replace(/ \(.*\)$/,''))}</h1><p>${COL[c].sub}</p></div>
+      <details class="intro" id="intro"${st.get('intro.'+c,true)?' open':''}><summary>تقديم الكتاب</summary>${INTRO[c]}</details>
       <div class="row2"><input class="search" id="bkFilter" type="search" placeholder="ابحث عن كتاب" autocomplete="off" style="flex-basis:100%">
       <input class="search" id="hNum" type="number" min="1" inputmode="numeric" placeholder="رقم الحديث" style="flex:1;min-width:0"><button class="btn primary" id="hGo">اذهب</button></div>
       <p class="empty" id="hMsg" hidden></p><div id="bkOut"></div>
@@ -762,7 +791,7 @@ function hadithList(el,c){
     const draw=()=>{const f=norm($('bkFilter').value);const items=I.books.filter(b=>!f||norm(b[1]).includes(f));
       $('bkOut').innerHTML=items.length?`<ul class="list">${items.map(b=>`<li><a href="#${c}-${b[0]}"><span class="no">${b[0]}</span><span class="nm">${esc(b[1])}<small>${b[2]} حديثًا</small></span><span class="meta2">${Math.floor(b[3])}–${Math.floor(b[4])}</span></a></li>`).join('')}</ul>`:'<p class="empty">لا نتائج</p>'};
     const go=()=>{const n=parseFloat($('hNum').value);const b=I.books.find(b=>n>=b[3]&&n<b[4]+1);if(b)location.hash=`#${c}-${b[0]}-${n}`;else{$('hMsg').hidden=false;$('hMsg').textContent=`لا يوجد حديث بهذا الرقم. الأرقام من ${I.books[0][3]} إلى ${Math.floor(I.books[I.books.length-1][4])}.`}};
-    $('bkFilter').addEventListener('input',draw);$('hGo').onclick=go;$('hNum').addEventListener('keydown',e=>{if(e.key==='Enter')go()});draw();
+    $('intro').addEventListener('toggle',e=>st.set('intro.'+c,e.target.open));$('bkFilter').addEventListener('input',draw);$('hGo').onclick=go;$('hNum').addEventListener('keydown',e=>{if(e.key==='Enter')go()});draw();
   }).catch(()=>failed(el));
 }
 function hadithBook(el,c,b,n){
