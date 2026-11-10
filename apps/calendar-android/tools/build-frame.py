@@ -4,6 +4,12 @@ as the CSS `border-image` value used by `.qfr` in web/index-source.html.
 
     python3 tools/build-frame.py            # prints the url("data:image/svg+xml,...") value
     python3 tools/build-frame.py frame.svg  # also writes the SVG, to look at it
+    python3 tools/build-frame.py opening 1.jpg  # the two opening pages: prints the tile and the two masks of `.qop`
+
+The opening pages (al-Fatiha and the start of al-Baqara, same artwork) are one large sky-blue field with a
+scalloped outline around a white medallion. `opening` takes page 1 of the Qalun images, finds that field, and
+prints: a seamless tile to fill it (lattice and rosettes), a mask of the field, and a mask of its rim (a gold
+rule along every edge and a hairline inside it). Needs Pillow, numpy and scipy.
 
 The SVG is 300 x 300: four 66 x 66 corners and, between them, a 168-wide edge strip holding two periods
 of the pattern (a gold braid with a rosette in each loop), so `border-image-slice:66` and `repeat:round`.
@@ -78,8 +84,49 @@ def svg():
          '<use href="#c"/>', f'<use href="#c" x="{S-T}"/>', f'<use href="#c" y="{S-T}"/>', f'<use href="#c" x="{S-T}" y="{S-T}"/>']
     return f'<svg xmlns="http://www.w3.org/2000/svg" width="{S}" height="{S}" viewBox="0 0 {S} {S}">{d}{"".join(b)}</svg>'
 
+def uri(svg_text):
+    return 'url("data:image/svg+xml,' + urllib.parse.quote(svg_text, safe="/:=,;()' ").replace('"', '%22') + '")'
+
+def tile():
+    """A seamless 60 x 60 tile: a gold diamond lattice, a rosette in each cell and at each crossing of four cells."""
+    n = 60; h = n / 2
+    g = [f'<rect width="{n}" height="{n}" fill="{DEEP}"/>',
+         f'<path d="M0 {h}L{h} 0L{n} {h}L{h} {n}Z" fill="{BLUE}" stroke="{GOLD}" stroke-width="2.2"/>',
+         f'<path d="M0 {h}L{h} 0L{n} {h}L{h} {n}Z" fill="none" stroke="{LIGHT}" stroke-width=".7"/>',
+         rosette(h, h, 10.5)]
+    for x, y in ((0, 0), (n, 0), (0, n), (n, n)):
+        g.append(star(x, y, 11, DEEP, GOLD, 1.4) + f'<circle cx="{x}" cy="{y}" r="3.2" fill="{LIGHT}"/>')
+    for x, y in ((h / 2, h / 2), (n - h / 2, h / 2), (h / 2, n - h / 2), (n - h / 2, n - h / 2)):
+        g.append(f'<path d="M{x} {y-3.4}L{x+3.4} {y}L{x} {y+3.4}L{x-3.4} {y}Z" fill="{GOLD}"/>')
+    return f'<svg xmlns="http://www.w3.org/2000/svg" width="{n}" height="{n}" viewBox="0 0 {n} {n}">{"".join(g)}</svg>'
+
+def opening(path, width=740):
+    import base64, io
+    import numpy as np
+    from PIL import Image
+    from scipy import ndimage as nd
+    im = np.asarray(Image.open(path).convert('RGB')).astype(int)
+    blue = (im[..., 2] - im[..., 0]) > 60
+    lab, n = nd.label(blue)
+    fld = lab == 1 + int(np.argmax(nd.sum(blue, lab, range(1, n + 1))))   # the big field, without the verse markers
+    er = lambda k: nd.binary_erosion(fld, iterations=k)
+    grow = nd.binary_dilation(fld, iterations=2)                            # over the soft edge of the print
+    rim = (grow & ~er(6)) | (er(11) & ~er(13))
+    def png(mask):
+        a = Image.fromarray((mask * 255).astype(np.uint8))
+        a = a.resize((width, round(width * a.height / a.width)), Image.LANCZOS)
+        p = a.point(lambda v: min(3, v // 52)).convert('P')                 # four levels of alpha, two bits a pixel
+        p.putpalette([0] * 12)
+        b = io.BytesIO(); p.save(b, 'PNG', optimize=True, bits=2, transparency=bytes([0, 85, 170, 255]))
+        return 'url("data:image/png;base64,' + base64.b64encode(b.getvalue()).decode() + '")'
+    return uri(tile()), png(grow), png(rim)
+
 if __name__ == '__main__':
+    if len(sys.argv) > 2 and sys.argv[1] == 'opening':
+        for name, v in zip(('tile', 'field', 'rim'), opening(sys.argv[2])):
+            print(f'--{name}:{v};')
+        sys.exit()
     s = svg()
     if len(sys.argv) > 1:
         open(sys.argv[1], 'w', encoding='utf-8').write(s)
-    print('url("data:image/svg+xml,' + urllib.parse.quote(s, safe="/:=,;()' ").replace('"', '%22') + '")')
+    print(uri(s))
