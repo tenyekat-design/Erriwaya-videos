@@ -168,11 +168,70 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
   td.d small{font-size:.74em}
 }
 @media (prefers-reduced-motion:no-preference){.cell,.times li{transition:background-color .15s,border-color .15s}}
+
+/* ---------- app shell: bottom tabs + library views ---------- */
+@font-face{font-family:"warsh10";src:url("fonts/warsh10.woff2") format("woff2");font-display:swap}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+.view[hidden]{display:none!important}
+.tabs{position:fixed;inset:auto 0 0 0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs a{display:grid;justify-items:center;gap:1px;padding:7px 2px 6px;color:var(--muted);text-decoration:none;font-size:.74rem;font-weight:500}
+.tabs a svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabs a[aria-current="page"]{color:var(--green);font-weight:700}
+.tabs a[aria-current="page"] svg{stroke-width:2.2}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);display:flex;align-items:center;gap:10px;padding-block:10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.bar h2{font-size:1.15rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .back{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.2rem;line-height:1;flex:none;text-decoration:none;color:var(--ink);display:grid;place-items:center}
+.lib-h{display:grid;gap:4px}
+.lib-h h1{font-size:1.4rem;color:var(--green)}
+.lib-h p{margin:0;color:var(--muted);font-size:.88rem}
+.search{width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;font-size:1rem}
+.search:focus{border-color:var(--green);outline:none}
+.list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.list li+li{border-top:1px solid var(--line)}
+.list a{display:flex;align-items:center;gap:12px;padding:11px 14px;color:inherit;text-decoration:none}
+.list a:active{background:var(--green-soft)}
+.list .no{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:var(--green-soft);color:var(--green);font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+.list .nm{flex:1;min-width:0;font-weight:600}
+.list .nm small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.list .meta2{flex:none;color:var(--muted);font-size:.8rem;text-align:left;font-variant-numeric:tabular-nums}
+.resume{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--green);color:var(--on-green);border-radius:12px;padding:12px 16px;text-decoration:none}
+.resume b{font-family:var(--f-display)}
+.row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row2 input[type=number]{width:7em}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+
+/* mushaf */
+.mushaf{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+.sura-head{border:2px solid var(--gold);border-radius:10px;text-align:center;padding:8px;margin-bottom:10px;font-family:var(--f-display);font-weight:700;color:var(--green);background:var(--gold-soft)}
+.sura-head small{display:block;font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.78rem}
+.basmala{font-family:"warsh10",serif;text-align:center;font-size:calc(var(--qs,26px) * 1.05);margin:4px 0 8px}
+.qtext{font-family:"warsh10",serif;font-size:var(--qs,26px);line-height:2.15;text-align:justify;text-align-last:center;margin:0}
+.ay{border-radius:6px;cursor:pointer}
+.ay.mark{background:var(--gold-soft);box-shadow:0 0 0 2px var(--gold-soft)}
+.pg{display:block;text-align:center;font-family:var(--f-body);font-size:.72rem;color:var(--muted);margin:6px 0;line-height:1.4}
+.pg::before,.pg::after{content:"";display:inline-block;width:28%;height:1px;background:var(--line);vertical-align:middle;margin:0 8px}
+.pager{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+.pager a{flex:1;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px;color:inherit;text-decoration:none;font-weight:600}
+.fs{display:flex;gap:4px}
+.fs button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:700}
+.hits{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.hits a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:inherit;text-decoration:none}
+.hits .q{font-family:"warsh10",serif;font-size:1.25rem;line-height:1.9}
+.hits small{color:var(--green);font-weight:600}
+
+/* hadith + hisn */
+.hd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;scroll-margin-top:70px}
+.hd.mark{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
+.hd .n{display:inline-block;background:var(--green-soft);color:var(--green);font-weight:700;border-radius:6px;padding:0 8px;font-size:.82rem;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.hd p{margin:0;font-size:var(--hs,1.06rem);line-height:2;white-space:pre-line}
+.hd .fn{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);color:var(--muted);font-size:.8rem;line-height:1.7}
+.stack{display:grid;gap:10px}
+.src{color:var(--muted);font-size:.78rem;text-align:center;margin:6px 0 0}
 </style>
 </head>
 <body>
 
-<div class="wrap" dir="rtl" lang="ar">
+<div class="wrap view" id="v-cal" dir="rtl" lang="ar">
   <header class="top">
     <div class="brand">
       <svg viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="10" fill="var(--green)"/><path d="M10 17a12 12 0 0 0 24 0a12 10 0 0 1-24 0z" fill="var(--gold)"/><path d="M22 7l1.7 4.6 4.9.2-3.8 3 1.3 4.7L22 16.8l-4.1 2.7 1.3-4.7-3.8-3 4.9-.2z" fill="var(--gold)"/><rect y="0" width="44" height="4" rx="2" fill="var(--red)"/><rect y="40" width="44" height="4" rx="2" fill="var(--red)"/></svg>
@@ -246,6 +305,18 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
 
   <footer>موريتانيا على توقيت غرينتش طوال السنة، دون توقيت صيفي.</footer>
 </div>
+
+<main class="view wrap" id="v-quran" dir="rtl" lang="ar" hidden></main>
+<main class="view wrap" id="v-hadith" dir="rtl" lang="ar" hidden></main>
+<main class="view wrap" id="v-hisn" dir="rtl" lang="ar" hidden></main>
+
+<nav class="tabs" dir="rtl" lang="ar" aria-label="الأقسام">
+  <a href="#cal" data-v="cal"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>التقويم</a>
+  <a href="#quran" data-v="quran"><svg viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 3.5 5v13.5C7 18 10 18.5 12 20c2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5zM12 6.5V20"/></svg>المصحف</a>
+  <a href="#bukhari" data-v="bukhari"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/></svg>البخاري</a>
+  <a href="#muwatta" data-v="muwatta"><svg viewBox="0 0 24 24"><path d="M4 5.5h7v14H4zM13 5.5h7v14h-7z"/><path d="M6.5 9h2M15.5 9h2"/></svg>الموطأ</a>
+  <a href="#hisn" data-v="hisn"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>الحصن</a>
+</nav>
 
 <script>
 (function(){
@@ -483,6 +554,157 @@ $('cG').value=`${n0.y}-${pad(n0.m)}-${pad(n0.d)}`;$('cHd').value=10;$('cHm').val
 allRender();
 let lastToday=S.sel;
 setInterval(()=>{const tj=todayJdn();if(tj!==lastToday){const follow=S.sel===lastToday;lastToday=tj;if(follow){select(tj,true);return}renderCal()}tick()},1000);
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const st={get(k,d){try{const v=localStorage.getItem('mrapp.'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('mrapp.'+k,JSON.stringify(v))}catch(e){}}};
+const norm=s=>s.replace(/[ؐ-ًؚ-ٰٟۖ-ۭ࣓-ࣿـ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[٠-٩]/g,'').replace(/\s+/g,' ').trim();
+
+/* ---------- data files: data/<key>.js calls DATA_LOADED(key, payload) ---------- */
+const loaded={},waiting={};
+window.DATA_LOADED=(k,v)=>{loaded[k]=v;(waiting[k]||[]).forEach(f=>f.ok(v));delete waiting[k]};
+function need(k){
+  if(loaded[k])return Promise.resolve(loaded[k]);
+  return new Promise((ok,fail)=>{
+    const first=!waiting[k];(waiting[k]=waiting[k]||[]).push({ok,fail});
+    if(first){const s=document.createElement('script');s.src='data/'+k+'.js';s.onerror=()=>{(waiting[k]||[]).forEach(f=>f.fail());delete waiting[k];s.remove()};document.head.appendChild(s)}
+  });
+}
+const loading=el=>{el.innerHTML='<p class="empty">جارٍ التحميل…</p>'};
+const failed=el=>{el.innerHTML='<p class="empty">تعذّر تحميل البيانات. أعد المحاولة.</p>'};
+const bar=(back,title,extra='')=>`<div class="bar"><a class="back" href="${back}" aria-label="رجوع">›</a><h2>${title}</h2>${extra}</div>`;
+
+/* ---------- Quran (Warsh) ---------- */
+let qSize=st.get('qs',26),qIndex=null;
+function quranList(el){
+  loading(el);
+  need('quran').then(Q=>{
+    const last=st.get('lastAya',null);
+    el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>برواية ورش عن نافع من طريق الأزرق · العدّ المدني الأخير (6214 آية)</p></div>
+      ${last?`<a class="resume" href="#sura-${last[0]}-${last[1]}"><span>متابعة القراءة<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]}</b></span><span>‹</span></a>`:''}
+      <input class="search" id="qSearch" type="search" placeholder="ابحث عن سورة أو كلمة في الآيات" autocomplete="off">
+      <div id="qOut"></div>
+      <p class="src">النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (الإصدار 10)</p>`;
+    const out=$('qOut');
+    const listHtml=filter=>{
+      const items=Q.suras.map((s,i)=>({s,i})).filter(({s,i})=>!filter||norm(s.n).includes(filter)||String(i+1)===filter);
+      return items.length?`<ul class="list">${items.map(({s,i})=>`<li><a href="#sura-${i+1}"><span class="no">${i+1}</span><span class="nm">سورة ${esc(s.n)}<small>${s.v.length} آية · الجزء ${s.v[0][2]}</small></span><span class="meta2">ص ${s.v[0][1]}</span></a></li>`).join('')}</ul>`:'';
+    };
+    const run=()=>{
+      const q=norm($('qSearch').value);
+      let html=listHtml(q);
+      if(q.length>=3&&!/^\d+$/.test(q)){
+        if(!qIndex)qIndex=Q.suras.map(s=>s.v.map(v=>norm(v[0])));
+        const hits=[];
+        outer:for(let i=0;i<qIndex.length;i++)for(let j=0;j<qIndex[i].length;j++)if(qIndex[i][j].includes(q)){hits.push([i,j]);if(hits.length>=60)break outer}
+        html+=`<h3 style="margin:14px 0 8px;font-size:1rem">في الآيات (${hits.length>=60?'أول 60 نتيجة':hits.length+' نتيجة'})</h3>`+(hits.length?`<ul class="hits">${hits.map(([i,j])=>`<li><a href="#sura-${i+1}-${j+1}"><small>${esc(Q.suras[i].n)} · ${j+1}</small><div class="q">${esc(Q.suras[i].v[j][0])}</div></a></li>`).join('')}</ul>`:'<p class="empty">لا نتائج</p>');
+      }
+      out.innerHTML=html||'<p class="empty">لا نتائج</p>';
+    };
+    $('qSearch').addEventListener('input',run);run();
+  }).catch(()=>failed(el));
+}
+function quranRead(el,s,a){
+  loading(el);
+  need('quran').then(Q=>{
+    const S=Q.suras[s-1];if(!S){location.hash='#quran';return}
+    let body='',pg=S.v[0][1];
+    S.v.forEach((v,i)=>{
+      if(v[1]!==pg){pg=v[1];body+=`<span class="pg">صفحة ${pg}</span>`}
+      body+=`<span class="ay" data-a="${i+1}" id="ay-${i+1}">${esc(v[0])}</span> `;
+    });
+    const mark=st.get('lastAya',null);
+    el.innerHTML=bar('#quran','سورة '+esc(S.n),'<div class="fs"><button id="qMinus" aria-label="تصغير الخط">ـأ</button><button id="qPlus" aria-label="تكبير الخط">أ+</button></div>')+
+      `<article class="mushaf" style="--qs:${qSize}px"><div class="sura-head">سورة ${esc(S.n)}<small>${S.v.length} آية · الجزء ${S.v[0][2]} · صفحة ${S.v[0][1]}</small></div>
+      ${s!==9?`<div class="basmala">${esc(Q.basmala)}</div>`:''}<p class="qtext">${body}</p></article>
+      <div class="pager">${s<114?`<a href="#sura-${s+1}">‹ سورة ${esc(Q.suras[s].n)}</a>`:'<span></span>'}${s>1?`<a href="#sura-${s-1}">سورة ${esc(Q.suras[s-2].n)} ›</a>`:''}</div>
+      <p class="src">اضغط على آية لحفظ موضع القراءة</p>`;
+    const art=el.querySelector('.mushaf');
+    const setSize=d=>{qSize=Math.min(44,Math.max(18,qSize+d));st.set('qs',qSize);art.style.setProperty('--qs',qSize+'px')};
+    $('qMinus').onclick=()=>setSize(-2);$('qPlus').onclick=()=>setSize(2);
+    el.querySelector('.qtext').addEventListener('click',e=>{const sp=e.target.closest('.ay');if(!sp)return;el.querySelectorAll('.ay.mark').forEach(x=>x.classList.remove('mark'));sp.classList.add('mark');st.set('lastAya',[s,+sp.dataset.a])});
+    const target=a||(mark&&mark[0]===s?mark[1]:0);
+    if(mark&&mark[0]===s){const m=$('ay-'+mark[1]);if(m)m.classList.add('mark')}
+    if(a){const m=$('ay-'+a);if(m){el.querySelectorAll('.ay.mark').forEach(x=>x.classList.remove('mark'));m.classList.add('mark')}}
+    requestAnimationFrame(()=>{const m=target&&$('ay-'+target);if(m)window.scrollTo(0,m.getBoundingClientRect().top+window.scrollY-110);else window.scrollTo(0,0)});
+  }).catch(()=>failed(el));
+}
+
+/* ---------- Hadith collections ---------- */
+const COL={bukhari:{tab:'bukhari',sub:'للإمام محمد بن إسماعيل البخاري (ت 256 هـ) · بترقيم فتح الباري'},muwatta:{tab:'muwatta',sub:'للإمام مالك بن أنس (ت 179 هـ) · رواية يحيى بن يحيى الليثي'}};
+const hs=()=>st.get('hs',1.06);
+function hadithList(el,c){
+  loading(el);
+  need(c+'/index').then(I=>{
+    el.innerHTML=`<div class="lib-h"><h1>${esc(I.title.replace(/ \(.*\)$/,''))}</h1><p>${COL[c].sub}</p></div>
+      <div class="row2"><input class="search" id="bkFilter" type="search" placeholder="ابحث عن كتاب" autocomplete="off" style="flex-basis:100%">
+      <input class="search" id="hNum" type="number" min="1" inputmode="numeric" placeholder="رقم الحديث" style="flex:1;min-width:0"><button class="btn primary" id="hGo">اذهب</button></div>
+      <p class="empty" id="hMsg" hidden></p><div id="bkOut"></div>
+      <p class="src">النص العربي: مجموعة hadith-api المفتوحة · عناوين الكتب: sunnah.com</p>`;
+    const draw=()=>{const f=norm($('bkFilter').value);const items=I.books.filter(b=>!f||norm(b[1]).includes(f));
+      $('bkOut').innerHTML=items.length?`<ul class="list">${items.map(b=>`<li><a href="#${c}-${b[0]}"><span class="no">${b[0]}</span><span class="nm">${esc(b[1])}<small>${b[2]} حديثًا</small></span><span class="meta2">${Math.floor(b[3])}–${Math.floor(b[4])}</span></a></li>`).join('')}</ul>`:'<p class="empty">لا نتائج</p>'};
+    const go=()=>{const n=parseFloat($('hNum').value);const b=I.books.find(b=>n>=b[3]&&n<b[4]+1);if(b)location.hash=`#${c}-${b[0]}-${n}`;else{$('hMsg').hidden=false;$('hMsg').textContent=`لا يوجد حديث بهذا الرقم. الأرقام من ${I.books[0][3]} إلى ${Math.floor(I.books[I.books.length-1][4])}.`}};
+    $('bkFilter').addEventListener('input',draw);$('hGo').onclick=go;$('hNum').addEventListener('keydown',e=>{if(e.key==='Enter')go()});draw();
+  }).catch(()=>failed(el));
+}
+function hadithBook(el,c,b,n){
+  loading(el);
+  Promise.all([need(c+'/index'),need(c+'/'+b)]).then(([I,H])=>{
+    const meta=I.books.find(x=>x[0]===b);
+    const card=h=>`<article class="hd" id="h-${String(h[0]).replace('.','_')}"><span class="n">${h[0]}</span><p>${esc(h[1])}</p></article>`;
+    el.innerHTML=bar('#'+c,esc(meta?meta[1]:''),'<div class="fs"><button id="hMinus" aria-label="تصغير الخط">ـأ</button><button id="hPlus" aria-label="تكبير الخط">أ+</button></div>')+
+      `<input class="search" id="hFilter" type="search" placeholder="ابحث في أحاديث هذا الكتاب" autocomplete="off"><div class="stack" id="hOut" style="--hs:${hs()}rem">${H.map(card).join('')}</div>
+      <div class="pager">${I.books.some(x=>x[0]===b+1)?`<a href="#${c}-${b+1}">الكتاب التالي ‹</a>`:'<span></span>'}${b>1?`<a href="#${c}-${b-1}">› الكتاب السابق</a>`:''}</div>`;
+    const out=$('hOut');let nIdx=null;
+    $('hFilter').addEventListener('input',e=>{const q=norm(e.target.value);if(q.length<2){out.innerHTML=H.map(card).join('');return}if(!nIdx)nIdx=H.map(h=>norm(h[1]));const r=H.filter((h,i)=>nIdx[i].includes(q));out.innerHTML=r.length?r.map(card).join(''):'<p class="empty">لا نتائج</p>'});
+    const size=d=>{const v=Math.min(1.6,Math.max(.85,+(hs()+d).toFixed(2)));st.set('hs',v);out.style.setProperty('--hs',v+'rem')};
+    $('hMinus').onclick=()=>size(-.08);$('hPlus').onclick=()=>size(.08);
+    requestAnimationFrame(()=>{const m=n&&$('h-'+String(n).replace('.','_'));if(m){m.classList.add('mark');m.scrollIntoView()}else window.scrollTo(0,0)});
+  }).catch(()=>failed(el));
+}
+
+/* ---------- Hisn al-Muslim ---------- */
+function hisnList(el){
+  loading(el);
+  need('hisn').then(D=>{
+    el.innerHTML=`<div class="lib-h"><h1>حصن المسلم</h1><p>من أذكار الكتاب والسنة · سعيد بن علي بن وهف القحطاني</p></div>
+      <input class="search" id="zFilter" type="search" placeholder="ابحث عن ذكر: الصباح، النوم، السفر…" autocomplete="off"><div id="zOut"></div>`;
+    const draw=()=>{const f=norm($('zFilter').value);const items=D.map((d,i)=>({d,i})).filter(({d})=>!f||norm(d[0]).includes(f)||norm(d[1].join(' ')).includes(f));
+      $('zOut').innerHTML=items.length?`<ul class="list">${items.map(({d,i})=>`<li><a href="#hisn-${i+1}"><span class="no">${i+1}</span><span class="nm">${esc(d[0])}</span><span class="meta2">${d[1].length}</span></a></li>`).join('')}</ul>`:'<p class="empty">لا نتائج</p>'};
+    $('zFilter').addEventListener('input',draw);draw();
+  }).catch(()=>failed(el));
+}
+function hisnRead(el,i){
+  loading(el);
+  need('hisn').then(D=>{
+    const d=D[i-1];if(!d){location.hash='#hisn';return}
+    el.innerHTML=bar('#hisn',esc(d[0]))+`<div class="stack" style="--hs:${hs()}rem">${d[1].map((t,k)=>`<article class="hd"><span class="n">${k+1}</span><p>${esc(t)}</p></article>`).join('')}
+      ${d[2].length?`<article class="hd"><div class="fn" style="border:0;margin:0;padding:0">${d[2].map(esc).join('<br>')}</div></article>`:''}</div>
+      <div class="pager">${i<D.length?`<a href="#hisn-${i+1}">‹ ${esc(D[i][0])}</a>`:'<span></span>'}${i>1?`<a href="#hisn-${i-1}">${esc(D[i-2][0])} ›</a>`:''}</div>`;
+    window.scrollTo(0,0);
+  }).catch(()=>failed(el));
+}
+
+/* ---------- router ---------- */
+const VIEWS=['v-cal','v-quran','v-hadith','v-hisn'];
+function route(){
+  const h=location.hash.replace(/^#/,'');let m,view='v-cal',tab='cal';
+  if(h==='quran'){view='v-quran';tab='quran';quranList($('v-quran'))}
+  else if((m=h.match(/^sura-(\d+)(?:-(\d+))?$/))){view='v-quran';tab='quran';quranRead($('v-quran'),+m[1],m[2]?+m[2]:0)}
+  else if((m=h.match(/^(bukhari|muwatta)$/))){view='v-hadith';tab=m[1];hadithList($('v-hadith'),m[1])}
+  else if((m=h.match(/^(bukhari|muwatta)-(\d+)(?:-([\d.]+))?$/))){view='v-hadith';tab=m[1];hadithBook($('v-hadith'),m[1],+m[2],m[3]?parseFloat(m[3]):0)}
+  else if(h==='hisn'){view='v-hisn';tab='hisn';hisnList($('v-hisn'))}
+  else if((m=h.match(/^hisn-(\d+)$/))){view='v-hisn';tab='hisn';hisnRead($('v-hisn'),+m[1])}
+  VIEWS.forEach(v=>{const e=$(v);if(e)e.hidden=v!==view});
+  document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.v===tab)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  if(view==='v-cal')window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);route();
 })();
 </script>
 </body>
