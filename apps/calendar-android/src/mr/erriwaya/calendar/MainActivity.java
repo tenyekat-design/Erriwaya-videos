@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
@@ -22,6 +25,26 @@ public class MainActivity extends Activity {
     public class Bridge {
         @JavascriptInterface
         public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
+
+        /** "40" vibrates 40 ms; "90,70,160" is on, off, on... in ms. */
+        @JavascriptInterface
+        public void vibrate(String pattern) {
+            try {
+                Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                if (v == null || !v.hasVibrator()) return;
+                String[] p = pattern.split(",");
+                if (p.length == 1) {
+                    long ms = Long.parseLong(p[0].trim());
+                    if (Build.VERSION.SDK_INT >= 26) v.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+                    else v.vibrate(ms);
+                } else {
+                    long[] w = new long[p.length + 1];   // Android patterns start with a pause
+                    for (int i = 0; i < p.length; i++) w[i + 1] = Long.parseLong(p[i].trim());
+                    if (Build.VERSION.SDK_INT >= 26) v.vibrate(VibrationEffect.createWaveform(w, -1));
+                    else v.vibrate(w, -1);
+                }
+            } catch (Exception ignored) { }
+        }
     }
 
     @Override
@@ -33,6 +56,7 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);   // remembers the city and settings
         s.setTextZoom(100);             // keep the layout stable with large system fonts
+        s.setMediaPlaybackRequiresUserGesture(false);   // tasbih clicks also sound when counting with the volume keys
         web.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
