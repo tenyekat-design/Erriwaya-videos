@@ -362,6 +362,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-alert{display:grid;gap:8px}
 .adh-alert .pr{display:flex;flex-wrap:wrap;gap:6px 12px}
 .adh-alert label{display:inline-flex;gap:5px;align-items:center;font-size:.9rem}
+.adh-snd{display:grid;gap:6px;border:1px dashed var(--orn);border-radius:10px;padding:10px}
+.adh-snd b{color:var(--green)}
+.adh-snd span{color:var(--muted);font-size:.86rem}
 .adh-alert .warn{color:var(--red);font-size:.84rem;margin:0}
 /* ---------- qibla ---------- */
 .compass-wrap{display:grid;justify-items:center;gap:10px}
@@ -479,7 +482,14 @@ a.hd.hit small{color:var(--gold);font-weight:600}
       <div class="adh-alert" id="adhAlert" hidden>
         <div class="row" style="margin:0"><label for="adhOn">تنبيه الأذان</label><label><input type="checkbox" id="adhOn"> عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا</label></div>
         <div class="pr" id="adhPr"></div>
-        <div class="row2"><button class="btn" id="adhTest">جرّب التنبيه الآن</button></div>
+        <div class="adh-snd">
+          <div><b>صوت الأذان</b> <span id="sndMain"></span></div>
+          <div class="row2"><button class="btn primary" id="pickMain">اختر تسجيل الأذان من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
+          <div><b>أذان الفجر</b> <span id="sndFajr"></span></div>
+          <div class="row2"><button class="btn" id="pickFajr">اختر تسجيلًا خاصًا بالفجر</button><button class="btn" id="clrFajr" hidden>حذف</button></div>
+        </div>
+        <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان الآن</button><button class="btn" id="adhStop">إيقاف</button></div>
+        <p class="note">اختر ملفًّا صوتيًّا لأذان مالكي محفوظًا في هاتفك (mp3 أو m4a…). يُنسخ داخل التطبيق ويُرفع به الأذان كاملًا بصوت المنبّه عند دخول كل وقت، مع زر «إيقاف الأذان» في الإشعار. ودون تسجيل يرنّ التنبيه بنغمة المنبّه.</p>
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
       </div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
@@ -756,7 +766,7 @@ function pushAdhan(){
     const c=city(),t0=todayJdn();
     for(let d=0;d<14;d++){const g=gOf(t0+d),t=prayerTimes(g.y,g.m,g.d,c);
       for(const k of Object.keys(ADN)){if(!AD.p[k])continue;const mins=Math.floor(fix(t[k]+.5/60,24)*60);
-        list.push([Date.UTC(g.y,g.m-1,g.d)+mins*60000,`أذان ${ADN[k]} · ${fmt(t[k])}`,`حان وقت صلاة ${ADN[k]} في ${c.name}. ${k==='fajr'?'الصلاة خير من النوم.':'حيّ على الصلاة، حيّ على الفلاح.'}`])}}
+        list.push([Date.UTC(g.y,g.m-1,g.d)+mins*60000,`أذان ${ADN[k]} · ${fmt(t[k])}`,`حان وقت صلاة ${ADN[k]} في ${c.name}. ${k==='fajr'?'الصلاة خير من النوم.':'حيّ على الصلاة، حيّ على الفلاح.'}`,k==='fajr'])}}
   }
   try{A.setAdhanSchedule(JSON.stringify(list))}catch(e){}
 }
@@ -768,7 +778,18 @@ function pushAdhan(){
   const warn=()=>{try{$('adhWarn').hidden=!AD.on||A.notificationsAllowed()}catch(e){}};
   $('adhOn').addEventListener('change',e=>{AD.on=e.target.checked;store.set('adhan',AD);if(AD.on)try{A.requestNotifications()}catch(x){}pushAdhan();setTimeout(warn,1500)});
   $('adhPr').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;AD.p[k]=e.target.checked;store.set('adhan',AD);pushAdhan()});
-  $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يصلك التنبيه عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
+  $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يُرفع الأذان عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
+  const has=k=>{try{return A.hasAdhan(k)}catch(e){return false}};
+  const showSnd=()=>{const m=has('adhan'),f=has('fajr');
+    $('sndMain').textContent=m?': تسجيلك':': نغمة المنبّه (لم يُختر تسجيل)';$('clrMain').hidden=!m;
+    $('sndFajr').textContent=f?': تسجيلك الخاص بالفجر':(m?': التسجيل نفسه':': نغمة المنبّه');$('clrFajr').hidden=!f};
+  if(typeof A.pickAdhan==='function'){
+    $('pickMain').onclick=()=>A.pickAdhan('adhan');$('pickFajr').onclick=()=>A.pickAdhan('fajr');
+    $('clrMain').onclick=()=>{A.clearAdhan('adhan');showSnd()};$('clrFajr').onclick=()=>{A.clearAdhan('fajr');showSnd()};
+    $('adhStop').onclick=()=>{try{A.stopAdhan()}catch(e){}};
+    window.onAdhanPicked=(k,ok)=>{showSnd();$('adhWarn').hidden=ok;if(!ok){$('adhWarn').hidden=false;$('adhWarn').textContent='تعذّر نسخ الملف. جرّب ملفًّا صوتيًّا آخر (mp3 أو m4a).'}};
+    showSnd();
+  }else{document.querySelector('.adh-snd').hidden=true;$('adhStop').hidden=true}
   warn();
 })();
 /* ---------- boot ---------- */
@@ -824,7 +845,7 @@ function quranList(el){
   el.classList.remove('paged');setQF(el);loading(el);
   need(qkey()).then(Q=>{
     const last=st.get('lastAya.'+rw,null),R_=RW[rw];
-    el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>${rw==='warsh'?`<span class="mgh">${R_.d}</span>`:R_.d} · ${R_.v} آية · 604 صفحات</p></div>
+    el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>${rw==='warsh'?R_.d.replace('ورش','<span class="mgh">ورش</span>'):R_.d} · ${R_.v} آية · 604 صفحات</p></div>
       <div class="seg3" role="group" aria-label="الرواية">${Object.entries(RW).map(([k,x])=>`<button data-rw="${k}" aria-pressed="${k===rw}">${k==='warsh'?`<span class="mgh">${x.n}</span>`:x.n}<small>${k==='hafs'?'عن عاصم':'عن نافع'}</small></button>`).join('')}</div>
       ${last&&last[2]?`<a class="resume" href="#page-${last[2]}-${last[0]}-${last[1]}"><span>متابعة القراءة · ${R_.n}<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]} · صفحة ${last[2]}</b></span><span>‹</span></a>`:''}
       <div class="seg2" role="group" aria-label="طريقة العرض"><button id="lmS" aria-pressed="${listMode==='s'}">السور</button><button id="lmJ" aria-pressed="${listMode==='j'}">الأجزاء</button></div>
@@ -879,7 +900,7 @@ function quranPage(el,p,s,a){
     const [s0,a0]=items[0],juz=Q.suras[s0-1].v[a0-1][2];
     const names=[...new Set(items.map(x=>x[0]))].map(x=>Q.suras[x-1].n);
     const L=p<=2?(Q.lines[p]||8):Math.max(15,Q.lines[p]||15);
-    el.innerHTML=bar('#quran',`${rw==='warsh'?`<span class="mgh">${RW[rw].full}</span>`:RW[rw].full}<small>صفحة ${p}</small>`)+
+    el.innerHTML=bar('#quran',`${rw==='warsh'?RW[rw].full.replace('ورش','<span class="mgh">ورش</span>'):RW[rw].full}<small>صفحة ${p}</small>`)+
       `<div class="page${rw==='warsh'?' w':''}" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}<i></i>الجزء ${juz}</span>
         <div class="pbody">${body}</div><span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}

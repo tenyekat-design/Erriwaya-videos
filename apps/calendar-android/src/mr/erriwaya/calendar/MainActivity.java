@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     private WebView web;
     /** True while the tasbih page asks to count with the volume keys. */
     private volatile boolean volumeKeysCount = false;
+    private volatile String pickKind = "adhan";
     /** Tasbih sounds (assets/sounds/*.wav), played natively for a reliable, low-latency click. */
     private SoundPool pool;
     private int sClick, sClick2, sChime;
@@ -48,9 +49,28 @@ public class MainActivity extends Activity {
                     || checkSelfPermission("android.permission.POST_NOTIFICATIONS") == android.content.pm.PackageManager.PERMISSION_GRANTED;
         }
 
-        /** Shows a test alert now, so the user can hear the adhan sound. */
+        /** Raises the adhan now, so the user can hear it. */
         @JavascriptInterface
-        public void testAdhan(String title, String text) { AdhanReceiver.notify(MainActivity.this, title, text); }
+        public void testAdhan(String title, String text) { AdhanReceiver.fire(MainActivity.this, title, text, false); }
+
+        @JavascriptInterface
+        public void stopAdhan() { AdhanReceiver.stop(MainActivity.this); }
+
+        /** Opens the phone's file picker for an adhan recording ("adhan" or "fajr"). */
+        @JavascriptInterface
+        public void pickAdhan(String kind) {
+            pickKind = "fajr".equals(kind) ? "fajr" : "adhan";
+            runOnUiThread(() -> {
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT).setType("audio/*").addCategory(Intent.CATEGORY_OPENABLE);
+                try { startActivityForResult(Intent.createChooser(i, "اختر تسجيل الأذان"), 42); } catch (Exception ignored) { }
+            });
+        }
+
+        @JavascriptInterface
+        public boolean hasAdhan(String kind) { return AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).exists(); }
+
+        @JavascriptInterface
+        public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
         /** click, click2 (every tenth) or chime (count complete). */
         @JavascriptInterface
@@ -117,6 +137,16 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         web.saveState(out);
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        super.onActivityResult(req, res, data);
+        if (req != 42) return;
+        final String kind = pickKind;
+        final boolean ok = res == RESULT_OK && data != null && data.getData() != null
+                && AdhanReceiver.saveAudio(this, data.getData(), "fajr".equals(kind));
+        web.evaluateJavascript("window.onAdhanPicked&&window.onAdhanPicked('" + kind + "'," + ok + ")", null);
     }
 
     @Override
