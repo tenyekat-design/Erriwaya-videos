@@ -183,7 +183,6 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
 /* ---------- Islamic theme: ornament tiles (gold line work) ---------- */
 @font-face{font-family:"warsh10";src:url("fonts/warsh10.woff2") format("woff2");font-display:block}
 @font-face{font-family:"qaloon10";src:url("fonts/qaloon10.woff2") format("woff2");font-display:block}
-@font-face{font-family:"maghribi";src:url("fonts/maghribi.woff2") format("woff2");font-display:swap}
 @font-face{font-family:"hafs18";src:url("fonts/hafs18.woff2") format("woff2");font-display:block}
 :root{
   --khatam:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23C9A44C' stroke-width='1.1'%3E%3Cpath d='M28 11L45 28 28 45 11 28Z'/%3E%3Cpath d='M16 16H40V40H16Z'/%3E%3Ccircle cx='28' cy='28' r='5'/%3E%3Cpath d='M28 0V11M28 45V56M0 28H11M45 28H56M0 0L16 16M56 0L40 16M0 56L16 40M56 56L40 40'/%3E%3C/g%3E%3C/svg%3E");
@@ -214,7 +213,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* ---------- shared library pieces ---------- */
 .bar{display:flex;align-items:center;gap:10px;padding-block:4px 10px;border-bottom:1px solid var(--line)}
 .bar h2{font-family:var(--f-naskh);font-weight:700;font-size:1.25rem;flex:1;min-width:0;overflow:visible;white-space:normal;text-wrap:balance;color:var(--green);line-height:1.9;padding-block:2px 6px}
-.bar h2 small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.78rem;margin-right:6px}
+.bar h2 small{display:inline-block;font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.78rem;margin-right:6px}
 .bar .back{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.2rem;line-height:1;flex:none;text-decoration:none;color:var(--ink);display:grid;place-items:center}
 .lib-h{display:grid;gap:2px;justify-items:center;text-align:center;padding-top:4px}
 .lib-h h1{font-size:1.5rem;color:var(--green)}
@@ -271,21 +270,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hits .q{font-family:var(--qf);font-size:1.25rem;line-height:1.9}
 .hits small{color:var(--green);font-weight:600}
 
-/* Warsh is named, and its surah headings set, in Maghribi script (Bouazzi Maghribi, OFL); the verses keep the Complex's Warsh font */
-.mgh{font-family:"maghribi",var(--f-naskh);font-size:1.22em;font-weight:400;letter-spacing:.2px}
-.page.w .plabel,.page.w .cart .mid{font-family:var(--f-naskh);font-weight:700}
-.page.w .plabel{font-size:.86rem}
-.page.w .cart .mid{font-size:max(.95rem,min(1.35rem,calc(var(--lh,40px)*.5)))}
-
- 
-/* Mohammadi Mushaf: a Maghribi zellige frame around the page image */
-.page.z{border-width:22px;border-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22144%22 height=%22144%22 viewBox=%220 0 144 144%22%3E%3Cpath fill-rule=%22evenodd%22 fill=%22%23F7EED8%22 d=%22M0 0H144V144H0Z M36 36V108H108V36Z%22/%3E%3Crect x=%221%22 y=%221%22 width=%22142%22 height=%22142%22 fill=%22none%22 stroke=%22%238E6B1E%22 stroke-width=%222%22/%3E%3Crect x=%224%22 y=%224%22 width=%22136%22 height=%22136%22 fill=%22none%22 stroke=%22%238E2A22%22 stroke-width=%221%22/%3E%3Crect x=%2232%22 y=%2232%22 width=%2280%22 height=%2280%22 fill=%22none%22 stroke=%22%238E2A22%22 stroke-width=%221%22/%3E%3Crect x=%2235%22 y=%2235%22 width=%2274%22 height=%2274%22 fill=%22none%22 stroke=%22%238E6B1E%22 stroke-width=%222%22/%3E%3Cpath d=%22M45.00 9.40 L46.76 13.75 L51.08 11.92 L49.25 16.24 L53.60 18.00 L49.25 19.76 L51.08 24.08 L46.76 22.25 L45.00 26.60 L43.24 22.25 L38.92 24.08 L40.75 19.76 L36.40 18.00 L40.75 16.24 L38.92 11.92 L43.24 13.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2245%22 cy=%2218.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M45.00 117.40 L46.76 121.75 L51.08 119.92 L49.25 124.24 L53.60 126.00 L49.25 127.76 L51.08 132.08 L46.76 130.25 L45.00 134.60 L43.24 130.25 L38.92 132.08 L40.75 127.76 L36.40 126.00 L40.75 124.24 L38.92 119.92 L43.24 121.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2245%22 cy=%22126.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M18.00 36.40 L19.76 40.75 L24.08 38.92 L22.25 43.24 L26.60 45.00 L22.25 46.76 L24.08 51.08 L19.76 49.25 L18.00 53.60 L16.24 49.25 L11.92 51.08 L13.75 46.76 L9.40 45.00 L13.75 43.24 L11.92 38.92 L16.24 40.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2218.0%22 cy=%2245%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M126.00 36.40 L127.76 40.75 L132.08 38.92 L130.25 43.24 L134.60 45.00 L130.25 46.76 L132.08 51.08 L127.76 49.25 L126.00 53.60 L124.24 49.25 L119.92 51.08 L121.75 46.76 L117.40 45.00 L121.75 43.24 L119.92 38.92 L124.24 40.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%22126.0%22 cy=%2245%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M63.00 9.40 L64.76 13.75 L69.08 11.92 L67.25 16.24 L71.60 18.00 L67.25 19.76 L69.08 24.08 L64.76 22.25 L63.00 26.60 L61.24 22.25 L56.92 24.08 L58.75 19.76 L54.40 18.00 L58.75 16.24 L56.92 11.92 L61.24 13.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2263%22 cy=%2218.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M63.00 117.40 L64.76 121.75 L69.08 119.92 L67.25 124.24 L71.60 126.00 L67.25 127.76 L69.08 132.08 L64.76 130.25 L63.00 134.60 L61.24 130.25 L56.92 132.08 L58.75 127.76 L54.40 126.00 L58.75 124.24 L56.92 119.92 L61.24 121.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2263%22 cy=%22126.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M18.00 54.40 L19.76 58.75 L24.08 56.92 L22.25 61.24 L26.60 63.00 L22.25 64.76 L24.08 69.08 L19.76 67.25 L18.00 71.60 L16.24 67.25 L11.92 69.08 L13.75 64.76 L9.40 63.00 L13.75 61.24 L11.92 56.92 L16.24 58.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2218.0%22 cy=%2263%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M126.00 54.40 L127.76 58.75 L132.08 56.92 L130.25 61.24 L134.60 63.00 L130.25 64.76 L132.08 69.08 L127.76 67.25 L126.00 71.60 L124.24 67.25 L119.92 69.08 L121.75 64.76 L117.40 63.00 L121.75 61.24 L119.92 56.92 L124.24 58.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%22126.0%22 cy=%2263%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M81.00 9.40 L82.76 13.75 L87.08 11.92 L85.25 16.24 L89.60 18.00 L85.25 19.76 L87.08 24.08 L82.76 22.25 L81.00 26.60 L79.24 22.25 L74.92 24.08 L76.75 19.76 L72.40 18.00 L76.75 16.24 L74.92 11.92 L79.24 13.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2281%22 cy=%2218.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M81.00 117.40 L82.76 121.75 L87.08 119.92 L85.25 124.24 L89.60 126.00 L85.25 127.76 L87.08 132.08 L82.76 130.25 L81.00 134.60 L79.24 130.25 L74.92 132.08 L76.75 127.76 L72.40 126.00 L76.75 124.24 L74.92 119.92 L79.24 121.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2281%22 cy=%22126.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M18.00 72.40 L19.76 76.75 L24.08 74.92 L22.25 79.24 L26.60 81.00 L22.25 82.76 L24.08 87.08 L19.76 85.25 L18.00 89.60 L16.24 85.25 L11.92 87.08 L13.75 82.76 L9.40 81.00 L13.75 79.24 L11.92 74.92 L16.24 76.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2218.0%22 cy=%2281%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M126.00 72.40 L127.76 76.75 L132.08 74.92 L130.25 79.24 L134.60 81.00 L130.25 82.76 L132.08 87.08 L127.76 85.25 L126.00 89.60 L124.24 85.25 L119.92 87.08 L121.75 82.76 L117.40 81.00 L121.75 79.24 L119.92 74.92 L124.24 76.75Z%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%22126.0%22 cy=%2281%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M99.00 9.40 L100.76 13.75 L105.08 11.92 L103.25 16.24 L107.60 18.00 L103.25 19.76 L105.08 24.08 L100.76 22.25 L99.00 26.60 L97.24 22.25 L92.92 24.08 L94.75 19.76 L90.40 18.00 L94.75 16.24 L92.92 11.92 L97.24 13.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2299%22 cy=%2218.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M99.00 117.40 L100.76 121.75 L105.08 119.92 L103.25 124.24 L107.60 126.00 L103.25 127.76 L105.08 132.08 L100.76 130.25 L99.00 134.60 L97.24 130.25 L92.92 132.08 L94.75 127.76 L90.40 126.00 L94.75 124.24 L92.92 119.92 L97.24 121.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2299%22 cy=%22126.0%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M18.00 90.40 L19.76 94.75 L24.08 92.92 L22.25 97.24 L26.60 99.00 L22.25 100.76 L24.08 105.08 L19.76 103.25 L18.00 107.60 L16.24 103.25 L11.92 105.08 L13.75 100.76 L9.40 99.00 L13.75 97.24 L11.92 92.92 L16.24 94.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%2218.0%22 cy=%2299%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M126.00 90.40 L127.76 94.75 L132.08 92.92 L130.25 97.24 L134.60 99.00 L130.25 100.76 L132.08 105.08 L127.76 103.25 L126.00 107.60 L124.24 103.25 L119.92 105.08 L121.75 100.76 L117.40 99.00 L121.75 97.24 L119.92 92.92 L124.24 94.75Z%22 fill=%22%238E2A22%22 stroke=%22%23C9A44C%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%22126.0%22 cy=%2299%22 r=%222%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M36 13.0L38.2 18.0L36 23.0L33.8 18.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M36 121.0L38.2 126.0L36 131.0L33.8 126.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M13.0 36L18.0 38.2L23.0 36L18.0 33.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M121.0 36L126.0 38.2L131.0 36L126.0 33.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M54 13.0L56.2 18.0L54 23.0L51.8 18.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M54 121.0L56.2 126.0L54 131.0L51.8 126.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M13.0 54L18.0 56.2L23.0 54L18.0 51.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M121.0 54L126.0 56.2L131.0 54L126.0 51.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M72 13.0L74.2 18.0L72 23.0L69.8 18.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M72 121.0L74.2 126.0L72 131.0L69.8 126.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M13.0 72L18.0 74.2L23.0 72L18.0 69.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M121.0 72L126.0 74.2L131.0 72L126.0 69.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M90 13.0L92.2 18.0L90 23.0L87.8 18.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M90 121.0L92.2 126.0L90 131.0L87.8 126.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M13.0 90L18.0 92.2L23.0 90L18.0 87.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M121.0 90L126.0 92.2L131.0 90L126.0 87.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M108 13.0L110.2 18.0L108 23.0L105.8 18.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M108 121.0L110.2 126.0L108 131.0L105.8 126.0Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M13.0 108L18.0 110.2L23.0 108L18.0 105.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M121.0 108L126.0 110.2L131.0 108L126.0 105.8Z%22 fill=%22%231E4E6B%22/%3E%3Cpath d=%22M36 11.5H108 M36 119.5H108 M11.5 36V108 M119.5 36V108%22 stroke=%22%23C9A44C%22 stroke-width=%22.6%22 opacity=%22.7%22/%3E%3Cpath d=%22M36 24.5H108 M36 132.5H108 M24.5 36V108 M132.5 36V108%22 stroke=%22%23C9A44C%22 stroke-width=%22.6%22 opacity=%22.7%22/%3E%3Crect x=%225.0%22 y=%225.0%22 width=%2226%22 height=%2226%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%221%22/%3E%3Cpath d=%22M18.00 4.50 L21.06 10.61 L27.55 8.45 L25.39 14.94 L31.50 18.00 L25.39 21.06 L27.55 27.55 L21.06 25.39 L18.00 31.50 L14.94 25.39 L8.45 27.55 L10.61 21.06 L4.50 18.00 L10.61 14.94 L8.45 8.45 L14.94 10.61Z%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M19.66 9.66 L20.78 13.84 L25.07 13.28 L22.90 17.02 L26.34 19.66 L22.16 20.78 L22.72 25.07 L18.98 22.90 L16.34 26.34 L15.22 22.16 L10.93 22.72 L13.10 18.98 L9.66 16.34 L13.84 15.22 L13.28 10.93 L17.02 13.10Z%22 fill=%22%238E2A22%22/%3E%3Ccircle cx=%2218.0%22 cy=%2218.0%22 r=%222.6%22 fill=%22%23F7EED8%22/%3E%3Crect x=%22113.0%22 y=%225.0%22 width=%2226%22 height=%2226%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%221%22/%3E%3Cpath d=%22M126.00 4.50 L129.06 10.61 L135.55 8.45 L133.39 14.94 L139.50 18.00 L133.39 21.06 L135.55 27.55 L129.06 25.39 L126.00 31.50 L122.94 25.39 L116.45 27.55 L118.61 21.06 L112.50 18.00 L118.61 14.94 L116.45 8.45 L122.94 10.61Z%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M127.66 9.66 L128.78 13.84 L133.07 13.28 L130.90 17.02 L134.34 19.66 L130.16 20.78 L130.72 25.07 L126.98 22.90 L124.34 26.34 L123.22 22.16 L118.93 22.72 L121.10 18.98 L117.66 16.34 L121.84 15.22 L121.28 10.93 L125.02 13.10Z%22 fill=%22%238E2A22%22/%3E%3Ccircle cx=%22126.0%22 cy=%2218.0%22 r=%222.6%22 fill=%22%23F7EED8%22/%3E%3Crect x=%225.0%22 y=%22113.0%22 width=%2226%22 height=%2226%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%221%22/%3E%3Cpath d=%22M18.00 112.50 L21.06 118.61 L27.55 116.45 L25.39 122.94 L31.50 126.00 L25.39 129.06 L27.55 135.55 L21.06 133.39 L18.00 139.50 L14.94 133.39 L8.45 135.55 L10.61 129.06 L4.50 126.00 L10.61 122.94 L8.45 116.45 L14.94 118.61Z%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M19.66 117.66 L20.78 121.84 L25.07 121.28 L22.90 125.02 L26.34 127.66 L22.16 128.78 L22.72 133.07 L18.98 130.90 L16.34 134.34 L15.22 130.16 L10.93 130.72 L13.10 126.98 L9.66 124.34 L13.84 123.22 L13.28 118.93 L17.02 121.10Z%22 fill=%22%238E2A22%22/%3E%3Ccircle cx=%2218.0%22 cy=%22126.0%22 r=%222.6%22 fill=%22%23F7EED8%22/%3E%3Crect x=%22113.0%22 y=%22113.0%22 width=%2226%22 height=%2226%22 fill=%22%230F5641%22 stroke=%22%23C9A44C%22 stroke-width=%221%22/%3E%3Cpath d=%22M126.00 112.50 L129.06 118.61 L135.55 116.45 L133.39 122.94 L139.50 126.00 L133.39 129.06 L135.55 135.55 L129.06 133.39 L126.00 139.50 L122.94 133.39 L116.45 135.55 L118.61 129.06 L112.50 126.00 L118.61 122.94 L116.45 116.45 L122.94 118.61Z%22 fill=%22%23C9A44C%22/%3E%3Cpath d=%22M127.66 117.66 L128.78 121.84 L133.07 121.28 L130.90 125.02 L134.34 127.66 L130.16 128.78 L130.72 133.07 L126.98 130.90 L124.34 134.34 L123.22 130.16 L118.93 130.72 L121.10 126.98 L117.66 124.34 L121.84 123.22 L121.28 118.93 L125.02 121.10Z%22 fill=%22%238E2A22%22/%3E%3Ccircle cx=%22126.0%22 cy=%22126.0%22 r=%222.6%22 fill=%22%23F7EED8%22/%3E%3C/svg%3E") 36 round;background:#FFFDF6;padding:10px 6px 14px}
-.page.z::before{border-color:#8E2A22;opacity:.4}
-.page.z .plabel{top:-25px;background:linear-gradient(#9B2C24,#741F19);border-color:#C9A44C;color:#F7EED8;font-family:var(--f-naskh);font-weight:700;font-size:.8rem}
-.page.z .pmed{bottom:-33px}
-.pimg{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
-.pimg img{max-width:100%;max-height:100%;object-fit:contain;display:block}
-.pimg .empty{padding:12px;line-height:1.9}
 /* ---------- hadith + hisn ---------- */
 .hd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;scroll-margin-top:70px}
 .hd.mark{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
@@ -836,14 +820,14 @@ const bar=(back,title,extra='')=>`<div class="bar"><a class="back" href="${back}
 
 /* ---------- Quran: Warsh, Qalun, Hafs — page by page ---------- */
 const RW={
-  warsh:{n:'ورش',full:'رواية ورش عن نافع',f:'warsh10',d:'برواية ورش عن نافع من طريق الأزرق · العدّ المدني الأخير',v:'6214',ver:'الإصدار 10'},
+  warsh:{n:'ورش',full:'رواية ورش عن نافع',f:'warsh10',d:'برواية ورش عن نافع من طريق الأزرق · بالخط المغربي · العدّ المدني الأخير',v:'6214',ver:'mushaf.ma'},
   qaloon:{n:'قالون',full:'رواية قالون عن نافع',f:'qaloon10',d:'برواية قالون عن نافع · العدّ المدني الأخير',v:'6214',ver:'الإصدار 10'},
-  mohammadi:{n:'المحمدي',full:'المصحف المحمدي · رواية ورش',f:'warsh10',d:'المصحف المحمدي برواية ورش عن نافع · الخط المغربي · صور صفحات مؤسسة محمد السادس لنشر المصحف الشريف',v:'6214',ver:'mushaf.ma'},
   hafs:{n:'حفص',full:'رواية حفص عن عاصم',f:'hafs18',d:'برواية حفص عن عاصم · العدّ الكوفي',v:'6236',ver:'الإصدار 18'}
 };
-let rw=st.get('rw','warsh');if(!RW[rw])rw='warsh';
-const qkey=()=>'quran-'+(rw==='mohammadi'?'warsh':rw);
-const NPAGES=()=>rw==='mohammadi'?638:604;
+let rw=st.get('rw','warsh');if(!RW[rw])rw='warsh';  // an old 'mohammadi' choice falls back to Warsh, which now shows those pages
+const qkey=()=>'quran-'+rw;
+const IMG=()=>rw==='warsh';  // Warsh is read in the Moroccan printed mushaf (page images)
+const NPAGES=()=>IMG()?638:604;
 const setQF=el=>el.style.setProperty('--qf',`"${RW[rw].f}",serif`);
 const QP={},qIndex={};
 function pagesOf(Q){
@@ -854,16 +838,16 @@ function pagesOf(Q){
 let listMode=st.get('qlist','s');
 function quranList(el){
   el.classList.remove('paged');setQF(el);loading(el);
-  Promise.all([need(qkey()),rw==='mohammadi'?need('mohammadi'):null]).then(([Q,M])=>{
+  Promise.all([need(qkey()),IMG()?need('mohammadi'):null]).then(([Q,M])=>{
     const PG=(i,j)=>M?M.pages[i][j]:Q.suras[i].v[j][1];
     const last=st.get('lastAya.'+rw,null),R_=RW[rw];
-    el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>${rw==='warsh'?R_.d.replace('ورش','<span class="mgh">ورش</span>'):R_.d} · ${R_.v} آية · ${NPAGES()} صفحة</p></div>
-      <div class="seg3" role="group" aria-label="الرواية">${Object.entries(RW).map(([k,x])=>`<button data-rw="${k}" aria-pressed="${k===rw}">${k==='warsh'?`<span class="mgh">${x.n}</span>`:x.n}<small>${k==='hafs'?'عن عاصم':k==='mohammadi'?'<span class="mgh">ورش</span> · مغربي':'عن نافع'}</small></button>`).join('')}</div>
-      ${last&&last[2]?`<a class="resume" href="#page-${last[2]}-${last[0]}-${last[1]}"><span>متابعة القراءة · ${R_.n}<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]} · صفحة ${last[2]}</b></span><span>‹</span></a>`:''}
+    el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>${R_.d} · ${R_.v} آية · ${NPAGES()} صفحة</p></div>
+      <div class="seg3" role="group" aria-label="الرواية">${Object.entries(RW).map(([k,x])=>`<button data-rw="${k}" aria-pressed="${k===rw}">${x.n}<small>${k==='hafs'?'عن عاصم':'عن نافع'}</small></button>`).join('')}</div>
+      ${last&&last[2]?(()=>{const lp=M?PG(last[0]-1,last[1]-1):last[2];return`<a class="resume" href="#page-${lp}-${last[0]}-${last[1]}"><span>متابعة القراءة · ${R_.n}<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]} · صفحة ${lp}</b></span><span>‹</span></a>`})():''}
       <div class="seg2" role="group" aria-label="طريقة العرض"><button id="lmS" aria-pressed="${listMode==='s'}">السور</button><button id="lmJ" aria-pressed="${listMode==='j'}">الأجزاء</button></div>
       <input class="search" id="qSearch" type="search" placeholder="ابحث عن سورة أو كلمة في الآيات" autocomplete="off">
       <div id="qOut"></div>
-      <p class="src">${rw==='mohammadi'?'صور الصفحات من موقع مؤسسة محمد السادس لنشر المصحف الشريف (mushaf.ma)، وتحتاج إلى اتصال بالإنترنت. البحث في نص ورش لمجمع الملك فهد.':`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
+      <p class="src">${IMG()?'صفحات المصحف من موقع مؤسسة محمد السادس لنشر المصحف الشريف (mushaf.ma)، وتحتاج إلى اتصال بالإنترنت.':`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
     el.querySelectorAll('[data-rw]').forEach(b=>b.onclick=()=>{rw=b.dataset.rw;st.set('rw',rw);quranList(el)});
     const out=$('qOut');
     const juz=[];Q.suras.forEach((S,i)=>S.v.forEach((v,j)=>{if(!juz[v[2]])juz[v[2]]=[i+1,j+1,PG(i,j)]}));
@@ -890,7 +874,7 @@ function quranList(el){
 }
 let fitTimer=0;
 function quranPage(el,p,s,a){
-  if(rw==='mohammadi')return mohammadiPage(el,p,s,a);
+  if(IMG())return mohammadiPage(el,p,s,a);
   el.classList.add('paged');setQF(el);
   need(qkey()).then(Q=>{
     const P=pagesOf(Q);p=Math.min(604,Math.max(1,p|0));
@@ -913,7 +897,7 @@ function quranPage(el,p,s,a){
     const [s0,a0]=items[0],juz=Q.suras[s0-1].v[a0-1][2];
     const names=[...new Set(items.map(x=>x[0]))].map(x=>Q.suras[x-1].n);
     const L=p<=2?(Q.lines[p]||8):Math.max(15,Q.lines[p]||15);
-    el.innerHTML=bar('#quran',`${rw==='warsh'?RW[rw].full.replace('ورش','<span class="mgh">ورش</span>'):RW[rw].full}<small>صفحة ${p}</small>`)+
+    el.innerHTML=bar('#quran',`${RW[rw].full} <small>صفحة ${p}</small>`)+
       `<div class="page${rw==='warsh'?' w':''}" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}<i></i>الجزء ${juz}</span>
         <div class="pbody">${body}</div><span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
@@ -946,7 +930,7 @@ function quranPage(el,p,s,a){
 }
 
 
-/* ---------- the Mohammadi Mushaf: page images from mushaf.ma in a zellige frame ---------- */
+/* ---------- Warsh: the Moroccan printed mushaf (Mohammed VI Foundation), page images from mushaf.ma in a zellige frame ---------- */
 let MP=null; // pages[p] = [[sura, aya], ...]
 function mohammadiPage(el,p,s,a){
   el.classList.add('paged');setQF(el);
@@ -957,9 +941,9 @@ function mohammadiPage(el,p,s,a){
     const names=[...new Set(items.map(x=>x[0]))].map(x=>Q.suras[x-1].n);
     const juz=items.length?Q.suras[items[0][0]-1].v[items[0][1]-1][2]:'';
     const url=n=>M.url.replace('{n}',n+M.offset);
-    el.innerHTML=bar('#quran',`المصحف المحمدي<small>رواية <span class="mgh">ورش</span> · صفحة ${p} من ${M.count}</small>`)+
+    el.innerHTML=bar('#quran',`رواية ورش عن نافع <small>صفحة ${p} من ${M.count}</small>`)+
       `<div class="page z" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<i></i>الجزء ${juz}`:''}</span>
-        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" alt="صفحة ${p} من المصحف المحمدي" hidden></div>
+        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" alt="صفحة ${p} من المصحف برواية ورش" hidden></div>
         <span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
         <input id="pgGo" type="number" min="1" max="${M.count}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
@@ -968,7 +952,7 @@ function mohammadiPage(el,p,s,a){
     const fit=()=>{window.scrollTo(0,0);page.style.height=Math.max(380,Math.floor(window.innerHeight-page.getBoundingClientRect().top-$('pnav').offsetHeight-34))+'px'};
     fit();window.onresize=()=>{if(location.hash.startsWith('#page-'))fit()};
     img.onload=()=>{img.hidden=false;msg.hidden=true};
-    img.onerror=()=>{msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات المصحف المحمدي تُحمَّل من موقع مؤسسة محمد السادس (mushaf.ma)، فتحتاج إلى اتصال بالإنترنت.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
+    img.onerror=()=>{msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات مصحف ورش تُحمَّل من موقع مؤسسة محمد السادس (mushaf.ma)، فتحتاج إلى اتصال بالإنترنت.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
     img.src=url(p);
     [p+1,p-1].forEach(n=>{if(n>=1&&n<=M.count){const im=new Image();im.src=url(n)}});  // ready for the next turn
     $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=M.count)location.hash='#page-'+v});
@@ -1291,7 +1275,7 @@ function route(){
   const h=location.hash.replace(/^#/,'');let m,view='v-cal',tab='cal';
   if(h==='quran'){view='v-quran';tab='quran';quranList($('v-quran'))}
   else if((m=h.match(/^page-(\d+)(?:-(\d+)-(\d+))?$/))){view='v-quran';tab='quran';quranPage($('v-quran'),+m[1],m[2]?+m[2]:0,m[3]?+m[3]:0)}
-  else if((m=h.match(/^sura-(\d+)(?:-(\d+))?$/))){Promise.all([need(qkey()),rw==='mohammadi'?need('mohammadi'):null]).then(([Q,M])=>{const S=Q.suras[+m[1]-1];if(!S)return;const a=m[2]?+m[2]:1;if(M){location.replace(`#page-${M.pages[+m[1]-1][Math.min(a,S.v.length)-1]}`);return}location.replace(`#page-${S.v[Math.min(a,S.v.length)-1][1]}-${m[1]}-${a}`)});return}
+  else if((m=h.match(/^sura-(\d+)(?:-(\d+))?$/))){Promise.all([need(qkey()),IMG()?need('mohammadi'):null]).then(([Q,M])=>{const S=Q.suras[+m[1]-1];if(!S)return;const a=m[2]?+m[2]:1;if(M){location.replace(`#page-${M.pages[+m[1]-1][Math.min(a,S.v.length)-1]}`);return}location.replace(`#page-${S.v[Math.min(a,S.v.length)-1][1]}-${m[1]}-${a}`)});return}
   else if((m=h.match(/^(bukhari|muwatta)$/))){view='v-hadith';tab=m[1];hadithList($('v-hadith'),m[1])}
   else if((m=h.match(/^(bukhari|muwatta)-(\d+)(?:-([\d.]+))?$/))){view='v-hadith';tab=m[1];hadithBook($('v-hadith'),m[1],+m[2],m[3]?parseFloat(m[3]):0)}
   else if(h==='hisn'){view='v-hisn';tab='hisn';hisnList($('v-hisn'))}
