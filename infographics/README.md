@@ -11,6 +11,7 @@ node infographics/render.js --name camels-maghreb --stills 3,20,45 # صور لل
 ```
 
 - `donkeys-maghreb/`: إنفوجرافيك الحمير (بلا صور: خرائط ورموز؛ الرمز من Health Icons برخصة MIT)، يُصيَّر بالأمرين نفسيهما مع `--name donkeys-maghreb`.
+- `gold-mauritania/`: إنفوجرافيك الذهب في موريتانيا (الاحتياطات، الاستخراج، البنك المركزي، العوائق؛ خرائط ورمز سبيكة)، `--name gold-mauritania`.
 - `camels-maghreb/data.js`: الأرقام والمصادر والصور. `camels-maghreb/app.js`: المشاهد والانتقالات (انتقال مختلف لكل قطع).
 - `camels-maghreb/timeline.js`: التوقيت على شبكة موسيقية (96 نبضة في الدقيقة، كل قطع على بداية مازورة)،
   يقرؤه `app.js` و`score.py` معاً.
