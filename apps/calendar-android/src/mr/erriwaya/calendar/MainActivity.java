@@ -23,9 +23,9 @@ public class MainActivity extends Activity {
     /** True while the tasbih page asks to count with the volume keys. */
     private volatile boolean volumeKeysCount = false;
     private volatile String pickKind = "adhan";
-    /** Tasbih sounds (assets/sounds/*.wav), played natively for a reliable, low-latency click. */
+    /** Tasbih sounds and the page-turn sound (assets/sounds/*.wav), played natively for a reliable, low-latency sound. */
     private SoundPool pool;
-    private int sClick, sClick2, sChime;
+    private int sClick, sClick2, sChime, sPage;
 
     /** Bridge the page calls as window.AndroidApp. */
     public class Bridge {
@@ -111,12 +111,22 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
-        /** click, click2 (every tenth) or chime (count complete). */
+        /** click, click2 (every tenth), chime (count complete) or page (a mushaf page turning). */
         @JavascriptInterface
         public void sound(String name) {
             if (pool == null) return;
-            int id = "chime".equals(name) ? sChime : "click2".equals(name) ? sClick2 : sClick;
+            int id = "page".equals(name) ? sPage : "chime".equals(name) ? sChime : "click2".equals(name) ? sClick2 : sClick;
             if (id != 0) pool.play(id, 1f, 1f, 1, 0, 1f);
+        }
+
+        /** Puts text on the clipboard (copied verses). */
+        @JavascriptInterface
+        public boolean copy(String text) {
+            try {
+                android.content.ClipboardManager cm = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("آيات", text));
+                return true;
+            } catch (Exception e) { return false; }
         }
 
         /** "40" vibrates 40 ms; "90,70,160" is on, off, on... in ms. */
@@ -149,6 +159,7 @@ public class MainActivity extends Activity {
             sClick = pool.load(getAssets().openFd("sounds/click.wav"), 1);
             sClick2 = pool.load(getAssets().openFd("sounds/click2.wav"), 1);
             sChime = pool.load(getAssets().openFd("sounds/chime.wav"), 1);
+            sPage = pool.load(getAssets().openFd("sounds/page.wav"), 1);
         } catch (Exception e) { pool = null; }
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
