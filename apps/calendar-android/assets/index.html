@@ -70,6 +70,9 @@ button{cursor:pointer}
 .occ.nat{background:var(--red-soft);color:var(--red)}
 .next{background:var(--green-soft);border-radius:12px;padding:10px 16px;text-align:center;min-width:200px}
 .next .lbl{font-size:.88rem;color:var(--muted)}
+.next .cdrow{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:4px 10px;margin-top:2px}
+.next .cdl{font-family:var(--f-naskh);font-weight:700;color:var(--green);font-size:1rem}
+.next .cdrow.iq .cdl,.next .cdrow.iq .cd{color:var(--gold)}
 .next .cd{font-size:1.7rem;font-weight:600;color:var(--green);direction:ltr;font-variant-numeric:tabular-nums}
 .next .pn{font-family:var(--f-display);font-weight:700}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 12px}
@@ -147,6 +150,9 @@ tbody tr{cursor:pointer}
 .row label{min-width:7.5em;color:var(--muted);font-size:.9rem}
 .out{margin-top:4px;padding:8px 12px;border-radius:8px;background:var(--green-soft);font-weight:600}
 .note{color:var(--muted);font-size:.84rem;margin:0}
+#iqBox{display:flex;flex-wrap:wrap;gap:6px}
+#iqBox label{min-width:0;display:grid;justify-items:center;font-size:.74rem;color:var(--muted);gap:2px}
+#iqBox input{width:3.6em;text-align:center;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 footer{color:var(--muted);font-size:.82rem;text-align:center}
 
 @media (max-width:720px){
@@ -444,6 +450,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
       <h3>الإعدادات</h3>
       <div class="row"><label for="sMethod">طريقة الحساب</label><select id="sMethod"></select></div>
       <div class="row"><label for="sAsr">وقت العصر</label><select id="sAsr"><option value="1">الجمهور (المذهب المالكي)</option><option value="2">المذهب الحنفي</option></select></div>
+      <div class="row"><label>الإقامة بعد الأذان</label><span class="iqs"><span id="iqBox"></span></span></div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
@@ -495,7 +502,8 @@ const G_EV={'1-1':'رأس السنة الميلادية','5-1':'عيد العم�
 
 /* ---------- state ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('mrcal.'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('mrcal.'+k,JSON.stringify(v))}catch(e){}}};
-const S={city:store.get('city','nkc'),method:store.get('method','mwl'),asr:store.get('asr',1),adj:store.get('adj',0),mode:'g',sel:null,gy:0,gm:0,hy:0,hm:0};
+const IQ_DEFAULT={fajr:20,dhuhr:15,asr:15,maghrib:7,isha:15};
+const S={iq:Object.assign({},IQ_DEFAULT,store.get('iq',{})),city:store.get('city','nkc'),method:store.get('method','mwl'),asr:store.get('asr',1),adj:store.get('adj',0),mode:'g',sel:null,gy:0,gm:0,hy:0,hm:0};
 if(!CITIES.some(c=>c.id===S.city))S.city='nkc';
 if(!METHODS[S.method])S.method='mwl';
 const city=()=>CITIES.find(c=>c.id===S.city);
@@ -600,11 +608,17 @@ function tick(){
   let nk=order.find(k=>t[k]>n.h),target,cur=null;
   if(nk)target=t[nk];else{const g=gOf(tj+1);nk='fajr';target=prayerTimes(g.y,g.m,g.d,c).fajr+24}
   for(const k of order)if(t[k]<=n.h)cur=k;
+  // between a prayer's adhan and its iqama, count down to the iqama
+  const iqAt=cur?t[cur]+(S.iq[cur]||0)/60:null;
+  const toIqama=cur&&n.h<iqAt;
+  const kk=toIqama?cur:nk,tt=toIqama?iqAt:target;
   if(!cur)cur='isha';
-  let s=Math.max(0,Math.round((target-n.h)*3600));
+  let s=Math.max(0,Math.round((tt-n.h)*3600));
   const cd=pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60);
-  const name=PR.find(x=>x[0]===nk)[1];
-  const html=`<div class="lbl">الصلاة القادمة في ${c.name}</div><div class="pn">${name} · ${fmt(target)}</div><div class="cd">${cd}</div>`;
+  const name=PR.find(x=>x[0]===kk)[1];
+  const html=toIqama
+    ?`<div class="lbl">صلاة ${name} في ${c.name}</div><div class="pn">أُذِّن ${fmt(t[kk])} · الإقامة ${fmt(tt)}</div><div class="cdrow iq"><span class="cdl">الوقت المتبقي للإقامة</span><span class="cd">${cd}</span></div>`
+    :`<div class="lbl">الصلاة القادمة في ${c.name}</div><div class="pn">${name} · ${fmt(tt)}</div><div class="cdrow"><span class="cdl">الوقت المتبقي للأذان</span><span class="cd">${cd}</span></div>`;
   if(box.innerHTML!==html)box.innerHTML=html;
   document.querySelectorAll('#times li').forEach(li=>li.classList.toggle('on',li.dataset.k===cur));
   const mk=$('nowMk');if(mk)mk.style.right=(n.h/24*100).toFixed(2)+'%';
@@ -687,6 +701,8 @@ $('goToday').addEventListener('click',()=>select(todayJdn(),true));
 document.addEventListener('click',e=>{if(e.target.id==='backToday')select(todayJdn(),true)});
 $('sMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}">${m.name}</option>`).join('');
 $('sMethod').value=S.method;$('sAsr').value=S.asr;$('sAdj').value=S.adj;
+$('iqBox').innerHTML=[['fajr','الفجر'],['dhuhr','الظهر'],['asr','العصر'],['maghrib','المغرب'],['isha','العشاء']].map(([k,n])=>`<label>${n}<input type="number" id="iq-${k}" min="0" max="60" inputmode="numeric" value="${S.iq[k]}" aria-label="دقائق الإقامة بعد أذان ${n}"></label>`).join('');
+$('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');const v=Math.max(0,Math.min(60,parseInt(e.target.value,10)||0));e.target.value=v;S.iq[k]=v;store.set('iq',S.iq);tick()});
 $('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay()});
 $('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay()});
 $('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender()});
