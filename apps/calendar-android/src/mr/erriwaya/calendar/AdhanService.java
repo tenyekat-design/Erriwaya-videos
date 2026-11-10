@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -11,7 +12,7 @@ import android.os.IBinder;
 
 import java.io.File;
 
-/** Plays the user's adhan recording in full, at alarm volume, as a foreground service with a stop button. */
+/** Plays the adhan (the user's recording, or the Maliki one bundled with the app) in full, at alarm volume, as a foreground service with a stop button. */
 public class AdhanService extends Service {
     static final String STOP = "mr.erriwaya.calendar.STOP_ADHAN";
     private MediaPlayer mp;
@@ -37,7 +38,12 @@ public class AdhanService extends Service {
             mp = new MediaPlayer();
             mp.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
-            mp.setDataSource(f.getAbsolutePath());
+            if (f.exists()) mp.setDataSource(f.getAbsolutePath());
+            else {  // the Maliki adhan bundled with the app
+                AssetFileDescriptor afd = getAssets().openFd("sounds/adhan.m4a");
+                mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+            }
             mp.setOnCompletionListener(m -> stopSelf());
             mp.prepare();
             mp.start();

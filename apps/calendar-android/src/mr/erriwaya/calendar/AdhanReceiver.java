@@ -27,8 +27,9 @@ import java.io.OutputStream;
  * list, sets one alarm for the next entry, raises the adhan when it fires and then sets the following one.
  * After a reboot or an app update the same list is read again.
  *
- * The adhan sound is a recording the user picks on the phone (copied into the app's files); it is played in
- * full by AdhanService. Without one, the notification rings with the phone's alarm tone.
+ * The adhan sound is the Maliki adhan bundled in assets/sounds/adhan.m4a, or a recording the user picks on the
+ * phone (copied into the app's files); AdhanService plays it in full. If the service cannot start, the
+ * notification rings with the phone's alarm tone.
  */
 public class AdhanReceiver extends BroadcastReceiver {
     static final String PREFS = "adhan";
@@ -68,7 +69,7 @@ public class AdhanReceiver extends BroadcastReceiver {
 
     // ---------- raising the adhan ----------
     static void fire(Context ctx, String title, String text, boolean fajr) {
-        if (audioFor(ctx, fajr).exists()) {
+        {   // always played in full by AdhanService (the bundled adhan when the user has not picked one)
             Intent s = new Intent(ctx, AdhanService.class).putExtra("title", title).putExtra("text", text).putExtra("fajr", fajr);
             try {
                 if (Build.VERSION.SDK_INT >= 26) ctx.startForegroundService(s);

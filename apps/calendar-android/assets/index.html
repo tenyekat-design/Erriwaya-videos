@@ -352,6 +352,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-l{margin:0 0 10px;padding-inline-start:1.6em;font-family:var(--f-naskh);font-size:1.08rem;line-height:2.1}
 .adh-l small,.adh h3 small{font-family:var(--f-body);font-size:.74rem;color:var(--muted);font-weight:400}
 .adh-l .fj{color:var(--gold)}
+.adh-play{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:2px 0 12px;padding:10px 12px;border:1px solid var(--orn);border-radius:12px;background:var(--gold-soft)}
+.adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
+.adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
 .adh-alert .pr{display:flex;flex-wrap:wrap;gap:6px 12px}
 .adh-alert label{display:inline-flex;gap:5px;align-items:center;font-size:.9rem}
@@ -427,6 +430,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
       <div><h3>الأذان</h3><ol class="adh-l"><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(الترجيع: بأرفع من الصوت الأول)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</li><li>حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الصَّلَاةِ</li><li>حَيَّ عَلَى الْفَلَاحِ، حَيَّ عَلَى الْفَلَاحِ</li><li><span class="fj">الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ، الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ <small>(في أذان الصبح وحده)</small></span></li><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>لَا إِلَٰهَ إِلَّا اللَّهُ</li></ol></div>
       <div><h3>الإقامة <small>(وترًا)</small></h3><ol class="adh-l"><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ</li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</li><li>حَيَّ عَلَى الصَّلَاةِ</li><li>حَيَّ عَلَى الْفَلَاحِ</li><li>قَدْ قَامَتِ الصَّلَاةُ</li><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>لَا إِلَٰهَ إِلَّا اللَّهُ</li></ol></div>
     </div>
+    <div class="adh-play"><span>استمع إلى الأذان</span><audio controls preload="none" src="sounds/adhan.m4a"></audio></div>
     <p class="note">على مذهب مالك: التكبير في أول الأذان مرتان، وتُرجَّع الشهادتان (تُقالان بصوت منخفض ثم تُعادان بصوت أرفع)، وتُختم بـ«لا إله إلا الله» مرة واحدة. والإقامة وتر، و«قد قامت الصلاة» فيها مرة واحدة.</p>
   </details>
 
@@ -477,12 +481,12 @@ a.hd.hit small{color:var(--gold);font-weight:600}
         <div class="pr" id="adhPr"></div>
         <div class="adh-snd">
           <div><b>صوت الأذان</b> <span id="sndMain"></span></div>
-          <div class="row2"><button class="btn primary" id="pickMain">اختر تسجيل الأذان من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
+          <div class="row2"><button class="btn" id="pickMain">استبدله بتسجيل من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
           <div><b>أذان الفجر</b> <span id="sndFajr"></span></div>
           <div class="row2"><button class="btn" id="pickFajr">اختر تسجيلًا خاصًا بالفجر</button><button class="btn" id="clrFajr" hidden>حذف</button></div>
         </div>
         <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان الآن</button><button class="btn" id="adhStop">إيقاف</button></div>
-        <p class="note">اختر ملفًّا صوتيًّا لأذان مالكي محفوظًا في هاتفك (mp3 أو m4a…). يُنسخ داخل التطبيق ويُرفع به الأذان كاملًا بصوت المنبّه عند دخول كل وقت، مع زر «إيقاف الأذان» في الإشعار. ودون تسجيل يرنّ التنبيه بنغمة المنبّه.</p>
+        <p class="note">يُرفع الأذان المالكي المضمَّن في التطبيق كاملًا بصوت المنبّه عند دخول كل وقت، ولو كان التطبيق مغلقًا، مع زر «إيقاف الأذان» في الإشعار. ويمكنك استبداله بتسجيل آخر من هاتفك (mp3 أو m4a…).</p>
         <p class="warn" id="exWarn" hidden>ليُرفع الأذان في وقته بالضبط اسمح للتطبيق بـ«المنبّهات والتذكيرات»، وإلا فقد يتأخر بضع دقائق. <button class="btn" id="exGo">اسمح الآن</button></p>
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
       </div>
@@ -778,8 +782,8 @@ function pushAdhan(){
   $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يُرفع الأذان عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
   const has=k=>{try{return A.hasAdhan(k)}catch(e){return false}};
   const showSnd=()=>{const m=has('adhan'),f=has('fajr');
-    $('sndMain').textContent=m?': تسجيلك':': نغمة المنبّه (لم يُختر تسجيل)';$('clrMain').hidden=!m;
-    $('sndFajr').textContent=f?': تسجيلك الخاص بالفجر':(m?': التسجيل نفسه':': نغمة المنبّه');$('clrFajr').hidden=!f};
+    $('sndMain').textContent=m?': تسجيلك':': الأذان المالكي المضمَّن في التطبيق';$('clrMain').hidden=!m;
+    $('sndFajr').textContent=f?': تسجيلك الخاص بالفجر':(m?': تسجيلك نفسه':': الأذان المضمَّن نفسه');$('clrFajr').hidden=!f};
   if(typeof A.pickAdhan==='function'){
     $('pickMain').onclick=()=>A.pickAdhan('adhan');$('pickFajr').onclick=()=>A.pickAdhan('fajr');
     $('clrMain').onclick=()=>{A.clearAdhan('adhan');showSnd()};$('clrFajr').onclick=()=>{A.clearAdhan('fajr');showSnd()};
