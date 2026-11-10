@@ -283,6 +283,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* Qalun and Hafs: the Madinah mushaf pages carry their own ornament; a quiet mount around them */
 .page.m{border:1px solid var(--orn);background:#FFFFFF;padding:4px;border-radius:4px;box-shadow:0 8px 22px rgba(20,40,30,.14)}
 .page.m::before,.page.m .plabel,.page.m .pmed{display:none}
+.sheet{transform-origin:right center;backface-visibility:hidden;pointer-events:none;box-shadow:-10px 0 28px rgba(0,0,0,.28)}
+.sheet-shade{position:fixed;z-index:39;pointer-events:none;background:linear-gradient(to left,rgba(0,0,0,.35),rgba(0,0,0,0) 70%)}
+/* Qalun's pale sky-blue ornament, a little deeper so it stands out from the white */
+.page.m img.qal{filter:saturate(1.45) contrast(1.06)}
 /* ---------- hadith + hisn ---------- */
 .hd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;scroll-margin-top:70px}
 .hd.mark{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
@@ -948,7 +952,7 @@ function quranTextPage(el,p,s,a){
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
         <input id="pgGo" type="number" min="1" max="604" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
         ${p<604?`<a href="#page-${p+1}">التالية ‹</a>`:'<span class="off">التالية ‹</span>'}</div>`;
-    const page=$('qpage'),pb=page.querySelector('.pbody');
+    const page=$('qpage'),pb=page.querySelector('.pbody');requestAnimationFrame(afterPage);
     const fit=()=>{
       window.scrollTo(0,0);
       const h=Math.max(380,Math.floor(window.innerHeight-page.getBoundingClientRect().top-$('pnav').offsetHeight-34));
@@ -964,13 +968,13 @@ function quranTextPage(el,p,s,a){
     fit();
     if(document.fonts&&document.fonts.load)document.fonts.load(`20px "${RW[rw].f}"`).then(fit).catch(()=>{});
     window.onresize=()=>{clearTimeout(fitTimer);fitTimer=setTimeout(()=>{if(location.hash.startsWith('#page-'))fit()},150)};
-    $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=604)location.hash='#page-'+v});
+    $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=604)turnTo(v,v>p?1:-1)});
     pb.addEventListener('click',e=>{const sp=e.target.closest('.ay');if(!sp)return;el.querySelectorAll('.ay.mark').forEach(x=>x.classList.remove('mark'));sp.classList.add('mark');st.set('lastAya.'+rw,[+sp.dataset.s,+sp.dataset.a,p])});
     // swipe: drag the page to the right for the next page (as when turning a mushaf's page), to the left for the previous
     let x0=null,y0=0;
     page.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
     page.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){const n=dx>0?p+1:p-1;if(n>=1&&n<=604)location.replace('#page-'+n)}});
+      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){const n=dx>0?p+1:p-1;if(n>=1&&n<=604)turnTo(n,n>p?1:-1)}});
   }).catch(()=>failed(el));
 }
 
@@ -993,12 +997,12 @@ function imagePage(el,p,s,a){
     const url=n=>{const A=window.AndroidApp;let loc='';try{if(A&&typeof A.mushafPage==='function')loc=A.mushafPage(key,n+M.offset)}catch(e){}return loc||M.url.replace('{n}',n+M.offset)};
     el.innerHTML=bar('#quran',`${RW[key].full} <small>صفحة ${p} من ${M.count}</small>`)+
       `<div class="page ${warsh?'z':'m'}" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<i></i>الجزء ${juz}`:''}</span>
-        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" alt="صفحة ${p} من المصحف (${RW[key].full})" hidden></div>
+        <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><img id="mImg" class="${key==='qaloon'?'qal':''}" alt="صفحة ${p} من المصحف (${RW[key].full})" hidden></div>
         <span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
         <input id="pgGo" type="number" min="1" max="${M.count}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
         ${p<M.count?`<a href="#page-${p+1}">التالية ‹</a>`:'<span class="off">التالية ‹</span>'}</div>`;
-    const page=$('qpage'),img=$('mImg'),msg=$('mMsg');
+    const page=$('qpage'),img=$('mImg'),msg=$('mMsg');requestAnimationFrame(afterPage);
     const fit=()=>{window.scrollTo(0,0);page.style.height=Math.max(380,Math.floor(window.innerHeight-page.getBoundingClientRect().top-$('pnav').offsetHeight-34))+'px'};
     fit();window.onresize=()=>{if(location.hash.startsWith('#page-'))fit()};
     img.onload=()=>{img.hidden=false;msg.hidden=true};
@@ -1010,14 +1014,48 @@ function imagePage(el,p,s,a){
     // keep the next and previous pages loaded and decoded, so turning a page is instant
     [p+1,p-1,p+2,p+3,p-2].forEach(n=>{if(n>=1&&n<=M.count&&!PCACHE.has(n)){const im=new Image();im.decoding='async';im.src=url(n);PCACHE.set(n,im)}});
     for(const k of [...PCACHE.keys()])if(Math.abs(k-p)>6)PCACHE.delete(k);
-    $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=M.count)location.hash='#page-'+v});
+    $('pgGo').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(v>=1&&v<=M.count)turnTo(v,v>p?1:-1)});
     img.addEventListener('click',()=>{if(items.length){st.set('lastAya.'+key,[items[0][0],items[0][1],p]);msg.hidden=false;msg.textContent='حُفظ موضع القراءة: صفحة '+p;setTimeout(()=>{msg.hidden=true},1500)}});
     let x0=null,y0=0;
     page.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
     page.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
-      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){const n=dx>0?p+1:p-1;if(n>=1&&n<=M.count)location.replace('#page-'+n)}});
+      if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){const n=dx>0?p+1:p-1;if(n>=1&&n<=M.count)turnTo(n,n>p?1:-1)}});
   }).catch(()=>failed(el));
 }
+
+
+/* ---------- turning a page: the sheet folds over its spine (the right edge, as in an Arabic book) ---------- */
+let FLIP=null;
+function turnTo(n,dir){
+  const old=$('qpage');
+  if(old&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const r=old.getBoundingClientRect(),c=old.cloneNode(true);
+    c.removeAttribute('id');c.querySelectorAll('[id]').forEach(x=>x.removeAttribute('id'));
+    c.classList.add('sheet');
+    Object.assign(c.style,{position:'fixed',left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',margin:'0',zIndex:dir>0?'40':'0'});
+    document.body.appendChild(c);
+    FLIP={dir,sheet:c};
+  }
+  location.replace('#page-'+n);
+}
+function afterPage(){
+  if(!FLIP)return;
+  const {dir,sheet}=FLIP;FLIP=null;const pg=$('qpage');
+  const ease='cubic-bezier(.45,.05,.55,.95)',ms=560;
+  if(dir>0){  // the current page lifts from its left edge and turns over, uncovering the next one
+    sheet.animate([{transform:'perspective(1800px) rotateY(0deg)',filter:'brightness(1)'},{transform:'perspective(1800px) rotateY(-96deg)',filter:'brightness(.62)'}],{duration:ms,easing:ease,fill:'forwards'}).onfinish=()=>sheet.remove();
+    const sh=document.createElement('div');sh.className='sheet-shade';Object.assign(sh.style,{left:sheet.style.left,top:sheet.style.top,width:sheet.style.width,height:sheet.style.height});
+    document.body.appendChild(sh);sh.animate([{opacity:.45},{opacity:0}],{duration:ms,easing:ease}).onfinish=()=>sh.remove();
+  }else if(pg){  // the previous page comes back over the current one
+    pg.style.position='relative';pg.style.zIndex='2';pg.style.transformOrigin='right center';
+    pg.animate([{transform:'perspective(1800px) rotateY(-96deg)',filter:'brightness(.62)'},{transform:'perspective(1800px) rotateY(0deg)',filter:'brightness(1)'}],{duration:ms,easing:ease}).onfinish=()=>{sheet.remove();pg.style.zIndex=''};
+  }else sheet.remove();
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('#pnav a[href^="#page-"]');if(!a)return;
+  e.preventDefault();const n=parseInt(a.getAttribute('href').slice(6),10),p=parseInt(($('pgGo')||{}).value,10)||0;
+  turnTo(n,n>p?1:-1);
+});
 
 /* ---------- Hadith collections ---------- */
 const COL={bukhari:{sub:'للإمام محمد بن إسماعيل البخاري (ت 256 هـ) · بترقيم فتح الباري'},muwatta:{sub:'للإمام مالك بن أنس (ت 179 هـ) · رواية يحيى بن يحيى الليثي'}};
