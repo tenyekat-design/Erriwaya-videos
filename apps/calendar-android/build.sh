@@ -10,9 +10,11 @@ VERSION_NAME=${VERSION_NAME:-1.0}
 VERSION_CODE=${VERSION_CODE:-1}
 echo "build-tools: $BT"; echo "platform: $PLAT"
 rm -rf build && mkdir -p build/gen build/classes build/dex dist
+# the page shows its version (CI checkout only; the source keeps the placeholder)
+cp -r assets build/assets && sed -i "s/__APP_VERSION__/$VERSION_NAME/" build/assets/index.html
 "$BT/aapt2" compile --dir res -o build/res.zip
 "$BT/aapt2" link -o build/unsigned.apk -I "$PLAT" --manifest AndroidManifest.xml \
-  -A assets -0 wav --java build/gen --min-sdk-version 21 --target-sdk-version 34 \
+  -A build/assets -0 wav --java build/gen --min-sdk-version 21 --target-sdk-version 34 \
   --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" build/res.zip
 javac --release 11 -classpath "$PLAT" -d build/classes $(find src build/gen -name '*.java')
 "$BT/d8" --release --lib "$PLAT" --min-api 21 --output build/dex $(find build/classes -name '*.class')

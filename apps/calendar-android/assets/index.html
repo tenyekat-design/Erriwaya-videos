@@ -456,7 +456,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     </div>
   </section>
 
-  <footer>موريتانيا على توقيت غرينتش طوال السنة، دون توقيت صيفي.</footer>
+  <footer>موريتانيا على توقيت غرينتش طوال السنة، دون توقيت صيفي.<br><span id="appVer" data-v="__APP_VERSION__"></span></footer>
 </div>
 
 <main class="view wrap" id="v-quran" dir="rtl" lang="ar" hidden></main>
@@ -713,6 +713,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>rende
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
 window.APP={cities:CITIES,options:cityOptions,city:()=>city(),setCity(id){if(!CITIES.some(c=>c.id===id))return;S.city=id;store.set('city',id);renderCities();renderCal();renderDay()}};
+(()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 /* ---------- boot ---------- */
 S.sel=todayJdn();syncViewToSel();
 const n0=nowInfo(),h0=hOfJdn(S.sel);
