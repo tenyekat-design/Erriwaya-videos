@@ -17,3 +17,6 @@
   ويضع الملف في `dist/mauritania-calendar.apk`.
 - مفتاح التوقيع `signing/release.jks` ثابت كي تُثبَّت التحديثات فوق النسخة السابقة. هو للتوزيع المباشر فقط؛
   للنشر على Google Play يُستعمل مفتاح خاص لا يُحفظ في المستودع.
+- الخط المغاربي (اسم رواية ورش وعناوين سورها): Bouazzi Maghribi، رخصة OFL (`assets/fonts/BouazziMaghribi-OFL.txt`)،
+  github.com/aleftypefoundry/bouazzi-maghribi. لا يُستعمل لنص الآيات لأنه لا يحوي علامات الضبط القرآنية (نقطة الإمالة،
+  الصلة، علامات الوقف…)، فتبقى الآيات بخط مجمع الملك فهد لرواية ورش.
