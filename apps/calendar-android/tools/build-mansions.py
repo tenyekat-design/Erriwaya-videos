@@ -14,6 +14,11 @@ mansion takes the values of the old period it falls in (rain and rainy days as t
 humidity and wind as a mean over the days). This is an approximation from period means, not a new aggregation from
 the daily records.
 
+tools/mansions-lore.tsv holds what goes with each mansion, by its number in this cycle: other names (classical, and the
+local ones the research file quotes), its stars (after the Stellarium list of the Arabic lunar stations), the weather
+(worded from the climate normals above and the local season names in the research file), the land (farming, herding,
+oases) and the sea. The seasonal lines go by the dates of the period; edit the file to correct or add.
+
 What the app keeps per mansion and station: rain total (mm), rainy days >= 1 mm, mean / max / min temperature,
 humidity %, wind m/s.
 """
@@ -39,9 +44,14 @@ def climate(m, sid):
     mean = lambda k: round(sum(c[k] for c in ds) / len(ds), 1)
     return [share('precipitation_30y_mean_total_mm'), share('rainy_days_ge_1mm_mean_per_year_in_period'),
             mean('temp_avg_c'), mean('temp_max_daily_avg_c'), mean('temp_min_daily_avg_c'), mean('relative_humidity_pct'), mean('wind_speed_m_s')]
+# what goes with each mansion (tools/mansions-lore.tsv): other names, its stars, the weather, the land, the sea
+import csv
+lore = {int(r['id']): [r['aka'], r['stars'], r['air'], r['land'], r['sea']]
+        for r in csv.DictReader(open(ROOT / 'tools/mansions-lore.tsv', encoding='utf-8'), delimiter='\t')}
+assert sorted(lore) == list(range(1, 29))
 out = {
     'label': d['label_ar'],
-    'm': [[m['name_ar'], *md(m)] for m in ms],
+    'm': [[m['name_ar'], *md(m), *lore[m['id']]] for m in ms],
     'st': [[s_['name_ar'], s_['approx_latitude'], s_['approx_longitude']] for s_ in st],
     'c': [[climate(m, s_['id']) for s_ in st] for m in ms],
 }
