@@ -2,7 +2,8 @@
 """Builds assets/data/*.js (Quran Warsh, Sahih al-Bukhari, Muwatta Malik, Hisn al-Muslim) from their sources.
 
 Sources (downloaded into the folder given as argument, default ./src-data):
-  Quran, Warsh 'an Nafi', King Fahd Complex v10 text and font: github.com/thetruetruth/quran-data-kfgqpc (warsh/)
+  Quran, King Fahd Complex texts and fonts: Warsh v10, Qalun v10, Hafs v18 (github.com/thetruetruth/quran-data-kfgqpc);
+  basmala of Warsh and Qalun: github.com/fawazahmed0/quran-api (same Complex texts)
   Sahih al-Bukhari and Muwatta Malik (riwayat Yahya al-Laythi), Arabic: github.com/fawazahmed0/hadith-api
   Arabic book titles of both: github.com/AhmedBaset/hadith-json (sunnah.com)
   Hisn al-Muslim (Sa'id al-Qahtani): github.com/rn0x/hisn_almuslim_json
@@ -18,6 +19,11 @@ FILES = {
     'warsh.json': 'thetruetruth/quran-data-kfgqpc/main/warsh/data/warshData_v10.json',
     'warsh.10.woff2': 'thetruetruth/quran-data-kfgqpc/main/warsh/font/warsh.10.woff2',
     'quran-warsh-v8.json': 'fawazahmed0/quran-api/1/editions/ara-quranwarsh.json',
+    'qaloon.json': 'thetruetruth/quran-data-kfgqpc/main/qaloon/data/QaloonData_v10.json',
+    'qaloon.10.woff2': 'thetruetruth/quran-data-kfgqpc/main/qaloon/font/qaloon.10.woff2',
+    'quran-qaloon-v8.json': 'fawazahmed0/quran-api/1/editions/ara-quranqaloon.json',
+    'hafs.json': 'thetruetruth/quran-data-kfgqpc/main/hafs/data/hafsData_v18.json',
+    'hafs.18.woff2': 'thetruetruth/quran-data-kfgqpc/main/hafs/font/hafs.18.woff2',
     'ara-bukhari.json': 'fawazahmed0/hadith-api/1/editions/ara-bukhari.json',
     'ara-malik.json': 'fawazahmed0/hadith-api/1/editions/ara-malik.json',
     'ab-bukhari.json': 'AhmedBaset/hadith-json/main/db/by_book/the_9_books/bukhari.json',
@@ -38,22 +44,35 @@ def write(rel, key, payload):
     with open(p, 'w', encoding='utf-8') as f:
         f.write('DATA_LOADED(%s,%s);\n' % (json.dumps(key), json.dumps(payload, ensure_ascii=False, separators=(',', ':'))))
 
-# ---- Quran (Warsh, Madani count: 6214 verses) ----
-rows = load('warsh.json')
-assert len(rows) == 6214, len(rows)
-basmala = next(v['text'] for v in load('quran-warsh-v8.json')['quran'] if v['chapter'] == 1 and v['verse'] == 1)
-suras = []
-for r in rows:
-    s = r['sura_no']
-    if len(suras) < s:
-        suras.append({'n': r['sura_name_ar'].strip(), 'v': []})
-    assert r['aya_no'] == len(suras[s - 1]['v']) + 1
-    suras[s - 1]['v'].append([r['aya_text'].strip(), int(str(r['page']).split('-')[0]), r['jozz']])
-assert len(suras) == 114
-write('quran.js', 'quran', {'basmala': basmala, 'suras': suras})
+# ---- Quran: Warsh and Qalun (Madani count, 6214 verses) and Hafs (Kufi count, 6236), King Fahd Complex ----
 import shutil
-os.makedirs(os.path.join(OUT, '..', 'fonts'), exist_ok=True)
-shutil.copy(os.path.join(SRC, 'warsh.10.woff2'), os.path.join(OUT, '..', 'fonts', 'warsh10.woff2'))
+RIWAYAT = [  # key, data file, verse count, font file, basmala source
+    ('warsh', 'warsh.json', 6214, 'warsh.10.woff2', 'warsh10.woff2'),
+    ('qaloon', 'qaloon.json', 6214, 'qaloon.10.woff2', 'qaloon10.woff2'),
+    ('hafs', 'hafs.json', 6236, 'hafs.18.woff2', 'hafs18.woff2'),
+]
+first_page = lambda r: int(str(r['page']).split('-')[0])
+for key, src, count, font, font_out in RIWAYAT:
+    rows = load(src)
+    assert len(rows) == count, (key, len(rows))
+    suras, lines = [], [0] * 605
+    for r in rows:
+        s = r.get('sura_no') or r.get('sora')
+        if len(suras) < s:
+            suras.append({'n': (r.get('sura_name_ar') or r.get('sora_name_ar')).strip(), 'v': []})
+        assert r['aya_no'] == len(suras[s - 1]['v']) + 1, (key, s, r['aya_no'])
+        suras[s - 1]['v'].append([r['aya_text'].strip(), first_page(r), r['jozz']])
+        for pg in str(r['page']).split('-'):
+            lines[int(pg)] = max(lines[int(pg)], int(r['line_end']))
+    assert len(suras) == 114
+    if key == 'hafs':  # in Hafs the basmala is verse 1 of al-Fatiha; it heads the other suras unnumbered
+        basmala = re.sub(r'\s*[\u0660-\u0669]+$', '', suras[0]['v'][0][0])
+    else:
+        basmala = next(v['text'] for v in load(f'quran-{key}-v8.json')['quran'] if v['chapter'] == 1 and v['verse'] == 1)
+    write(f'quran-{key}.js', f'quran-{key}', {'basmala': basmala, 'suras': suras, 'lines': lines})
+    os.makedirs(os.path.join(OUT, '..', 'fonts'), exist_ok=True)
+    shutil.copy(os.path.join(SRC, font), os.path.join(OUT, '..', 'fonts', font_out))
+    print(key, sum(len(x['v']) for x in suras), 'verses, basmala:', basmala)
 
 # ---- Hadith collections ----
 norm = lambda t: re.sub(r'\s+', ' ', re.sub(r'[^\u0621-\u063A\u0641-\u064A\s\ufffd]', '', t)).strip()
