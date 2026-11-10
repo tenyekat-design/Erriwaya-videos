@@ -483,6 +483,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
         </div>
         <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان الآن</button><button class="btn" id="adhStop">إيقاف</button></div>
         <p class="note">اختر ملفًّا صوتيًّا لأذان مالكي محفوظًا في هاتفك (mp3 أو m4a…). يُنسخ داخل التطبيق ويُرفع به الأذان كاملًا بصوت المنبّه عند دخول كل وقت، مع زر «إيقاف الأذان» في الإشعار. ودون تسجيل يرنّ التنبيه بنغمة المنبّه.</p>
+        <p class="warn" id="exWarn" hidden>ليُرفع الأذان في وقته بالضبط اسمح للتطبيق بـ«المنبّهات والتذكيرات»، وإلا فقد يتأخر بضع دقائق. <button class="btn" id="exGo">اسمح الآن</button></p>
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
       </div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
@@ -768,7 +769,10 @@ function pushAdhan(){
   $('adhAlert').hidden=false;
   $('adhOn').checked=AD.on;
   $('adhPr').innerHTML=Object.entries(ADN).map(([k,n])=>`<label><input type="checkbox" data-k="${k}"${AD.p[k]?' checked':''}> ${n}</label>`).join('');
-  const warn=()=>{try{$('adhWarn').hidden=!AD.on||A.notificationsAllowed()}catch(e){}};
+  const warn=()=>{try{$('adhWarn').hidden=!AD.on||A.notificationsAllowed()}catch(e){}
+    try{$('exWarn').hidden=!AD.on||typeof A.exactAlarmsAllowed!=='function'||A.exactAlarmsAllowed()}catch(e){}};
+  $('exGo').onclick=()=>{try{A.requestExactAlarms()}catch(e){}};
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){warn();pushAdhan()}});
   $('adhOn').addEventListener('change',e=>{AD.on=e.target.checked;store.set('adhan',AD);if(AD.on)try{A.requestNotifications()}catch(x){}pushAdhan();setTimeout(warn,1500)});
   $('adhPr').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;AD.p[k]=e.target.checked;store.set('adhan',AD);pushAdhan()});
   $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يُرفع الأذان عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});

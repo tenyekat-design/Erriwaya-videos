@@ -43,6 +43,24 @@ public class MainActivity extends Activity {
                     requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 7));
         }
 
+        /** Exact alarms: Android 12+ lets the user allow them in Settings ("Alarms & reminders"). */
+        @JavascriptInterface
+        public boolean exactAlarmsAllowed() {
+            if (Build.VERSION.SDK_INT < 31) return true;
+            android.app.AlarmManager am = (android.app.AlarmManager) getSystemService(ALARM_SERVICE);
+            return am != null && am.canScheduleExactAlarms();
+        }
+
+        @JavascriptInterface
+        public void requestExactAlarms() {
+            if (Build.VERSION.SDK_INT >= 31) runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                            Uri.parse("package:" + getPackageName())));
+                } catch (Exception ignored) { }
+            });
+        }
+
         @JavascriptInterface
         public boolean notificationsAllowed() {
             return Build.VERSION.SDK_INT < 33
