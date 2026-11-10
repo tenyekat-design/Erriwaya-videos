@@ -385,6 +385,9 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .rc .cpick-w button{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .rc .cpick-w em{display:block;font-style:normal;font-size:.72rem;color:var(--muted)}
 .rc .cpick-h span{font-size:1rem}
+.ayhl{position:absolute;inset:0;pointer-events:none}
+.ayhl i{position:absolute;background:#FFE28A;mix-blend-mode:multiply;opacity:.7;border-radius:calc(var(--u)*8)}
+.ay.now{background:rgba(255,226,138,.55);border-radius:6px}
 #qPlayer .sk{position:relative;width:34px}
 #qPlayer .sk svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #qPlayer .sk b{position:absolute;inset:0;display:grid;place-items:center;font-size:.5rem;font-weight:700;padding-top:5px}
@@ -1110,7 +1113,8 @@ function readerTools(Q,key,p,items){
   const mk=$('mkPage'),op=$('ayOpen');if(!mk||!op||!items.length)return;
   const first=items[0],name=i=>Q.suras[i-1].n;
   const pl=$('ayPlay'),names=Q.suras.map(x=>x.n);
-  if(pl)pl.onclick=()=>reciterSheet(key,()=>playSura(key,first[0],names),`استمع إلى سورة ${name(first[0])} بصوت`);
+  if(pl)pl.onclick=()=>reciterSheet(key,()=>playSura(key,first[0],names,first[1]),`استمع إلى سورة ${name(first[0])} بصوت`);   // from the page's first verse, where the recording has timings
+  syncDraw();
   mk.setAttribute('aria-pressed',markHas(key,p,0,0));
   mk.onclick=()=>{const on=markToggle(key,p,first[0],0,name(first[0]));mk.setAttribute('aria-pressed',on);toast(on?'حُفظت الصفحة في المرجعيات':'أُزيلت الصفحة من المرجعيات')};
   op.onclick=()=>{
@@ -1144,24 +1148,25 @@ function readerTools(Q,key,p,items){
   };
 }
 /* ---------- listening: reciters for each riwaya; one sura at a time, streamed (needs the internet).
-   m: a folder holding 001.mp3 … 114.mp3 (mp3quran.net, way2quran.com); only: [first, last] when the source has just those suras.  a: an item on archive.org; its mp3 files begin with the sura's number,
+   m: a folder holding 001.mp3 … 114.mp3 (mp3quran.net, way2quran.com); only: [first, last] when the source has just those suras.
+   t: the recording has verse timings (data/tm-<t>.js), so the mushaf can follow it verse by verse.  a: an item on archive.org; its mp3 files begin with the sura's number,
    and their exact names are read from the item's file list the first time it is played. mr: a Mauritanian reciter. ---------- */
 const RECITERS={
   warsh:[
     {id:'rajel',n:'الراجل ولد عثمان',mr:1,a:'alfird77777777777777776479446944696799796444il_002'},
     {id:'rabbani',n:'سليمان ولد الرباني',mr:1,a:'alfirdwsiy1433_35686535653683658668356566586356gmail_002'},
     {id:'laghdaf',n:'محمد الأغظف ولد محمد سيدي',mr:1,m:'https://media.way2quran.com/mohamed-laghzaf-weld-mohamed-sidi/warsh-an-nafi/',only:[2,33]},   // the source has suras 2–33 only
-    {id:'koshi',n:'العيون الكوشي',m:'https://server11.mp3quran.net/koshi/'},
-    {id:'qazabri',n:'عمر القزابري',m:'https://cdn.mp3quran.net/audio/omar-kazabri/r1/'},
-    {id:'yassin',n:'القارئ ياسين الجزائري',m:'https://server11.mp3quran.net/qari/'},
-    {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r3/'}],
+    {id:'koshi',n:'العيون الكوشي',m:'https://server11.mp3quran.net/koshi/',t:'16'},
+    {id:'qazabri',n:'عمر القزابري',m:'https://cdn.mp3quran.net/audio/omar-kazabri/r1/',t:'80'},
+    {id:'yassin',n:'القارئ ياسين الجزائري',m:'https://server11.mp3quran.net/qari/',t:'14'},
+    {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r3/',t:'120'}],
   qaloon:[
     {id:'naji',n:'الناجي ولد بلال',mr:1,a:'alfirdwsiy14335787878787858750578780578780'},
     {id:'abdqader',n:'عبد الرحمن ولد عبد القادر',mr:1,a:'alf444444444444444444444444444444444469469649469746946969_gmail_011_201703'},
     {id:'laghdaf',n:'محمد الأغظف ولد محمد سيدي',mr:1,m:'https://media.way2quran.com/mohamed-laghzaf-weld-mohamed-sidi/qalun-an-nafi/'},
-    {id:'dokali',n:'الدوكالي محمد العالم',m:'https://server7.mp3quran.net/dokali/'},
-    {id:'hudhaify',n:'علي بن عبد الرحمن الحذيفي',m:'https://server9.mp3quran.net/huthifi_qalon/'},
-    {id:'husary',n:'محمود خليل الحصري',m:'https://server13.mp3quran.net/husr/Rewayat-Qalon-A-n-Nafi/'}],
+    {id:'dokali',n:'الدوكالي محمد العالم',m:'https://server7.mp3quran.net/dokali/',t:'208'},
+    {id:'hudhaify',n:'علي بن عبد الرحمن الحذيفي',m:'https://server9.mp3quran.net/huthifi_qalon/',t:'75'},
+    {id:'husary',n:'محمود خليل الحصري',m:'https://server13.mp3quran.net/husr/Rewayat-Qalon-A-n-Nafi/',t:'270'}],
   hafs:[
     {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r1/'},
     {id:'basit',n:'عبد الباسط عبد الصمد',m:'https://server7.mp3quran.net/basit/'},
@@ -1183,6 +1188,52 @@ function suraUrl(r,n){
     if(Object.keys(map).length){archFiles[r.a]=map;st.set('arch.'+r.a,map)}return pick(map)}).catch(()=>pick({}));
 }
 const PL={audio:null,key:'',n:0,names:null};
+/* following the recitation: with a reciter whose recording has verse timings, the verse being recited is tinted on the
+   page (Qalun pages, whose verse positions are in data/rg-qaloon.js, and the text pages) and the page is turned when the
+   recitation moves on to the next one. T: when each verse of each sura starts, in tenths of a second. */
+const SY={T:null,tkey:'',pos:null,s:0,a:0,page:0,was:0};
+function syncLoad(key,r){
+  SY.s=SY.a=SY.page=SY.was=0;syncDraw();
+  if(!r.t){SY.T=null;SY.tkey='';return Promise.resolve()}
+  const k='tm-'+r.t,jobs=[need(k).then(T=>{if(reciter(PL.key).t===r.t){SY.T=T;SY.tkey=k}}).catch(()=>{SY.T=null})];
+  if(key==='qaloon'&&!SY.pos)jobs.push(need('rg-qaloon').then(R=>{const m=new Map();     // 's:a' -> [[page, area, [left, bottom, width, height]…], …]
+    for(const p in R)for(const v of R[p]){const rs=[];let ar=0;for(let i=2;i<v.length;i+=4){rs.push(v.slice(i,i+4));ar+=v[i+2]*v[i+3]}
+      const k2=v[0]+':'+v[1];(m.get(k2)||m.set(k2,[]).get(k2)).push([+p,ar,rs])}
+    m.forEach(L=>L.sort((x,y)=>x[0]-y[0]));SY.pos=m}).catch(()=>{}));
+  return Promise.all(jobs);
+}
+// the page a verse is on; for a verse that runs over two pages, by how far through it the recitation is
+function syncPage(key,s,a,frac){
+  if(key==='qaloon'&&SY.pos){const L=SY.pos.get(s+':'+a);if(L){if(L.length<2)return L[0][0];return frac<L[0][1]/(L[0][1]+L[1][1])?L[0][0]:L[1][0]}}
+  const Q=loaded['quran-'+key],M=loaded.mohammadi;
+  try{return key==='warsh'?(M?M.pages[s-1][a-1]:0):Q.suras[s-1].v[a-1][1]}catch(e){return 0}
+}
+const shownPage=()=>{const m=/^#page-(\d+)/.exec(location.hash);return m&&$('qpage')&&rw===PL.key?+m[1]:0};
+function syncTick(){
+  const A=PL.audio,T=SY.T&&SY.T[PL.n-1];if(!T||!PL.n)return;
+  const t=A.currentTime*10;let i=-1;
+  if(t>=T[0]){let lo=0,hi=T.length-2;while(lo<hi){const mid=(lo+hi+1)>>1;if(T[mid]<=t)lo=mid;else hi=mid-1}i=lo}
+  const a=i+1,frac=i<0?0:(t-T[i])/Math.max(1,T[i+1]-T[i]),page=a?syncPage(PL.key,PL.n,a,frac):0;
+  if(a===SY.a&&PL.n===SY.s&&page===SY.page)return;
+  SY.s=PL.n;SY.a=a;
+  if(page&&page!==SY.page){
+    const shown=shownPage();
+    if(shown&&shown===SY.was&&shown!==page&&!TURN&&!document.querySelector('.cpick')){SY.page=SY.was=page;turnTo(page,page>shown?1:-1);return}   // the reader was on the page being recited: follow it
+    SY.page=page;
+  }
+  if(page&&shownPage()===page)SY.was=page;
+  syncDraw();
+}
+function syncDraw(){
+  document.querySelectorAll('.ayhl').forEach(x=>x.remove());document.querySelectorAll('.ay.now').forEach(x=>x.classList.remove('now'));
+  if(!SY.a||!PL.n)return;const shown=shownPage();if(!shown)return;
+  const sp=document.querySelector(`#qpage .ay[data-s="${SY.s}"][data-a="${SY.a}"]`);if(sp){sp.classList.add('now');return}   // a text page
+  const box=$('mFit'),L=PL.key==='qaloon'&&SY.pos&&SY.pos.get(SY.s+':'+SY.a);if(!box||!L)return;
+  const here=L.find(x=>x[0]===shown);if(!here)return;
+  const d=document.createElement('div');d.className='ayhl';
+  d.innerHTML=here[2].map(r=>`<i style="left:calc(var(--u)*${r[0]});bottom:calc(var(--u)*${r[1]});width:calc(var(--u)*${r[2]});height:calc(var(--u)*${r[3]})"></i>`).join('');
+  box.insertBefore(d,box.querySelector('.qfr'));
+}
 function playerBar(){
   let b=$('qPlayer');if(b)return b;
   b=document.createElement('div');b.id='qPlayer';b.dir='rtl';b.lang='ar';
@@ -1196,7 +1247,8 @@ function playerBar(){
   const state=()=>{b.classList.toggle('on',!a.paused);document.body.classList.toggle('has-player',document.body.contains(b))};
   a.addEventListener('play',state);a.addEventListener('pause',state);
   a.addEventListener('waiting',()=>{$('qpSub').dataset.w='1';subLine()});a.addEventListener('playing',()=>{delete $('qpSub').dataset.w;subLine()});
-  a.addEventListener('timeupdate',()=>{if(a.duration)b.querySelector('#qpBar u').style.width=(a.currentTime/a.duration*100).toFixed(1)+'%';subLine()});
+  a.addEventListener('timeupdate',()=>{if(a.duration)b.querySelector('#qpBar u').style.width=(a.currentTime/a.duration*100).toFixed(1)+'%';subLine();syncTick()});
+  a.addEventListener('seeked',syncTick);
   const seek=d=>{if(isFinite(a.duration))a.currentTime=Math.max(0,Math.min(a.duration-.5,a.currentTime+d))};
   // a tap on the line jumps there (the line fills from the right)
   b.querySelector('#qpBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();if(isFinite(a.duration))a.currentTime=a.duration*Math.max(0,Math.min(1,(r.right-e.clientX)/r.width))});
@@ -1208,26 +1260,29 @@ function playerBar(){
     else if(k==='back')seek(-10);else if(k==='fwd')seek(10);
     else if(k==='prev'&&PL.n>1)playSura(PL.key,PL.n-1,PL.names);
     else if(k==='next'&&PL.n<114)playSura(PL.key,PL.n+1,PL.names);
-    else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player')}});
+    else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player');SY.a=0;syncDraw()}});
   return b;
 }
 const clock=t=>{t=Math.floor(t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s2=t%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s2).padStart(2,'0')};
 const subLine=()=>{const e=$('qpSub'),a=PL.audio;if(!e||e.dataset.x)return;
   e.textContent=(e.dataset.w?'جارٍ التحميل… · ':isFinite(a.duration)&&a.duration?clock(a.currentTime)+' / '+clock(a.duration)+' · ':'')+reciter(PL.key).n+' ▾'};
-// names: the sura names of the riwaya being read (from its text data)
-function playSura(key,n,names){
+// names: the sura names of the riwaya being read (from its text data); from: the verse to start at, when the recording has timings
+function playSura(key,n,names,from){
   playerBar();const a=PL.audio,r=reciter(key);PL.key=key;PL.n=n;PL.names=names;
   $('qpTitle').textContent='سورة '+(names&&names[n-1]||n);delete $('qpSub').dataset.x;$('qpSub').dataset.w='1';subLine();$('qPlayer').querySelector('#qpBar u').style.width='0';
   a.pause();
   if(r.only&&(n<r.only[0]||n>r.only[1])){a.removeAttribute('src');delete $('qpSub').dataset.w;$('qpSub').dataset.x='1';$('qpSub').textContent=`غير متوفرة بصوت ${r.n} (المتوفر: السور ${r.only[0]}–${r.only[1]}) ▾`;return}
-  suraUrl(r,n).then(u=>{if(PL.n!==n||PL.key!==key)return;a.src=u;a.play().catch(()=>{})});
+  Promise.all([suraUrl(r,n),syncLoad(key,r)]).then(([u])=>{if(PL.n!==n||PL.key!==key)return;
+    const T=SY.T&&SY.T[n-1],at=from>1&&T&&T[from-1]?T[from-1]/10:0;
+    a.src=u;if(at)a.addEventListener('loadedmetadata',()=>{try{a.currentTime=at}catch(e){}},{once:true});
+    a.play().catch(()=>{})});
 }
 // choosing a reciter: the Mauritanian reciters are listed first
 function reciterSheet(key,then,title){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';const cur=reciter(key).id;
   d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>${title?esc(title):'قراء '+RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}</span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
+    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}${r.t?'<em>المصحف يتابع تلاوته آيةً آية</em>':''}</span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
     <p class="rc-src">التلاوات تُسمع عبر الإنترنت: من موقع mp3quran.net، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
   d.addEventListener('click',e=>{const b=e.target.closest('button');
     if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then()}
