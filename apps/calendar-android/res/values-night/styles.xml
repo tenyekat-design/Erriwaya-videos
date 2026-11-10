@@ -4,9 +4,10 @@
         <item name="android:colorPrimary">#14201A</item>
         <item name="android:colorPrimaryDark">#0C1511</item>
         <item name="android:colorAccent">#E2B33F</item>
-        <item name="android:windowBackground">@color/bg</item>
-        <item name="android:statusBarColor">#0C1511</item>
+        <item name="android:windowBackground">@color/splash</item>
+        <item name="android:statusBarColor">#04190F</item>
         <item name="android:navigationBarColor">@color/bg</item>
     </style>
     <color name="bg">#0C1511</color>
+    <color name="splash">#FFFFFF</color>
 </resources>
