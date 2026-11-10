@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show Tangent;
 import 'package:flutter/material.dart';
 
 /// زخرفة المصحف: تذهيب على أرضية لازوردية، على طريقة المصاحف المذهّبة.
