@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -12,6 +14,14 @@ import android.webkit.WebViewClient;
 /** The whole calendar lives in assets/index.html; this activity only hosts it, fully offline. */
 public class MainActivity extends Activity {
     private WebView web;
+    /** True while the tasbih page asks to count with the volume keys. */
+    private volatile boolean volumeKeysCount = false;
+
+    /** Bridge the page calls as window.AndroidApp. */
+    public class Bridge {
+        @JavascriptInterface
+        public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
+    }
 
     @Override
     protected void onCreate(Bundle state) {
@@ -30,6 +40,7 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+        web.addJavascriptInterface(new Bridge(), "AndroidApp");
         setContentView(web);
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
@@ -39,6 +50,17 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
         web.saveState(out);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        int k = e.getKeyCode();
+        if (volumeKeysCount && (k == KeyEvent.KEYCODE_VOLUME_UP || k == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0)
+                web.evaluateJavascript("window.tasbihTick&&window.tasbihTick()", null);
+            return true;
+        }
+        return super.dispatchKeyEvent(e);
     }
 
     @Override
