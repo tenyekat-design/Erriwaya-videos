@@ -4,6 +4,7 @@ import '../data.dart';
 import '../settings.dart';
 import '../theme.dart';
 import '../ornament.dart';
+import '../ornate_page.dart';
 import '../widgets.dart';
 import 'ayah_sheet.dart';
 import 'home_screen.dart';
@@ -236,6 +237,7 @@ class _MushafPageState extends State<_MushafPage> {
     closeRun();
     final slots = segs.where((s) => !s.isRun).length;
     final target = q.textLines(r, widget.page);
+    if (ornate) return _ornatePage(words, segs.any((s) => s.basmala), colors);
 
     return Container(
       color: colors.paper,
@@ -297,6 +299,125 @@ class _MushafPageState extends State<_MushafPage> {
               return used > box.maxHeight + 1 ? SingleChildScrollView(child: column) : column;
             }),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// الفاتحة وأول البقرة: النصّ داخل ميدالية مزخرفة، وكل سطر ممتدّ بعرض الميدالية عند موضعه
+  /// فتأتي الأسطر متناظرة حول المحور وتملأ اللوحة من أعلاها إلى أسفلها.
+  _Layout _ornateLayout(List<_Word> words, bool basmala, Medallion m, double yTop, double yBot) {
+    final key = 'ornate/${widget.riwaya.name}/${widget.page}/${m.w.round()}x${m.h.round()}';
+    return _cache.putIfAbsent(key, () {
+      final d = m.textInset;
+      final first = basmala ? 1 : 0;
+      List<List<int>>? pack(double fs, int n, double lineH) {
+        final lines = <List<int>>[];
+        var i = 0;
+        for (var li = first; li < n; li++) {
+          final avail = 2 * m.halfW(yTop + (li + .5) * lineH, d) * .97;
+          final cur = <int>[];
+          var wd = 0.0;
+          while (i < words.length) {
+            final ww = words[i].w100 * fs / 100;
+            final add = cur.isEmpty ? ww : ww + _space * fs;
+            if (cur.isNotEmpty && wd + add > avail) break;
+            cur.add(i);
+            wd += add;
+            i++;
+          }
+          lines.add(cur);
+        }
+        return i >= words.length ? lines : null;
+      }
+
+      _Layout? best;
+      var bestScore = -1e9;
+      for (var n = 4; n <= 18; n++) {
+        final lineH = (yBot - yTop) / n;
+        var lo = _minFs, hi = lineH / 1.8;
+        if (hi <= lo || pack(lo, n, lineH) == null) continue;
+        for (var k = 0; k < 12; k++) {
+          final mid = (lo + hi) / 2;
+          pack(mid, n, lineH) != null ? lo = mid : hi = mid;
+        }
+        final lines = pack(lo, n, lineH)!;
+        // أكبر خط، دون أسطر فارغة ولا أسطر قليلة الكلمات تتّسع فراغاتها
+        final empty = lines.where((l) => l.isEmpty).length;
+        final sparse = lines.where((l) => l.length < 3).length;
+        final score = lo - empty * 4 - sparse * 1.5;
+        if (score > bestScore) {
+          bestScore = score;
+          best = _Layout(lo, lineH, lines.where((l) => l.isNotEmpty).toList());
+        }
+      }
+      return best ?? _Layout(_minFs, (yBot - yTop) / 10, [List.generate(words.length, (i) => i)]);
+    });
+  }
+
+  Widget _ornatePage(List<_Word> words, bool basmala, PageColors colors) {
+    final r = widget.riwaya;
+    final surah = Quran.instance.surah(widget.page == 1 ? 1 : 2);
+    return Container(
+      color: colors.paper,
+      child: SafeArea(
+        top: false,
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+          child: LayoutBuilder(builder: (context, box) {
+            final m = Medallion(box.biggest);
+            final d = m.textInset;
+            final yTop = m.ts(d) + 2, yBot = m.bs(d) - 2;
+            final lay = _ornateLayout(words, basmala, m, yTop, yBot);
+            // توزيع الأسطر على ارتفاع اللوحة كله
+            final n = lay.lines.length + (basmala ? 1 : 0);
+            final lineH = (yBot - yTop) / n;
+            final style = TextStyle(fontFamily: r.font, fontSize: lay.fs, color: colors.ink);
+            final kids = <Widget>[
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: MedallionPainter(
+                      colors: colors, title: 'سورة ${surah.name}', titleFont: r.font, page: widget.page),
+                ),
+              ),
+            ];
+            var li = 0;
+            if (basmala) {
+              kids.add(Positioned(
+                  top: yTop,
+                  left: 0,
+                  right: 0,
+                  height: lineH,
+                  child: Center(child: Text(r.basmala, style: style, textDirection: TextDirection.rtl))));
+              li = 1;
+            }
+            for (var k = 0; k < lay.lines.length; k++, li++) {
+              final line = lay.lines[k];
+              final y = yTop + li * lineH;
+              final hw = m.halfW(y + lineH / 2, d) * .97;
+              final wordsW = line.fold<double>(0, (t, i) => t + words[i].w100 * lay.fs / 100);
+              final natural = wordsW + (line.length - 1) * _space * lay.fs;
+              final last = k == lay.lines.length - 1;
+              final full = line.length > 1 && !(last && natural < 2 * hw * .8);
+              final gap = full ? (2 * hw - wordsW) / (line.length - 1) - 1.5 : _space * lay.fs;
+              kids.add(Positioned(
+                top: y,
+                left: m.cx - hw,
+                width: 2 * hw,
+                height: lineH,
+                child: Row(
+                  textDirection: TextDirection.rtl,
+                  mainAxisAlignment: full ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                  children: [
+                    for (var j = 0; j < line.length; j++)
+                      _wordWidget(words[line[j]], style, colors,
+                          EdgeInsets.only(right: j == 0 ? 0 : gap / 2, left: j == line.length - 1 ? 0 : gap / 2)),
+                  ],
+                ),
+              ));
+            }
+            return Stack(children: kids);
+          }),
         ),
       ),
     );
