@@ -20,19 +20,13 @@ javac --release 11 -classpath "$PLAT" -d build/classes $(find src build/gen -nam
 "$BT/d8" --release --lib "$PLAT" --min-api 21 --output build/dex $(find build/classes -name '*.class')
 (cd build/dex && zip -q -u ../unsigned.apk classes.dex)
 "$BT/zipalign" -f -p 4 build/unsigned.apk build/aligned.apk
-# The signing key is NOT in the repository: CI passes it as secrets (KEYSTORE_B64 = base64 of the
-# .jks file, KEYSTORE_PASS = its password). Until those secrets exist the old committed key is used.
-if [ -n "${KEYSTORE_B64:-}" ] && [ -n "${KEYSTORE_PASS:-}" ]; then
-  KS=build/release.jks; printf '%s' "$KEYSTORE_B64" | base64 -d > "$KS"; echo "signing: secret key"
-elif [ -f signing/release.jks ]; then
-  KS=signing/release.jks; KEYSTORE_PASS=erriwaya-calendar; echo "signing: OLD committed key (add the secrets)"
-else
-  echo "No signing key: set KEYSTORE_B64 and KEYSTORE_PASS" >&2; exit 1
-fi
+# signing/calendar-release.jks is encrypted (PKCS12, AES-256) with a long random password that is
+# NOT in the repository: CI passes it as the secret KEYSTORE_PASS. Without it nothing can be signed.
+KS=signing/calendar-release.jks
+if [ -z "${KEYSTORE_PASS:-}" ]; then echo "No signing password: set KEYSTORE_PASS" >&2; exit 1; fi
 export KEYSTORE_PASS
 "$BT/apksigner" sign --ks "$KS" --ks-pass env:KEYSTORE_PASS \
   --key-pass env:KEYSTORE_PASS --ks-key-alias calendar \
   --out dist/mauritania-calendar.apk build/aligned.apk
-rm -f build/release.jks
 "$BT/apksigner" verify --print-certs dist/mauritania-calendar.apk | head -3
 ls -l dist/mauritania-calendar.apk

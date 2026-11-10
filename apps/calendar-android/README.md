@@ -85,5 +85,5 @@
 
 ## التوقيع
 
-مفتاح التوقيع غير موجود في المستودع. يمرَّر إلى البناء عبر سرّين في GitHub Actions:
-`CALENDAR_KEYSTORE_B64` (ملف `.jks` بترميز base64) و`CALENDAR_KEYSTORE_PASS` (كلمة السر)، والاسم المستعار للمفتاح `calendar`.
+ملف المفتاح `signing/calendar-release.jks` مشفَّر بكلمة سر عشوائية طويلة غير موجودة في المستودع.
+تمرَّر كلمة السر إلى البناء عبر السر `CALENDAR_KEYSTORE_PASS` في GitHub Actions، والاسم المستعار للمفتاح `calendar`.
