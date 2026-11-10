@@ -77,7 +77,8 @@ for key, src, count, font, font_out in RIWAYAT:
 
 # ---- Mohammadi Mushaf (Mohammed VI Foundation, Maghribi script, Warsh): page of every verse ----
 # Index [id, page, sura, aya] from github.com/Zizwar/mushaf-mauri (MIT). Page images are served by mushaf.ma as
-# page{index page + 2}.png (al-Fatiha is page4.png); the app shows index page - 1 as the page number (1..638).
+# page{index page + 1}.png (al-Fatiha is page3.png, the start of al-Baqara page4.png); the app shows
+# index page - 1 as the page number (1..638), so the image is page{shown page + 2}.png.
 t = open(os.path.join(SRC, 'indexMuhammadi.js'), encoding='utf-8').read()
 idx = json.loads(t[t.index('['):t.rindex(']') + 1])
 warsh = load('warsh.json')
@@ -87,7 +88,7 @@ for (i, page, sura, aya), w in zip(idx, warsh):
     assert (sura, aya) == (w['sura_no'], w['aya_no']), (i, sura, aya)
     if len(mp) < sura: mp.append([])
     mp[sura - 1].append(page - 1)
-write('mohammadi.js', 'mohammadi', {'pages': mp, 'count': max(max(x) for x in mp), 'url': 'https://mushaf.ma/fahres/page/images/muhammadi/page{n}.png', 'offset': 3})
+write('mohammadi.js', 'mohammadi', {'pages': mp, 'count': max(max(x) for x in mp), 'url': 'https://mushaf.ma/fahres/page/images/muhammadi/page{n}.png', 'offset': 2})
 print('mohammadi', sum(map(len, mp)), 'verses on', max(max(x) for x in mp), 'pages')
 
 # ---- Hadith collections ----

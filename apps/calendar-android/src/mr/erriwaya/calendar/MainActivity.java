@@ -43,6 +43,27 @@ public class MainActivity extends Activity {
                     requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 7));
         }
 
+        /** Local copy of a Warsh mushaf page ("" if not downloaded), as a file:// URL. */
+        @JavascriptInterface
+        public String mushafPage(int n) {
+            java.io.File f = new java.io.File(new java.io.File(getFilesDir(), "mushaf"), "page" + n + ".png");
+            return f.exists() && f.length() > 0 ? Uri.fromFile(f).toString() : "";
+        }
+
+        /** Downloads every page (url pattern with {n}, pages from..to) into the app's files, in the background. */
+        @JavascriptInterface
+        public void downloadMushaf(String pattern, int from, int to) { MushafDownload.start(MainActivity.this, pattern, from, to); }
+
+        @JavascriptInterface
+        public void cancelMushaf() { MushafDownload.cancel(); }
+
+        /** "done,total,bytes,running,error" */
+        @JavascriptInterface
+        public String mushafProgress() { return MushafDownload.progress(MainActivity.this, 638); }
+
+        @JavascriptInterface
+        public void deleteMushaf() { MushafDownload.deleteAll(MainActivity.this); }
+
         /** Exact alarms: Android 12+ lets the user allow them in Settings ("Alarms & reminders"). */
         @JavascriptInterface
         public boolean exactAlarmsAllowed() {
@@ -135,7 +156,9 @@ public class MainActivity extends Activity {
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);   // remembers the city and settings
         s.setTextZoom(100);             // keep the layout stable with large system fonts
-        s.setMediaPlaybackRequiresUserGesture(false);   // tasbih clicks also sound when counting with the volume keys
+        s.setMediaPlaybackRequiresUserGesture(false);
+        s.setAllowFileAccess(true);                     // downloaded mushaf pages live in the app's files
+        s.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  // pages seen once open again from the cache   // tasbih clicks also sound when counting with the volume keys
         web.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
