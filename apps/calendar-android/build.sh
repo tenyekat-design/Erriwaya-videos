@@ -23,7 +23,14 @@ javac --release 11 -classpath "$PLAT" -d build/classes $(find src build/gen -nam
 # signing/calendar-release.jks is encrypted (PKCS12, AES-256) with a long random password that is
 # NOT in the repository: CI passes it as the secret KEYSTORE_PASS. Without it nothing can be signed.
 KS=signing/calendar-release.jks
-if [ -z "${KEYSTORE_PASS:-}" ]; then echo "No signing password: set KEYSTORE_PASS" >&2; exit 1; fi
+# accept the password from either secret, ignoring stray spaces or line breaks from pasting
+PW=""
+for c in "${KEYSTORE_PASS:-}" "${KEYSTORE_ALT:-}"; do
+  c=$(printf '%s' "$c" | tr -d '[:space:]'); [ -n "$c" ] || continue
+  if KP="$c" keytool -list -keystore "$KS" -storepass:env KP >/dev/null 2>&1; then PW=$c; break; fi
+done
+if [ -z "$PW" ]; then echo "Signing password missing or wrong (secret CALENDAR_KEYSTORE_PASS)" >&2; exit 1; fi
+KEYSTORE_PASS=$PW
 export KEYSTORE_PASS
 "$BT/apksigner" sign --ks "$KS" --ks-pass env:KEYSTORE_PASS \
   --key-pass env:KEYSTORE_PASS --ks-key-alias calendar \

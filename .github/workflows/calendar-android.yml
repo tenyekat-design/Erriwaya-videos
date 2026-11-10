@@ -25,6 +25,7 @@ jobs:
           VERSION_CODE: ${{ github.run_number }}
           VERSION_NAME: "1.${{ github.run_number }}"
           KEYSTORE_PASS: ${{ secrets.CALENDAR_KEYSTORE_PASS }}
+          KEYSTORE_ALT: ${{ secrets.CALENDAR_KEYSTORE_B64 }}
       - uses: actions/upload-artifact@v4
         with:
           name: mauritania-calendar-apk
