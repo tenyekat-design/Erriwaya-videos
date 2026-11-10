@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Builds dist/mauritania-calendar.apk with the Android SDK's command-line tools (no Gradle).
+# Needs ANDROID_HOME (preinstalled on GitHub's ubuntu runners) and a JDK. Run from this folder.
+set -euo pipefail
+cd "$(dirname "$0")"
+SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:?set ANDROID_HOME}}"
+BT=$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)
+PLAT=$(ls -d "$SDK"/platforms/android-[0-9]* | sort -V | tail -1)/android.jar
+VERSION_NAME=${VERSION_NAME:-1.0}
+VERSION_CODE=${VERSION_CODE:-1}
+echo "build-tools: $BT"; echo "platform: $PLAT"
+rm -rf build && mkdir -p build/gen build/classes build/dex dist
+"$BT/aapt2" compile --dir res -o build/res.zip
+"$BT/aapt2" link -o build/unsigned.apk -I "$PLAT" --manifest AndroidManifest.xml \
+  -A assets --java build/gen --min-sdk-version 21 --target-sdk-version 34 \
+  --version-code "$VERSION_CODE" --version-name "$VERSION_NAME" build/res.zip
+javac --release 11 -classpath "$PLAT" -d build/classes $(find src build/gen -name '*.java')
+"$BT/d8" --release --lib "$PLAT" --min-api 21 --output build/dex $(find build/classes -name '*.class')
+(cd build/dex && zip -q -u ../unsigned.apk classes.dex)
+"$BT/zipalign" -f -p 4 build/unsigned.apk build/aligned.apk
+"$BT/apksigner" sign --ks signing/release.jks --ks-pass pass:erriwaya-calendar \
+  --key-pass pass:erriwaya-calendar --ks-key-alias calendar \
+  --out dist/mauritania-calendar.apk build/aligned.apk
+"$BT/apksigner" verify --print-certs dist/mauritania-calendar.apk | head -3
+ls -l dist/mauritania-calendar.apk
