@@ -90,7 +90,7 @@ class _SettingsSheet extends StatelessWidget {
             style: TextStyle(fontSize: 13, height: 1.7, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
-          Text('الإصدار 1.8.0', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+          Text('الإصدار 1.8.1', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
         ]),
       ),
     );

@@ -40,7 +40,7 @@ class Medallion {
       : w = s.width,
         h = s.height {
     final bw = w * .88;
-    final bh = math.min(h * .9, bw * 1.5);
+    final bh = math.min(h * .93, bw * 2.2);
     b = Rect.fromCenter(center: Offset(w / 2, h / 2 - h * .005), width: bw, height: bh);
     aH = b.height * .16;
     bandW = b.width * .075;
@@ -54,8 +54,8 @@ class Medallion {
   double halfW(double y, double d) => b.width / 2 - d;
 
   Offset get cartoucheCenter => Offset(cx, b.top + aH * .64);
-  Size get cartoucheSize => Size(b.width * .38, aH * .44);
-  Offset get knotCenter => Offset(cx, b.bottom - aH * .5);
+  Size get cartoucheSize => Size(b.width * .42, aH * .5);
+  Offset get knotCenter => Offset(cx, b.bottom - aH * .6);
   double get knotSize => aH * .27;
 
   double get textTop => cartoucheCenter.dy + cartoucheSize.height * .75;
@@ -154,7 +154,7 @@ class MedallionPainter extends CustomPainter {
     canvas.translate(-c.dx, -c.dy);
     canvas.drawPath(cp, _s(Md.roseDark, .9));
     canvas.restore();
-    paintSurahName(canvas, c, surah, cs.height * .64, const Color(0xFF1A1A1A));
+    paintSurahName(canvas, c, surah, cs.height * .95, const Color(0xFF1A1A1A));
     paintKnot(canvas, m.knotCenter, m.knotSize);
 
     // رقم الصفحة تحت اللوحة
@@ -331,26 +331,39 @@ void paintCornerArabesque(Canvas canvas, Offset at, double sx, double sy, double
     ..moveTo(x0, 0)
     ..cubicTo(x0 + (x1 - x0) * .2, -w, x0 + (x1 - x0) * .75, -w * .95, x1, 0)
     ..cubicTo(x0 + (x1 - x0) * .75, w * .95, x0 + (x1 - x0) * .2, w, x0, 0);
-  // الورقتان الجانبيتان على امتداد الحافتين
-  for (final s in [-1.0, 1.0]) {
+  // غصنان رفيعان على امتداد الحافتين، عليهما أوراق صغيرة وبرعم وردي، وينتهيان بلفيفة
+  for (final sd in [-1.0, 1.0]) {
     canvas.save();
-    canvas.rotate(s * math.pi / 4);
-    final p = Path()
-      ..moveTo(r * .1, 0)
-      ..cubicTo(r * .3, s * r * .2, r * .62, s * r * .22, r * .82, s * r * .06)
-      ..cubicTo(r * .7, s * r * .02, r * .56, s * -r * .02, r * .5, s * -r * .1)
-      ..cubicTo(r * .4, s * -r * .02, r * .25, s * -r * .03, r * .1, 0);
-    shape(p, Md.green, Md.gold);
-    _spiral(canvas, Offset(r * .88, s * r * .12), r * .1, s > 0 ? -math.pi / 2 : math.pi / 2, -s, 1.2, _s(Md.gold, 1.3));
-    canvas.drawCircle(Offset(r * .45, s * r * .1), r * .045, _f(Md.rose));
+    canvas.rotate(sd * math.pi / 4);
+    final stem = Path()
+      ..moveTo(r * .08, 0)
+      ..cubicTo(r * .35, sd * r * .02, r * .7, sd * r * .16, r * 1.0, sd * r * .1);
+    canvas.drawPath(stem, _s(Md.gold, 1.6));
+    _spiral(canvas, Offset(r * 1.06, sd * r * .02), r * .1, sd > 0 ? math.pi * .6 : -math.pi * .6, -sd, 1.3,
+        _s(Md.gold, 1.4));
+    for (final (x, up) in [(.32, 1.0), (.5, -1.0), (.68, 1.0), (.84, -1.0)]) {
+      final y = sd * r * (.02 + .14 * x * x);
+      final leafPath = Path()
+        ..moveTo(0, 0)
+        ..cubicTo(r * .05, -r * .07, r * .15, -r * .06, r * .2, 0)
+        ..cubicTo(r * .15, r * .06, r * .05, r * .07, 0, 0);
+      canvas.save();
+      canvas.translate(r * x, y);
+      canvas.rotate(-sd * up * .9 + (up < 0 ? 0 : 0));
+      canvas.drawPath(leafPath, _f(Md.green));
+      canvas.drawPath(leafPath, _s(Md.gold, .8));
+      canvas.restore();
+    }
+    canvas.drawCircle(Offset(r * .6, sd * r * .07), r * .045, _f(Md.rose));
+    canvas.drawCircle(Offset(r * .6, sd * r * .07), r * .045, _s(Md.goldDark, .7));
     canvas.restore();
   }
   // السعفة الوسطى
-  shape(leaf(r * .12, r * .92, r * .3), Md.green, Md.gold);
-  shape(leaf(r * .25, r * .8, r * .16), Md.rose, Md.goldDark);
-  shape(leaf(r * .35, r * .66, r * .06), Md.greenLight, Md.goldDark);
-  canvas.drawLine(Offset(r * .92, 0), Offset(r * 1.08, 0), _s(Md.gold, 1.4));
-  canvas.drawCircle(Offset(r * 1.1, 0), r * .045, _f(Md.gold));
+  shape(leaf(r * .12, r * .8, r * .2), Md.green, Md.gold);
+  shape(leaf(r * .22, r * .7, r * .11), Md.rose, Md.goldDark);
+  shape(leaf(r * .32, r * .58, r * .045), Md.greenLight, Md.goldDark);
+  canvas.drawLine(Offset(r * .8, 0), Offset(r * .95, 0), _s(Md.gold, 1.4));
+  canvas.drawCircle(Offset(r * .97, 0), r * .04, _f(Md.gold));
   canvas.drawCircle(Offset(r * .1, 0), r * .07, _f(Md.gold));
   canvas.restore();
 }
@@ -390,7 +403,7 @@ class SurahHeaderPainter extends CustomPainter {
     final cp = lobedCartouche(c, cw, ch);
     canvas.drawPath(cp, _f(Md.cream));
     canvas.drawPath(cp, _s(Md.lavDark, 1.2));
-    paintSurahName(canvas, c, surah, ch * .66, ink);
+    paintSurahName(canvas, c, surah, ch * .95, ink);
   }
 
   @override

@@ -655,31 +655,35 @@ class _QcfPageState extends State<QcfPage> {
     final ayat = Quran.instance.ayat[Riwaya.hafs]!;
     final style = TextStyle(
         fontFamily: Qcf.family(widget.page), fontSize: fs, height: 1, color: colors.ink);
+    // عرض السطر الفعلي من مجموع عروض الرسوم، والسطر متوسّط في مكانه
+    final lw = l.width / Qcf.unitsPerEm * fs;
     return SizedBox(
       height: lineH,
-      child: OverflowBox(
-        maxHeight: double.infinity,
-        maxWidth: double.infinity,
-        child: Row(
-          textDirection: TextDirection.rtl,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final (i, glyphs) in l.runs)
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => widget.onTap(ayat[i]),
-                child: Container(
-                  height: lineH,
-                  alignment: Alignment.center,
-                  color: _on(ayat[i]) ? colors.highlight : null,
-                  // رسوم الخطّ تعلو خطّ الأساس، فتُنزَّل قليلاً لتتوسّط السطر
-                  child: Transform.translate(
-                    offset: Offset(0, fs * .33),
-                    child: Text(glyphs, style: style, textDirection: TextDirection.rtl, softWrap: false),
+      child: Center(
+        child: SizedBox(
+          width: lw + 2,
+          height: lineH,
+          child: Row(
+            textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (final (i, glyphs) in l.runs)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => widget.onTap(ayat[i]),
+                  child: Container(
+                    height: lineH,
+                    alignment: Alignment.center,
+                    color: _on(ayat[i]) ? colors.highlight : null,
+                    // رسوم الخطّ تعلو خطّ الأساس، فتُنزَّل قليلاً لتتوسّط السطر
+                    child: Transform.translate(
+                      offset: Offset(0, fs * .33),
+                      child: Text(glyphs, style: style, textDirection: TextDirection.rtl, softWrap: false),
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
