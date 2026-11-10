@@ -236,24 +236,12 @@
   // ---------- scenes (e = seconds since the scene's cut) ----------
   const MRC = { lon: -10.5, lat: 20.3 };          // centre of Mauritania, start of the light waves
   function sceneHook(e) {
-    const ng = ctx.createLinearGradient(0, 0, 0, H * 0.7);
-    ng.addColorStop(0, C.navy); ng.addColorStop(1, C.navy2);
-    ctx.fillStyle = ng; ctx.fillRect(0, 0, W, H);
-    drawMap({ x: 0, y: 0, w: W, h: H * 0.62 }, { lon: lerp(-7.5, -9.5, e / 5), lat: lerp(22.5, 21.0, e / 5), w: lerp(46, 38, eout(prog(e, 0, 5.5))) }, (ci, lon, my) => {
-      if (ci === WS) return [C.dkWs, 1];
-      if (ci !== IDX[MR]) return [C.dkLand, 1];
-      const w = wave(MRC, e - 0.3, lon, my, 22);
-      return [mix(C.dkLand, C.greenRGB, w * 0.9), 1];
-    });
-    // a small stack of gold bars slides in above the title
-    const dy = Y(690 + EX);
-    const bars = [[150, 0, 260], [370, 0, 260], [260, -1, 260]];
-    bars.forEach(([x, row, s], k) => {
-      const a = eout(prog(e, 0.5 + k * 0.22, 1.2 + k * 0.22));
-      goldbar(M + x + (1 - a) * 200 - e * 6, dy + 62 - s * 0.36 + row * s * 0.5 - (1 - a) * 40 * row, s, k === 2 ? C.white : 'rgba(255,255,255,0.72)', a);
-    });
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, dy + 62, W, H);
-    ctx.fillStyle = C.green; ctx.fillRect(0, dy + 62, W * eout(prog(e, 0.2, 1.1)), 10);
+    // the photo slowly pulls back and fades to white under the title (camels template)
+    const img = IMG[I.hook.img];
+    photo(img, 0, 0, W, H, [lerp(0.55, 0.48, e / 5), 0.42], 1.22 - 0.12 * eout(prog(e, 0, 5.5)));
+    const g = ctx.createLinearGradient(0, H * 0.32, 0, H);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.9)'); g.addColorStop(0.62, '#fff'); g.addColorStop(1, '#fff');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const la = eout(prog(e, 0.15, 0.9));
     logo(W / 2, Y(30 + 110) - (1 - la) * 20, 220, la, true);
     const by = Y(830 + EX);
@@ -313,7 +301,9 @@
   }
 
   function sceneWorld(e, t) {
-    background(t, [0.2, 0.3]);
+    photo(IMG[I.worldImg], 0, 0, W, H, [lerp(0.4, 0.6, clamp(e / 5)), 0.5], 1.15);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fillRect(0, 0, W, H);
+    ctx.drawImage(DOTS, 0, 0);
     header(e);
     title('كم منها مؤكَّد؟', Y(250), e);
     const cx = W / 2, cy = Y(570 + EX * 0.5), R = 225;
@@ -328,7 +318,7 @@
     ctx.restore();
     text(`${(share * 100 * p).toFixed(1)}%`, cx, cy - 18, 124, C.ink, 'center', eout(prog(e, BEAT * 0.8, BEAT * 1.4)), true);
     text('مؤكَّد في منجم تازيازت', cx, cy + 78, 42, C.green, 'center', eout(prog(e, BEAT * 3, BEAT * 3 + 0.4)));
-    const ly = Y(900 + EX * 0.5);
+    const ly = Y(925 + EX * 0.9);
     const row = (y, label, num, col, bg, d) => {
       const a = eout(prog(e, d, d + 0.45));
       const x0 = 90 - (1 - a) * 60;
@@ -338,90 +328,107 @@
     };
     row(ly, 'الإمكانات المقدّرة', `+${I.potential}`, C.ink, 'rgba(11,31,75,0.07)', BEAT * 4);
     row(ly + 120, 'الاحتياطي المؤكد في تازيازت', String(I.proven), C.green, 'rgba(16,185,129,0.16)', BEAT * 5);
-    const oa = eout(prog(e, BEAT * 6, BEAT * 6 + 0.45));
-    goldbar(W - M - 70, ly + 262, 110, C.green, oa);
-    run([{ s: 'أنتج تازيازت منذ 2010 نحو', size: 40, color: C.ink }, { s: String(I.producedOz), size: 50, color: C.green, ltr: true, dy: -2 },
-         { s: 'مليون أونصة', size: 40, color: C.ink }], W - M - 150 + (1 - oa) * 30, ly + 262, 'right', oa);
     footer(eout(prog(e, 1, 1.6)));
   }
 
   // each slide shares the layout but has its own camera move, figure style and map effect
+  const MOVES = [
+    { z: [1.04, 1.18], f: [[0.6, 0.55], [0.64, 0.5]] },   // slow push in
+    { z: [1.2, 1.2], f: [[0.3, 0.5], [0.7, 0.5]] },       // pan
+    { z: [1.3, 1.05], f: [[0.5, 0.4], [0.5, 0.5]] },      // pull out
+    { z: [1.3, 1.3], f: [[0.5, 0.75], [0.5, 0.3]] },      // tilt up
+    { z: [1.12, 1.26], f: [[0.4, 0.35], [0.6, 0.5]] },    // diagonal drift
+  ];
   const FIG = ['count', 'drop', 'count', 'drop', 'count'];
   function sceneCountry(e, t, i) {
-    const c = I.slides[i];
+    const c = I.slides[i], mv = MOVES[i];
     background(t, [i % 2 ? 0.15 : 0.85, 0.2]);
     header(e, i);
-    const px = M, py = Y(195), pw = W - 2 * M, ph = 430 + EX * 0.7 + (FORMAT === 'story' ? 90 : 0);
-    const kb = eio(prog(e, -0.4, 4.6));
+    const px = M, py = Y(195), pw = W - 2 * M, ph = 430 + EX * 0.7;
+    const kb = eio(prog(e, -0.5, 5.2));
     ctx.save();
     rrect(px, py, pw, ph, 26); ctx.clip();
-    const pg = ctx.createLinearGradient(0, py, 0, py + ph);
-    pg.addColorStop(0, C.navy2); pg.addColorStop(1, C.navy);
-    ctx.fillStyle = pg; ctx.fillRect(px, py, pw, ph);
-    // the camera travels from the whole country to the place
-    const cam = { lon: lerp(-9.0, c.cam.lon, kb), lat: lerp(21.0, c.cam.lat, kb), w: lerp(40, c.cam.w, kb) };
-    const P = drawMap({ x: px, y: py, w: pw, h: ph }, cam, (ci, lon, my) => {
-      if (ci === WS) return [C.dkWs, 1];
-      if (ci !== IDX[MR]) return [C.dkLand, 1];
-      const w = wave(c, e - 0.35, lon, my, i % 2 ? 26 : 16);
-      return [mix(C.dkLand, C.greenRGB, w * 0.75), 1, w > 0 && w < 1 ? 1.25 : 1];
-    });
-    // pulse on the place (or places)
-    const pts = c.pins || [[c.lon, c.lat]];
-    pts.forEach(([lo, la]) => {
-      const [qx, qy] = P(lo, la);
+    if (c.img) {
+      photo(IMG[c.img], px, py, pw, ph, [lerp(mv.f[0][0], mv.f[1][0], kb), lerp(mv.f[0][1], mv.f[1][1], kb)], lerp(mv.z[0], mv.z[1], kb));
+    } else {
+      // no photo: the dotted map of the place on a navy card, the camera travels in
+      const pg = ctx.createLinearGradient(0, py, 0, py + ph);
+      pg.addColorStop(0, C.navy2); pg.addColorStop(1, C.navy);
+      ctx.fillStyle = pg; ctx.fillRect(px, py, pw, ph);
+      const cam = { lon: lerp(-9.0, c.cam.lon, kb), lat: lerp(21.0, c.cam.lat, kb), w: lerp(40, c.cam.w, kb) };
+      const P = drawMap({ x: px, y: py, w: pw, h: ph }, cam, (ci, lon, my) => {
+        if (ci === WS) return [C.dkWs, 1];
+        if (ci !== IDX[MR]) return [C.dkLand, 1];
+        const w = wave(c, e - 0.35, lon, my, i % 2 ? 26 : 16);
+        return [mix(C.dkLand, C.greenRGB, w * 0.75), 1, w > 0 && w < 1 ? 1.25 : 1];
+      });
+      const [qx, qy] = P(c.lon, c.lat);
       for (let k = 0; k < 2; k++) {
         const pp = (((e * 0.55 + k * 0.5) % 1) + 1) % 1;
         ctx.strokeStyle = `rgba(255,255,255,${0.55 * (1 - pp) * prog(e, 1, 1.6)})`; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.arc(qx, qy, 14 + pp * 70, 0, Math.PI * 2); ctx.stroke();
       }
       ctx.fillStyle = `rgba(255,255,255,${prog(e, 1, 1.4)})`; ctx.beginPath(); ctx.arc(qx, qy, 11, 0, Math.PI * 2); ctx.fill();
-    });
-    const g = ctx.createLinearGradient(0, py + ph * 0.6, 0, py + ph);
-    g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(1, 'rgba(11,31,75,0.92)');
+    }
+    const g = ctx.createLinearGradient(0, py + ph * 0.45, 0, py + ph);
+    g.addColorStop(0, 'rgba(11,31,75,0)'); g.addColorStop(1, 'rgba(11,31,75,0.9)');
     ctx.fillStyle = g; ctx.fillRect(px, py, pw, ph);
-    const da = eout(prog(e, 0.5, 1.1));
-    goldbar(px + 130 - (1 - da) * 120, py + ph - 92, 170, C.white, da * 0.95);
     ctx.restore();
     // number badge pops, then the name fades in
     const pb = prog(e, 0.15, 0.55);
     if (pb > 0) {
       const ab = eback(pb);
       ctx.save(); ctx.translate(px + pw - 72, py + ph - 80); ctx.scale(ab, ab);
-      ctx.fillStyle = i >= 3 ? C.red : C.green; ctx.fillRect(-48, -48, 96, 96);
+      ctx.fillStyle = C.green; ctx.fillRect(-48, -48, 96, 96);
       text(String(i + 1), 0, 4, 66, C.white, 'center', 1, true);
       ctx.restore();
     }
     const an = eout(prog(e, 0.3, 0.8));
-    text(c.name, px + pw - 148 + (1 - an) * 40, py + ph - 76, 80, C.white, 'right', an);
+    text(c.name, px + pw - 148 + (1 - an) * 40, py + ph - 76, 84, C.white, 'right', an);
+    // mini map of Mauritania with the place (photo slides)
+    if (c.img) {
+      const mr = { x: px + 20, y: py + 20, w: 290, h: 220 };
+      const ma = eout(prog(e, 0.4, 0.8));
+      ctx.save(); ctx.globalAlpha = ma; ctx.fillStyle = 'rgba(255,255,255,0.92)'; rrect(mr.x, mr.y, mr.w, mr.h, 16); ctx.fill(); ctx.restore();
+      const MP = drawMap({ x: mr.x + 8, y: mr.y + 8, w: mr.w - 16, h: mr.h - 16 }, { lon: -10.5, lat: 20.6, w: 19 }, (ci, lon, my) => {
+        if (ci === WS) return [C.wsRGB, 1];
+        if (ci !== IDX[MR]) return null;
+        const w = wave(c, e - 0.5, lon, my, i % 2 ? 22 : 12);
+        return w > 0 ? [mix(C.landRGB, C.greenRGB, w), 1] : null;
+      }, ma);
+      (c.pins || [[c.lon, c.lat]]).forEach(([lo, la]) => {
+        const [qx, qy] = MP(lo, la);
+        const pa = prog(e, 1, 1.3) * ma;
+        ctx.save(); ctx.globalAlpha = pa;
+        ctx.fillStyle = C.white; ctx.beginPath(); ctx.arc(qx, qy, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = C.navy; ctx.beginPath(); ctx.arc(qx, qy, 5.5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+    }
     // the figure lands on beat 3
     const ny = py + ph + 105;
-    figure(c.n, W / 2, ny, 140, i === 4 ? C.red : C.green, e, BEAT * 0.8, BEAT * 3, FIG[i], c.d);
+    figure(c.n, W / 2, ny, 140, C.green, e, BEAT * 0.8, BEAT * 3, FIG[i], c.d);
     text(c.unit, W / 2, ny + 92, 44, C.ink, 'center', eout(prog(e, BEAT * 3, BEAT * 3 + 0.4)));
     const by = ny + 182;
     const ba = eout(prog(e, BEAT * 3.5, BEAT * 3.5 + 0.4));
-    if (c.over) text(c.shareText, W - M, by, 38, C.red, 'right', ba);
+    if (c.over) text(c.shareText, W - M, by, 40, C.red, 'right', ba);
     else run([{ s: `${(c.share * 100).toFixed(1)}%`, size: 44, color: C.green, ltr: true, dy: -2 }, { s: c.shareText, size: 36, color: C.ink }], W - M, by, 'right', ba);
-    const share10 = Math.min(10, c.share * 10) * eio(prog(e, BEAT * 3.6, BEAT * 5.2));
-    const us = (W - 2 * M) / 10;
-    for (let k = 0; k < 10; k++) {
-      const x = W - M - us * (k + 0.5), yy = by + 92;
-      const a = eout(prog(e, BEAT * 3.5 + k * 0.04, BEAT * 3.5 + 0.35 + k * 0.04));
-      goldbar(x, yy, us * 1.0, 'rgba(11,31,75,0.13)', a);
-      const f = clamp(share10 - k);
-      if (f > 0) goldbar(x, yy, us * 1.0, c.over ? C.red : C.green, a, f);
-    }
-    text('كل رمز = 10% من إنتاج 2024', M, by + 2, 28, C.mute, 'left', ba);
-    const fy = by + 215;
-    const fb = eout(prog(e, BEAT * 5, BEAT * 5 + 0.4));
+    ctx.save(); ctx.globalAlpha = ba;
+    ctx.fillStyle = 'rgba(11,31,75,0.08)'; rrect(M, by + 40, W - 2 * M, 22, 11); ctx.fill();
+    const bw = (W - 2 * M) * Math.min(1, c.share) * eio(prog(e, BEAT * 3.6, BEAT * 5));
+    ctx.fillStyle = c.over ? C.red : C.green; rrect(W - M - bw, by + 40, Math.max(bw, 22), 22, 11); ctx.fill();
+    ctx.restore();
+    text('مقارنة بإنتاج البلاد في 2024 (22.3 طن)', M, by + 2, 26, C.mute, 'left', ba);
+    const fy = by + 120;
+    const fa = eout(prog(e, BEAT * 5, BEAT * 5 + 0.4));
     const parts = (arr, size, color) => arr.map(x => ({ s: x, size, color, ltr: /^[\d.,%()]+$/.test(x) }));
     if (c.factChip) {
       const ps = parts(c.fact, 32, C.white);
       const w = ps.reduce((a, p) => a + measure(p.s, 32), 0) + 14 * (ps.length - 1) + 44;
-      ctx.save(); ctx.globalAlpha = fb; ctx.fillStyle = C.navy; rrect(W - M - w * fb, fy - 30, w * fb, 60, 10); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.globalAlpha = fa; ctx.fillStyle = C.navy; rrect(W - M - w * fa, fy - 30, w * fa, 60, 10); ctx.fill(); ctx.restore();
       run(ps, W - M - w / 2, fy + 1, 'center', prog(e, BEAT * 5 + 0.2, BEAT * 5 + 0.5));
     } else {
-      run(parts(c.fact, 38, C.ink), W - M + (1 - fb) * 30, fy, 'right', fb);
+      run(parts(c.fact, 40, C.ink), W - M + (1 - fa) * 30, fy, 'right', fa);
     }
     footer(1);
   }
@@ -461,12 +468,13 @@
     const iy = top + 4 * rowH + 14;
     const ia = eout(prog(e, BEAT * 6, BEAT * 6 + 0.45));
     ctx.save(); ctx.globalAlpha = ia;
-    ctx.fillStyle = C.navy; rrect(M, iy, W - 2 * M, 220, 18); ctx.fill();
+    ctx.fillStyle = 'rgba(11,31,75,0.05)'; rrect(M, iy, W - 2 * M, 220, 18); ctx.fill();
+    ctx.fillStyle = C.red; ctx.fillRect(W - M - 8, iy, 8, 220 * ia);
     ctx.restore();
     const pp = prog(e, BEAT * 6, BEAT * 6 + 0.4);
     if (pp > 0) pill('لافت', W - 140, iy + 44, 30, C.red, C.white, eout(pp), lerp(0.6, 1, eback(pp)));
-    text('الذهب المهرَّب يعادل نحو', W - 100, iy + 112, 42, C.white, 'right', eout(prog(e, BEAT * 6.5, BEAT * 6.5 + 0.4)));
-    run([{ s: '29', size: 52, color: C.green2, ltr: true, dy: -2 }, { s: 'ضعف ما يملكه البنك المركزي', size: 42, color: C.white }],
+    text('الذهب المهرَّب يعادل نحو', W - 100, iy + 112, 42, C.ink, 'right', eout(prog(e, BEAT * 6.5, BEAT * 6.5 + 0.4)));
+    run([{ s: '29', size: 52, color: C.green, ltr: true, dy: -2 }, { s: 'ضعف ما يملكه البنك المركزي', size: 42, color: C.ink }],
         W - 100, iy + 172, 'right', eout(prog(e, BEAT * 7, BEAT * 7 + 0.4)));
     footer(eout(prog(e, 1, 1.6)));
   }
@@ -648,6 +656,8 @@
     await document.fonts.load(font(48));
     await document.fonts.ready;
     BAR = new Path2D(I.bar);
+    const files = new Set([I.hook.img, I.worldImg, ...I.slides.filter(c => c.img).map(c => c.img)]);
+    await Promise.all([...files].map(async f => { IMG[f] = await loadImage('img/' + f); }));
     const lm = await loadImage('../../assets/logo-mark.png');
     LOGO_W = tint(lm, '#fff');
     LOGO_N = tint(lm, C.navy);

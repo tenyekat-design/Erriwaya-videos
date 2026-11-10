@@ -8,6 +8,7 @@
 //  - Tasiast = 53% of the value of mineral production 2025: EITI 2025 data (via aqlame.com)
 //  - central bank gold 1.02 t: World Gold Council / IMF (latest published figure, Q4 2023)
 //  - ~30 t possibly exported illicitly 2016-2022: SWISSAID report (Oct 2024)
+// Photos: supplied by the user (10 Nov 2026), img/. Slides without a photo show the dotted map panel.
 // Gold-bar pictogram: drawn for this infographic (48x48 box).
 window.INFO = {
   slug: 'gold-mauritania',
@@ -33,10 +34,10 @@ window.INFO = {
   },
   // five slides, each a location on the map of Mauritania
   slides: [
-    { name: 'منجم تازيازت', n: 19.36, d: 1, unit: 'طناً من الذهب في 2024', lon: -15.5, lat: 20.6,
+    { name: 'منجم تازيازت', img: 'tasiast-plant-night.jpg', n: 19.36, d: 1, unit: 'طناً من الذهب في 2024', lon: -15.5, lat: 20.6,
       cam: { lon: -14.6, lat: 20.4, w: 22 }, share: 19.36 / 22.3, shareText: 'من إنتاج البلاد',
       fact: ['أكبر منجم ذهب في البلاد'] },
-    { name: 'التنقيب الأهلي', n: 1.97, d: 2, unit: 'طن من الذهب في 2024', lon: -12.5, lat: 22.7,
+    { name: 'التنقيب الأهلي', img: 'artisanal-site.jpg', n: 1.97, d: 2, unit: 'طن من الذهب في 2024', lon: -12.5, lat: 22.7,
       pins: [[-15.95, 20.05], [-12.47, 22.73]], cam: { lon: -13.8, lat: 21.5, w: 24 },
       share: 1.97 / 22.3, shareText: 'من إنتاج البلاد', fact: ['الشامي والزويرات – معادن موريتانيا'] },
     { name: 'قلب أم أكرين', n: 0.97, d: 2, unit: 'طن من الذهب في 2024', lon: -14.38, lat: 19.74,
@@ -45,10 +46,12 @@ window.INFO = {
     { name: 'البنك المركزي', n: 1.02, d: 2, unit: 'طن احتياطي الذهب الرسمي', lon: -15.98, lat: 18.09,
       cam: { lon: -14.0, lat: 19.2, w: 22 }, share: 1.02 / 22.3, shareText: 'من إنتاج سنة واحدة',
       fact: ['آخر رقم منشور', '–', '2023'], factChip: true },
-    { name: 'التهريب', n: 30, d: 0, unit: 'طناً بين 2016 و2022', lon: -10.5, lat: 21.0,
+    { name: 'التهريب', img: 'desert.jpg', n: 30, d: 0, unit: 'طناً بين 2016 و2022', lon: -10.5, lat: 21.0,
       cam: { lon: -10.5, lat: 20.8, w: 32 }, share: 30 / 22.3, shareText: 'أكثر من إنتاج سنة كاملة', over: true,
       fact: ['خرجت خارج القنوات الرسمية – تقديرات'] },
   ],
+  hook: { img: 'haul-truck.jpg', f: [0.5, 0.5] },
+  worldImg: 'desert.jpg',
   // obstacles (summary scene)
   issues: [
     { k: 'التهريب', v: '30', u: 'طناً', d: 'بين 2016 و2022' },
