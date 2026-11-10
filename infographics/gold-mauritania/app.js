@@ -14,6 +14,7 @@
   const Y = v => TOP + v;
   const M = 60;                           // side margin
   const LOGO_H = FORMAT === 'story' ? 170 : 150;
+  const LOGO_UP = FORMAT === 'story' ? 60 : 0;   // story: the logo sits a little higher (user, 10 Nov 2026)
   const BEAT = TM.beat;
 
   const C = {
@@ -159,7 +160,7 @@
   // header: the logo at frame scale, top-left inside the safe area; series title on the right
   function header(e = 9, step = -1) {
     const lw = logoW(LOGO_H);
-    logo(M + lw / 2, Y(10 + LOGO_H / 2), LOGO_H, 1);
+    logo(M + lw / 2, Y(10 + LOGO_H / 2) - LOGO_UP, LOGO_H, 1);
     ctx.fillStyle = C.green; ctx.fillRect(W - M - 8, Y(34), 8, 82);
     text('إنفوجرافيك', W - M - 22, Y(52), 28, C.green, 'right');
     text(I.title, W - M - 22, Y(96), 34, C.ink, 'right');
@@ -243,7 +244,7 @@
     g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,0.9)'); g.addColorStop(0.62, '#fff'); g.addColorStop(1, '#fff');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const la = eout(prog(e, 0.15, 0.9));
-    logo(W / 2, Y(30 + 110) - (1 - la) * 20, 220, la, true);
+    logo(W / 2, Y(30 + 110) - LOGO_UP - (1 - la) * 20, 220, la, true);
     const by = Y(830 + EX);
     const a1 = eout(prog(e, BEAT, BEAT + 0.4));
     const t1 = 'إنفوجرافيك', t2 = 'موريتانيا', ts = 34;
