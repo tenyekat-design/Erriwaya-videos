@@ -17,6 +17,7 @@
   --night:#1F2D52; --dawn:#8A6FB5; --day:#EDC25A; --dusk:#D57A4C;
   --f-display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
   --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --f-naskh:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#08130F; --surface:#0F1F19; --ink:#ECE4CF; --muted:#A3AC9E; --line:#233A30;
@@ -205,7 +206,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 /* ---------- shared library pieces ---------- */
 .bar{display:flex;align-items:center;gap:10px;padding-block:4px 10px;border-bottom:1px solid var(--line)}
-.bar h2{font-size:1.1rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--green);line-height:2;padding-block:2px}
+.bar h2{font-family:var(--f-naskh);font-weight:700;font-size:1.25rem;flex:1;min-width:0;overflow:visible;white-space:normal;text-wrap:balance;color:var(--green);line-height:1.9;padding-block:2px 6px}
 .bar h2 small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:.78rem;margin-right:6px}
 .bar .back{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.2rem;line-height:1;flex:none;text-decoration:none;color:var(--ink);display:grid;place-items:center}
 .lib-h{display:grid;gap:2px;justify-items:center;text-align:center;padding-top:4px}
@@ -255,7 +256,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .pnav input{width:5.2em;text-align:center;border:1px solid var(--orn);border-radius:10px;padding:8px 4px;background:var(--surface);font-weight:700}
 .seg3{display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid var(--orn);border-radius:12px;overflow:hidden;background:var(--surface)}
 .seg3 button{border:0;background:transparent;padding:8px 4px;font-weight:700;color:var(--muted);display:grid;line-height:1.7}
-.seg3 button small{font-weight:400;font-size:.72rem}
+.seg3 button small{font-family:var(--f-naskh);font-weight:500;font-size:.8rem}
 .seg3 button[aria-pressed="true"]{background:linear-gradient(#13604A,#0E4A37);color:#F3E2AE}
 .hits{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .hits a{display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;color:inherit;text-decoration:none}
