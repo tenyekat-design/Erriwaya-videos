@@ -373,6 +373,31 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .ay-bar .btn{flex:1}
 .ay-opt{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:.9rem;color:var(--muted)}
 .ay-opt input{width:18px;height:18px;accent-color:var(--green)}
+.listen{display:grid;gap:8px;border:1.5px solid var(--orn);border-radius:12px;background:var(--surface);padding:10px}
+.listen>div{display:flex;gap:8px}
+.listen select{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.rc-pick{display:flex;align-items:baseline;gap:8px;width:100%;border:0;background:none;color:inherit;font:inherit;text-align:start;padding:2px 2px}
+.rc-pick small{color:var(--muted);font-size:.78rem}
+.rc-pick b{font-size:1.05rem;color:var(--green)}
+.rc-pick i,.rc .cpick-w small{font-style:normal;font-size:.7rem;color:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:0 7px}
+.rc-pick span{margin-inline-start:auto;color:var(--muted);font-size:.8rem}
+.rc .cpick-w{border-top:0}
+.rc .cpick-w button{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rc .cpick-in{height:auto;max-height:84vh}
+.rc-src{margin:0;padding:8px 18px 16px;font-size:.76rem;color:var(--muted);line-height:1.7}
+#qPlayer{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;align-items:center;gap:4px;background:var(--surface);color:var(--ink);border-top:2px solid var(--orn);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 14px rgba(0,0,0,.14)}
+#qPlayer button{flex:none;width:38px;height:38px;border:0;background:none;color:inherit;font-size:1.25rem;display:grid;place-items:center}
+#qPlayer button[data-a="toggle"]{width:42px;height:42px;border-radius:50%;background:var(--green);color:var(--on-green)}
+#qPlayer svg{width:22px;height:22px;fill:currentColor}
+#qPlayer .i-pause,#qPlayer.on .i-play{display:none}
+#qPlayer.on .i-pause{display:inline}
+.qp-t{flex:1;min-width:0;display:grid;gap:1px;padding-inline:6px}
+.qp-t b{font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp-t small{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp-t i{display:block;height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:2px}
+.qp-t u{display:block;height:100%;width:0;background:var(--green)}
+body.has-player{padding-bottom:64px}
+body.has-player.mushaf #v-quran.paged{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))}
 .toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:80;background:var(--band);color:var(--band-ink);padding:9px 16px;border-radius:20px;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.3);white-space:nowrap}
 .marks{display:grid;gap:6px}
 .marks h3{margin:0;font-size:.95rem;color:var(--green)}
@@ -1051,6 +1076,7 @@ function need(k){
 const loading=el=>{el.innerHTML='<p class="empty">جارٍ التحميل…</p>'};
 const failed=el=>{el.innerHTML='<p class="empty">تعذّر تحميل البيانات. أعد المحاولة.</p>'};
 const rtop=(names,juz,rn)=>`<div class="rtop"><a class="back" href="#quran" aria-label="رجوع">›</a><b>${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<small> · الجزء ${juz}</small>`:''}</b><span>
+  <button type="button" id="ayPlay" aria-label="الاستماع إلى السورة"><svg viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6.5" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6.5" rx="1.5"/></svg></button>
   <button type="button" id="mkPage" aria-label="حفظ الصفحة مرجعية" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/></svg></button>
   <button type="button" id="ayOpen" aria-label="آيات الصفحة: نسخ وحفظ"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg></button></span></div>`;
 const bar=(back,title,extra='')=>`<div class="bar"><a class="back" href="${back}" aria-label="رجوع">›</a><h2>${title}</h2>${extra}</div>`;
@@ -1076,6 +1102,10 @@ const ayText=t=>t.replace(/\u00a0([\u0660-\u0669]+)$/,' ﴿$1﴾');
 function readerTools(Q,key,p,items){
   const mk=$('mkPage'),op=$('ayOpen');if(!mk||!op||!items.length)return;
   const first=items[0],name=i=>Q.suras[i-1].n;
+  const pl=$('ayPlay'),names=Q.suras.map(x=>x.n);
+  if(pl)pl.onclick=()=>{
+    if(PL.n&&PL.key===key&&items.some(x=>x[0]===PL.n)){const a=PL.audio;if(a.paused)a.play().catch(()=>{});else a.pause();return}   // the sura on this page is the one loaded
+    playSura(key,first[0],names)};
   mk.setAttribute('aria-pressed',markHas(key,p,0,0));
   mk.onclick=()=>{const on=markToggle(key,p,first[0],0,name(first[0]));mk.setAttribute('aria-pressed',on);toast(on?'حُفظت الصفحة في المرجعيات':'أُزيلت الصفحة من المرجعيات')};
   op.onclick=()=>{
@@ -1107,6 +1137,84 @@ function readerTools(Q,key,p,items){
     });
     document.body.append(d);
   };
+}
+/* ---------- listening: reciters for each riwaya; one sura at a time, streamed (needs the internet).
+   m: a folder on mp3quran.net holding 001.mp3 … 114.mp3.  a: an item on archive.org; its mp3 files begin with the sura's number,
+   and their exact names are read from the item's file list the first time it is played. mr: a Mauritanian reciter. ---------- */
+const RECITERS={
+  warsh:[
+    {id:'rajel',n:'الراجل ولد عثمان',mr:1,a:'alfird77777777777777776479446944696799796444il_002'},
+    {id:'rabbani',n:'سليمان ولد الرباني',mr:1,a:'alfirdwsiy1433_35686535653683658668356566586356gmail_002'},
+    {id:'koshi',n:'العيون الكوشي',m:'https://server11.mp3quran.net/koshi/'},
+    {id:'qazabri',n:'عمر القزابري',m:'https://cdn.mp3quran.net/audio/omar-kazabri/r1/'},
+    {id:'yassin',n:'القارئ ياسين الجزائري',m:'https://server11.mp3quran.net/qari/'},
+    {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r3/'}],
+  qaloon:[
+    {id:'naji',n:'الناجي ولد بلال',mr:1,a:'alfirdwsiy14335787878787858750578780578780'},
+    {id:'abdqader',n:'عبد الرحمن ولد عبد القادر',mr:1,a:'alf444444444444444444444444444444444469469649469746946969_gmail_011_201703'},
+    {id:'dokali',n:'الدوكالي محمد العالم',m:'https://server7.mp3quran.net/dokali/'},
+    {id:'hudhaify',n:'علي بن عبد الرحمن الحذيفي',m:'https://server9.mp3quran.net/huthifi_qalon/'},
+    {id:'husary',n:'محمود خليل الحصري',m:'https://server13.mp3quran.net/husr/Rewayat-Qalon-A-n-Nafi/'}],
+  hafs:[
+    {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r1/'},
+    {id:'basit',n:'عبد الباسط عبد الصمد',m:'https://server7.mp3quran.net/basit/'},
+    {id:'muaiqly',n:'ماهر المعيقلي',m:'https://cdn.mp3quran.net/audio/maher-muaiqly/r1/'},
+    {id:'afasy',n:'مشاري العفاسي',m:'https://cdn.mp3quran.net/audio/mishary-alafasy/r1/'}]
+};
+const reciter=k=>{const L=RECITERS[k],id=st.get('reciter.'+k,'');return L.find(r=>r.id===id)||L[0]};
+const pad3=n=>String(n).padStart(3,'0');
+const archFiles={};
+// the address of a sura's recording
+function suraUrl(r,n){
+  if(r.m)return Promise.resolve(r.m+pad3(n)+'.mp3');
+  const base='https://archive.org/download/'+r.a+'/',got=archFiles[r.a]||st.get('arch.'+r.a,null);
+  const pick=map=>map[n]?base+encodeURIComponent(map[n]):base+pad3(n)+'.mp3';
+  if(got){archFiles[r.a]=got;return Promise.resolve(pick(got))}
+  return fetch('https://archive.org/metadata/'+r.a+'/files').then(x=>x.json()).then(j=>{
+    const map={};(j.result||[]).forEach(f=>{const m=/^(\d{1,3})[^\d].*\.mp3$/i.exec(f.name||'');if(m&&f.source!=='derivative'&&+m[1]>=1&&+m[1]<=114)map[+m[1]]=f.name});
+    if(Object.keys(map).length){archFiles[r.a]=map;st.set('arch.'+r.a,map)}return pick(map)}).catch(()=>pick({}));
+}
+const PL={audio:null,key:'',n:0,names:null};
+function playerBar(){
+  let b=$('qPlayer');if(b)return b;
+  b=document.createElement('div');b.id='qPlayer';b.dir='rtl';b.lang='ar';
+  b.innerHTML=`<button type="button" data-a="toggle" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
+    <div class="qp-t"><b id="qpTitle"></b><small id="qpSub"></small><i id="qpBar"><u></u></i></div>
+    <button type="button" data-a="prev" aria-label="السورة السابقة">›</button><button type="button" data-a="next" aria-label="السورة التالية">‹</button><button type="button" data-a="close" aria-label="إغلاق المشغّل">✕</button>`;
+  document.body.append(b);
+  const a=PL.audio=new Audio();a.preload='none';
+  const state=()=>{b.classList.toggle('on',!a.paused);document.body.classList.toggle('has-player',document.body.contains(b))};
+  a.addEventListener('play',state);a.addEventListener('pause',state);
+  a.addEventListener('waiting',()=>{$('qpSub').dataset.w='1';subLine()});a.addEventListener('playing',()=>{delete $('qpSub').dataset.w;subLine()});
+  a.addEventListener('timeupdate',()=>{if(a.duration)b.querySelector('#qpBar u').style.width=(a.currentTime/a.duration*100).toFixed(1)+'%'});
+  a.addEventListener('ended',()=>{if(PL.n<114)playSura(PL.key,PL.n+1,PL.names)});
+  a.addEventListener('error',()=>{if(a.src)$('qpSub').textContent='تعذّر تشغيل التلاوة. تحقق من الاتصال بالإنترنت.'});
+  b.addEventListener('click',e=>{const x=e.target.closest('button');if(!x)return;const k=x.dataset.a;
+    if(k==='toggle'){if(a.paused)a.play().catch(()=>{});else a.pause()}
+    else if(k==='prev'&&PL.n>1)playSura(PL.key,PL.n-1,PL.names);
+    else if(k==='next'&&PL.n<114)playSura(PL.key,PL.n+1,PL.names);
+    else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player')}});
+  return b;
+}
+const subLine=()=>{const e=$('qpSub');if(e)e.textContent=(e.dataset.w?'جارٍ التحميل… · ':'')+reciter(PL.key).n+' · '+RW[PL.key].n};
+// names: the sura names of the riwaya being read (from its text data)
+function playSura(key,n,names){
+  playerBar();const a=PL.audio,r=reciter(key);PL.key=key;PL.n=n;PL.names=names;
+  $('qpTitle').textContent='سورة '+(names&&names[n-1]||n);$('qpSub').dataset.w='1';subLine();$('qPlayer').querySelector('#qpBar u').style.width='0';
+  a.pause();
+  suraUrl(r,n).then(u=>{if(PL.n!==n||PL.key!==key)return;a.src=u;a.play().catch(()=>{})});
+}
+// choosing a reciter: the Mauritanian reciters are listed first
+function reciterSheet(key,then){
+  if(document.querySelector('.cpick'))return;
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';const cur=reciter(key).id;
+  d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>قراء ${RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}>${r.n}${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
+    <p class="rc-src">التلاوات تُسمع عبر الإنترنت: من موقع mp3quran.net، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org).</p></div></div>`;
+  d.addEventListener('click',e=>{const b=e.target.closest('button');
+    if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then()}
+    else if(b||e.target===d)d.remove()});
+  document.body.append(d);
 }
 let flipAudio=null;
 function flipSound(){
@@ -1149,12 +1257,16 @@ function quranList(el){
       <div class="seg3" role="group" aria-label="الرواية">${Object.entries(RW).map(([k,x])=>`<button data-rw="${k}" aria-pressed="${k===rw}">${x.n}<small>${k==='hafs'?'عن عاصم':'عن نافع'}</small></button>`).join('')}</div>
       ${last&&last[2]?(()=>{const lp=M?PG(last[0]-1,last[1]-1):last[2];return`<a class="resume" href="#page-${lp}-${last[0]}-${last[1]}"><span>متابعة القراءة · ${R_.n}<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]} · صفحة ${lp}</b></span><span>‹</span></a>`})():''}
       ${(L=>L.length?`<div class="marks"><h3>المرجعيات</h3>${L.map(m=>`<div><a href="#page-${m.p}${m.a?`-${m.s}-${m.a}`:''}">${m.a?`سورة ${esc(m.n)} · الآية ${m.a}`:`صفحة ${m.p}`} <small>${m.a?`صفحة ${m.p}`:`سورة ${esc(m.n)}`}</small></a><button type="button" data-mkdel="${m.p}|${m.s}|${m.a}" aria-label="حذف المرجعية">✕</button></div>`).join('')}</div>`:'')(marks().filter(m=>m.r===rw))}
+      <div class="listen"><button type="button" class="rc-pick" id="rcPick"><small>القارئ</small><b>${reciter(rw).n}</b>${reciter(rw).mr?'<i>موريتاني</i>':''}<span>تغيير ‹</span></button>
+        <div><select id="rcSura" aria-label="السورة">${Q.suras.map((x,i)=>`<option value="${i+1}"${last&&last[0]===i+1?' selected':''}>${i+1}. ${esc(x.n)}</option>`).join('')}</select><button type="button" class="btn primary" id="rcPlay">▶ استمع</button></div></div>
       <div class="seg2" role="group" aria-label="طريقة العرض"><button id="lmS" aria-pressed="${listMode==='s'}">السور</button><button id="lmJ" aria-pressed="${listMode==='j'}">الأجزاء</button></div>
       <input class="search" id="qSearch" type="search" placeholder="ابحث عن سورة أو كلمة في الآيات" autocomplete="off">
       <div id="dlBox"></div>
       <div id="qOut"></div>
       <p class="src">${IMG()?'صفحات المصحف من موقع مؤسسة محمد السادس لنشر المصحف الشريف (mushaf.ma)، وتحتاج إلى اتصال بالإنترنت.':PAGESRC[rw]?PAGESRC[rw].src:`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
     el.querySelectorAll('[data-rw]').forEach(b=>b.onclick=()=>{rw=b.dataset.rw;st.set('rw',rw);quranList(el)});
+    $('rcPick').onclick=()=>reciterSheet(rw,()=>quranList(el));
+    $('rcPlay').onclick=()=>playSura(rw,+$('rcSura').value,Q.suras.map(x=>x.n));
     el.querySelectorAll('[data-mkdel]').forEach(b=>b.onclick=()=>{const [p,s_,a]=b.dataset.mkdel.split('|').map(Number);markToggle(rw,p,s_,a,'');quranList(el)});
     const A=window.AndroidApp;
     const SET=M?{url:M.url,offset:M.offset,count:M.count}:PAGESRC[rw];
