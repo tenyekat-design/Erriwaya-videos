@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'data.dart';
-import 'oualata.dart';
+import 'illumination.dart';
 import 'theme.dart';
 
 /// زخارف صفحات المصحف على طراز زخارف ولاتة (موريتانيا)، مرسومة بالكود.
@@ -21,7 +21,7 @@ class PageFrame extends StatelessWidget {
 
   /// المسافة بين حافة الصفحة والنصّ.
   static EdgeInsets inset(bool ornate) =>
-      ornate ? const EdgeInsets.fromLTRB(58, 70, 58, 70) : const EdgeInsets.fromLTRB(29, 29, 29, 34);
+      ornate ? const EdgeInsets.fromLTRB(58, 70, 58, 70) : const EdgeInsets.fromLTRB(27, 27, 27, 34);
 
   @override
   Widget build(BuildContext context) {
@@ -85,55 +85,56 @@ class _FramePainter extends CustomPainter {
 
   // ───────── الصفحات العادية ─────────
   void _regular(Canvas canvas, Size size) {
-    final p = dark ? OualataPalette.dark : OualataPalette.light;
     final full = Offset.zero & size;
-    const o = 16.0; // عرض جدار الطين
-    // جدار الطين حول الصفحة
+    const o = 17.0; // عرض الشريط اللازوردي
+    // شريط لازوردي حول الصفحة يجري فيه غصن ذهبي مزهر
     canvas.save();
     canvas.clipPath(Path()
       ..fillType = PathFillType.evenOdd
       ..addRect(full)
       ..addRect(full.deflate(o)));
-    paintWall(canvas, full, p);
+    canvas.drawRect(
+        full,
+        Paint()
+          ..shader = const LinearGradient(colors: [Illum.lapisLight, Illum.lapisDeep],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight)
+              .createShader(full));
     canvas.restore();
-    // أسنان جصّية بيضاء على حافة الجدار، ونقاط بيضاء على طرفه الخارجي
-    final ti = full.deflate(o - 1.5);
-    paintTeeth(canvas, ti.topLeft, ti.topRight, const Offset(0, -1), 5, p.lime);
-    paintTeeth(canvas, ti.bottomLeft, ti.bottomRight, const Offset(0, 1), 5, p.lime);
-    paintTeeth(canvas, ti.topLeft, ti.bottomLeft, const Offset(-1, 0), 5, p.lime);
-    paintTeeth(canvas, ti.topRight, ti.bottomRight, const Offset(1, 0), 5, p.lime);
-    final dot = Paint()..color = p.lime;
-    for (var x = o + 12; x < size.width - o; x += 9) {
-      canvas.drawCircle(Offset(x, 4.5), 1.2, dot);
-      canvas.drawCircle(Offset(x, size.height - 4.5), 1.2, dot);
-    }
-    for (var y = o + 12; y < size.height - o; y += 9) {
-      canvas.drawCircle(Offset(4.5, y), 1.2, dot);
-      canvas.drawCircle(Offset(size.width - 4.5, y), 1.2, dot);
-    }
-    // خطوط الألوان الأربعة حول النصّ
-    for (final (d, col, w) in [
-      (o + 1.0, p.ink, 1.2),
-      (o + 3.0, p.yellow, 1.8),
-      (o + 5.0, p.red, 1.8),
-      (o + 7.0, p.green, 1.8),
-      (o + 9.0, p.blue, 1.8),
-      (o + 10.7, p.ink, .9),
-    ]) {
-      canvas.drawRRect(
-          RRect.fromRectAndRadius(full.deflate(d), const Radius.circular(5)),
-          Paint()
-            ..color = col
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = w);
-    }
-    // دوائر ملوّنة في الزوايا، ومعيّن جصّي أعلى الصفحة، ورقم الصفحة في دائرة أسفلها
+    paintVine(canvas, Path()..addRect(full.deflate(o / 2)), o * .27, 26, 1, const [Illum.crimson, Illum.turquoise]);
+    final gold = Illum.goldShader(full);
+    canvas.drawRect(
+        full.deflate(1.5),
+        Paint()
+          ..shader = gold
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2);
+    canvas.drawRect(
+        full.deflate(o),
+        Paint()
+          ..shader = gold
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.2);
+    canvas.drawRect(
+        full.deflate(o + 3),
+        Paint()
+          ..color = Illum.turquoise
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1);
+    canvas.drawRect(
+        full.deflate(o + 5),
+        Paint()
+          ..color = Illum.gold
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .6);
+    // نجوم ذهبية في الزوايا، وسعفة في أعلى الصفحة، وشمسة تحمل رقم الصفحة أسفلها
     for (final q in [Offset(o, o), Offset(size.width - o, o), Offset(o, size.height - o), Offset(size.width - o, size.height - o)]) {
-      paintColorMedallion(canvas, q, 15, p);
+      canvas.drawPath(star8(q, 14, 9.5), Paint()..shader = Illum.goldShader(Rect.fromCircle(center: q, radius: 14)));
+      canvas.drawPath(star8(q, 9.5, 7), Paint()..color = Illum.lapis);
+      paintFlower(canvas, q, 4.8, Illum.crimson);
     }
-    paintLaceDiamond(canvas, Offset(size.width / 2, o / 2 + 1), 9, p.lime, p.wall);
-    paintColorMedallion(canvas, Offset(size.width / 2, size.height - o + 1), 17, p,
-        label: ar(page), font: Brand.ui);
+    paintCartouche(canvas, Offset(size.width / 2, o / 2 + .5), 54, 13, wings: false);
+    paintFlower(canvas, Offset(size.width / 2, o / 2 + .5), 3.8, Illum.crimson);
+    paintShamsa(canvas, Offset(size.width / 2, size.height - o + 1), 18, c.paper, label: ar(page), font: Brand.ui);
   }
 
   // ───────── الفاتحة وأول البقرة ─────────

@@ -1,19 +1,19 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'oualata.dart';
+import 'illumination.dart';
 import 'theme.dart';
 
-/// هندسة لوحة الفاتحة وأول البقرة: إطار جصّي أبيض بقوس علوي مفصّص يلتقي في رأس مدبّب،
-/// وجانبين منتفخين قليلاً، وقوس سفلي مقابل، على جدار طيني كواجهات بيوت ولاتة.
+/// هندسة لوحة الفاتحة وأول البقرة: إطار مذهّب بقوس علوي مفصّص يلتقي في رأس مدبّب،
+/// وجانبين منتفخين قليلاً، وقوس سفلي مقابل، على أرضية لازوردية.
 /// كل شكل داخلي هو الشكل نفسه مُزاحاً إلى الداخل بمقدار d.
 class Medallion {
   Medallion(Size s)
       : w = s.width,
         h = s.height {
-    b = Rect.fromLTRB(w * .08, h * .05, w * .92, h * .95);
-    aH = b.height * .13;
-    bul = b.width * .06;
-    bandW = b.width * .085;
+    b = Rect.fromLTRB(w * .07, h * .045, w * .93, h * .955);
+    aH = b.height * .12;
+    bul = b.width * .05;
+    bandW = b.width * .075;
   }
   final double w, h;
   late final Rect b;
@@ -21,8 +21,8 @@ class Medallion {
   double get cx => b.center.dx;
 
   /// حافة اللوحة الورقية، وإزاحة منطقة النصّ.
-  double get panelInset => bandW * 1.17;
-  double get textInset => bandW * 1.3 + 8;
+  double get panelInset => bandW + 3;
+  double get textInset => bandW + 12;
 
   double _a(double d) => aH - d * .55;
   double ts(double d) => b.top + d + _a(d);
@@ -61,9 +61,9 @@ class Medallion {
   }
 
   /// خرطوشة اسم السورة تحت الرأس العلوي، والدائرتان الملوّنتان على الرأسين.
-  Offset get cartoucheCenter => Offset(cx, b.top + aH * .95);
-  Size get cartoucheSize => Size(b.width * .46, aH * .42);
-  double get crownR => w * .085;
+  Offset get cartoucheCenter => Offset(cx, b.top + aH * .98);
+  Size get cartoucheSize => Size(b.width * .5, aH * .42);
+  double get crownR => w * .075;
 
   /// حدود منطقة النصّ عمودياً.
   double get textTop => math.max(ts(textInset), cartoucheCenter.dy + cartoucheSize.height / 2 + 6);
@@ -77,87 +77,71 @@ class MedallionPainter extends CustomPainter {
   final String title, titleFont;
   final int page;
 
-  bool get _dark => colors == PageColors.dark;
-
   @override
   void paint(Canvas canvas, Size size) {
     final m = Medallion(size);
-    final p = _dark ? OualataPalette.dark : OualataPalette.light;
     final bw = m.bandW;
-    Paint line(Color c, double w) => Paint()
-      ..color = c
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w;
+    final full = Offset.zero & size;
+    final gold = Illum.goldShader(m.b);
+    Paint goldFill() => Paint()..shader = gold;
 
-    // الجدار الطيني ونقوشه الجصّية
-    paintWall(canvas, Offset.zero & size, p);
-    final lr = size.width * .1;
-    for (final o in [
-      Offset(size.width * .1, size.height * .085),
-      Offset(size.width * .9, size.height * .085),
-      Offset(size.width * .1, size.height * .915),
-      Offset(size.width * .9, size.height * .915),
-    ]) {
-      paintLaceDiamond(canvas, o, lr, p.lime, p.wall);
-    }
-    for (var i = 0; i < 5; i++) {
-      final y = size.height * (.3 + i * .1);
-      paintStamp(canvas, Offset(size.width * .035, y), 6, p.lime, p.wall);
-      paintStamp(canvas, Offset(size.width * .965, y), 6, p.lime, p.wall);
-    }
+    // أرضية لازوردية بشبكة نجوم، وإطار ذهبي للصفحة، وزوايا مفصّصة
+    paintLapisGround(canvas, full);
+    canvas.drawRect(
+        full.deflate(5),
+        Paint()
+          ..shader = Illum.goldShader(full)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5);
+    canvas.drawRect(
+        full.deflate(9),
+        Paint()
+          ..color = Illum.gold
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .8);
+    final cr = size.width * .19;
+    paintCornerPiece(canvas, const Offset(10, 10), 1, 1, cr);
+    paintCornerPiece(canvas, Offset(size.width - 10, 10), -1, 1, cr);
+    paintCornerPiece(canvas, Offset(10, size.height - 10), 1, -1, cr);
+    paintCornerPiece(canvas, Offset(size.width - 10, size.height - 10), -1, -1, cr);
 
-    // الإطار الجصّي الأبيض كإطار باب ولاتيّ
+    // أهداب ذهبية حول اللوحة
     final s0 = m.shape(0);
-    canvas.drawShadow(s0, const Color(0xFF280A00), 6, false);
-    canvas.drawPath(s0, Paint()..color = p.lime);
-    canvas.drawPath(s0, line(p.ink, 2));
-    canvas.drawPath(m.shape(bw * .12), line(p.ink, .8));
-    canvas.drawPath(m.shape(bw * .72), line(p.ink, .8));
-    // أختام بنّية على الإطار تتخلّلها نقاط
-    final metric = m.shape(bw * .42).computeMetrics().first;
-    final n = (metric.length / (bw * .62)).round();
-    for (var k = 0; k < n; k++) {
-      final pos = metric.getTangentForOffset(k * metric.length / n)!.position;
-      if ((pos.dx - m.cx).abs() < m.crownR * 1.2) continue; // تحت الدائرتين
-      k.isEven
-          ? paintStamp(canvas, pos, bw * .19, p.ink, p.lime)
-          : canvas.drawCircle(pos, bw * .06, Paint()..color = p.red);
-    }
-
-    // اللوحة الورقية بخطوط الألوان الأربعة
+    paintFringe(canvas, s0, m.b.center, 9, 11);
+    // الإطار: ذهب، ثم شريط لازوردي يجري فيه غصن مزهر، ثم ذهب وفيروز وذهب
+    canvas.drawShadow(s0, Colors.black, 8, false);
+    canvas.drawPath(s0, goldFill());
+    canvas.drawPath(
+        s0,
+        Paint()
+          ..color = Illum.goldDark
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1);
+    canvas.drawPath(m.shape(3.5), Paint()..color = Illum.lapis);
+    paintVine(canvas, m.shape(3.5 + (bw - 7) / 2), (bw - 7) * .28, 34, 1.3,
+        const [Illum.crimson, Illum.turquoise, Illum.orange]);
+    canvas.drawPath(m.shape(bw - 3.5), goldFill());
+    canvas.drawPath(m.shape(bw), Paint()..color = Illum.turquoise);
+    canvas.drawPath(m.shape(bw + 1.6), goldFill());
     canvas.drawPath(m.shape(m.panelInset), Paint()..color = colors.paper);
-    for (final (dd, cc, ww) in [
-      (bw * .86, p.ink, 1.4),
-      (bw * .92, p.yellow, 2.2),
-      (bw * .98, p.red, 2.2),
-      (bw * 1.04, p.green, 2.2),
-      (bw * 1.10, p.blue, 2.2),
-      (bw * 1.16, p.ink, 1.4),
-    ]) {
-      canvas.drawPath(m.shape(dd), line(cc, ww));
-    }
-    canvas.drawPath(m.shape(bw * 1.3), line(p.wall.withValues(alpha: .45), .8));
+    canvas.drawPath(
+        m.shape(bw + 7),
+        Paint()
+          ..color = Illum.gold.withValues(alpha: .6)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .7);
 
-    // الدائرتان الملوّنتان على الرأسين، والسفلى تحمل رقم الصفحة
-    paintColorMedallion(canvas, Offset(m.cx, m.b.top + 4), m.crownR, p);
-    paintColorMedallion(canvas, Offset(m.cx, m.b.bottom - 4), m.crownR, p, label: _ar(page), font: Brand.ui);
+    // شمستان على الرأسين، والسفلى تحمل رقم الصفحة
+    paintShamsa(canvas, Offset(m.cx, m.b.top + 2), m.crownR, colors.paper);
+    paintShamsa(canvas, Offset(m.cx, m.b.bottom - 2), m.crownR, colors.paper, label: _ar(page), font: Brand.ui);
 
-    // خرطوشة اسم السورة بين ختمين
+    // خرطوشة اسم السورة
     final c = m.cartoucheCenter, cs = m.cartoucheSize;
-    for (final dir in [-1.0, 1.0]) {
-      paintStamp(canvas, Offset(c.dx + dir * (cs.width / 2 + cs.height * .55), c.dy), cs.height * .32, p.ink, p.lime);
-    }
-    RRect rr(double d) => RRect.fromRectAndRadius(
-        Rect.fromCenter(center: c, width: cs.width - 2 * d, height: cs.height - 2 * d),
-        Radius.circular(cs.height / 2 - d));
-    canvas.drawRRect(rr(0), Paint()..color = p.lime);
-    canvas.drawRRect(rr(0), line(p.ink, 1.6));
-    canvas.drawRRect(rr(3), line(p.red, 1.3));
-    canvas.drawRRect(rr(5), line(p.yellow, 1.3));
+    paintCartouche(canvas, c, cs.width, cs.height);
     final tp = TextPainter(
       text: TextSpan(
           text: title,
-          style: TextStyle(fontFamily: titleFont, fontSize: cs.height * .5, height: 1.15, color: p.ink)),
+          style: TextStyle(fontFamily: titleFont, fontSize: cs.height * .52, height: 1.15, color: Illum.goldLight)),
       textDirection: TextDirection.rtl,
     )..layout(maxWidth: cs.width - cs.height);
     tp.paint(canvas, c - Offset(tp.width / 2, tp.height / 2));

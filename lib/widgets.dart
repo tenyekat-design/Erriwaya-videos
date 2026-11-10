@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'data.dart';
+import 'illumination.dart';
 import 'theme.dart';
 
 /// اختيار الرواية: حفص أو ورش.
@@ -88,7 +89,7 @@ class _StarPainter extends CustomPainter {
 }
 
 /// شريط اسم السورة في الصفحة: يشغل سطراً واحداً كما في المصحف المطبوع.
-/// خرطوشة مستطيلة بحدّين رفيعين بلون الطين، وفي طرفيها نجمتان ثمانيتان، ومعلومات السورة صغيرة على الجانبين.
+/// خرطوشة مذهّبة لازوردية، وفي طرفيها نجمتان ذهبيتان، ومعلومات السورة صغيرة على الجانبين.
 class SurahBanner extends StatelessWidget {
   const SurahBanner({super.key, required this.surah, required this.riwaya, required this.colors, this.height = 44});
   final Surah surah;
@@ -99,21 +100,21 @@ class SurahBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final h = height * .82;
-    final small = TextStyle(fontSize: (h * .26).clamp(9, 12.5).toDouble(), color: colors.muted, height: 1);
+    final small = TextStyle(fontSize: (h * .26).clamp(9, 12.5).toDouble(), color: Illum.goldLight.withValues(alpha: .85), height: 1);
     return Center(
       child: SizedBox(
         height: h,
         child: CustomPaint(
-          painter: _CartouchePainter(colors.frame),
+          painter: _CartouchePainter(),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: h * .9),
+            padding: EdgeInsets.symmetric(horizontal: h * 1.05),
             child: Row(children: [
               Text(surah.makki ? 'مكية' : 'مدنية', style: small),
               Expanded(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text('سُورَةُ ${surah.name}',
-                      style: TextStyle(fontFamily: riwaya.font, fontSize: h * .52, color: colors.ink, height: 1.25)),
+                      style: TextStyle(fontFamily: riwaya.font, fontSize: h * .52, color: Illum.goldLight, height: 1.25)),
                 ),
               ),
               Text('آياتها ${ar(surah.count(riwaya))}', style: small),
@@ -126,48 +127,19 @@ class SurahBanner extends StatelessWidget {
 }
 
 class _CartouchePainter extends CustomPainter {
-  _CartouchePainter(this.color);
-  final Color color;
-
   @override
   void paint(Canvas canvas, Size size) {
     final h = size.height;
-    final r = Rect.fromLTWH(h * .5, 0, size.width - h, h);
-    final rr = RRect.fromRectAndRadius(r, Radius.circular(h * .22));
-    canvas.drawRRect(rr, Paint()..color = color.withValues(alpha: .07));
-    canvas.drawRRect(
-        rr,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2);
-    canvas.drawRRect(
-        rr.deflate(3),
-        Paint()
-          ..color = color.withValues(alpha: .45)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = .7);
-    // نجمتان ثمانيتان على الطرفين
-    for (final cx in [h * .5, size.width - h * .5]) {
+    // خرطوشة مذهّبة لازوردية، وفي طرفيها نجمتان ذهبيتان
+    paintCartouche(canvas, size.center(Offset.zero), size.width - h * .5, h, wings: false);
+    for (final cx in [h * .62, size.width - h * .62]) {
       final c = Offset(cx, h / 2);
-      final s = h * .34;
-      canvas.drawCircle(c, s * 1.05, Paint()..color = color);
-      _star(canvas, c, s * .78, Paint()..color = const Color(0xFFFBF4E6));
-      canvas.drawCircle(c, s * .22, Paint()..color = color);
+      canvas.drawPath(star8(c, h * .36, h * .25), Paint()..shader = Illum.goldShader(Rect.fromCircle(center: c, radius: h * .36)));
+      canvas.drawPath(star8(c, h * .24, h * .17), Paint()..color = Illum.lapis);
+      paintFlower(canvas, c, h * .12, Illum.crimson);
     }
-  }
-
-  void _star(Canvas canvas, Offset o, double r, Paint p) {
-    final path = Path();
-    for (var i = 0; i < 16; i++) {
-      final a = i * math.pi / 8 - math.pi / 2;
-      final rr = i.isEven ? r : r * .62;
-      final pt = o + Offset(math.cos(a), math.sin(a)) * rr;
-      i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
-    }
-    canvas.drawPath(path..close(), p);
   }
 
   @override
-  bool shouldRepaint(covariant _CartouchePainter old) => old.color != color;
+  bool shouldRepaint(covariant _CartouchePainter old) => false;
 }
