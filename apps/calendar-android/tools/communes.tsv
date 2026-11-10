@@ -1,0 +1,240 @@
+code	id	ar	fr	lat	lng	source	wilaya	moughataa	moughataa_fr
+-	nkc	نواكشوط	Nouakchott	18.0858	-15.9785	app	نواكشوط		
+MR01330	c330	لكصر	Ksar	18.0995	-15.9574	geonames	نواكشوط الغربية	لكصر	Ksar
+MR01331	c331	تفرغ زينة	Tefragh Zeina	18.3	-16.016	centre	نواكشوط الغربية	تفرغ زينة	Tevragh Zeina
+MR01332	c332	السبخة	Sebkha	18.077	-16.008	centre	نواكشوط الغربية	السبخة	Sebkha
+MR01333	c333	تيارت	Teyarett	18.171	-15.929	centre	نواكشوط الشمالية	تيارت	Teyarett
+MR01334	c334	دار النعيم	Dar Naim	18.1081	-15.9267	geonames	نواكشوط الشمالية	دار النعيم	Dar Naïm
+MR01335	c335	توجنين	Toujounine	18.067	-15.888	centre	نواكشوط الشمالية	توجنين	Toujounine
+MR01336	c336	الميناء	El Mina	17.946	-16.005	centre	نواكشوط الجنوبية	الميناء	El Mina
+MR01337	c337	عرفات	Arafat	18.0464	-15.9719	geonames	نواكشوط الجنوبية	عرفات	Arafat
+MR01338	c338	الرياض	Riyad	17.971	-15.908	centre	نواكشوط الجنوبية	الرياض	Riyad
+MR01286	ndb	نواذيبو	Nouadhibou	20.931	-17.0347	app	داخلة نواذيبو	نواذيبو	Nouadhibou
+MR01287	boulanouar	بولنوار	Boulenouar	21.27	-16.51	app	داخلة نواذيبو	نواذيبو	Nouadhibou
+MR01288	c288	إينال	Inal	20.946	-15.313	centre	داخلة نواذيبو	نواذيبو	Nouadhibou
+MR01289	c289	الشامي	Chami	20.05	-15.97	known	داخلة نواذيبو	الشامي	Chami
+MR01290	c290	اتميميشات	Tmeimichat	20.833	-14.779	centre	داخلة نواذيبو	الشامي	Chami
+MR01291	c291	انوامغار	Nouamghar	19.3564	-16.5139	geonames	داخلة نواذيبو	الشامي	Chami
+MR01248	boutilimit	بوتلميت	Boutilimit	17.55	-14.6833	app	اترارزة	بوتلميت	Boutilimit
+MR01249	c249	علب آدرس	Elb Adress	18.279	-13.42	centre	اترارزة	بوتلميت	Boutilimit
+MR01250	c250	أجوير	Ajoueir	17.206	-14.423	centre	اترارزة	بوتلميت	Boutilimit
+MR01251	c251	انتيشط	N'Teichet	17.334	-14.701	centre	اترارزة	بوتلميت	Boutilimit
+MR01252	c252	النباغية	Nebaghiye	17.406	-15.06	centre	اترارزة	بوتلميت	Boutilimit
+MR01253	c253	تنغدج	Tenghadej	18.548	-14.389	centre	اترارزة	بوتلميت	Boutilimit
+MR01254	c254	الميسر	El Mouyessar	18.499	-13.887	centre	اترارزة	بوتلميت	Boutilimit
+MR01255	keurmacene	كرمسين	Keurmacen	16.55	-16.23	app	اترارزة	كرمسين	Keur Macène
+MR01256	c256	انجاكو	N'Diago	16.1676	-16.5103	geonames	اترارزة	كرمسين	Keur Macène
+MR01257	c257	امبلل	M'Balal	16.75	-16.237	centre	اترارزة	كرمسين	Keur Macène
+MR01258	mederdra	المذرذرة	Mederdra	16.92	-15.66	app	اترارزة	المذرذرة	Mederdra
+MR01259	c259	بير التورس	Beir Taouress	17.092	-15.698	centre	اترارزة	المذرذرة	Mederdra
+MR01260	c260	تاكيلالت	Taguilalet	17.0404	-15.5205	geonames	اترارزة	المذرذرة	Mederdra
+MR01261	c261	الخط	El Khat	16.809	-15.83	centre	اترارزة	المذرذرة	Mederdra
+MR01262	c262	تكنت	Tiguent	17.268	-15.952	centre	اترارزة	المذرذرة	Mederdra
+MR01263	ouadnaga	واد الناقة	Ouad Naga	17.97	-15.52	app	اترارزة	واد الناقة	Ouad Naga
+MR01264	c264	أوليكات	Aouleiygat	18.203	-15.408	centre	اترارزة	واد الناقة	Ouad Naga
+MR01265	c265	العرية	El Ariye	17.664	-15.883	centre	اترارزة	واد الناقة	Ouad Naga
+MR01266	rkiz	اركيز	R'Kiz	16.88	-15.25	app	اترارزة	اركيز	R'Kiz
+MR01267	c267	بوطلحاية	Boutalhaye	17.053	-14.926	centre	اترارزة	اركيز	R'Kiz
+MR01268	c268	برينه	Bareine	17.154	-15.189	centre	اترارزة	اركيز	R'Kiz
+MR01269	rosso	روصو	Rosso	16.5138	-15.805	app	اترارزة	روصو	Rosso
+MR01270	c270	جدر المحكن	Jedrel Mouhguen	16.676	-15.604	centre	اترارزة	روصو	Rosso
+MR01271	c271	تيكان	Teikane	16.599	-15.275	centre	اترارزة	تيكان	Tékane
+MR01272	c272	شمامه	Chemame	16.765	-15.266	centre	اترارزة	تيكان	Tékane
+MR01273	c273	تيشطيات	Teichteyat	16.805	-15.403	centre	اترارزة	تيكان	Tékane
+MR01274	c274	لكصيبة 2	Lexeiba 2	16.782	-14.989	centre	اترارزة	تيكان	Tékane
+MR01224	aleg	ألاك	Aleg	17.0583	-14.3833	app	لبراكنة	ألاك	Aleg
+MR01225	c225	شكار	Chegar	17.415	-13.542	centre	لبراكنة	ألاك	Aleg
+MR01226	c226	بوحديدة	Bouhdida	16.9281	-13.9992	geonames	لبراكنة	ألاك	Aleg
+MR01227	c227	أغشوركيت	Aghchourguit	17.457	-13.894	centre	لبراكنة	ألاك	Aleg
+MR01228	bababe	باب ابه	Bababé	16.34	-13.95	app	لبراكنة	باب ابه	Bababé
+MR01229	c229	الفرع	El Verae	16.434	-13.866	centre	لبراكنة	باب ابه	Bababé
+MR01230	c230	آيري امبار	Aéré M'Bar	16.476	-14.031	centre	لبراكنة	باب ابه	Bababé
+MR01231	boghe	بوكي	Boghé	16.59	-14.27	app	لبراكنة	بوكي	Boghé
+MR01232	c232	دار العافية	Dar El Aviye	16.681	-14.363	centre	لبراكنة	بوكي	Boghé
+MR01233	c233	دار البركة	Dar El Barke	16.695	-14.777	centre	لبراكنة	بوكي	Boghé
+MR01234	c234	ولد بيرام	Ould Biram	16.696	-14.527	centre	لبراكنة	بوكي	Boghé
+MR01235	magta	مقطع لحجار	Magtalahjar	17.5	-13.08	app	لبراكنة	مقطع لحجار	Magta Lahjar
+MR01236	c236	صنكرافة	Sangrave	17.592	-12.8365	geonames	لبراكنة	مقطع لحجار	Magta Lahjar
+MR01237	c237	جونابه	Djonabe	17.137	-12.691	centre	لبراكنة	مقطع لحجار	Magta Lahjar
+MR01238	c238	واد أمور	Ouad Emmour	17.282	-12.972	centre	لبراكنة	مقطع لحجار	Magta Lahjar
+MR01239	mbagne	امباني	M'Bagne	16.15	-13.78	app	لبراكنة	امباني	M'Bagne
+MR01240	c240	انيابينا	Niabina	16.232	-13.848	centre	لبراكنة	امباني	M'Bagne
+MR01241	c241	أدباي الحجاج	Edebaye El Hejjaj	16.36	-13.767	centre	لبراكنة	امباني	M'Bagne
+MR01242	c242	باكودين	Bagodine	16.2401	-13.7222	geonames	لبراكنة	امباني	M'Bagne
+MR01243	c243	مال	Maal	17.066	-13.459	centre	لبراكنة	مال	Maal
+MR01244	c244	ارومد	Roumed	16.968	-13.174	centre	لبراكنة	مال	Maal
+MR01245	c245	الواد لبيظ	Elwad Lebiadh	16.87	-12.966	centre	لبراكنة	مال	Maal
+MR01246	c246	بورات	Bourat	16.652	-13.114	centre	لبراكنة	مال	Maal
+MR01247	c247	جلوار	Djelwar	16.597	-13.503	centre	لبراكنة	مال	Maal
+MR01193	kaedi	كيهيدي	Kaedi	16.15	-13.5	app	كوركول	كيهيدي	Kaédi
+MR01194	c194	نيري والو	Néré Walo	16.228	-13.579	centre	كوركول	كيهيدي	Kaédi
+MR01195	c195	جول	Djewol	16.084	-13.347	centre	كوركول	كيهيدي	Kaédi
+MR01196	c196	توكومادي	Toghomadi	15.856	-13.163	centre	كوركول	كيهيدي	Kaédi
+MR01197	c197	تيفوندي سيفي	Tifondé Civé	15.822	-12.988	centre	كوركول	كيهيدي	Kaédi
+MR01198	maghama	مقامة	Maghama	15.51	-12.85	app	كوركول	مقامة	Maghama
+MR01199	c199	داو	Doo	15.507	-12.996	centre	كوركول	مقامة	Maghama
+MR01200	c200	دولول سيفي	Dolol Civé	15.584	-13.044	centre	كوركول	مقامة	Maghama
+MR01201	c201	بيلوكت ليتامه	Beilouguet Litame	15.756	-12.871	centre	كوركول	مقامة	Maghama
+MR01202	c202	افريع ليتامه	Vrea Litame	15.5	-12.7	centre	كوركول	مقامة	Maghama
+MR01203	c203	تولل	Toulel	15.366	-12.768	centre	كوركول	مقامة	Maghama
+MR01204	c204	صانيي	Sagné	15.2046	-12.7898	geonames	كوركول	مقامة	Maghama
+MR01205	c205	والي جنتانك	Wali Djantang	15.3325	-12.8746	geonames	كوركول	مقامة	Maghama
+MR01206	mbout	امبود	M'Boud	16.02	-12.58	app	كوركول	امبود	M'Bout
+MR01207	c207	تيكوبره	Tikobra	16.143	-12.376	centre	كوركول	امبود	M'Bout
+MR01208	c208	ترنكل أهل مولاي اعلي	Terenguel Ehel Moulaye Ely	15.867	-12.381	centre	كوركول	امبود	M'Bout
+MR01209	c209	انجاجبني كانديكا	N'Djadjbenni Gandéga	15.803	-12.523	centre	كوركول	امبود	M'Bout
+MR01210	c210	أدباي أهل كلاي	Edebaye Ehel Guelaye	15.763	-12.681	centre	كوركول	امبود	M'Bout
+MR01211	c211	فم لكليته	Voum Legleite	16.043	-12.705	centre	كوركول	امبود	M'Bout
+MR01212	c212	شلخة التياب	Chelkhet Tiyab	16.329	-12.77	centre	كوركول	امبود	M'Bout
+MR01213	c213	لحرش	Lahrach	16.286	-12.54	centre	كوركول	امبود	M'Bout
+MR01214	c214	سوفه	Souve	15.993	-12.148	centre	كوركول	امبود	M'Bout
+MR01215	monguel	مونكل	Mounguel	16.42	-13.13	app	كوركول	مونكل	Monguel
+MR01216	c216	بطحة مويت	Bathet Moït	16.483	-13.084	centre	كوركول	مونكل	Monguel
+MR01217	c217	بوخول	Bokhol	16.49	-12.943	centre	كوركول	مونكل	Monguel
+MR01218	c218	ملزم تيشط	Melzem Teichet	16.607	-12.865	centre	كوركول	مونكل	Monguel
+MR01219	c219	أزكيلم التياب	Azgueilem Tiyab	16.342	-13.031	centre	كوركول	مونكل	Monguel
+MR01220	c220	لكصيبة	Lexeiba	16.209	-13.1	centre	كوركول	لكصيبة	Lexeiba
+MR01221	c221	بتنكال	Betengal	16.109	-12.945	centre	كوركول	لكصيبة	Lexeiba
+MR01222	c222	الطلحاية	Talhaye	16.062	-13.148	centre	كوركول	لكصيبة	Lexeiba
+MR01223	c223	كانكي	Ganki	16.2141	-13.2404	geonames	كوركول	لكصيبة	Lexeiba
+MR01302	ouldyenge	ولد ينجه	Ould Yengé	15.53	-11.73	app	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01303	c303	لعبلي	Leebelli	15.354	-11.863	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01304	c304	تكتاكه	Tektake	15.619	-11.93	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01305	c305	دافوع	Davoue	15.588	-12.064	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01306	c306	بوعنز	Bouanz	15.828	-12.121	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01307	c307	لحرج	Lehraj	15.88	-11.801	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01308	c308	لعوينات	Leaweinat	15.692	-11.761	centre	كيدي ماغا	ولد ينجه	Ould Yengé
+MR01309	selibaby	سيلبابي	Sélibabi	15.1597	-12.1847	app	كيدي ماغا	سيلبابي	Sélibaby
+MR01310	c310	ولد امبوني	Ould M'Bonny	15.723	-12.275	centre	كيدي ماغا	سيلبابي	Sélibaby
+MR01311	c311	تاشوط	Tachout	15.448	-12.181	centre	كيدي ماغا	سيلبابي	Sélibaby
+MR01312	c312	حاسي شكار	Hassi Chegar	15.3663	-12.0866	geonames	كيدي ماغا	سيلبابي	Sélibaby
+MR01313	c313	غابو	Ghabou	14.805	-12.057	centre	كيدي ماغا	غابو	Ghabou
+MR01314	c314	اشليخه	Chleikha	14.872	-11.981	centre	كيدي ماغا	غابو	Ghabou
+MR01315	c315	جوكنتورو	Diogountourou	14.77	-12.2509	geonames	كيدي ماغا	غابو	Ghabou
+MR01316	c316	بيديام	Bayediam	15.046	-11.984	centre	كيدي ماغا	غابو	Ghabou
+MR01317	c317	كوراي	Gouraye	15.002	-12.376	centre	كيدي ماغا	غابو	Ghabou
+MR01318	c318	صوفي	Soufi	15.232	-11.984	centre	كيدي ماغا	غابو	Ghabou
+MR01319	c319	وومبو	Wompou	15.1308	-12.7253	geonames	كيدي ماغا	وومبو	Wompou
+MR01320	c320	أكوينيت	Agoueinitt	15.578	-12.409	centre	كيدي ماغا	وومبو	Wompou
+MR01321	c321	أجار	Ejar	15.504	-12.497	centre	كيدي ماغا	وومبو	Wompou
+MR01322	c322	ساني جيري	Sagne Dieri	15.154	-12.527	centre	كيدي ماغا	وومبو	Wompou
+MR01323	c323	آر	Arr	15.366	-12.476	centre	كيدي ماغا	وومبو	Wompou
+MR01167	barkeol	باركيول	Barkeiwel	16.64	-12.5	app	لعصابة	باركيول	Barkéol
+MR01168	c168	كلير	Gueller	16.864	-12.261	centre	لعصابة	باركيول	Barkéol
+MR01169	c169	لبحير	Lebheir	16.521	-12.158	centre	لعصابة	باركيول	Barkéol
+MR01170	c170	لعويسي	Laweissi	16.235	-12.138	centre	لعصابة	باركيول	Barkéol
+MR01171	c171	دغفك	Daghveg	16.464	-12.376	centre	لعصابة	باركيول	Barkéol
+MR01172	c172	الغبرة	El Ghabra	16.6471	-12.6711	geonames	لعصابة	باركيول	Barkéol
+MR01173	c173	ارظيظيع	R'Dheidhie	16.948	-12.691	centre	لعصابة	باركيول	Barkéol
+MR01174	c174	بولحراث	Bou Lahrath	17.031	-12.419	centre	لعصابة	باركيول	Barkéol
+MR01175	boumdeid	بومديد	Boumdeid	17.43	-11.34	app	لعصابة	بومديد	Boumdeid
+MR01176	c176	احسي الطين	Hseiy Tin	17.314	-11.488	centre	لعصابة	بومديد	Boumdeid
+MR01177	c177	لفطح	Lavtah	17.853	-11.273	centre	لعصابة	بومديد	Boumdeid
+MR01178	guerou	كرو	Guerou	16.81	-11.83	app	لعصابة	كرو	Guerou
+MR01179	c179	اوديي اجريد	Oudeiy Jrid	16.783	-12.022	centre	لعصابة	كرو	Guerou
+MR01180	c180	الغايرة	El Ghaira	17.157	-12.18	centre	لعصابة	كرو	Guerou
+MR01181	c181	كامور	Kamour	16.995	-11.965	centre	لعصابة	كرو	Guerou
+MR01182	kankossa	كنكوصة	Kankoussa	15.93	-11.52	app	لعصابة	كنكوصة	Kankossa
+MR01183	c183	ساني	Sani	16.106	-11.46	centre	لعصابة	كنكوصة	Kankossa
+MR01184	c184	ابلاجميل	Blajmil	16.04	-11.068	centre	لعصابة	كنكوصة	Kankossa
+MR01185	c185	تناها	Tenaha	15.1237	-10.8985	geonames	لعصابة	كنكوصة	Kankossa
+MR01186	c186	حامد	Hamed	15.64	-11.5186	geonames	لعصابة	كنكوصة	Kankossa
+MR01187	kiffa	كيفة	Kiffa	16.62	-11.404	app	لعصابة	كيفة	Kiffa
+MR01188	c188	انواملين	Nouamlein	17.11	-11.469	centre	لعصابة	كيفة	Kiffa
+MR01189	c189	أغورط	Aghorat	16.724	-10.95	centre	لعصابة	كيفة	Kiffa
+MR01190	c190	الملكه	El Melgue	16.701	-11.111	centre	لعصابة	كيفة	Kiffa
+MR01191	c191	كوروجل	Kouroudjel	16.423	-11.495	centre	لعصابة	كيفة	Kiffa
+MR01192	c192	لكران	Legrane	16.36	-11.797	centre	لعصابة	كيفة	Kiffa
+MR01138	aioun	لعيون	Aïoun El Atrouss	16.6667	-9.6167	app	الحوض الغربي	لعيون	Aïoun
+MR01139	c139	انصفني	N'Savenni	17.044	-9.719	centre	الحوض الغربي	لعيون	Aïoun
+MR01140	c140	ادويراره	Doueirare	16.701	-9.88	centre	الحوض الغربي	لعيون	Aïoun
+MR01141	c141	تنحماد	Ten Hamadi	16.433	-9.844	centre	الحوض الغربي	لعيون	Aïoun
+MR01142	c142	بنعمان	Beneamane	16.404	-9.585	centre	الحوض الغربي	لعيون	Aïoun
+MR01143	c143	أكجرت	Egjert	17.053	-9.287	centre	الحوض الغربي	لعيون	Aïoun
+MR01144	c144	أم لحياظ	Oum Lahyadh	16.846	-8.744	centre	الحوض الغربي	لعيون	Aïoun
+MR01145	kobenni	كوبني	Koubenni	15.86	-9.4	app	الحوض الغربي	كوبني	Kobenni
+MR01146	c146	حاسي أهل أحمد بشنه	Hassi Ehel Ahmed Bechne	15.985	-9.704	centre	الحوض الغربي	كوبني	Kobenni
+MR01147	c147	تمزين	Timzine	16.209	-9.247	centre	الحوض الغربي	كوبني	Kobenni
+MR01148	c148	لغليك	Leghlig	15.779	-9.031	centre	الحوض الغربي	كوبني	Kobenni
+MR01149	c149	كوكي الزمال	Gougui Zemmal	15.791	-9.271	centre	الحوض الغربي	كوبني	Kobenni
+MR01150	c150	موديبوكو	Modibougou	15.664	-9.526	centre	الحوض الغربي	كوبني	Kobenni
+MR01151	c151	الفلانية	Voullaniya	15.602	-9.784	centre	الحوض الغربي	كوبني	Kobenni
+MR01152	tamchekett	تامشكط	Tamchekett	17.25	-10.67	app	الحوض الغربي	تامشكط	Tamchekett
+MR01153	c153	المبروك	El Mabrouk	17.406	-10.39	centre	الحوض الغربي	تامشكط	Tamchekett
+MR01154	c154	الراظي	Radhi	16.722	-10.272	centre	الحوض الغربي	تامشكط	Tamchekett
+MR01155	c155	كطع تيدومه	Guetae-Teidoume	16.732	-10.728	centre	الحوض الغربي	تامشكط	Tamchekett
+MR01156	c156	الصفا	Sava	17.045	-10.652	centre	الحوض الغربي	تامشكط	Tamchekett
+MR01157	tintane	الطينطان	Tintan	16.39	-10.17	app	الحوض الغربي	الطينطان	Tintane
+MR01158	c158	حاسي عبد الله	Hassi Abdallah	16.312	-10.045	centre	الحوض الغربي	الطينطان	Tintane
+MR01159	c159	عوينات الطل	Aweinat Thalle	15.938	-10.075	centre	الحوض الغربي	الطينطان	Tintane
+MR01160	c160	عين فربه	Aïn Varbe	15.861	-10.433	centre	الحوض الغربي	الطينطان	Tintane
+MR01161	c161	أغرغار	Egharghar	16.186	-10.46	centre	الحوض الغربي	الطينطان	Tintane
+MR01162	c162	الدفعة	Dev-a	16.417	-10.537	centre	الحوض الغربي	الطينطان	Tintane
+MR01163	c163	الطويل	Touil	15.602	-10.175	centre	الحوض الغربي	الطويل	Touil
+MR01164	c164	بغداد	Baghdad	15.598	-10.497	centre	الحوض الغربي	الطويل	Touil
+MR01165	c165	سط	Sett	15.579	-10.006	centre	الحوض الغربي	الطويل	Touil
+MR01166	c166	لحريجات	Lehreijat	15.598	-10.298	centre	الحوض الغربي	الطويل	Touil
+MR01101	amourj	أمرج	Amourj	16.08	-7.2	app	الحوض الشرقي	أمرج	Amourj
+MR01102	c102	أم اشيش	Oum Echeich	15.677	-7.554	centre	الحوض الشرقي	أمرج	Amourj
+MR01103	c103	بوكادوم	Bougadoum	15.867	-7.3692	geonames	الحوض الشرقي	أمرج	Amourj
+MR01104	c104	جيكي	Djigui	15.672	-7.2	centre	الحوض الشرقي	أمرج	Amourj
+MR01105	c105	لكدور	Legdour	15.866	-7.539	centre	الحوض الشرقي	أمرج	Amourj
+MR01106	bassikounou	باسكنو	Basseknou	15.8667	-5.9667	app	الحوض الشرقي	باسكنو	Bassikounou
+MR01107	c107	المكفه	El Megve	16.162	-5.563	centre	الحوض الشرقي	باسكنو	Bassikounou
+MR01108	c108	فصاله	Vessale	15.669	-5.855	centre	الحوض الشرقي	باسكنو	Bassikounou
+MR01109	c109	الظهر	Dhar	16.171	-6.279	centre	الحوض الشرقي	باسكنو	Bassikounou
+MR01110	djigueni	جكني	Djiguenni	15.73	-8.67	app	الحوض الشرقي	جكني	Djiguenni
+MR01111	c111	المبروك	El Mabrouk	15.671	-8.501	centre	الحوض الشرقي	جكني	Djiguenni
+MR01112	c112	افيريني	Feirenni	15.566	-8.837	centre	الحوض الشرقي	جكني	Djiguenni
+MR01113	c113	بنعمان	Beneamane	15.923	-8.847	centre	الحوض الشرقي	جكني	Djiguenni
+MR01114	c114	عوينات ازبل	Aoueinat Ez Bel	16.338	-8.763	centre	الحوض الشرقي	جكني	Djiguenni
+MR01115	c115	اغليك أهل بيه	Ghlig Ehel Beye	15.964	-8.602	centre	الحوض الشرقي	جكني	Djiguenni
+MR01116	c116	قصر البركة	Kasr El Barke	15.729	-8.829	centre	الحوض الشرقي	جكني	Djiguenni
+MR01117	nema	النعمة	Néma	16.6167	-7.2667	app	الحوض الشرقي	النعمة	Néma
+MR01118	c118	أشميم	Achemime	16.755	-7.128	centre	الحوض الشرقي	النعمة	Néma
+MR01119	c119	اجريف	Jreif	16.428	-7.171	centre	الحوض الشرقي	النعمة	Néma
+MR01120	c120	بنكو	Bangou	16.291	-6.983	centre	الحوض الشرقي	النعمة	Néma
+MR01121	c121	حاسي اتيله	Hassi Etile	16.172	-7.276	centre	الحوض الشرقي	النعمة	Néma
+MR01122	c122	أم آفنادش	Oum Avnadech	16.08	-7.606	centre	الحوض الشرقي	النعمة	Néma
+MR01123	c123	المبروك	El Mabrouk	16.468	-7.339	centre	الحوض الشرقي	النعمة	Néma
+MR01124	c124	بيريبافات	Beribavat	16.436	-7.572	centre	الحوض الشرقي	النعمة	Néma
+MR01125	c125	انوال	Noual	16.512	-7.751	centre	الحوض الشرقي	النعمة	Néma
+MR01126	c126	أكوينيت	Agoueinit	16.648	-7.453	centre	الحوض الشرقي	النعمة	Néma
+MR01127	oualata	ولاتة	Oualata	17.3	-7.03	app	الحوض الشرقي	ولاتة	Oualata
+MR01128	c128	الباطن	Elbatene	17.177	-7.748	centre	الحوض الشرقي	ولاتة	Oualata
+MR01129	timbedra	تمبدغة	Tembedgha	16.24	-8.17	app	الحوض الشرقي	تمبدغة	Timbédra
+MR01130	c130	الطويل	Touil	16.579	-8.293	centre	الحوض الشرقي	تمبدغة	Timbédra
+MR01131	c131	كومبي صالح	Koumbi Saleh	15.895	-7.967	centre	الحوض الشرقي	تمبدغة	Timbédra
+MR01132	c132	بوسطيله	Bousteile	15.5754	-8.0856	geonames	الحوض الشرقي	تمبدغة	Timbédra
+MR01133	c133	حاسي امهادي	Hassi M'Hadi	15.991	-8.315	centre	الحوض الشرقي	تمبدغة	Timbédra
+MR01134	c134	انبيكت لحواش	Nbeikett Lehwache	18.131	-6.149	centre	الحوض الشرقي	انبيكت لحواش	N'Beiket Lehwach
+MR01135	adelbagrou	عدل بكرو	Adel Bagrou	15.53	-7.06	app	الحوض الشرقي	عدل بكرو	Adel Bagrou
+MR01136	c136	المسكول	Elmessgoul	15.874	-6.474	centre	الحوض الشرقي	عدل بكرو	Adel Bagrou
+MR01137	c137	سيفان	Sivane	15.84	-6.882	centre	الحوض الشرقي	عدل بكرو	Adel Bagrou
+MR01292	moudjeria	المجرية	Moudjeria	17.88	-12.33	app	تكانت	المجرية	Moudjéria
+MR01293	c293	انبيكه	N'Beike	18.166	-12.241	centre	تكانت	المجرية	Moudjéria
+MR01294	c294	السدود	Soudoud	17.538	-12.127	centre	تكانت	المجرية	Moudjéria
+MR01295	tichitt	تيشيت	Tichit	18.45	-9.51	app	تكانت	تيشيت	Tichit
+MR01296	c296	لخشب	Lekhcheb	18.537	-10.551	centre	تكانت	تيشيت	Tichit
+MR01297	tidjikja	تجكجة	Tidjikdja	18.5564	-11.4271	app	تكانت	تجكجة	Tidjikja
+MR01298	c298	الواحات	El Wahat	19.043	-11.547	centre	تكانت	تجكجة	Tidjikja
+MR01299	c299	تنسيق	Tensigh	18.21	-11.758	centre	تكانت	تجكجة	Tidjikja
+MR01300	c300	بوبكر بن عامر	Boubacar Ben Amer	17.839	-11.641	centre	تكانت	تجكجة	Tidjikja
+MR01301	c301	لحصيرة	Lehsira	17.495	-11.604	centre	تكانت	تجكجة	Tidjikja
+MR01275	aoujeft	أوجفت	Aoujeft	20.03	-13.05	app	آدرار	أوجفت	Aoujeft
+MR01276	c276	المعدن	Maeden	20.195	-13.028	centre	آدرار	أوجفت	Aoujeft
+MR01277	c277	انتيركنت	N'Teirguent	19.095	-12.676	centre	آدرار	أوجفت	Aoujeft
+MR01278	c278	المداح	El Medah	19.5	-13.735	centre	آدرار	أوجفت	Aoujeft
+MR01279	atar	أطار	Atar	20.5167	-13.05	app	آدرار	أطار	Atar
+MR01280	c280	عين أهل الطايع	Aïn Ehel Taya	20.208	-13.646	centre	آدرار	أطار	Atar
+MR01281	c281	تواز	Tawaz	20.797	-13.297	centre	آدرار	أطار	Atar
+MR01282	c282	شوم	Choum	21.2996	-13.0668	geonames	آدرار	أطار	Atar
+MR01283	chinguetti	شنقيط	Chinguitti	20.46	-12.36	app	آدرار	شنقيط	Chinguetti
+MR01284	c284	عين الصفرة	Aïn Savra	19.612	-11.968	centre	آدرار	شنقيط	Chinguetti
+MR01285	ouadane	وادان	Ouadane	20.93	-11.62	app	آدرار	وادان	Ouadane
+MR01327	akjoujt	أكجوجت	Akjoujt	19.75	-14.3833	app	إينشيري	أكجوجت	Akjoujt
+MR01328	bennichab	بنشاب	Bennechab	19.45	-15.17	app	إينشيري	بنشاب	Bennichab
+MR01329	c329	امحيجرات	Mheijrat	18.81	-15.838	centre	إينشيري	بنشاب	Bennichab
+MR01324	birmoghrein	بير أم اكرين	Birmoughrein	25.24	-11.59	app	تيرس زمور	بير أم اكرين	Bir Moghrein
+MR01325	fderik	افديرك	F'Deirick	22.68	-12.71	app	تيرس زمور	افديرك	F'Dérik
+MR01326	zouerate	ازويرات	Zoueirat	22.7353	-12.4714	app	تيرس زمور	ازويرات	Zouérate
