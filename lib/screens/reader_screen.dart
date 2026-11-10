@@ -367,7 +367,7 @@ class _MushafPageState extends State<_MushafPage> {
           child: LayoutBuilder(builder: (context, box) {
             final m = Medallion(box.biggest);
             final d = m.textInset;
-            final yTop = m.ts(d) + 2, yBot = m.bs(d) - 2;
+            final yTop = m.textTop, yBot = m.textBottom;
             final lay = _ornateLayout(words, basmala, m, yTop, yBot);
             // توزيع الأسطر على ارتفاع اللوحة كله
             final n = lay.lines.length + (basmala ? 1 : 0);

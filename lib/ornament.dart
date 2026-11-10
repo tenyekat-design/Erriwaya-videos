@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'data.dart';
+import 'oualata.dart';
 import 'theme.dart';
 
 /// زخارف صفحات المصحف على طراز زخارف ولاتة (موريتانيا)، مرسومة بالكود.
@@ -20,18 +21,18 @@ class PageFrame extends StatelessWidget {
 
   /// المسافة بين حافة الصفحة والنصّ.
   static EdgeInsets inset(bool ornate) =>
-      ornate ? const EdgeInsets.fromLTRB(58, 70, 58, 70) : const EdgeInsets.fromLTRB(27, 25, 27, 25);
+      ornate ? const EdgeInsets.fromLTRB(58, 70, 58, 70) : const EdgeInsets.fromLTRB(29, 29, 29, 34);
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final o = dark ? Oualata.dark : Oualata.light;
     return CustomPaint(
-      painter: _FramePainter(colors, ornate, dark),
+      painter: _FramePainter(colors, ornate, dark, page),
       child: Stack(children: [
         Positioned.fill(child: Padding(padding: inset(ornate), child: child)),
-        // رقم الصفحة على الإطار السفلي، فلا يزاحم النصّ
-        Positioned(
+        // رقم الصفحة على الإطار السفلي، فلا يزاحم النصّ (في الصفحات العادية يرسمه الإطار)
+        if (ornate) Positioned(
           left: 0,
           right: 0,
           bottom: ornate ? 44 : 4,
@@ -69,7 +70,8 @@ class Oualata {
 }
 
 class _FramePainter extends CustomPainter {
-  _FramePainter(this.c, this.ornate, this.dark);
+  _FramePainter(this.c, this.ornate, this.dark, this.page);
+  final int page;
   final PageColors c;
   final bool ornate;
   final bool dark;
@@ -83,39 +85,55 @@ class _FramePainter extends CustomPainter {
 
   // ───────── الصفحات العادية ─────────
   void _regular(Canvas canvas, Size size) {
-    final outer = (Offset.zero & size).deflate(6);
-    const w = 14.0, ro = 18.0, ri = 9.0;
-    final inner = outer.deflate(w);
-    _band(canvas, outer, inner, o.wall, ro: ro, ri: ri, wall: true);
-
-    // خط موجيّ أبيض في منتصف الشريط
-    final wave = Paint()
-      ..color = o.lime
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round;
-    _waveAround(canvas, outer.deflate(w / 2), ro, 3.2, 15, wave, dots: o.lime);
-
-    // خطّ بنّي رفيع داخل الإطار
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(inner.deflate(3), const Radius.circular(6)),
-        Paint()
-          ..color = c.frame.withValues(alpha: .7)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1);
-
-    // الزوايا: قرص جصّي أبيض فيه صليب ولاتيّ، على قوس الزاوية
-    for (final p in _corners(outer, w, inset: 2.5)) {
-      canvas.drawCircle(p, w * .72, Paint()..color = o.lime);
-      canvas.drawCircle(
-          p,
-          w * .72,
-          Paint()
-            ..color = o.ink
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1);
-      _cross(canvas, p, w * .5, o.ink, o.lime);
+    final p = dark ? OualataPalette.dark : OualataPalette.light;
+    final full = Offset.zero & size;
+    const o = 16.0; // عرض جدار الطين
+    // جدار الطين حول الصفحة
+    canvas.save();
+    canvas.clipPath(Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRect(full)
+      ..addRect(full.deflate(o)));
+    paintWall(canvas, full, p);
+    canvas.restore();
+    // أسنان جصّية بيضاء على حافة الجدار، ونقاط بيضاء على طرفه الخارجي
+    final ti = full.deflate(o - 1.5);
+    paintTeeth(canvas, ti.topLeft, ti.topRight, const Offset(0, -1), 5, p.lime);
+    paintTeeth(canvas, ti.bottomLeft, ti.bottomRight, const Offset(0, 1), 5, p.lime);
+    paintTeeth(canvas, ti.topLeft, ti.bottomLeft, const Offset(-1, 0), 5, p.lime);
+    paintTeeth(canvas, ti.topRight, ti.bottomRight, const Offset(1, 0), 5, p.lime);
+    final dot = Paint()..color = p.lime;
+    for (var x = o + 12; x < size.width - o; x += 9) {
+      canvas.drawCircle(Offset(x, 4.5), 1.2, dot);
+      canvas.drawCircle(Offset(x, size.height - 4.5), 1.2, dot);
     }
+    for (var y = o + 12; y < size.height - o; y += 9) {
+      canvas.drawCircle(Offset(4.5, y), 1.2, dot);
+      canvas.drawCircle(Offset(size.width - 4.5, y), 1.2, dot);
+    }
+    // خطوط الألوان الأربعة حول النصّ
+    for (final (d, col, w) in [
+      (o + 1.0, p.ink, 1.2),
+      (o + 3.0, p.yellow, 1.8),
+      (o + 5.0, p.red, 1.8),
+      (o + 7.0, p.green, 1.8),
+      (o + 9.0, p.blue, 1.8),
+      (o + 10.7, p.ink, .9),
+    ]) {
+      canvas.drawRRect(
+          RRect.fromRectAndRadius(full.deflate(d), const Radius.circular(5)),
+          Paint()
+            ..color = col
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = w);
+    }
+    // دوائر ملوّنة في الزوايا، ومعيّن جصّي أعلى الصفحة، ورقم الصفحة في دائرة أسفلها
+    for (final q in [Offset(o, o), Offset(size.width - o, o), Offset(o, size.height - o), Offset(size.width - o, size.height - o)]) {
+      paintColorMedallion(canvas, q, 15, p);
+    }
+    paintLaceDiamond(canvas, Offset(size.width / 2, o / 2 + 1), 9, p.lime, p.wall);
+    paintColorMedallion(canvas, Offset(size.width / 2, size.height - o + 1), 17, p,
+        label: ar(page), font: Brand.ui);
   }
 
   // ───────── الفاتحة وأول البقرة ─────────
@@ -409,5 +427,5 @@ class _FramePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _FramePainter old) => old.c != c || old.ornate != ornate || old.dark != dark;
+  bool shouldRepaint(covariant _FramePainter old) => old.c != c || old.ornate != ornate || old.dark != dark || old.page != page;
 }
