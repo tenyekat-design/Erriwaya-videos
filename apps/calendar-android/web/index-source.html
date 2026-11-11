@@ -537,6 +537,20 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+.wx{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.wx svg{fill:none;stroke:var(--gold);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.wx-ic{width:30px;height:30px}.wx-t{font:700 1.7rem/1 var(--f-display,inherit);color:var(--ink)}
+.wx-d{display:grid;font-size:.86rem;font-weight:600}.wx-d small{font-weight:500;color:var(--muted)}
+.wx-n{display:flex;gap:12px;margin-inline-start:auto}.wx-n>span{display:grid;justify-items:center;font-size:.72rem;line-height:1.35}.wx-n small{color:var(--muted)}.wx-n svg{width:18px;height:18px}.wx-n b{font-weight:700}.wx-n i{font-style:normal;color:var(--muted)}
+.ram-h{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:center}.ram-h h2{font-size:1.2rem;color:var(--green)}.ram-h small{color:var(--gold);font-weight:600}
+.ram-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
+.ram-sum div{display:grid;gap:2px;padding:8px 10px;border-radius:10px;background:var(--green-soft)}.ram-sum small{color:var(--muted);font-size:.76rem}.ram-sum b{font-size:.9rem;color:var(--green)}
+.ramt{width:100%;border-collapse:collapse;text-align:center;font-variant-numeric:tabular-nums}.ramt th{background:var(--green);color:var(--on-green);font-size:.78rem;font-weight:600;padding:9px 4px}
+.ramt th:first-child{border-start-start-radius:10px}.ramt th:last-child{border-start-end-radius:10px}
+.ramt td{padding:8px 4px;border-bottom:1px solid var(--line);font-size:.92rem}.ramt td.rn b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--gold-soft);color:var(--gold);font-size:.9rem}
+.ramt td.d{text-align:start}.ramt td.d small{display:block;color:var(--muted);font-size:.72rem}.ramt td.im{font-weight:700;color:var(--green)}.ramt td.if{font-weight:700;color:var(--red)}
+.ramt tr.l10 td{background:color-mix(in srgb,var(--gold-soft) 60%,transparent)}.ramt tr.today td{background:var(--green-soft);font-weight:700}.ramt tbody tr{cursor:pointer}
+.fr .ramt th{font-size:.7rem}.fr .ramt td{font-size:.86rem;padding:8px 2px}.fr .ramt td.rn b{width:26px;height:26px}
 /* the calendar screen: the day's times stay in view, everything else opens from a tile */
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 6px;margin:18px 0 6px}
 .tiles button{display:grid;justify-items:center;align-content:start;gap:6px;border:0;background:transparent;color:var(--ink);font:500 .78rem/1.3 var(--f-body);padding:0;cursor:pointer;text-align:center}
@@ -546,7 +560,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .tiles button[aria-expanded="true"] .tile-ic{background:var(--green);border-color:var(--green);color:var(--on-green)}
 .tiles button[aria-expanded="true"]{color:var(--green);font-weight:700}
 #v-cal [data-sec]{display:none;scroll-margin-top:84px}#v-cal [data-sec].open{display:block}
-#goRam{display:none}.about summary{pointer-events:none}.about summary::after{content:""!important}
+.about summary{pointer-events:none}.about summary::after{content:""!important}
 #v-cal .meta{margin:0 0 12px}
 #dNotes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .nt{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green);border-radius:6px;padding:2px 4px 2px 10px;padding-inline:10px 4px;font-size:.88rem;font-weight:600}
@@ -555,9 +569,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .cell .ndot{position:absolute;bottom:5px;left:6px;width:6px;height:6px;border-radius:2px;background:var(--green)}
 .cell.sel .ndot,.cell.today .ndot{background:var(--gold)}
 .occ.ram{background:var(--green-soft);color:var(--green)}
-table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),table.ram td:nth-child(6){color:var(--green);font-weight:700}
 .nsheet{height:auto!important;max-height:84vh}.nform{display:grid;gap:10px;padding:12px 16px 20px}.nform input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}.nform .row{margin:0}.nform input[type=time]{padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-#goRam{flex:none}
 .lang-btn{position:absolute;inset-inline-end:0;top:-8px;border:1px solid var(--orn);background:transparent;color:var(--band-ink);border-radius:999px;padding:3px 9px;font:600 .72rem var(--f-body);cursor:pointer}
 .fr .clock{text-align:right}.fr .tabs a{font-size:.62rem;letter-spacing:-.01em}.fr .app-in h1{font-size:1.12rem}.fr .app-in p{font-size:.74rem}.fr .cell em{font-size:.56rem;letter-spacing:-.02em;white-space:nowrap}.fr .row select{max-width:100%;min-width:0}.fr .cpick small{display:none}.fr .about summary::after{content:" ›"}.fr .about[open] summary::after{content:""}.fr .legend i{margin-inline-end:5px}.fr .cell .mzd{left:auto;right:6px}.fr .cell .mzd.x{right:18px}
 .about summary{cursor:pointer;list-style:none}.about summary::-webkit-details-marker{display:none}.about summary h3{display:inline}.about summary::after{content:" ‹";color:var(--gold)}.about[open] summary::after{content:""}.about p{font-size:.86rem;line-height:1.9;margin:8px 0 0;color:var(--muted)}.about p b{color:var(--ink)}
@@ -624,6 +636,7 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
         <button type="button" class="mnz" id="dMnz"></button>
         <div id="dOcc"></div>
         <div id="dNotes"></div>
+        <div class="wx" id="wx" hidden></div>
       </div>
       <div class="next" id="next"></div>
     </div>
@@ -673,8 +686,17 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
   </section>
 
   <section class="card" data-sec="table">
-    <div class="sec-h"><h2 id="tblTitle"></h2><small id="tblHint">اضغط على أي يوم لعرض تفاصيله</small><button type="button" class="btn" id="goRam">إمساكية رمضان</button></div>
+    <div class="sec-h"><h2 id="tblTitle"></h2><small id="tblHint">اضغط على أي يوم لعرض تفاصيله</small></div>
     <div class="scroll"><table id="tbl"></table></div>
+  </section>
+
+  <section class="card ramc" data-sec="ram">
+    <div class="ram-h"><button class="nav" id="ramPrev" aria-label="رمضان السابق"><svg class="ic" viewBox="0 0 24 24"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
+      <div><h2 id="ramTitle"></h2><small id="ramCity"></small></div>
+      <button class="nav" id="ramNext" aria-label="رمضان التالي"><svg class="ic" viewBox="0 0 24 24"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg></button></div>
+    <div class="ram-sum" id="ramSum"></div>
+    <div class="scroll"><table id="ramTbl" class="ramt"></table></div>
+    <p class="note">الإمساك عند أذان الفجر، والإفطار عند أذان المغرب. بداية الشهر حسابية وقد تتقدم أو تتأخر يومًا عن رؤية الهلال. الصفوف المظلَّلة: العشر الأواخر.</p>
   </section>
 
   <section class="tools">
@@ -719,6 +741,7 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
       <p><b>الخصوصية.</b> التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا إعلانات ولا أدوات تتبّع. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.</p>
       <p><b>الإنترنت.</b> المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (mushaf.ma وGitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.</p>
       <p><b>المصادر.</b> نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: مصحف مؤسسة محمد السادس لنشر المصحف الشريف. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.</p>
+      <p><b>الطقس.</b> درجات الحرارة من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك.</p>
       <p><b>الناشر.</b> تقويم موريتانيا</p>
     </details>
   </section>
@@ -886,8 +909,6 @@ function openSec(k,keep){const cur=document.querySelector('#v-cal [data-sec].ope
   return el}
 document.getElementById('tiles').addEventListener('click',e=>{const b=e.target.closest('button[data-open]');if(!b)return;const k=b.dataset.open;
   if(k==='note'){noteSheet(S.sel);return}
-  if(k==='ram'){if(b.getAttribute('aria-expanded')==='true'){openSec('table');return}
-    openSec('table',true);b.setAttribute('aria-expanded','true');document.getElementById('goRam').click();return}
   const el=openSec(k);if(el){b.setAttribute('aria-expanded','true');el.scrollIntoView({behavior:'smooth',block:'start'})}});
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-note-add],[data-note-del]');if(!t)return;
   if('noteAdd' in t.dataset)noteSheet(S.sel);
@@ -1014,6 +1035,34 @@ const T_IC={
 const IC_BELL='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 10a5.5 5.5 0 0 1 11 0c0 4.6 1.8 5.7 1.8 5.7H4.7S6.5 14.6 6.5 10zM10 18.6a2 2 0 0 0 4 0"/></svg>',
  IC_PLUS='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>',
  IC_MOON='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/></svg>';
+/* ---------- temperature (Open-Meteo, for the chosen commune's coordinates; needs the network) ---------- */
+const WX_IC={sun:T_IC.dhuhr,
+ cloud:'<path d="M7.5 18.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 9.6 4.5 4.5 0 0 0 7.5 18.5z"/>',
+ part:'<circle cx="8.5" cy="8" r="3"/><path d="M8.5 2.5v1M3 8h1M4.6 4.1l.7.7M12.4 4.1l-.7.7M9.5 19h8a3.5 3.5 0 0 0 .5-6.95A4.8 4.8 0 0 0 9 11.3 3.9 3.9 0 0 0 9.5 19z"/>',
+ rain:'<path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15zM9 18l-1 2.5M13 18l-1 2.5M17 18l-1 2.5"/>',
+ storm:'<path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15zM12.5 14.5l-2 3.5h3l-2 3.5"/>',
+ fog:'<path d="M4 9h16M4 13h16M6.5 17h11"/>'};
+const wxKind=c=>c===0?'sun':c<=2?'part':c===3?'cloud':c<=48?'fog':c>=95?'storm':'rain';
+const WX_NAME={sun:'صحو',part:'غائم جزئيًا',cloud:'غائم',fog:'ضباب',rain:'مطر',storm:'عاصفة رعدية'};
+let WX=store.get('wx',null);
+function showWx(){const el=$('wx'),c=city(),w=WX,ok=w&&w.id===c.id&&Date.now()-w.t<6*3600e3&&S.sel===todayJdn();
+  el.hidden=!ok;if(!ok)return;
+  const k=wxKind(w.code);
+  el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small>العظمى ${w.hi}° · الصغرى ${w.lo}°</small></span>`
+   +`<span class="wx-n">${w.days.map(d=>`<span><small>${DAYS[dowOf(d.j)]}</small><svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[wxKind(d.code)]}</svg><b>${d.hi}°</b><i>${d.lo}°</i></span>`).join('')}</span>`}
+async function loadWx(){const c=city();
+  if(WX&&WX.id===c.id&&Date.now()-WX.t<45*60e3){showWx();return}
+  showWx();
+  try{
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=GMT&forecast_days=4`);
+    if(!r.ok)return;const j=await r.json(),d=j.daily,R=Math.round;
+    if(c.id!==city().id)return;
+    WX={id:c.id,t:Date.now(),now:R(j.current.temperature_2m),code:j.current.weather_code,hi:R(d.temperature_2m_max[0]),lo:R(d.temperature_2m_min[0]),
+      days:[1,2,3].map(i=>{const [y,m,dd]=d.time[i].split('-').map(Number);return {j:jdnOf(y,m,dd),hi:R(d.temperature_2m_max[i]),lo:R(d.temperature_2m_min[i]),code:d.weather_code[i]}})};
+    store.set('wx',WX);showWx();
+  }catch(e){}}
+setInterval(()=>{if(!document.hidden)loadWx()},30*60e3);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadWx()});
 function renderDay(){
   const c=city(),g=gOf(S.sel),h=hOfJdn(S.sel),t=prayerTimes(g.y,g.m,g.d,c),isToday=S.sel===todayJdn();
   $('dWeek').textContent=DAYS[dowOf(S.sel)]+(isToday?' · اليوم':'');
@@ -1026,7 +1075,7 @@ function renderDay(){
   if(!ev.length&&isToday){
     for(let k=1;k<400;k++){const e=events(S.sel+k);if(e.length){occ=`<span class="occ${e[0].nat?' nat':''}">${e[0].t} ${daysWord(k)} · ${hStr(hOfJdn(S.sel+k))}</span>`;break}}
   }
-  $('dOcc').innerHTML=occ;
+  $('dOcc').innerHTML=occ;showWx();
   const esc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
   $('dNotes').innerHTML=notesOn(S.sel).map(n=>`<span class="nt"><span>${esc(n.t)}${n.rep?' <small>(كل سنة)</small>':''}${n.rem?` <small>${IC_BELL} ${esc(n.at||'08:00')}</small>`:''}</span><button type="button" data-note-del="${esc(n.id)}" aria-label="حذف الملاحظة">✕</button></span>`).join('')
     ;
@@ -1110,12 +1159,26 @@ function renderCal(){
   $('modeG').setAttribute('aria-pressed',S.mode==='g');$('modeH').setAttribute('aria-pressed',S.mode==='h');
   renderTable(days);
 }
+/* ---------- Ramadan's imsakiya: one row per fasting day ---------- */
+function ramYear(){if(S.ry)return S.ry;const h=hOfJdn(todayJdn());return h.m<=9?h.y:h.y+1}
+function renderRam(){
+  const y=ramYear(),c=city(),j0=jdnOfHijri(y,9,1),j1=jdnOfHijri(y,10,1),tj=todayJdn();
+  if(!j0||!j1){$('ramTitle').textContent='—';$('ramTbl').innerHTML='';$('ramSum').innerHTML='';return}
+  const dur=(a,b)=>{const p=x=>{const [h,m]=fmt(x).split(':').map(Number);return h*60+m};const d=p(b)-p(a);return {d,s:`${Math.floor(d/60)}:${String(d%60).padStart(2,'0')}`}};
+  let rows='',min=null,max=null;
+  for(let j=j0;j<j1;j++){const n=j-j0+1,g=gOf(j),t=prayerTimes(g.y,g.m,g.d,c),f=dur(t.fajr,t.maghrib),cls=[];
+    if(n>=21)cls.push('l10');if(j===tj)cls.push('today');
+    if(!min||f.d<min.d)min=f;if(!max||f.d>max.d)max=f;
+    rows+=`<tr class="${cls.join(' ')}" data-j="${j}"><td class="rn"><b>${n}</b></td><td class="d"><b>${DAYS[dowOf(j)]}</b><small>${g.d} ${GM[g.m-1]}</small></td><td class="im">${fmt(t.fajr)}</td><td class="if">${fmt(t.maghrib)}</td><td>${f.s}</td><td>${fmt(t.isha)}</td></tr>`}
+  $('ramTitle').textContent=`إمساكية رمضان ${y} هـ`;$('ramCity').textContent=c.name;
+  const g0=gOf(j0),g1=gOf(j1-1);
+  $('ramSum').innerHTML=`<div><small>أول يوم</small><b>${DAYS[dowOf(j0)]} ${gStr(g0)}</b></div><div><small>آخر يوم</small><b>${DAYS[dowOf(j1-1)]} ${gStr(g1)}</b></div><div><small>أقصر صيام</small><b>${min.s}</b></div><div><small>أطول صيام</small><b>${max.s}</b></div>`;
+  $('ramTbl').innerHTML=`<thead><tr><th>رمضان</th><th>التاريخ</th><th>الإمساك</th><th>الإفطار</th><th>مدة الصيام</th><th>العشاء</th></tr></thead><tbody>${rows}</tbody>`;
+}
 function renderTable(days){
   const c=city(),tj=todayJdn();
-  const ram=S.mode==='h'&&S.hm===9;   // Ramadan's timetable is its imsakiya: fasting starts at the fajr adhan and ends at the maghrib adhan
-  $('tblTitle').textContent=ram?`إمساكية رمضان ${S.hy} هـ في ${c.name}`:`مواقيت الصلاة في ${c.name} — ${S.mode==='g'?GM[S.gm-1]+' '+S.gy:HM[S.hm-1]+' '+S.hy+' هـ'}`;
-  $('tbl').classList.toggle('ram',ram);$('tblHint').textContent=ram?'الإمساك عند أذان الفجر، والإفطار عند أذان المغرب':'اضغط على أي يوم لعرض تفاصيله';
-  let h=`<thead><tr><th>التاريخ</th>${PR.map(p=>`<th>${ram&&p[0]==='fajr'?'الإمساك':ram&&p[0]==='maghrib'?'الإفطار':p[1]}</th>`).join('')}</tr></thead><tbody>`;
+  $('tblTitle').textContent=`مواقيت الصلاة في ${c.name} — ${S.mode==='g'?GM[S.gm-1]+' '+S.gy:HM[S.hm-1]+' '+S.hy+' هـ'}`;
+  let h=`<thead><tr><th>التاريخ</th>${PR.map(p=>`<th>${p[1]}</th>`).join('')}</tr></thead><tbody>`;
   for(const j of days){
     const g=gOf(j),hj=hOfJdn(j),t=prayerTimes(g.y,g.m,g.d,c),cls=[];
     if(dowOf(j)===5)cls.push('fri');if(j===tj)cls.push('today');
@@ -1130,14 +1193,14 @@ function shift(dir){
   else{S.hm+=dir;if(S.hm>12){S.hm=1;S.hy++}if(S.hm<1){S.hm=12;S.hy--}S.hy=Math.min(1520,Math.max(1318,S.hy))}
   renderCal();
 }
-function allRender(){renderCities();renderCal();renderDay();convG();convH()}
+function allRender(){renderCities();renderCal();renderDay();renderRam();convG();convH()}
 
 /* ---------- converter ---------- */
 function convG(){const v=$('cG').value;if(!v){$('cGout').textContent='—';return}const [y,m,d]=v.split('-').map(Number);const j=jdnOf(y,m,d);$('cGout').textContent=`${DAYS[dowOf(j)]} ${hStr(hOfJdn(j))}`}
 function convH(){const d=+$('cHd').value,m=+$('cHm').value,y=+$('cHy').value;if(!(d>=1&&d<=30&&y>=1318&&y<=1520)){$('cHout').textContent='أدخل يومًا بين 1 و30 وسنة بين 1318 و1520';return}const j=jdnOfHijri(y,m,d);$('cHout').textContent=j?`${DAYS[dowOf(j)]} ${gStr(gOf(j))}`:`شهر ${HM[m-1]} ${y} هـ ليس فيه يوم ${d}`}
 
 /* ---------- events ---------- */
-$('citySel').addEventListener('change',e=>{S.city=e.target.value;store.set('city',S.city);renderCities();renderCal();renderDay();pushAdhan()});
+$('citySel').addEventListener('change',e=>{S.city=e.target.value;store.set('city',S.city);renderCities();renderCal();renderDay();renderRam();pushAdhan();loadWx()});
 $('grid').addEventListener('click',e=>{const b=e.target.closest('.cell[data-j]');if(b){select(+b.dataset.j,false);window.scrollTo({top:0,behavior:'smooth'})}});
 $('tbl').addEventListener('click',e=>{const r=e.target.closest('tr[data-j]');if(r){select(+r.dataset.j,false);window.scrollTo({top:0,behavior:'smooth'})}});
 $('prev').addEventListener('click',()=>shift(-1));
@@ -1147,7 +1210,9 @@ $('modeH').addEventListener('click',()=>{S.mode='h';syncViewToSel();renderCal()}
 $('jMonth').addEventListener('change',e=>{if(S.mode==='g')S.gm=+e.target.value;else S.hm=+e.target.value;renderCal()});
 $('jYear').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(!v)return;if(S.mode==='g')S.gy=Math.min(2100,Math.max(1900,v));else S.hy=Math.min(1520,Math.max(1318,v));renderCal()});
 $('goToday').addEventListener('click',()=>select(todayJdn(),true));
-$('goRam').addEventListener('click',()=>{const h=hOfJdn(todayJdn());S.mode='h';S.hy=h.m<=9?h.y:h.y+1;S.hm=9;renderCal();$('tblTitle').scrollIntoView({behavior:'smooth',block:'start'})});
+$('ramPrev').addEventListener('click',()=>{S.ry=Math.max(1318,ramYear()-1);renderRam()});
+$('ramNext').addEventListener('click',()=>{S.ry=Math.min(1520,ramYear()+1);renderRam()});
+$('ramTbl').addEventListener('click',e=>{const r=e.target.closest('tr[data-j]');if(r){select(+r.dataset.j,true);window.scrollTo({top:0,behavior:'smooth'})}});
 document.addEventListener('click',e=>{if(e.target.id==='backToday')select(todayJdn(),true)});
 $('sMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}">${m.name}</option>`).join('');
 $('sMethod').value=S.method;$('sAsr').value=S.asr;$('sAdj').value=S.adj;
@@ -1216,7 +1281,7 @@ function pushAdhan(){
 S.sel=todayJdn();syncViewToSel();
 const n0=nowInfo(),h0=hOfJdn(S.sel);
 $('cG').value=`${n0.y}-${pad(n0.m)}-${pad(n0.d)}`;$('cHd').value=10;$('cHm').value=12;$('cHy').value=h0.y;
-allRender();
+allRender();loadWx();
 pushAdhan();
 let lastToday=S.sel;
 setInterval(()=>{const tj=todayJdn();if(tj!==lastToday){const follow=S.sel===lastToday;lastToday=tj;if(follow){select(tj,true);return}renderCal()}tick()},1000);
@@ -2164,7 +2229,11 @@ const D=[
 ['الشهر السابق','Mois précédent'],['الشهر التالي','Mois suivant'],['نوع التقويم','Type de calendrier'],['ميلادي','Grégorien'],['هجري','Hégirien'],['الشهر الهجري','Mois hégirien'],['السنة الهجرية','Année hégirienne'],['اليوم الهجري','Jour hégirien'],['الشهر','Mois'],['السنة','Année'],
 ['مناسبة دينية','Fête religieuse'],['مناسبة وطنية','Fête nationale'],['بداية منزلة','Début d’une manzila'],['الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر','Grand chiffre : mois affiché · petit : l’autre calendrier'],
 ['مواقيت الصلاة في ','Horaires de prière à '],['اضغط على أي يوم لعرض تفاصيله','Touchez un jour pour voir ses détails'],['التاريخ','Date'],
-['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],['أدوات التقويم','Outils du calendrier'],['جدول المواقيت','Horaires du mois'],['ملاحظة وتذكير','Note et rappel'],['الأذان والإقامة','Adhan et iqama'],['حول التطبيق','À propos'],
+['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],
+['رمضان السابق','Ramadan précédent'],['رمضان التالي','Ramadan suivant'],['أول يوم','Premier jour'],['آخر يوم','Dernier jour'],['أقصر صيام','Jeûne le plus court'],['أطول صيام','Jeûne le plus long'],['مدة الصيام','Durée'],
+['الإمساك عند أذان الفجر، والإفطار عند أذان المغرب. بداية الشهر حسابية وقد تتقدم أو تتأخر يومًا عن رؤية الهلال. الصفوف المظلَّلة: العشر الأواخر.','Le jeûne commence à l’adhan du Fajr et se rompt à l’adhan du Maghrib. Le début du mois est calculé ; il peut avancer ou retarder d’un jour par rapport à l’observation du croissant. Lignes teintées : les dix dernières nuits.'],
+['صحو','Dégagé'],['غائم جزئيًا','Partiellement nuageux'],['غائم','Nuageux'],['ضباب','Brouillard'],['مطر','Pluie'],['عاصفة رعدية','Orage'],['العظمى','Max'],['الصغرى','Min'],
+['الطقس.','Météo.'],['درجات الحرارة من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك.','Les températures viennent d’Open-Meteo (licence CC BY 4.0). Les coordonnées de la commune choisie lui sont envoyées, pas votre position.'],['أدوات التقويم','Outils du calendrier'],['جدول المواقيت','Horaires du mois'],['ملاحظة وتذكير','Note et rappel'],['الأذان والإقامة','Adhan et iqama'],['حول التطبيق','À propos'],
 [' · عطلة رسمية',' · jour férié'],['أضف ملاحظة أو تذكيرًا','Ajouter une note ou un rappel'],['(كل سنة)','(chaque année)'],['حذف الملاحظة','Supprimer la note'],['ملاحظة جديدة','Nouvelle note'],['ملاحظة ليوم ','Note pour le '],
 ['اكتب الملاحظة أو المناسبة…','Écrivez la note ou l’événement…'],['نص الملاحظة','Texte de la note'],['التكرار','Répétition'],['لا تتكرر','Aucune'],['كل سنة ميلادية','Chaque année grégorienne'],['كل سنة هجرية','Chaque année hégirienne'],
 ['ذكّرني بها في يومها','Me la rappeler ce jour-là'],['وقت التذكير','Heure du rappel'],['التذكير يصل من تطبيق أندرويد، بتوقيت موريتانيا.','Le rappel est envoyé par l’application Android, à l’heure de Mauritanie.'],['حفظ الملاحظة','Enregistrer la note'],['حُفظت الملاحظة','Note enregistrée'],['حُذفت الملاحظة','Note supprimée'],
@@ -2210,7 +2279,7 @@ const RX=[
  [/· اليوم$/g,'· aujourd’hui'],
  [/بعد (\d+) (?:أيام|يومًا)/g,'dans $1 jours'],[/بعد يومين/g,'dans 2 jours'],[/غدًا/g,'demain'],
  [/([\d.]+)° ش · ([\d.]+)° غ/g,'$1° N · $2° O'],
- [/^صلاة (\S+) في /g,'Prière de $1 à '],[/إمساكية رمضان (\d+) هـ في /g,'Imsakiya du Ramadan $1 H à '],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
+ [/^صلاة (\S+) في /g,'Prière de $1 à '],[/إمساكية رمضان (\d+) هـ/g,'Imsakiya du Ramadan $1 H'],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
  [/\(ولاية ([^)]+)\)/g,'(wilaya : $1)'],[/^ولاية (.+)$/g,'Wilaya : $1'],[/^مقاطعة (.+)$/g,'Moughataa : $1'],
  [/(\d) هـ/g,'$1 H']
 ];
@@ -2224,7 +2293,7 @@ function tr(s){
 }
 const skip=e=>!e||e.closest('.adh-l li,[data-keep],script,style')&&!e.closest('small');
 function text(n){const p=n.parentElement;if(!p||(p.closest('[data-keep]'))||(p.closest('.adh-l')&&!p.closest('small')))return;
-  const v=n.nodeValue;if(!AR.test(v))return;let t=tr(v);if(p.classList.contains('dow'))t=t.slice(0,3)+'.';if(t!==v)n.nodeValue=t}
+  const v=n.nodeValue;if(!AR.test(v))return;let t=tr(v);if(p.classList.contains('dow')||p.closest('.wx-n'))t=t.slice(0,3)+'.';if(t!==v)n.nodeValue=t}
 function el(e){
   if(e.nodeType===3){text(e);return}
   if(e.nodeType!==1)return;
