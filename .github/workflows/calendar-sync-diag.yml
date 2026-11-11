@@ -1,0 +1,28 @@
+name: calendar-sync-diag
+on:
+  push:
+    paths:
+      - "apps/calendar-android/tools/syncdiag/**"
+      - ".github/workflows/calendar-sync-diag.yml"
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {reciter: abdqader, suras: "1,2,94,87,112"}
+          - {reciter: rajel, suras: "3,35,95,56"}
+          - {reciter: rabbani, suras: "24,31,62,114,71"}
+          - {reciter: naji, suras: "109,67"}
+          - {reciter: laghdaf, suras: "100,114,85"}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            apps/calendar-android/tools
+            apps/calendar-android/assets/data
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy scipy librosa
+      - run: python3 apps/calendar-android/tools/syncdiag/diag.py ${{ matrix.reciter }} ${{ matrix.suras }}
