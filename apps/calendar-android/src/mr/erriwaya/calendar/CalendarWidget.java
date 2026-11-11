@@ -22,6 +22,9 @@ public class CalendarWidget extends AppWidgetProvider {
     static final String TICK = "mr.erriwaya.calendar.WIDGET_TICK";
     private static final String[] G_MONTHS = {"يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"};
     private static final String[] H_MONTHS = {"محرم", "صفر", "ربيع الأول", "ربيع الآخر", "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"};
+    private static final String[] G_MONTHS_FR = {"janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"};
+    private static final String[] H_MONTHS_FR = {"Mouharram", "Safar", "Rabi I", "Rabi II", "Joumada I", "Joumada II", "Rajab", "Chaabane", "Ramadan", "Chawwal", "Dhou al-Qi`da", "Dhou al-Hijja"};
+    private static final String[] DAYS_FR = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
     private static final String[] DAYS = {"الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"};
     private static final int[] PRAYERS = {PrayerCalc.FAJR, PrayerCalc.DHUHR, PrayerCalc.ASR, PrayerCalc.MAGHRIB, PrayerCalc.ISHA};
     private static final int[] CELL = {R.id.c0, R.id.c1, R.id.c2, R.id.c3, R.id.c4};
@@ -97,16 +100,20 @@ public class CalendarWidget extends AppWidgetProvider {
         if (tomorrow) nextIdx = 0;
 
         int[] g = PrayerCalc.gregorian(day), h = hijri(day, c.optInt("adj", 0));
-        String dow = DAYS[(int) (((day + 4) % 7 + 7) % 7)];   // 1970-01-01 was a Thursday
+        boolean fr = AdhanReceiver.french(c);
+        String[] names = AdhanReceiver.names(c);
+        int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
         RemoteViews v = new RemoteViews(ctx.getPackageName(), R.layout.widget_calendar);
-        v.setTextViewText(R.id.wHijri, h[2] + " " + H_MONTHS[Math.max(1, Math.min(12, h[1])) - 1] + " " + h[0] + " هـ");
-        v.setTextViewText(R.id.wCity, c.optString("city", "نواكشوط"));
-        v.setTextViewText(R.id.wGreg, dow + " " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);
-        v.setTextViewText(R.id.wNext, "القادمة: " + AdhanReceiver.NAMES[PRAYERS[nextIdx]] + (tomorrow ? " غدًا " : " ") + PrayerCalc.fmt(tn[PRAYERS[nextIdx]]));
+        v.setInt(R.id.wRoot, "setLayoutDirection", fr ? 0 : 1);   // View.LAYOUT_DIRECTION_LTR / _RTL
+        v.setTextViewText(R.id.wHijri, h[2] + " " + (fr ? H_MONTHS_FR : H_MONTHS)[hm] + " " + h[0] + (fr ? " H" : " هـ"));
+        v.setTextViewText(R.id.wCity, AdhanReceiver.cityOf(c));
+        v.setTextViewText(R.id.wGreg, (fr ? DAYS_FR : DAYS)[di] + " " + g[2] + " " + (fr ? G_MONTHS_FR : G_MONTHS)[g[1] - 1] + " " + g[0]);
+        v.setTextViewText(R.id.wNext, (fr ? "Prochaine : " : "القادمة: ") + names[PRAYERS[nextIdx]]
+                + (tomorrow ? (fr ? " demain " : " غدًا ") : " ") + PrayerCalc.fmt(tn[PRAYERS[nextIdx]]));
         int ink = color(ctx, R.color.w_ink), muted = color(ctx, R.color.w_muted), hiInk = color(ctx, R.color.w_hi_ink);
         for (int i = 0; i < PRAYERS.length; i++) {
             boolean hi = i == nextIdx;
-            v.setTextViewText(NAME[i], AdhanReceiver.NAMES[PRAYERS[i]]);
+            v.setTextViewText(NAME[i], names[PRAYERS[i]]);
             v.setTextViewText(TIME[i], PrayerCalc.fmt((hi ? tn : t)[PRAYERS[i]]));
             v.setInt(CELL[i], "setBackgroundResource", hi ? R.drawable.widget_hi : 0);
             v.setTextColor(NAME[i], hi ? hiInk : muted);

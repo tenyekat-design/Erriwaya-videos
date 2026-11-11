@@ -535,6 +535,8 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+.lang-btn{position:absolute;inset-inline-end:0;top:-8px;border:1px solid var(--orn);background:transparent;color:var(--band-ink);border-radius:999px;padding:3px 9px;font:600 .72rem var(--f-body);cursor:pointer}
+.fr .clock{text-align:right}.fr .tabs a{font-size:.62rem;letter-spacing:-.01em}.fr .app-in h1{font-size:1.12rem}.fr .app-in p{font-size:.74rem}.fr .cell em{font-size:.56rem;letter-spacing:-.02em;white-space:nowrap}.fr .row select{max-width:100%;min-width:0}.fr .cpick small{display:none}.fr .about summary::after{content:" ›"}.fr .about[open] summary::after{content:""}.fr .legend i{margin-inline-end:5px}.fr .cell .mzd{left:auto;right:6px}.fr .cell .mzd.x{right:18px}
 .about summary{cursor:pointer;list-style:none}.about summary::-webkit-details-marker{display:none}.about summary h3{display:inline}.about summary::after{content:" ‹";color:var(--gold)}.about[open] summary::after{content:""}.about p{font-size:.86rem;line-height:1.9;margin:8px 0 0;color:var(--muted)}.about p b{color:var(--ink)}
 .cpick-loc{display:block;width:100%;margin-top:8px}
 .adh-alert .pr{display:flex;flex-wrap:wrap;gap:6px 12px}
@@ -1068,7 +1070,7 @@ function pushAdhan(){
   // the app also gets the settings themselves: it computes the times on its own from them (same formulas, PrayerCalc.java),
   // so the adhan keeps coming however long the app stays closed, and the home-screen widget is drawn from them
   if(typeof A.setAdhanConfig==='function'){const c=city(),M=METHODS[S.method];
-    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,pre:+AD.pre||0,p:AD.p,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
+    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,pre:+AD.pre||0,p:AD.p,lang:store.get('lang','ar'),cityFr:c.fr,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
 }
 (function(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -2019,6 +2021,116 @@ function route(){
   if(view==='v-cal'||view==='v-qibla'||view==='v-manazil'||(view==='v-hadith'&&!/-\d+-/.test(h)))window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',route);route();
+})();
+</script>
+<script>
+/* ---------- French interface ----------
+   The page is written in Arabic. In French (the «Français» button in the header; kept in mrcal.lang) this script
+   rewrites what the header, the calendar view, the city list and the short messages show: it replaces the Arabic
+   phrases below (longest first) each time the page redraws. The library (mushaf, hadith, adhkar, mansions) stays in Arabic.
+   A phrase added to the calendar view needs its French here, or it shows in Arabic. */
+(function(){
+"use strict";
+let lang='ar';try{lang=JSON.parse(localStorage.getItem('mrcal.lang'))||'ar'}catch(e){}
+const band=document.querySelector('.app-in');
+if(band){const b=document.createElement('button');b.type='button';b.className='lang-btn';b.setAttribute('data-keep','');
+  b.textContent=lang==='fr'?'العربية':'Français';b.lang=lang==='fr'?'ar':'fr';
+  b.onclick=()=>{try{localStorage.setItem('mrcal.lang',JSON.stringify(lang==='fr'?'ar':'fr'))}catch(e){}location.reload()};band.append(b)}
+if(lang!=='fr')return;
+const GM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const D=[
+['التقويم الموريتاني','Calendrier mauritanien'],['مواقيت الصلاة · المصحف · الحديث · الأذكار','Horaires de prière · Coran · Hadith · Invocations'],
+['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المسبحة','Tasbih'],['القبلة','Qibla'],
+['المدينة','Ville'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
+['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
+['تعرض يومًا غير اليوم','Vous affichez un autre jour'],['العودة إلى اليوم','Revenir à aujourd’hui'],
+['الفجر','Fajr'],['الشروق','Lever'],['الظهر','Dhohr'],['العصر','Asr'],['المغرب','Maghrib'],['العشاء','Icha'],
+['اتجاه القبلة:','Direction de la qibla :'],['من الشمال (شرقًا)','depuis le nord (vers l’est)'],['الطريقة:','Méthode :'],[' · موقع تقريبي (مركز البلدية)',' · position approximative (centre de la commune)'],
+['رابطة العالم الإسلامي','Ligue islamique mondiale'],['وزارة الأوقاف المغربية','Ministère des Habous (Maroc)'],['الهيئة المصرية العامة للمساحة','Autorité égyptienne de topographie'],['أم القرى (18.5° / 90 دقيقة)','Oumm al-Qura (18.5° / 90 min)'],
+['الأذان والإقامة على مذهب الإمام مالك','L’adhan et l’iqama selon l’école de l’imam Malik'],['استمع إلى الأذان الآن','Écouter l’adhan maintenant'],['استمع إلى الأذان','Écouter l’adhan'],['(وترًا)','(formules dites une fois)'],
+['(بصوت منخفض)','(à voix basse)'],['(الترجيع: بأرفع من الصوت الأول)','(reprise : d’une voix plus haute)'],['(في أذان الصبح وحده)','(à l’adhan de l’aube seulement)'],
+['على مذهب مالك: التكبير في أول الأذان مرتان، وتُرجَّع الشهادتان (تُقالان بصوت منخفض ثم تُعادان بصوت أرفع)، وتُختم بـ«لا إله إلا الله» مرة واحدة. والإقامة وتر، و«قد قامت الصلاة» فيها مرة واحدة.','Selon l’école malikite : le takbir du début de l’adhan est dit deux fois, les deux attestations sont dites à voix basse puis reprises plus haut, et l’adhan se termine par « La ilaha illa Allah » une seule fois. Dans l’iqama, chaque formule est dite une fois, y compris « Qad qamati s-salat ».'],
+['الشهر السابق','Mois précédent'],['الشهر التالي','Mois suivant'],['نوع التقويم','Type de calendrier'],['ميلادي','Grégorien'],['هجري','Hégirien'],['الشهر الهجري','Mois hégirien'],['السنة الهجرية','Année hégirienne'],['اليوم الهجري','Jour hégirien'],['الشهر','Mois'],['السنة','Année'],
+['مناسبة دينية','Fête religieuse'],['مناسبة وطنية','Fête nationale'],['بداية منزلة','Début d’une manzila'],['الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر','Grand chiffre : mois affiché · petit : l’autre calendrier'],
+['مواقيت الصلاة في ','Horaires de prière à '],['اضغط على أي يوم لعرض تفاصيله','Touchez un jour pour voir ses détails'],['التاريخ','Date'],
+['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],['أدخل يومًا بين 1 و30 وسنة بين 1318 و1520','Entrez un jour entre 1 et 30 et une année entre 1318 et 1520'],['الأذان','Adhan'],['الإقامة','Iqama'],
+['الإعدادات','Réglages'],['طريقة الحساب','Méthode de calcul'],['وقت العصر','Heure de l’Asr'],['الجمهور (المذهب المالكي)','Majorité (école malikite)'],['المذهب الحنفي','École hanafite'],
+['الإقامة بعد الأذان','Iqama après l’adhan (min)'],['تنبيه الأذان','Alerte de l’adhan'],['عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا','à l’heure de chaque prière, même si l’application est fermée'],
+['تنبيه قبل الأذان','Rappel avant l’adhan'],['بدون تعديل (أم القرى)','Sans correction (Oumm al-Qura)'],['بدون','Aucun'],
+['صوت الأذان','Son de l’adhan'],[': الأذان المالكي المضمَّن في التطبيق',' : l’adhan malikite fourni avec l’application'],['استبدله بتسجيل من الهاتف','Le remplacer par un enregistrement du téléphone'],['حذف','Supprimer'],
+['أذان الفجر','Adhan du Fajr'],[': الأذان المضمَّن نفسه',' : le même adhan fourni'],[': تسجيلك الخاص بالفجر',' : votre enregistrement pour le Fajr'],[': تسجيلك نفسه',' : votre même enregistrement'],[': تسجيلك',' : votre enregistrement'],
+['اختر تسجيلًا خاصًا بالفجر','Choisir un enregistrement pour le Fajr'],['إيقاف','Arrêter'],
+['يُرفع الأذان المالكي المضمَّن في التطبيق كاملًا بصوت المنبّه عند دخول كل وقت، ولو كان التطبيق مغلقًا، مع زر «إيقاف الأذان» في الإشعار. ويمكنك استبداله بتسجيل آخر من هاتفك (mp3 أو m4a…).','L’adhan malikite fourni avec l’application est diffusé en entier, au volume de l’alarme, à l’heure de chaque prière, même si l’application est fermée ; la notification porte un bouton « Arrêter l’adhan ». Vous pouvez le remplacer par un enregistrement de votre téléphone (mp3, m4a…).'],
+['ليُرفع الأذان في وقته بالضبط اسمح للتطبيق بـ«المنبّهات والتذكيرات»، وإلا فقد يتأخر بضع دقائق.','Pour que l’adhan retentisse exactement à l’heure, autorisez « Alarmes et rappels » pour l’application ; sinon il peut tarder de quelques minutes.'],['اسمح الآن','Autoriser'],
+['بعض الهواتف توقف الأذان لتوفير البطارية. افتح إعدادات التطبيق واجعل استعمال البطارية «غير مقيَّد».','Certains téléphones coupent l’adhan pour économiser la batterie. Ouvrez les paramètres de l’application et réglez l’utilisation de la batterie sur « Sans restriction ».'],['افتح الإعدادات','Ouvrir les paramètres'],
+['اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.','Autorisez les notifications de l’application dans les paramètres du téléphone pour recevoir l’adhan.'],
+['تعذّر نسخ الملف. جرّب ملفًّا صوتيًّا آخر','Copie du fichier impossible. Essayez un autre fichier audio'],
+['ضبط الهجري','Correction hégirienne'],['تأخير يومين','Retarder de 2 jours'],['تأخير يوم','Retarder d’un jour'],['تقديم يومين','Avancer de 2 jours'],['تقديم يوم','Avancer d’un jour'],
+['المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.','Les horaires sont calculés astronomiquement pour les coordonnées de chaque commune ; ils peuvent différer d’une ou deux minutes des tableaux officiels. La date hégirienne est calculée ; elle peut avancer ou retarder d’un jour par rapport à l’observation du croissant retenue en Mauritanie : corrigez-la ici au besoin.'],
+['حول التطبيق والخصوصية','À propos et confidentialité'],['الخصوصية.','Confidentialité.'],['الإنترنت.','Internet.'],['المصادر.','Sources.'],['الناشر.','Éditeur.'],['تقويم موريتانيا','Calendrier de Mauritanie'],
+['التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا إعلانات ولا أدوات تتبّع. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.','L’application ne collecte ni n’envoie aucune donnée vous concernant : ni compte, ni publicité, ni outil de suivi. Vos réglages et vos signets restent sur votre téléphone. Si vous demandez « La commune la plus proche », votre position approximative sert, sur le téléphone seulement, à choisir la commune ; elle n’est ni conservée ni envoyée.'],
+['المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (mushaf.ma وGitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.','Les horaires, le calendrier et les textes fonctionnent hors connexion. La connexion ne sert qu’à charger les images des pages du Coran (mushaf.ma et GitHub) et à écouter les récitations (mp3quran.net et archive.org) ; ces sites voient votre adresse de connexion, comme tout site que vous visitez.'],
+['نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: مصحف مؤسسة محمد السادس لنشر المصحف الشريف. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.','Textes et polices du Coran (lectures de Warch, Qaloun et Hafs) : Complexe du Roi Fahd pour l’impression du Noble Coran. Pages de Warch : Coran de la Fondation Mohammed VI. Pages de Qaloun et Hafs : Coran de Médine. Sahih al-Boukhari et Mouwatta de Malik : hadith-api et sunnah.com. Hisn al-Mouslim : Saïd ibn Ali ibn Wahf al-Qahtani. Liste et positions des communes : open-admin-data (licence CC-BY-4.0). Les horaires sont un calcul astronomique pour les coordonnées de chaque commune.'],
+['موريتانيا على توقيت غرينتش طوال السنة، دون توقيت صيفي.','La Mauritanie est à l’heure GMT toute l’année, sans heure d’été.'],['إصدار التطبيق ','Version '],['نسخة الويب','Version web'],
+['اختيار المدينة','Choix de la ville'],['اختر المدينة أو البلدية','Choisissez la ville ou la commune'],['ابحث باسم البلدية أو المقاطعة…','Chercher une commune ou une moughataa…'],['إغلاق','Fermer'],['بحث','Recherche'],
+['أقرب بلدية إلى موقعي','La commune la plus proche'],['جارٍ تحديد الموقع…','Localisation en cours…'],['لا توجد بلدية بهذا الاسم','Aucune commune de ce nom'],
+['موقعك بعيد عن بلديات موريتانيا. اختر البلدية من القائمة.','Votre position est loin des communes de Mauritanie. Choisissez la commune dans la liste.'],
+['تعذّر تحديد الموقع. شغّل الموقع في الهاتف واسمح به للتطبيق.','Localisation impossible. Activez la localisation du téléphone et autorisez-la pour l’application.'],['أقرب بلدية: ','Commune la plus proche : '],
+['رأس السنة الهجرية','Nouvel an hégirien'],['عاشوراء','Achoura'],['المولد النبوي الشريف','Mawlid (naissance du Prophète)'],['ذكرى الإسراء والمعراج','Isra et Miraj'],['ليلة النصف من شعبان','Nuit de la mi-Chaabane'],['بداية شهر رمضان','Début du Ramadan'],
+['ليلة القدر (تقديرًا)','Nuit du Destin (estimation)'],['عيد الفطر','Aïd el-Fitr'],['يوم عرفة','Jour d’Arafat'],['عيد الأضحى','Aïd el-Adha'],['رأس السنة الميلادية','Jour de l’an'],['عيد العمال','Fête du Travail'],['يوم إفريقيا','Journée de l’Afrique'],['عيد الاستقلال الوطني','Fête de l’Indépendance'],
+['السبت','Samedi'],['الأحد','Dimanche'],['الاثنين','Lundi'],['الثلاثاء','Mardi'],['الأربعاء','Mercredi'],['الخميس','Jeudi'],['الجمعة','Vendredi'],
+['يناير',GM[0]],['فبراير',GM[1]],['مارس',GM[2]],['أبريل',GM[3]],['مايو',GM[4]],['يونيو',GM[5]],['يوليو',GM[6]],['أغسطس',GM[7]],['سبتمبر',GM[8]],['أكتوبر',GM[9]],['نوفمبر',GM[10]],['ديسمبر',GM[11]],
+['محرم','Mouharram'],['صفر','Safar'],['ربيع الأول','Rabi I'],['ربيع الآخر','Rabi II'],['جمادى الأولى','Joumada I'],['جمادى الآخرة','Joumada II'],['رجب','Rajab'],['شعبان','Chaabane'],['رمضان','Ramadan'],['شوال','Chawwal'],['ذو القعدة','Dhou al-Qi`da'],['ذو الحجة','Dhou al-Hijja'],
+['الشرطان','Ach-Charatan'],['البطين','Al-Boutayn'],['الثريا','Ath-Thourayya'],['الدبران','Ad-Dabaran'],['الهقعة','Al-Haq`a'],['الهنعة','Al-Han`a'],['الذراع','Adh-Dhira`'],['النثرة','An-Nathra'],['الطرف','At-Tarf'],['الجبهة','Al-Jabha'],['الزبرة','Az-Zoubra'],['الصرفة','As-Sarfa'],['العواء','Al-`Awwa'],['السماك الأعزل','As-Simak al-A`zal'],['الغفر','Al-Ghafr'],['الزبانا','Az-Zoubana'],['الإكليل','Al-Iklil'],['القلب','Al-Qalb'],['الشولة','Ach-Chawla'],['النعائم','An-Na`aim'],['البلدة','Al-Balda'],['سعد الذابح','Sa`d adh-Dhabih'],['سعد بلع','Sa`d Boula`'],['سعد السعود','Sa`d as-Sou`oud'],['سعد الأخبية','Sa`d al-Akhbiya'],['الفرغ المقدم','Al-Fargh al-Mouqaddam'],['الفرغ المؤخر','Al-Fargh al-Mou’akhkhar'],['الرشاء / بطن الحوت','Ar-Richa / Batn al-Hout'],
+['نواكشوط الغربية','Nouakchott-Ouest'],['نواكشوط الشمالية','Nouakchott-Nord'],['نواكشوط الجنوبية','Nouakchott-Sud'],['داخلة نواذيبو','Dakhlet Nouadhibou'],['اترارزة','Trarza'],['لبراكنة','Brakna'],['كوركول','Gorgol'],['كيدي ماغا','Guidimakha'],['لعصابة','Assaba'],['الحوض الغربي','Hodh El Gharbi'],['الحوض الشرقي','Hodh Ech Chargui'],['تكانت','Tagant'],['آدرار','Adrar'],['إينشيري','Inchiri'],['تيرس زمور','Tiris Zemmour'],
+// moughataas (tools/communes.tsv, column moughataa_fr)
+["لكصر", "Ksar"],["تفرغ زينة", "Tevragh Zeina"],["السبخة", "Sebkha"],["تيارت", "Teyarett"],["دار النعيم", "Dar Naïm"],["توجنين", "Toujounine"],["الميناء", "El Mina"],["عرفات", "Arafat"],["الرياض", "Riyad"],["نواذيبو", "Nouadhibou"],["الشامي", "Chami"],["بوتلميت", "Boutilimit"],["كرمسين", "Keur Macène"],["المذرذرة", "Mederdra"],["واد الناقة", "Ouad Naga"],["اركيز", "R'Kiz"],["روصو", "Rosso"],["تيكان", "Tékane"],["ألاك", "Aleg"],["باب ابه", "Bababé"],["بوكي", "Boghé"],["مقطع لحجار", "Magta Lahjar"],["امباني", "M'Bagne"],["مال", "Maal"],["كيهيدي", "Kaédi"],["مقامة", "Maghama"],["امبود", "M'Bout"],["مونكل", "Monguel"],["لكصيبة", "Lexeiba"],["ولد ينجه", "Ould Yengé"],["سيلبابي", "Sélibaby"],["غابو", "Ghabou"],["وومبو", "Wompou"],["باركيول", "Barkéol"],["بومديد", "Boumdeid"],["كرو", "Guerou"],["كنكوصة", "Kankossa"],["كيفة", "Kiffa"],["لعيون", "Aïoun"],["كوبني", "Kobenni"],["تامشكط", "Tamchekett"],["الطينطان", "Tintane"],["الطويل", "Touil"],["أمرج", "Amourj"],["باسكنو", "Bassikounou"],["جكني", "Djiguenni"],["النعمة", "Néma"],["ولاتة", "Oualata"],["تمبدغة", "Timbédra"],["انبيكت لحواش", "N'Beiket Lehwach"],["عدل بكرو", "Adel Bagrou"],["المجرية", "Moudjéria"],["تيشيت", "Tichit"],["تجكجة", "Tidjikja"],["أوجفت", "Aoujeft"],["أطار", "Atar"],["شنقيط", "Chinguetti"],["وادان", "Ouadane"],["أكجوجت", "Akjoujt"],["بنشاب", "Bennichab"],["بير أم اكرين", "Bir Moghrein"],["افديرك", "F'Dérik"],["ازويرات", "Zouérate"]
+];
+// the communes' own French names (the page's list has them)
+try{for(const c of window.APP.cities)D.push([c.name,c.fr])}catch(e){}
+D.sort((a,b)=>b[0].length-a[0].length);
+const RX=[
+ [/قبله بـ(\d+) (?:دقائق|دقيقة)/g,'$1 min avant'],[/دقائق الإقامة بعد أذان (\S+)/g,'Minutes entre l’adhan et l’iqama : $1'],
+ [/منزلة (.+?) · اليوم (\d+) من (\d+)/g,(m,a,b,c)=>'Manzila '+a+' · jour '+b+' sur '+c],
+ [/· اليوم$/g,'· aujourd’hui'],
+ [/بعد (\d+) (?:أيام|يومًا)/g,'dans $1 jours'],[/بعد يومين/g,'dans 2 jours'],[/غدًا/g,'demain'],
+ [/([\d.]+)° ش · ([\d.]+)° غ/g,'$1° N · $2° O'],
+ [/^صلاة (\S+) في /g,'Prière de $1 à '],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
+ [/\(ولاية ([^)]+)\)/g,'(wilaya : $1)'],[/^ولاية (.+)$/g,'Wilaya : $1'],[/^مقاطعة (.+)$/g,'Moughataa : $1'],
+ [/(\d) هـ/g,'$1 H']
+];
+const AR=/[؀-ۿ]/;
+function tr(s){
+  if(!AR.test(s))return s;
+  for(const [r,f] of RX)s=s.replace(r,f);
+  if(AR.test(s))for(const [a,f] of D){if(s.includes(a)){s=s.split(a).join(f);if(!AR.test(s))break}}
+  for(const [r,f] of RX)s=s.replace(r,f);
+  return s.replace(/اليوم/g,'Aujourd’hui');
+}
+const skip=e=>!e||e.closest('.adh-l li,[data-keep],script,style')&&!e.closest('small');
+function text(n){const p=n.parentElement;if(!p||(p.closest('[data-keep]'))||(p.closest('.adh-l')&&!p.closest('small')))return;
+  const v=n.nodeValue;if(!AR.test(v))return;let t=tr(v);if(p.classList.contains('dow'))t=t.slice(0,3)+'.';if(t!==v)n.nodeValue=t}
+function el(e){
+  if(e.nodeType===3){text(e);return}
+  if(e.nodeType!==1)return;
+  const w=document.createTreeWalker(e,NodeFilter.SHOW_TEXT);let n;const all=[];while(n=w.nextNode())all.push(n);all.forEach(text);
+  const fix=x=>{for(const a of ['aria-label','placeholder','title','label']){const v=x.getAttribute&&x.getAttribute(a);if(v&&AR.test(v))x.setAttribute(a,tr(v))}};
+  fix(e);e.querySelectorAll('[aria-label],[placeholder],[title],optgroup[label]').forEach(fix);
+}
+const roots=[document.querySelector('header.app-head'),document.getElementById('v-cal')].filter(Boolean);
+const ltr=e=>{e.dir='ltr';e.lang='fr'};
+roots.forEach(r=>{ltr(r);el(r)});
+document.documentElement.classList.add('fr');
+const sp=document.querySelector('#splash h1');if(sp)sp.textContent='Calendrier mauritanien';
+new MutationObserver(ms=>{for(const m of ms){
+  if(m.type==='characterData'){const p=m.target.parentElement;if(p&&p.closest('header.app-head,#v-cal,.cpick,.toast'))text(m.target);continue}
+  for(const n of m.addedNodes){
+    const e=n.nodeType===1?n:n.parentElement;if(!e)continue;
+    const pick=e.closest('.cpick');
+    if(pick&&!pick.querySelector('.qfnt,[data-ay]')&&location.hash.replace('#','').replace('cal','')===''){if(pick.dir!=='ltr')ltr(pick);el(n)}
+    else if(e.closest('header.app-head,#v-cal'))el(n);
+    else if(e.closest('.toast')&&(location.hash===''||location.hash==='#cal'))el(n);
+  }}}).observe(document.body,{subtree:true,childList:true,characterData:true});
 })();
 </script>
 <script>

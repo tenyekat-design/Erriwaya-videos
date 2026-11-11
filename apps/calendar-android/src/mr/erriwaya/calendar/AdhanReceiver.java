@@ -176,6 +176,17 @@ public class AdhanReceiver extends BroadcastReceiver {
     }
 
     static final String[] NAMES = {"الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"};
+    static final String[] NAMES_FR = {"Fajr", "Lever", "Dhohr", "Asr", "Maghrib", "Icha"};
+
+    /** True when the page is shown in French (the «Français» button): alerts and the widget follow it. */
+    static boolean french(JSONObject c) { return "fr".equals(c.optString("lang", "ar")); }
+
+    static String[] names(JSONObject c) { return french(c) ? NAMES_FR : NAMES; }
+
+    static String cityOf(JSONObject c) {
+        String fr = c.optString("cityFr", "");
+        return french(c) ? (fr.length() > 0 ? fr : "Nouakchott") : c.optString("city", "نواكشوط");
+    }
     static final String[] KEYS = {"fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"};
 
     /** The day's six times for the settings in c (hours, UTC = Mauritania's time). */
@@ -210,7 +221,12 @@ public class AdhanReceiver extends BroadcastReceiver {
             }
             if (bk >= 0) {
                 boolean fajr = bk == PrayerCalc.FAJR;
-                String city = c.optString("city", "نواكشوط");
+                String city = cityOf(c);
+                if (french(c)) {
+                    String nm = NAMES_FR[bk], at = PrayerCalc.fmt(t[bk]);
+                    if (bpre) return new Object[]{best, "Dans " + pre + " min : adhan du " + nm, "L’adhan du " + nm + " à " + city + " est à " + at + ".", fajr, true};
+                    return new Object[]{best, "Adhan du " + nm + " · " + at, "C’est l’heure de la prière du " + nm + " à " + city + ".", fajr, false};
+                }
                 if (bpre) return new Object[]{best, "بعد " + pre + (pre >= 3 && pre <= 10 ? " دقائق" : " دقيقة") + ": أذان " + NAMES[bk],
                         "يُرفع أذان " + NAMES[bk] + " في " + city + " عند " + PrayerCalc.fmt(t[bk]) + ".", fajr, true};
                 return new Object[]{best, "أذان " + NAMES[bk] + " · " + PrayerCalc.fmt(t[bk]),
