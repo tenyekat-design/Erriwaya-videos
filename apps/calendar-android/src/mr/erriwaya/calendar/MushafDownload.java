@@ -16,10 +16,17 @@ final class MushafDownload {
     private static volatile String error = "";
     private static volatile String running = "";
 
-    /** Warsh keeps the folder it had before the other narrations got page images. */
+    /** One folder per narration. Warsh pages now come from the Athari mushaf (567 pages, folder mushaf-warsh); the
+     *  folder "mushaf" held the pages of the earlier Moroccan mushaf and is removed the first time it is seen. */
     static File dir(Context ctx, String key) {
-        String name = key == null || key.isEmpty() || "warsh".equals(key) ? "mushaf" : "mushaf-" + key.replaceAll("[^a-z]", "");
-        File d = new File(ctx.getFilesDir(), name);
+        String k = key == null || key.isEmpty() ? "warsh" : key.replaceAll("[^a-z]", "");
+        File old = new File(ctx.getFilesDir(), "mushaf");
+        if (old.isDirectory()) {
+            File[] fs = old.listFiles();
+            if (fs != null) for (File f : fs) f.delete();
+            old.delete();
+        }
+        File d = new File(ctx.getFilesDir(), "mushaf-" + k);
         if (!d.exists()) d.mkdirs();
         return d;
     }
