@@ -537,6 +537,17 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+/* the calendar screen: the day's times stay in view, everything else opens from a tile */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 6px;margin:18px 0 6px}
+.tiles button{display:grid;justify-items:center;align-content:start;gap:6px;border:0;background:transparent;color:var(--ink);font:500 .78rem/1.3 var(--f-body);padding:0;cursor:pointer;text-align:center}
+.tile-ic{display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 8px rgba(60,40,0,.06);color:var(--green);transition:background-color .15s,color .15s,transform .1s}
+.tile-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.tile-ic .dot{stroke-width:2.2}
+.tiles button:active .tile-ic{transform:scale(.94)}
+.tiles button[aria-expanded="true"] .tile-ic{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.tiles button[aria-expanded="true"]{color:var(--green);font-weight:700}
+#v-cal [data-sec]{display:none;scroll-margin-top:84px}#v-cal [data-sec].open{display:block}
+#goRam{display:none}.about summary{pointer-events:none}.about summary::after{content:""!important}
+#v-cal .meta{margin:0 0 12px}
 #dNotes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .nt{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green);border-radius:6px;padding:2px 4px 2px 10px;padding-inline:10px 4px;font-size:.88rem;font-weight:600}
 .nt small{font-weight:500;color:var(--muted)}.nt button{border:0;background:transparent;color:var(--muted);font-size:.8rem;padding:4px 6px;cursor:pointer}
@@ -618,10 +629,20 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
     </div>
     <div class="band" id="band" aria-hidden="true"></div>
     <ol class="times" id="times"></ol>
-    <div class="meta" id="meta"></div>
   </section>
 
-  <details class="intro adh" id="adhanBox">
+  <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
+    <button type="button" data-open="month" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M8 2.75v3.5M16 2.75v3.5M3.5 9.75h17"/><path class="dot" d="M8.25 14h.01M12 14h.01M15.75 14h.01M8.25 17h.01M12 17h.01"/></svg></span><span>الشهر</span></button>
+    <button type="button" data-open="table" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/></svg></span><span>جدول المواقيت</span></button>
+    <button type="button" data-open="ram" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/><path d="M17 3l.95 2.05L20 6l-2.05.95L17 9l-.95-2.05L14 6l2.05-.95z"/></svg></span><span>إمساكية رمضان</span></button>
+    <button type="button" data-open="note" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10.5a5.5 5.5 0 0 1 9-4.2M17 10.5c0 4.3 1.8 5.4 1.8 5.4H4.2S6 14.8 6 10.5M9.5 18.8a2 2 0 0 0 4 0M18.5 3v5M16 5.5h5"/></svg></span><span>ملاحظة وتذكير</span></button>
+    <button type="button" data-open="conv" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5h14M14.5 5L18 8.5 14.5 12M20 15.5H6M9.5 12L6 15.5 9.5 19"/></svg></span><span>تحويل التاريخ</span></button>
+    <button type="button" data-open="adhan" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5v5H8l5 4v-13l-5 4zM16.5 9a4.5 4.5 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></svg></span><span>الأذان والإقامة</span></button>
+    <button type="button" data-open="set" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8.5M17.5 7H20M4 17h2.5M11.5 17H20"/><circle cx="15" cy="7" r="2.5"/><circle cx="9" cy="17" r="2.5"/></svg></span><span>الإعدادات</span></button>
+    <button type="button" data-open="about" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.75"/><path d="M12 11v5.5"/><path class="dot" d="M12 7.75h.01"/></svg></span><span>حول التطبيق</span></button>
+  </nav>
+
+  <details class="intro adh" id="adhanBox" data-sec="adhan">
     <summary>الأذان والإقامة على مذهب الإمام مالك</summary>
     <div class="adh-cols">
       <div><h3>الأذان</h3><ol class="adh-l"><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ <small>(بصوت منخفض)</small></li><li>أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ <small>(الترجيع: بأرفع من الصوت الأول)</small></li><li>أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ مُحَمَّدًا رَسُولُ اللَّهِ</li><li>حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الصَّلَاةِ</li><li>حَيَّ عَلَى الْفَلَاحِ، حَيَّ عَلَى الْفَلَاحِ</li><li><span class="fj">الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ، الصَّلَاةُ خَيْرٌ مِنَ النَّوْمِ <small>(في أذان الصبح وحده)</small></span></li><li>اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ</li><li>لَا إِلَٰهَ إِلَّا اللَّهُ</li></ol></div>
@@ -631,7 +652,7 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
     <p class="note">على مذهب مالك: التكبير في أول الأذان مرتان، وتُرجَّع الشهادتان (تُقالان بصوت منخفض ثم تُعادان بصوت أرفع)، وتُختم بـ«لا إله إلا الله» مرة واحدة. والإقامة وتر، و«قد قامت الصلاة» فيها مرة واحدة.</p>
   </details>
 
-  <section class="card">
+  <section class="card" data-sec="month">
     <div class="cal-bar">
       <div class="cal-title">
         <button class="nav" id="prev" aria-label="الشهر السابق"><svg class="ic" viewBox="0 0 24 24"><path d="M9.5 5.5L16 12l-6.5 6.5"/></svg></button>
@@ -651,13 +672,13 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
     <div class="legend"><span><i style="background:var(--gold)"></i>مناسبة دينية</span><span><i style="background:var(--red)"></i>مناسبة وطنية</span><span><i style="background:transparent;border:2px solid var(--gold)"></i>اليوم</span><span><b style="color:var(--green);margin-left:4px">✦</b>بداية منزلة</span><span>الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر</span></div>
   </section>
 
-  <section class="card">
+  <section class="card" data-sec="table">
     <div class="sec-h"><h2 id="tblTitle"></h2><small id="tblHint">اضغط على أي يوم لعرض تفاصيله</small><button type="button" class="btn" id="goRam">إمساكية رمضان</button></div>
     <div class="scroll"><table id="tbl"></table></div>
   </section>
 
   <section class="tools">
-    <div class="card">
+    <div class="card" data-sec="conv">
       <h3>تحويل التاريخ</h3>
       <div class="row"><label for="cG">من الميلادي</label><input type="date" id="cG" min="1900-01-01" max="2100-12-31"></div>
       <div class="out" id="cGout">—</div>
@@ -668,8 +689,9 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
       </div>
       <div class="out" id="cHout">—</div>
     </div>
-    <div class="card">
+    <div class="card" data-sec="set">
       <h3>الإعدادات</h3>
+      <div class="meta" id="meta"></div>
       <div class="row"><label for="sMethod">طريقة الحساب</label><select id="sMethod"></select></div>
       <div class="row"><label for="sAsr">وقت العصر</label><select id="sAsr"><option value="1">الجمهور (المذهب المالكي)</option><option value="2">المذهب الحنفي</option></select></div>
       <div class="row"><label>الإقامة بعد الأذان</label><span class="iqs"><span id="iqBox"></span></span></div>
@@ -692,7 +714,7 @@ table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),ta
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
-    <details class="card about" id="aboutBox">
+    <details class="card about" id="aboutBox" data-sec="about" open>
       <summary><h3>حول التطبيق والخصوصية</h3></summary>
       <p><b>الخصوصية.</b> التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا إعلانات ولا أدوات تتبّع. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.</p>
       <p><b>الإنترنت.</b> المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (mushaf.ma وGitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.</p>
@@ -854,8 +876,20 @@ function noteSheet(jdn){
   });
   document.body.append(d);setTimeout(()=>{const i=d.querySelector('#nT');if(i)i.focus()},50);
 }
-document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-note-add],[data-note-del],[data-ram]');if(!t)return;
-  if('ram' in t.dataset){$('goRam').click();return}
+// the tiles under the day card: each opens one section (one at a time), or does its action
+function openSec(k,keep){const cur=document.querySelector('#v-cal [data-sec].open'),same=cur&&cur.dataset.sec===k;
+  document.querySelectorAll('#v-cal [data-sec]').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('#tiles button').forEach(b=>b.setAttribute('aria-expanded','false'));
+  if(same&&!keep)return null;
+  const el=document.querySelector(`#v-cal [data-sec="${k}"]`);if(!el)return null;
+  el.classList.add('open');if(el.tagName==='DETAILS')el.open=true;
+  return el}
+document.getElementById('tiles').addEventListener('click',e=>{const b=e.target.closest('button[data-open]');if(!b)return;const k=b.dataset.open;
+  if(k==='note'){noteSheet(S.sel);return}
+  if(k==='ram'){if(b.getAttribute('aria-expanded')==='true'){openSec('table');return}
+    openSec('table',true);b.setAttribute('aria-expanded','true');document.getElementById('goRam').click();return}
+  const el=openSec(k);if(el){b.setAttribute('aria-expanded','true');el.scrollIntoView({behavior:'smooth',block:'start'})}});
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-note-add],[data-note-del]');if(!t)return;
   if('noteAdd' in t.dataset)noteSheet(S.sel);
   else{NOTES=NOTES.filter(n=>n.id!==t.dataset.noteDel);store.set('notes',NOTES);renderCal();renderDay();pushAdhan();say('حُذفت الملاحظة')}});
 
@@ -995,7 +1029,7 @@ function renderDay(){
   $('dOcc').innerHTML=occ;
   const esc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
   $('dNotes').innerHTML=notesOn(S.sel).map(n=>`<span class="nt"><span>${esc(n.t)}${n.rep?' <small>(كل سنة)</small>':''}${n.rem?` <small>${IC_BELL} ${esc(n.at||'08:00')}</small>`:''}</span><button type="button" data-note-del="${esc(n.id)}" aria-label="حذف الملاحظة">✕</button></span>`).join('')
-    +`<button type="button" class="nadd" data-note-add>${IC_PLUS}<span>أضف ملاحظة أو تذكيرًا</span></button><button type="button" class="nadd" data-ram>${IC_MOON}<span>إمساكية رمضان</span></button>`;
+    ;
   $('times').innerHTML=PR.map(([k,n])=>`<li data-k="${k}" class="${k==='sunrise'?'sun':''}"><svg class="t-ic" viewBox="0 0 24 24" aria-hidden="true">${T_IC[k]}</svg><span class="t-name">${n}</span><time class="t-val">${fmt(t[k])}</time></li>`).join('');
   // sky band (right = 00:00, left = 24:00)
   const p=x=>(fix(x,24)/24*100).toFixed(2)+'%';
@@ -1104,7 +1138,7 @@ function convH(){const d=+$('cHd').value,m=+$('cHm').value,y=+$('cHy').value;if(
 
 /* ---------- events ---------- */
 $('citySel').addEventListener('change',e=>{S.city=e.target.value;store.set('city',S.city);renderCities();renderCal();renderDay();pushAdhan()});
-$('grid').addEventListener('click',e=>{const b=e.target.closest('.cell[data-j]');if(b)select(+b.dataset.j,false)});
+$('grid').addEventListener('click',e=>{const b=e.target.closest('.cell[data-j]');if(b){select(+b.dataset.j,false);window.scrollTo({top:0,behavior:'smooth'})}});
 $('tbl').addEventListener('click',e=>{const r=e.target.closest('tr[data-j]');if(r){select(+r.dataset.j,false);window.scrollTo({top:0,behavior:'smooth'})}});
 $('prev').addEventListener('click',()=>shift(-1));
 $('nextM').addEventListener('click',()=>shift(1));
@@ -2130,7 +2164,7 @@ const D=[
 ['الشهر السابق','Mois précédent'],['الشهر التالي','Mois suivant'],['نوع التقويم','Type de calendrier'],['ميلادي','Grégorien'],['هجري','Hégirien'],['الشهر الهجري','Mois hégirien'],['السنة الهجرية','Année hégirienne'],['اليوم الهجري','Jour hégirien'],['الشهر','Mois'],['السنة','Année'],
 ['مناسبة دينية','Fête religieuse'],['مناسبة وطنية','Fête nationale'],['بداية منزلة','Début d’une manzila'],['الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر','Grand chiffre : mois affiché · petit : l’autre calendrier'],
 ['مواقيت الصلاة في ','Horaires de prière à '],['اضغط على أي يوم لعرض تفاصيله','Touchez un jour pour voir ses détails'],['التاريخ','Date'],
-['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],
+['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],['أدوات التقويم','Outils du calendrier'],['جدول المواقيت','Horaires du mois'],['ملاحظة وتذكير','Note et rappel'],['الأذان والإقامة','Adhan et iqama'],['حول التطبيق','À propos'],
 [' · عطلة رسمية',' · jour férié'],['أضف ملاحظة أو تذكيرًا','Ajouter une note ou un rappel'],['(كل سنة)','(chaque année)'],['حذف الملاحظة','Supprimer la note'],['ملاحظة جديدة','Nouvelle note'],['ملاحظة ليوم ','Note pour le '],
 ['اكتب الملاحظة أو المناسبة…','Écrivez la note ou l’événement…'],['نص الملاحظة','Texte de la note'],['التكرار','Répétition'],['لا تتكرر','Aucune'],['كل سنة ميلادية','Chaque année grégorienne'],['كل سنة هجرية','Chaque année hégirienne'],
 ['ذكّرني بها في يومها','Me la rappeler ce jour-là'],['وقت التذكير','Heure du rappel'],['التذكير يصل من تطبيق أندرويد، بتوقيت موريتانيا.','Le rappel est envoyé par l’application Android, à l’heure de Mauritanie.'],['حفظ الملاحظة','Enregistrer la note'],['حُفظت الملاحظة','Note enregistrée'],['حُذفت الملاحظة','Note supprimée'],
