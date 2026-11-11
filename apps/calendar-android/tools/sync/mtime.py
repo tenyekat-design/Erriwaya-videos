@@ -92,3 +92,57 @@ def timings2(tgt_x,refs,win=1.0):
     for i in range(1,len(out)):
         if out[i]<=out[i-1]:out[i]=out[i-1]+0.1
     return out+[end]
+
+def consensus(E,c,L,tol=1.0,need=3):
+    """E: references x verses (seconds); c: the reciter's pauses; L: letters per verse.
+    A verse where `need` references fall within `tol` of each other is fixed there (their median, moved to the nearest
+    pause); the verses in between are fitted into the pauses between two fixed verses, each lasting in proportion to
+    its letters. Returns (times, fixed mask)."""
+    R,N=E.shape;t=np.full(N,np.nan);fixed=np.zeros(N,bool)
+    med0=np.median(E,0)
+    for k in range(N):
+        if (abs(E[:,k]-med0[k])<tol).sum()>=min(need,R):
+            x=float(med0[k])
+            if len(c):
+                q=int(np.argmin(abs(c-x)))
+                if abs(c[q]-x)<tol:x=float(c[q])
+            t[k]=x;fixed[k]=True
+    # fixed verses must increase; drop the ones that break the order
+    last=-1e9
+    for k in range(N):
+        if fixed[k]:
+            if t[k]<=last+0.05:fixed[k]=False;t[k]=np.nan
+            else:last=t[k]
+    med=np.median(E,0)
+    idx=[k for k in range(N) if fixed[k]]
+    if not idx:return np.maximum.accumulate(med),fixed
+    def fill(a,b,ta,tb):   # verses a+1..b-1 between times ta,tb (a may be -1: before the first fixed verse)
+        ks=list(range(a+1,b));
+        if not ks:return
+        cand=c[(c>ta+0.2)&(c<tb-0.2)]
+        Ls=L[max(a,0):b] if a>=0 else L[:b];tot=sum(L[max(a,0):b])
+        if a<0:   # before the first fixed verse: lean on the median of the references
+            for k in ks:t[k]=min(max(med[k],0),tb-0.1*(b-k))
+            return
+        r=(tb-ta)/max(tot,1)
+        if len(cand)<len(ks):
+            acc=ta
+            for k in ks:acc+=r*L[k-1];t[k]=acc
+            return
+        K=len(cand);INF=1e18;dp=np.full((len(ks),K),INF);bk=np.zeros((len(ks),K),int)
+        for q in range(K):
+            d=cand[q]-ta;dp[0][q]=np.log(max(d,.05)/(r*L[ks[0]-1]))**2+0.15*np.log(max(abs(cand[q]-med[ks[0]]),.2)/.2)
+        for i in range(1,len(ks)):
+            for q in range(i,K):
+                d=cand[q]-cand[:q];v=dp[i-1][:q]+np.log(np.maximum(d,.05)/(r*L[ks[i]-1]))**2
+                p=int(np.argmin(v));dp[i][q]=v[p]+0.15*np.log(max(abs(cand[q]-med[ks[i]]),.2)/.2);bk[i][q]=p
+        fin=dp[-1]+np.log(np.maximum(tb-cand,.05)/(r*L[b-1]))**2
+        q=int(np.argmin(fin))
+        for i in range(len(ks)-1,-1,-1):t[ks[i]]=float(cand[q]);q=bk[i][q]
+    fill(-1,idx[0],0.0,t[idx[0]])
+    for a,b in zip(idx,idx[1:]):fill(a,b,t[a],t[b])
+    # after the last fixed verse: references' median, kept increasing
+    for k in range(idx[-1]+1,N):t[k]=max(med[k],t[k-1]+0.1)
+    for k in range(1,N):
+        if t[k]<=t[k-1]:t[k]=t[k-1]+0.1
+    return t,fixed
