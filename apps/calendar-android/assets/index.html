@@ -1148,7 +1148,7 @@ function renderDay(){
   let occ=ev.map(e=>`<span class="occ${e.nat?' nat':''}">${evText(e)}</span>`).join(' ');
   if(h.m===9)occ+=` <span class="occ ram">الإمساك ${fmt(t.fajr)} · الإفطار ${fmt(t.maghrib)}</span>`;
   if(!ev.length&&isToday){
-    for(let k=1;k<400;k++){const e=events(S.sel+k);if(e.length){occ=`<span class="occ${e[0].nat?' nat':''}">${e[0].t} ${daysWord(k)} · ${hStr(hOfJdn(S.sel+k))}</span>`;break}}
+    for(let k=1;k<400;k++){const e=events(S.sel+k);if(e.length){occ=`<span class="occ${e[0].nat?' nat':''}">${e[0].t} ${daysWord(k)} · ${e[0].nat?gStr(gOf(S.sel+k)):hStr(hOfJdn(S.sel+k))}</span>`;break}}
   }
   $('dOcc').innerHTML=occ;showWx();
   const esc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
@@ -1522,9 +1522,81 @@ const PL={audio:null,key:'',n:0,names:null};
 const RG={qaloon:1,warsh:1,hafs:1};   // narrations whose page images have a map of their verses (data/rg-<key>.js)
 const SY={T:null,pos:{},arr:null,est:false,s:0,a:0,page:0,was:0};
 const letters=t=>(t.match(/[ء-ي]/g)||[]).length;
+const aLetters=t=>(t.match(/[\u0621-\u064A\u0671-\u06D3]/g)||[]).length;
+// finds when each verse starts in a recording from its loudness (dB per 50 ms) and the verses' lengths in letters;
+// anchors: [[verse, seconds], …] the listener has fixed. Returns seconds for the start of each verse, then the end.
+function autoAlign(db,L,anchors){
+  const FR=0.05,N0=db.length,s=new Float32Array(N0);
+  for(let i=0;i<N0;i++){let a=0,c=0;for(let k=i-1;k<=i+1;k++)if(k>=0&&k<N0){a+=db[k];c++}s[i]=a/c}
+  const sorted=Float32Array.from(s).sort(),pct=q=>sorted[Math.min(N0-1,Math.floor(q*N0))];
+  const fl=pct(.08),sp=pct(.6);
+  const W=Math.round(1.5/FR),H=3;let C=[];   // [time, pause length, depth]
+  for(let m=0;m<N0;m++){
+    let isMin=true;for(let k=m-H;k<=m+H;k++)if(k>=0&&k<N0&&s[k]<s[m]){isMin=false;break}
+    if(!isMin)continue;
+    let l=-1e9,r=-1e9;for(let k=Math.max(0,m-W);k<=m;k++)if(s[k]>l)l=s[k];for(let k=m;k<=Math.min(N0-1,m+W);k++)if(s[k]>r)r=s[k];
+    const dep=Math.min(l,r)-s[m];if(dep<6)continue;
+    const lvl=s[m]+.5*dep;let a=m,b=m;while(a>0&&s[a]<lvl)a--;while(b<N0-1&&s[b]<lvl)b++;
+    const t=(a+b)/2*FR,len=(b-a)*FR;
+    if(C.length&&t-C[C.length-1][0]<.3){if(dep>C[C.length-1][2])C[C.length-1]=[t,len,dep];continue}
+    C.push([t,len,dep]);
+  }
+  let end=N0*FR;for(let i=N0-1;i>=0;i--)if(s[i]>fl+.3*(sp-fl)){end=(i+1)*FR;break}
+  const N=L.length,A=new Map((anchors||[]).filter(x=>x[0]>=1&&x[0]<=N).map(x=>[x[0]-1,x[1]]));
+  A.forEach(t=>C.push([t,3,10]));C.sort((x,y)=>x[0]-y[0]);
+  const K=C.length,t=C.map(c=>c[0]),sc=C.map(c=>Math.min(c[1],3)+.05*c[2]);
+  const cum=[0];L.forEach(x=>cum.push(cum[cum.length-1]+x));const Ls=cum[N];
+  const isA=k=>[...A.values()].includes(t[k]);
+  let best=null;
+  const k0s=[];for(let k=0;k<K&&k0s.length<6;k++)if(t[k]<=45)k0s.push(k);
+  if(A.has(0)){k0s.length=0;k0s.push(t.indexOf(A.get(0)))}
+  for(const k0 of k0s){
+    const t0=t[k0],r=(end-t0)/Ls;if(r<=0)continue;
+    let prev=new Map([[k0,[-sc[k0],-1]]]);const back=[prev];
+    for(let j=1;j<N;j++){
+      const cur=new Map(),e=t0+r*cum[j],Wd=Math.max(60,.12*r*cum[j]),lj=r*L[j-1];
+      let lo=0,hi=K;
+      if(A.has(j)){const ta=A.get(j);lo=t.indexOf(ta);hi=lo+1}
+      for(let k=lo;k<hi;k++){
+        if(!A.has(j)&&(t[k]<e-Wd||t[k]>e+Wd))continue;
+        let bc=Infinity,bp=-1;
+        prev.forEach(([c],p)=>{const d=t[k]-t[p];if(d<=.25*lj||d>=4*lj)return;const v=c+5*Math.log(d/lj)**2;if(v<bc){bc=v;bp=p}});
+        if(bp>=0)cur.set(k,[bc-sc[k],bp]);
+      }
+      if(!cur.size){prev=null;break}
+      back.push(cur);prev=cur;
+    }
+    if(!prev)continue;
+    let bk=-1,bv=Infinity;prev.forEach(([c],k)=>{const v=c+5*Math.log(Math.max(end-t[k],.1)/(r*L[N-1]))**2;if(v<bv){bv=v;bk=k}});
+    if(best&&bv>=best[0])continue;
+    const path=[];let k=bk;for(let j=N-1;j>=0;j--){path.push(t[k]);k=back[j].get(k)[1]}
+    best=[bv,path.reverse()];
+  }
+  return best?[...best[1],end]:null;
+}
+
+// recordings without verse timings (the Mauritanian reciters): the app reads the recording's loudness (AudioScan in
+// Android), finds the pauses and fits the verses into them; the result is kept per reciter and sura
+function scanStart(key,r,n,u){
+  const A=window.AndroidApp;if(!A||typeof A.audioScan!=='function')return;
+  const id=`${key}.${r.id}.${n}`,kept=st.get('auto.'+id,null);
+  if(kept){SY.auto={n,arr:kept};SY.arr=null;syncTick();return}
+  try{A.audioScan(u,id)}catch(e){return}
+  SY.scan=1;subLine();
+  const poll=()=>{if(PL.n!==n||PL.key!==key){SY.scan=0;return}
+    let state='';try{state=A.audioScanState(id)}catch(e){}
+    if(state==='error'){SY.scan=0;subLine();return}
+    if(state!=='done'){setTimeout(poll,3000);return}
+    const Q0=loaded['quran-'+key];let db=[];try{db=A.audioScanResult(id).split(',').map(Number)}catch(e){}
+    SY.scan=0;if(!Q0||db.length<20){subLine();return}
+    setTimeout(()=>{const res=autoAlign(db,Q0.suras[n-1].v.map(v=>Math.max(4,aLetters(v[0]))),[]);
+      if(res&&PL.n===n&&PL.key===key){const arr=res.map(x=>Math.round(x*10));st.set('auto.'+id,arr);SY.env=db;SY.auto={n,arr};SY.arr=null;syncTick();titleLine()}
+      subLine()},50)};
+  setTimeout(poll,2000);
+}
 const syncKey=()=>`sync.${PL.key}.${reciter(PL.key).id}.${PL.n}`;
 function syncLoad(key,r){
-  SY.s=SY.a=SY.page=SY.was=0;SY.arr=null;SY.T=null;syncDraw();
+  SY.s=SY.a=SY.page=SY.was=0;SY.arr=null;SY.T=null;SY.auto=null;SY.env=null;SY.isAuto=false;SY.scan=0;syncDraw();
   const jobs=[];
   if(r.t)jobs.push(need('tm-'+r.t).then(T=>{if(reciter(PL.key).t===r.t)SY.T=T}).catch(()=>{}));
   if(RG[key]&&!SY.pos[key])jobs.push(need('rg-'+key).then(R=>{const m=new Map();     // 's:a' -> [[page, area, [left, bottom, width, height]…], …]
@@ -1538,6 +1610,12 @@ function syncArr(){
   const A=PL.audio,n=PL.n,an=st.get(syncKey(),[]).slice().sort((x,y)=>x[0]-y[0]);SY.arr=null;if(!n)return;
   const T=SY.T&&SY.T[n-1];
   if(T){const last=an[an.length-1],off=last&&T[last[0]-1]!==undefined?last[1]-T[last[0]-1]:0;SY.arr=off?T.map(x=>x+off):T;SY.est=false;return}   // a correction shifts the whole sura
+  if(SY.auto&&SY.auto.n===n){   // found from the recording's own pauses; the listener's corrections are fixed points of a new search
+    let arr=SY.auto.arr;
+    if(an.length){const Q0=loaded['quran-'+PL.key];
+      if(SY.env&&Q0){const r=autoAlign(SY.env,Q0.suras[n-1].v.map(v=>Math.max(4,aLetters(v[0]))),an.map(([a,t])=>[a,t/10]));if(r)arr=r.map(x=>Math.round(x*10))}
+      else{const last=an[an.length-1],off=arr[last[0]-1]!==undefined?last[1]-arr[last[0]-1]:0;arr=arr.map(x=>x+off)}}
+    SY.arr=arr;SY.est=false;SY.isAuto=true;return}
   const Q=loaded['quran-'+PL.key];if(!Q||!isFinite(A.duration)||!A.duration)return;
   const cum=[0];Q.suras[n-1].v.forEach(v=>cum.push(cum[cum.length-1]+Math.max(4,letters(v[0]))));
   const N=cum.length-1,lead=n===9?20:n===1&&PL.key==='hafs'?20:39,D=A.duration*10;   // before the first verse: the isti'adha, and the basmala where it is not a verse
@@ -1583,7 +1661,7 @@ function syncSheet(){
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
   const draw=()=>{const N=SY.arr?SY.arr.length-1:0;d.innerHTML=`<div class="cpick-in rc sy" role="dialog" aria-label="ضبط المتابعة"><div class="cpick-h"><span>ضبط متابعة التلاوة</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
     <div class="sy-b"><p>القارئ يتلو الآن الآية</p><div class="sy-n"><button type="button" data-d="-1" aria-label="الآية السابقة"${SY.a<=1?' disabled':''}>−</button><b class="num">${SY.a>0?SY.a:'—'}</b><button type="button" data-d="1" aria-label="الآية التالية"${!SY.arr||SY.a>=N?' disabled':''}>+</button></div>
-    <p class="note">${SY.est?'هذا القارئ لا توقيت لتسجيله، فموضع الآيات مقدَّر بطول كل آية وقد يتقدّم أو يتأخر. ':''}إن كان التظليل متقدّمًا أو متأخرًا عن القارئ فاضبط رقم الآية التي يتلوها الآن؛ يُحفظ الضبط لهذا القارئ في هذه السورة.</p>
+    <p class="note">${SY.est?'هذا القارئ لا توقيت لتسجيله، فموضع الآيات مقدَّر بطول كل آية وقد يتقدّم أو يتأخر. ':SY.isAuto?'ضُبطت المتابعة آليًا على وقفات القارئ في التسجيل، وقد تخطئ في بعض الآيات؛ تصحيحك يُعاد حوله الضبط. ':''}إن كان التظليل متقدّمًا أو متأخرًا عن القارئ فاضبط رقم الآية التي يتلوها الآن؛ يُحفظ الضبط لهذا القارئ في هذه السورة.</p>
     ${st.get(syncKey(),[]).length?'<button type="button" class="btn" data-clear>مسح الضبط</button>':''}</div></div>`};
   draw();
   d.addEventListener('click',e=>{const b=e.target.closest('button');
@@ -1640,7 +1718,7 @@ function playerBar(){
 const clock=t=>{t=Math.floor(t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s2=t%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s2).padStart(2,'0')};
 const titleLine=()=>{const e=$('qpTitle');if(e)e.innerHTML=`سورة ${esc(PL.names&&PL.names[PL.n-1]||PL.n)}${SY.a>0&&SY.s===PL.n?` <small>· الآية ${SY.est?'≈ ':''}${SY.a} ▾</small>`:''}`};
 const subLine=()=>{const e=$('qpSub'),a=PL.audio;if(!e||e.dataset.x)return;
-  e.textContent=(e.dataset.w?'جارٍ التحميل… · ':PL.ay?(PL.i?`الآية ${PL.i} من ${(loaded['quran-'+PL.key].suras[PL.n-1]||{v:[]}).v.length} · `:'البسملة · '):isFinite(a.duration)&&a.duration?clock(a.currentTime)+' / '+clock(a.duration)+' · ':'')+reciter(PL.key).n+' ▾'};
+  e.textContent=(SY.scan?'جارٍ ضبط المتابعة على وقفات القارئ… · ':'')+(e.dataset.w?'جارٍ التحميل… · ':PL.ay?(PL.i?`الآية ${PL.i} من ${(loaded['quran-'+PL.key].suras[PL.n-1]||{v:[]}).v.length} · `:'البسملة · '):isFinite(a.duration)&&a.duration?clock(a.currentTime)+' / '+clock(a.duration)+' · ':'')+reciter(PL.key).n+' ▾'};
 // verse by verse (a reciter with e: its folder on everyayah.com, one file per verse SSSAAA.mp3): i = the verse, 0 = the basmala before it
 const ayUrl=(r,n,i)=>`https://everyayah.com/data/${r.e}/${String(i?n:1).padStart(3,'0')}${String(i||1).padStart(3,'0')}.mp3`;
 function ayPlay(i){const a=PL.audio,r=reciter(PL.key);PL.i=i;a.src=ayUrl(r,PL.n,i);a.play().catch(()=>{});subLine();syncTick()}
@@ -1654,6 +1732,7 @@ function playSura(key,n,names,from){
   if(r.e){syncLoad(key,r).then(()=>need('quran-'+key)).then(()=>{if(PL.n!==n||PL.key!==key)return;ayPlay(from>1?from:n===1||n===9?1:0)});return}
   Promise.all([suraUrl(r,n),syncLoad(key,r)]).then(([u])=>{if(PL.n!==n||PL.key!==key)return;
     a.src=u;
+    if(!r.t)scanStart(key,r,n,u);
     if(from>1)a.addEventListener('loadedmetadata',()=>{syncArr();const T=SY.arr;if(T&&T[from-1]){try{a.currentTime=T[from-1]/10}catch(e){}}},{once:true});
     a.play().catch(()=>{})});
 }
@@ -1662,7 +1741,7 @@ function reciterSheet(key,then,title){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';const cur=reciter(key).id;
   d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>${title?esc(title):'قراء '+RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t?'متابعة الآيات بتوقيت التسجيل':'متابعة الآيات تقديرية'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
+    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t?'متابعة الآيات بتوقيت التسجيل':'المتابعة تُضبط آليًا على وقفات القارئ'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
     <p class="rc-src">التلاوات تُسمع عبر الإنترنت: من موقع mp3quran.net، وقراء حفص آية آية من everyayah.com، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
   d.addEventListener('click',e=>{const b=e.target.closest('button');
     if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then()}

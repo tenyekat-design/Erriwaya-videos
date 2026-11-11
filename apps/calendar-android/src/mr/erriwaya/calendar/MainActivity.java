@@ -98,6 +98,17 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void cancelMushaf() { MushafDownload.cancel(); }
 
+        /** Reads a sura recording's loudness in the background (AudioScan), for finding the pauses between verses. */
+        @JavascriptInterface
+        public void audioScan(String url, String id) { AudioScan.start(MainActivity.this, url, id); }
+
+        @JavascriptInterface
+        public String audioScanState(String id) { return AudioScan.state(MainActivity.this, id); }
+
+        /** "-38,-41,…": dB per 50 ms, or "" if not scanned yet. */
+        @JavascriptInterface
+        public String audioScanResult(String id) { return AudioScan.result(MainActivity.this, id); }
+
         /** "done,total,bytes,running,error" */
         @JavascriptInterface
         public String mushafProgress(String key, int total) { return MushafDownload.progress(MainActivity.this, key, total); }
