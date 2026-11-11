@@ -372,6 +372,12 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .rtop span{justify-self:end;display:flex;gap:2px}
 .rtop button{width:36px;height:36px;display:grid;place-items:center;border:0;background:none;color:inherit;padding:0}
 .rtop button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.rtop .ix{width:36px;height:36px;display:grid;place-items:center;color:inherit}
+.rtop .ix svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.paged .pnav{grid-template-columns:1fr auto auto auto 1fr}
+.pnav .pt{display:grid;justify-items:center;gap:1px;border:0;background:transparent;color:var(--band-ink);padding:2px 8px;font:600 .66rem/1 var(--f-body);cursor:pointer}
+.pnav .pt svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.pnav .pt:active{transform:scale(.92)}
 .rtop button[aria-pressed="true"] svg{fill:var(--orn);stroke:var(--orn)}
 /* the verses of the page: tick some to copy them, or save one as a reference */
 .ay-l{padding:0 10px}
@@ -1338,10 +1344,13 @@ function need(k){
 }
 const loading=el=>{el.innerHTML='<p class="empty">جارٍ التحميل…</p>'};
 const failed=el=>{el.innerHTML='<p class="empty">تعذّر تحميل البيانات. أعد المحاولة.</p>'};
-const rtop=(names,juz,rn)=>`<div class="rtop"><a class="back" href="#quran-${rw}" aria-label="رجوع">›</a><b>${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<small> · الجزء ${juz}</small>`:''}</b><span>
-  <button type="button" id="ayPlay" aria-label="الاستماع إلى السورة"><svg viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6.5" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6.5" rx="1.5"/></svg></button>
-  <button type="button" id="mkPage" aria-label="حفظ الصفحة مرجعية" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/></svg></button>
-  <button type="button" id="ayOpen" aria-label="آيات الصفحة: نسخ وحفظ"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg></button></span></div>`;
+const rtop=(names,juz,rn)=>`<div class="rtop"><a class="back" href="#quran" aria-label="المصاحف">›</a><b>${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<small> · الجزء ${juz}</small>`:''}</b><span>
+  <a class="ix" href="#quran-${rw}" aria-label="فهرس السور والأجزاء"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg></a>
+  <button type="button" id="mkPage" aria-label="حفظ الصفحة مرجعية" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/></svg></button></span></div>`;
+// listening and copying stay on every page, in the bar under it, beside the page number
+const pnavMid=p=>`<button type="button" class="pt" id="ayPlay" aria-label="الاستماع إلى التلاوة"><svg viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6.5" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6.5" rx="1.5"/></svg><small>استماع</small></button>
+        <input id="pgGo" type="number" min="1" max="${NPAGES()}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
+        <button type="button" class="pt" id="ayOpen" aria-label="آيات الصفحة: نسخ وحفظ"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><small>نسخ</small></button>`;
 const bar=(back,title,extra='')=>`<div class="bar"><a class="back" href="${back}" aria-label="رجوع">›</a><h2>${title}</h2>${extra}</div>`;
 
 /* ---------- reader tools: references (saved pages and verses), copying verses, the page-turn sound ---------- */
@@ -1620,7 +1629,7 @@ const musCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><rect x="5" y="5"
 function quranHome(el){
   el.classList.remove('paged');
   el.innerHTML=`<div class="lib-h"><h1>المصحف الشريف</h1><p>اختر الرواية</p></div>
-    <nav class="mus" aria-label="المصاحف">${Object.entries(RW).map(([k,x])=>`<a href="#quran-${k}"><span class="mi ${k}">${musCover(x.n)}</span><b>${x.n}</b><small>${esc(x.full)}</small>${k===rw?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
+    <nav class="mus" aria-label="المصاحف">${Object.entries(RW).map(([k,x])=>`<a href="#read-${k}"><span class="mi ${k}">${musCover(x.n)}</span><b>${x.n}</b><small>${esc(x.full)}</small>${k===rw?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
 }
 function quranList(el){
   el.classList.remove('paged');setQF(el);loading(el);
@@ -1710,7 +1719,7 @@ function quranTextPage(el,p,s,a){
       `<div class="page${rw==='warsh'?' w':''}" id="qpage"><span class="plabel">${esc(names.map(n=>'سورة '+n).join(' · '))}<i></i>الجزء ${juz}</span>
         <div class="pbody">${body}</div><span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
-        <input id="pgGo" type="number" min="1" max="604" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
+        ${pnavMid(p)}
         ${p<604?`<a href="#page-${p+1}">التالية ‹</a>`:'<span class="off">التالية ‹</span>'}</div>`;
     const page=$('qpage'),pb=page.querySelector('.pbody');requestAnimationFrame(afterPage);readerTools(Q,rw,p,items);
     const fit=()=>{
@@ -1753,7 +1762,7 @@ function imagePage(el,p,s,a){
         <div class="pimg"><p class="empty" id="mMsg">جارٍ تحميل الصفحة…</p><div class="pfit" id="mFit" hidden><img id="mImg" class="${key==='qaloon'?'qal':''}" alt="صفحة ${p} من المصحف (${RW[key].full})"><i class="qfr" hidden></i><i class="qop" hidden></i></div></div>
         <span class="pmed">${p}</span></div>
       <div class="pnav" id="pnav">${p>1?`<a href="#page-${p-1}">› السابقة</a>`:'<span class="off">› السابقة</span>'}
-        <input id="pgGo" type="number" min="1" max="${M.count}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
+        ${pnavMid(p)}
         ${p<M.count?`<a href="#page-${p+1}">التالية ‹</a>`:'<span class="off">التالية ‹</span>'}</div>`;
     const page=$('qpage'),img=$('mImg'),msg=$('mMsg');requestAnimationFrame(afterPage);readerTools(Q,key,p,items);
     const box=$('mFit'),fr=box.querySelector('.qfr'),op=box.querySelector('.qop');
@@ -2217,6 +2226,7 @@ const VIEWS=['v-cal','v-quran','v-hadith','v-hisn','v-tasbih','v-qibla','v-manaz
 function route(){
   const h=location.hash.replace(/^#/,'');let m,view='v-cal',tab='cal';
   if(h==='quran'){view='v-quran';tab='quran';quranHome($('v-quran'))}
+  else if((m=h.match(/^read-(warsh|qaloon|hafs)$/))){rw=m[1];st.set('rw',rw);const L=st.get('lastAya.'+rw,null);location.replace('#page-'+(L&&L[2]?L[2]:1));return}
   else if((m=h.match(/^quran-(warsh|qaloon|hafs)$/))){view='v-quran';tab='quran';if(rw!==m[1]){rw=m[1];st.set('rw',rw)}quranList($('v-quran'))}
   else if((m=h.match(/^page-(\d+)(?:-(\d+)-(\d+))?$/))){view='v-quran';tab='quran';quranPage($('v-quran'),+m[1],m[2]?+m[2]:0,m[3]?+m[3]:0)}
   else if((m=h.match(/^sura-(\d+)(?:-(\d+))?$/))){Promise.all([need(qkey()),IMG()?need('mohammadi'):null]).then(([Q,M])=>{const S=Q.suras[+m[1]-1];if(!S)return;const a=m[2]?+m[2]:1;if(M){location.replace(`#page-${M.pages[+m[1]-1][Math.min(a,S.v.length)-1]}`);return}location.replace(`#page-${S.v[Math.min(a,S.v.length)-1][1]}-${m[1]}-${a}`)});return}
