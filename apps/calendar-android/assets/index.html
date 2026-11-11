@@ -1480,16 +1480,16 @@ function readerTools(Q,key,p,items){
    and their exact names are read from the item's file list the first time it is played. mr: a Mauritanian reciter. ---------- */
 const RECITERS={
   warsh:[
-    {id:'rajel',n:'الراجل ولد عثمان',mr:1,a:'alfird77777777777777776479446944696799796444il_002'},
-    {id:'rabbani',n:'سليمان ولد الرباني',mr:1,a:'alfirdwsiy1433_35686535653683658668356566586356gmail_002'},
-    {id:'laghdaf',n:'محمد الأغظف ولد محمد سيدي',mr:1,m:'https://media.way2quran.com/mohamed-laghzaf-weld-mohamed-sidi/qalun-an-nafi/'},   // he reads Warsh; the source files this complete recording under Qalun
+    {id:'rajel',n:'الراجل ولد عثمان',mr:1,a:'alfird77777777777777776479446944696799796444il_002',t:'m-rajel'},
+    {id:'rabbani',n:'سليمان ولد الرباني',mr:1,a:'alfirdwsiy1433_35686535653683658668356566586356gmail_002',t:'m-rabbani'},
+    {id:'laghdaf',n:'محمد الأغظف ولد محمد سيدي',mr:1,m:'https://media.way2quran.com/mohamed-laghzaf-weld-mohamed-sidi/qalun-an-nafi/',t:'m-laghdaf'},   // he reads Warsh; the source files this complete recording under Qalun
     {id:'koshi',n:'العيون الكوشي',m:'https://server11.mp3quran.net/koshi/',t:'16'},
     {id:'qazabri',n:'عمر القزابري',m:'https://cdn.mp3quran.net/audio/omar-kazabri/r1/',t:'80'},
     {id:'yassin',n:'القارئ ياسين الجزائري',m:'https://server11.mp3quran.net/qari/',t:'14'},
     {id:'husary',n:'محمود خليل الحصري',m:'https://cdn.mp3quran.net/audio/mahmoud-husary/r3/',t:'120'}],
   qaloon:[
-    {id:'naji',n:'الناجي ولد بلال',mr:1,a:'alfirdwsiy14335787878787858750578780578780'},
-    {id:'abdqader',n:'عبد الرحمن ولد عبد القادر',mr:1,a:'alf444444444444444444444444444444444469469649469746946969_gmail_011_201703'},
+    {id:'naji',n:'الناجي ولد بلال',mr:1,a:'alfirdwsiy14335787878787858750578780578780',t:'m-naji'},
+    {id:'abdqader',n:'عبد الرحمن ولد عبد القادر',mr:1,a:'alf444444444444444444444444444444444469469649469746946969_gmail_011_201703',t:'m-abdqader'},
     {id:'dokali',n:'الدوكالي محمد العالم',m:'https://server7.mp3quran.net/dokali/',t:'208'},
     {id:'hudhaify',n:'علي بن عبد الرحمن الحذيفي',m:'https://server9.mp3quran.net/huthifi_qalon/',t:'75'},
     {id:'husary',n:'محمود خليل الحصري',m:'https://server13.mp3quran.net/husr/Rewayat-Qalon-A-n-Nafi/',t:'270'}],
@@ -1732,7 +1732,7 @@ function playSura(key,n,names,from){
   if(r.e){syncLoad(key,r).then(()=>need('quran-'+key)).then(()=>{if(PL.n!==n||PL.key!==key)return;ayPlay(from>1?from:n===1||n===9?1:0)});return}
   Promise.all([suraUrl(r,n),syncLoad(key,r)]).then(([u])=>{if(PL.n!==n||PL.key!==key)return;
     a.src=u;
-    if(!r.t)scanStart(key,r,n,u);
+    if(!(SY.T&&SY.T[n-1]))scanStart(key,r,n,u);   // no timings for this sura: find the pauses on the phone
     if(from>1)a.addEventListener('loadedmetadata',()=>{syncArr();const T=SY.arr;if(T&&T[from-1]){try{a.currentTime=T[from-1]/10}catch(e){}}},{once:true});
     a.play().catch(()=>{})});
 }
@@ -1741,7 +1741,7 @@ function reciterSheet(key,then,title){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';const cur=reciter(key).id;
   d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>${title?esc(title):'قراء '+RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t?'متابعة الآيات بتوقيت التسجيل':'المتابعة تُضبط آليًا على وقفات القارئ'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
+    <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t&&r.mr?'متابعة الآيات بتوقيت مضبوط على تسجيله':r.t?'متابعة الآيات بتوقيت التسجيل':'المتابعة تُضبط آليًا على وقفات القارئ'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
     <p class="rc-src">التلاوات تُسمع عبر الإنترنت: من موقع mp3quran.net، وقراء حفص آية آية من everyayah.com، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
   d.addEventListener('click',e=>{const b=e.target.closest('button');
     if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then()}

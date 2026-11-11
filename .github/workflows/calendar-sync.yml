@@ -1,0 +1,59 @@
+# توقيت آيات تلاوات القراء الموريتانيين لتطبيق «التقويم الموريتاني»: يُنقل من ستة تسجيلات لها توقيت بمطابقة الصوت
+# (apps/calendar-android/tools/sync/run.py)، ثم يُكتب في assets/data/tm-m-<القارئ>.js ويُبنى التطبيق من جديد.
+name: calendar-sync
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "apps/calendar-android/tools/sync/**"
+      - ".github/workflows/calendar-sync.yml"
+permissions:
+  contents: write
+concurrency: calendar-sync-${{ github.ref }}
+jobs:
+  time:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        reciter: [rajel, rabbani, laghdaf, naji, abdqader]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            apps/calendar-android/tools/sync
+            apps/calendar-android/assets/data
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy scipy librosa
+      - name: Carry the verse timings over
+        run: |
+          python3 apps/calendar-android/tools/sync/run.py ${{ matrix.reciter }} tm-m-${{ matrix.reciter }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tm-m-${{ matrix.reciter }}
+          path: tm-m-${{ matrix.reciter }}.json
+  commit:
+    needs: time
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: apps/calendar-android/assets/data
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+      - name: Write the data files and commit
+        run: |
+          for f in out/*/tm-m-*.json; do
+            id=$(basename "$f" .json)
+            python3 -c "import json,sys;d=json.load(open(sys.argv[1]));open(sys.argv[2],'w').write('DATA_LOADED(\"'+sys.argv[3]+'\",'+json.dumps(d['t'],separators=(',',':'))+');\n');print(sys.argv[3],sum(1 for x in d['t'] if x),'suras',d['spread'])" "$f" "apps/calendar-android/assets/data/$id.js" "$id"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/calendar-android/assets/data/tm-m-*.js
+          git diff --cached --quiet || git commit -m "Calendar app: verse timings of the Mauritanian recordings (calendar-sync run ${{ github.run_number }})"
+          git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
