@@ -160,6 +160,7 @@ button{cursor:pointer}
 .cal-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .cal-title{display:flex;align-items:center;gap:8px}
 .cal-title h2{font-size:1.3rem;min-width:9ch;text-align:center}
+.cal-title .hsn{display:inline-block;margin-inline-start:.5em;padding:.05em .6em;border-radius:1em;background:var(--gold-soft,rgba(201,149,46,.15));color:var(--gold,#a8771c);font-family:var(--f-body);font-size:.75em;font-weight:600;vertical-align:middle}
 .cal-title .sub{display:block;font-family:var(--f-body);font-size:.85rem;color:var(--muted);font-weight:400}
 .nav{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:1.1rem;line-height:1}
 .ctrls{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -827,6 +828,10 @@ const METHODS={
 };
 const GM=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 const HM=['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+// أسماء الأشهر القمرية بالحسانية (أرسلها صاحب التطبيق في 11 نوفمبر 2026)
+const HMH=['عاشور','اتبيع','المولود','لبيظ لول','لبيظ الوسطاني','لبيظ التالي','لكصيّر لوّل','لكصيّر التالي','رمضان','الفطر لكبير','الفطر اصغير','العيد'];
+const hmH=m=>HMH[m-1]!==HM[m-1]?HMH[m-1]:'';
+const hmB=m=>HM[m-1]+(hmH(m)?` (${hmH(m)})`:'');
 const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 const ORDER=[6,0,1,2,3,4,5]; // week starts on Saturday
 const PR=[['fajr','الفجر'],['sunrise','الشروق'],['dhuhr','الظهر'],['asr','العصر'],['maghrib','المغرب'],['isha','العشاء']];
@@ -895,7 +900,7 @@ function jdnOfHijri(hy,hm,hd){
 function hMonthLen(hy,hm){const a=jdnOfHijri(hy,hm,1),b=hm===12?jdnOfHijri(hy+1,1,1):jdnOfHijri(hy,hm+1,1);return(a&&b)?b-a:30}
 const gDaysIn=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
 const dowOf=jdn=>(jdn+1)%7; // 0 = Sunday
-const hStr=h=>`${h.d} ${HM[h.m-1]} ${h.y} هـ`;
+const hStr=h=>`${h.d} ${hmB(h.m)} ${h.y} هـ`;
 const gStr=g=>`${g.d} ${GM[g.m-1]} ${g.y}`;
 // official days off in Mauritania (the first day of each; the government may add days around the two Eids)
 const H_OFF=['1-1','3-12','10-1','12-10'],G_OFF=['1-1','5-1','5-25','11-28'];
@@ -1202,9 +1207,9 @@ function renderCal(){
     title=`${GM[S.gm-1]} ${S.gy}`;
     const hs=[];for(const j of days){const h=hOfJdn(j);if(!hs.some(x=>x.m===h.m&&x.y===h.y))hs.push(h)}
     const a=hs[0],b=hs[hs.length-1];
-    sub=hs.length===1?`${HM[a.m-1]} ${a.y} هـ`:(a.y===b.y?`${HM[a.m-1]} – ${HM[b.m-1]} ${b.y} هـ`:`${HM[a.m-1]} ${a.y} – ${HM[b.m-1]} ${b.y} هـ`);
+    sub=hs.length===1?`${hmB(a.m)} ${a.y} هـ`:(a.y===b.y?`${HM[a.m-1]} – ${HM[b.m-1]} ${b.y} هـ`:`${HM[a.m-1]} ${a.y} – ${HM[b.m-1]} ${b.y} هـ`);
   }else{
-    title=`${HM[S.hm-1]} ${S.hy} هـ`;
+    title=`${HM[S.hm-1]} ${S.hy} هـ${hmH(S.hm)?`<span class="hsn">${hmH(S.hm)}</span>`:''}`;
     const a=gOf(days[0]),b=gOf(days[days.length-1]);
     sub=a.m===b.m?`${GM[a.m-1]} ${a.y}`:(a.y===b.y?`${GM[a.m-1]} – ${GM[b.m-1]} ${b.y}`:`${GM[a.m-1]} ${a.y} – ${GM[b.m-1]} ${b.y}`);
   }
@@ -1224,7 +1229,7 @@ function renderCal(){
   $('grid').innerHTML=html;
   // jump controls
   const names=S.mode==='g'?GM:HM;
-  $('jMonth').innerHTML=names.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
+  $('jMonth').innerHTML=names.map((n,i)=>`<option value="${i+1}">${S.mode==='g'?n:hmB(i+1)}</option>`).join('');
   $('jMonth').value=S.mode==='g'?S.gm:S.hm;
   $('jYear').value=S.mode==='g'?S.gy:S.hy;
   $('jYear').min=S.mode==='g'?1900:1318;$('jYear').max=S.mode==='g'?2100:1520;
@@ -1293,7 +1298,7 @@ $('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');c
 $('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay();pushAdhan()});
 $('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay();pushAdhan()});
 $('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender();pushAdhan()});
-$('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
+$('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${hmB(i+1)}</option>`).join('');
 ['cG'].forEach(id=>$(id).addEventListener('input',convG));
 ['cHd','cHm','cHy'].forEach(id=>$(id).addEventListener('input',convH));
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
@@ -2464,6 +2469,7 @@ const D=[
 ['ليلة القدر (تقديرًا)','Nuit du Destin (estimation)'],['عيد الفطر','Aïd el-Fitr'],['يوم عرفة','Jour d’Arafat'],['عيد الأضحى','Aïd el-Adha'],['رأس السنة الميلادية','Jour de l’an'],['عيد العمال','Fête du Travail'],['يوم إفريقيا','Journée de l’Afrique'],['عيد الاستقلال الوطني','Fête de l’Indépendance'],
 ['السبت','Samedi'],['الأحد','Dimanche'],['الاثنين','Lundi'],['الثلاثاء','Mardi'],['الأربعاء','Mercredi'],['الخميس','Jeudi'],['الجمعة','Vendredi'],
 ['يناير',GM[0]],['فبراير',GM[1]],['مارس',GM[2]],['أبريل',GM[3]],['مايو',GM[4]],['يونيو',GM[5]],['يوليو',GM[6]],['أغسطس',GM[7]],['سبتمبر',GM[8]],['أكتوبر',GM[9]],['نوفمبر',GM[10]],['ديسمبر',GM[11]],
+['لكصيّر التالي','Legsayyer ettali'],['لكصيّر لوّل','Legsayyer lewwel'],['لبيظ الوسطاني','Lebyadh el-wastani'],['لبيظ التالي','Lebyadh ettali'],['لبيظ لول','Lebyadh lewwel'],['الفطر لكبير','Lefter lekbir'],['الفطر اصغير','Lefter esghayyir'],['المولود','El-Mouloud'],['اتبيع','Etbi`'],['عاشور','Achour'],['العيد','Laïd'],
 ['محرم','Mouharram'],['صفر','Safar'],['ربيع الأول','Rabi I'],['ربيع الآخر','Rabi II'],['جمادى الأولى','Joumada I'],['جمادى الآخرة','Joumada II'],['رجب','Rajab'],['شعبان','Chaabane'],['رمضان','Ramadan'],['شوال','Chawwal'],['ذو القعدة','Dhou al-Qi`da'],['ذو الحجة','Dhou al-Hijja'],
 ['الشرطان','Ach-Charatan'],['البطين','Al-Boutayn'],['الثريا','Ath-Thourayya'],['الدبران','Ad-Dabaran'],['الهقعة','Al-Haq`a'],['الهنعة','Al-Han`a'],['الذراع','Adh-Dhira`'],['النثرة','An-Nathra'],['الطرف','At-Tarf'],['الجبهة','Al-Jabha'],['الزبرة','Az-Zoubra'],['الصرفة','As-Sarfa'],['العواء','Al-`Awwa'],['السماك الأعزل','As-Simak al-A`zal'],['الغفر','Al-Ghafr'],['الزبانا','Az-Zoubana'],['الإكليل','Al-Iklil'],['القلب','Al-Qalb'],['الشولة','Ach-Chawla'],['النعائم','An-Na`aim'],['البلدة','Al-Balda'],['سعد الذابح','Sa`d adh-Dhabih'],['سعد بلع','Sa`d Boula`'],['سعد السعود','Sa`d as-Sou`oud'],['سعد الأخبية','Sa`d al-Akhbiya'],['الفرغ المقدم','Al-Fargh al-Mouqaddam'],['الفرغ المؤخر','Al-Fargh al-Mou’akhkhar'],['الرشاء / بطن الحوت','Ar-Richa / Batn al-Hout'],
 ['نواكشوط الغربية','Nouakchott-Ouest'],['نواكشوط الشمالية','Nouakchott-Nord'],['نواكشوط الجنوبية','Nouakchott-Sud'],['داخلة نواذيبو','Dakhlet Nouadhibou'],['اترارزة','Trarza'],['لبراكنة','Brakna'],['كوركول','Gorgol'],['كيدي ماغا','Guidimakha'],['لعصابة','Assaba'],['الحوض الغربي','Hodh El Gharbi'],['الحوض الشرقي','Hodh Ech Chargui'],['تكانت','Tagant'],['آدرار','Adrar'],['إينشيري','Inchiri'],['تيرس زمور','Tiris Zemmour'],
