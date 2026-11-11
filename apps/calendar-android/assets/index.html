@@ -374,7 +374,16 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .rtop button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
 .rtop .ix{width:36px;height:36px;display:grid;place-items:center;color:inherit}
 .rtop .ix svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
-.paged .pnav{grid-template-columns:1fr auto auto auto 1fr}
+.paged .pnav{grid-template-columns:1fr auto auto auto auto 1fr}
+.pnav .pt{padding-inline:5px}
+.su-s{flex:none;margin:0 16px 8px;width:calc(100% - 32px);box-sizing:border-box}
+.paged .pnav a,.paged .pnav span.off{white-space:nowrap;padding-inline:2px}.paged .pnav input{width:4.2em}
+.su-l a{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:9px 16px;border-top:1px solid var(--line);color:var(--ink);text-decoration:none}
+.su-l a i{font-style:normal;display:grid;place-items:center;width:30px;height:30px;border:1.5px solid var(--orn);border-radius:8px;transform:rotate(45deg);font-size:.78rem;font-weight:700;color:var(--green)}
+.su-l a i span{transform:rotate(-45deg)}
+.su-l a b{font-family:var(--f-naskh);font-size:1.05rem}.su-l a b small{display:block;font-weight:400;font-size:.76rem;color:var(--muted)}
+.su-l a em{font-style:normal;font-size:.8rem;color:var(--muted)}
+.su-l a[hidden]{display:none}.su-l a.on{background:var(--green-soft)}.su-l a.on b{color:var(--green)}
 .pnav .pt{display:grid;justify-items:center;gap:1px;border:0;background:transparent;color:var(--band-ink);padding:2px 8px;font:600 .66rem/1 var(--f-body);cursor:pointer}
 .pnav .pt svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
 .pnav .pt:active{transform:scale(.92)}
@@ -1348,7 +1357,8 @@ const rtop=(names,juz,rn)=>`<div class="rtop"><a class="back" href="#quran" aria
   <a class="ix" href="#quran-${rw}" aria-label="فهرس السور والأجزاء"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg></a>
   <button type="button" id="mkPage" aria-label="حفظ الصفحة مرجعية" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/></svg></button></span></div>`;
 // listening and copying stay on every page, in the bar under it, beside the page number
-const pnavMid=p=>`<button type="button" class="pt" id="ayPlay" aria-label="الاستماع إلى التلاوة"><svg viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6.5" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6.5" rx="1.5"/></svg><small>استماع</small></button>
+const pnavMid=p=>`<button type="button" class="pt" id="surOpen" aria-label="سور المصحف"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 2.4 3.5-.2-.2 3.5L20.3 12l-2.4 2.6.2 3.5-3.5-.2L12 20.3l-2.6-2.4-3.5.2.2-3.5L3.7 12l2.4-2.6-.2-3.5 3.5.2z"/><path d="M9.5 10.5h5M9.5 13.5h5"/></svg><small>السور</small></button>
+        <button type="button" class="pt" id="ayPlay" aria-label="الاستماع إلى التلاوة"><svg viewBox="0 0 24 24"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6.5" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6.5" rx="1.5"/></svg><small>استماع</small></button>
         <input id="pgGo" type="number" min="1" max="${NPAGES()}" inputmode="numeric" value="${p}" aria-label="رقم الصفحة">
         <button type="button" class="pt" id="ayOpen" aria-label="آيات الصفحة: نسخ وحفظ"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><small>نسخ</small></button>`;
 const bar=(back,title,extra='')=>`<div class="bar"><a class="back" href="${back}" aria-label="رجوع">›</a><h2>${title}</h2>${extra}</div>`;
@@ -1377,6 +1387,19 @@ function readerTools(Q,key,p,items){
   const pl=$('ayPlay'),names=Q.suras.map(x=>x.n);
   if(pl)pl.onclick=()=>reciterSheet(key,()=>playSura(key,first[0],names,first[1]),`استمع إلى سورة ${name(first[0])} بصوت`);   // from the page's first verse, where the recording has timings
   syncDraw();
+  const so=$('surOpen');
+  if(so)so.onclick=()=>{   // the surahs of this mushaf, from inside it: one tap goes to the surah's first page
+    if(document.querySelector('.cpick'))return;
+    const M=key==='warsh'?loaded.mohammadi:null,PG=i=>M?M.pages[i][0]:Q.suras[i].v[0][1];
+    const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+    d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="سور المصحف"><div class="cpick-h"><span>سور المصحف · ${RW[key].n}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+      <input class="search su-s" type="search" placeholder="ابحث باسم السورة أو رقمها" autocomplete="off">
+      <div class="cpick-l su-l">${Q.suras.map((S,i)=>`<a href="#sura-${i+1}" data-n="${esc(norm(S.n))}" data-i="${i+1}"${i+1===first[0]?' class="on"':''}><i><span>${i+1}</span></i><b>سورة ${esc(S.n)}<small>${S.v.length} آية · الجزء ${S.v[0][2]}</small></b><em>ص ${PG(i)}</em></a>`).join('')}</div></div>`;
+    const close=()=>d.remove();
+    d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-x]')||e.target.closest('a'))close()});
+    d.querySelector('.su-s').addEventListener('input',e=>{const q=norm(e.target.value);d.querySelectorAll('.su-l a').forEach(a=>a.hidden=!!q&&!a.dataset.n.includes(q)&&a.dataset.i!==q)});
+    document.body.append(d);const on=d.querySelector('.su-l a.on');if(on)on.scrollIntoView({block:'center'});
+  };
   mk.setAttribute('aria-pressed',markHas(key,p,0,0));
   mk.onclick=()=>{const on=markToggle(key,p,first[0],0,name(first[0]));mk.setAttribute('aria-pressed',on);toast(on?'حُفظت الصفحة في المرجعيات':'أُزيلت الصفحة من المرجعيات')};
   op.onclick=()=>{
