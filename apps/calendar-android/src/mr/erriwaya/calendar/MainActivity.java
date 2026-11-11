@@ -49,6 +49,34 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setAdhanConfig(String json) { AdhanReceiver.saveConfig(MainActivity.this, json); }
 
+        /** «أقرب بلدية إلى موقعي»: asks for the approximate-location permission if needed, then calls window.onLocated(lat, lng, ok). */
+        @JavascriptInterface
+        public void locate() {
+            runOnUiThread(() -> {
+                if (Locator.allowed(MainActivity.this)) doLocate();
+                else Locator.ask(MainActivity.this);
+            });
+        }
+
+        /** True when the phone does not restrict the app's background work to save battery (which can silence the adhan). */
+        @JavascriptInterface
+        public boolean batteryUnrestricted() {
+            if (Build.VERSION.SDK_INT < 23) return true;
+            android.os.PowerManager pm = (android.os.PowerManager) getSystemService(POWER_SERVICE);
+            return pm == null || pm.isIgnoringBatteryOptimizations(getPackageName());
+        }
+
+        /** Opens the app's page in the phone's settings, where its battery use can be set to unrestricted. */
+        @JavascriptInterface
+        public void openBatterySettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + getPackageName())));
+                } catch (Exception ignored) { }
+            });
+        }
+
         /** Asks for the notification permission (Android 13+) when the user turns adhan alerts on. */
         @JavascriptInterface
         public void requestNotifications() {
@@ -210,6 +238,26 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 33) Back.register(this);
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
+    }
+
+    private void doLocate() {
+        try {
+            Locator.locate(this, (lat, lng, ok) -> located(lat, lng, ok));
+        } catch (Exception e) {
+            located(0, 0, false);
+        }
+    }
+
+    private void located(double lat, double lng, boolean ok) {
+        if (web != null) web.evaluateJavascript("window.onLocated&&window.onLocated(" + lat + "," + lng + "," + ok + ")", null);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        if (req != Locator.REQUEST) return;
+        if (res.length > 0 && res[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) doLocate();
+        else located(0, 0, false);
     }
 
     /** Back: the page's previous view (it navigates by #hash), or out of the app from the first one. */

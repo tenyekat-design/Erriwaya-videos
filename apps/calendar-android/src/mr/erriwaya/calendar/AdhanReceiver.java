@@ -40,11 +40,13 @@ public class AdhanReceiver extends BroadcastReceiver {
     static final String PREFS = "adhan";
     static final String CHANNEL = "adhan_maliki_1";        // rings the alarm tone
     static final String CHANNEL_PLAY = "adhan_play_1";     // silent: the recording plays through AdhanService
+    static final String CHANNEL_PRE = "adhan_pre_1";       // the reminder some minutes before the adhan: an ordinary notification
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
         if ("mr.erriwaya.calendar.ADHAN".equals(intent.getAction())) {
-            fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false));
+            if (intent.getBooleanExtra("pre", false)) remind(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"));
+            else fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false));
         }
         scheduleNext(ctx);  // also on BOOT_COMPLETED and MY_PACKAGE_REPLACED
         CalendarWidget.updateAll(ctx);
@@ -74,7 +76,34 @@ public class AdhanReceiver extends BroadcastReceiver {
     }
 
     // ---------- raising the adhan ----------
+    /** The reminder before the adhan: a plain notification with the phone's notification sound. */
+    static void remind(Context ctx, String title, String text) {
+        NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null) return;
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
+        Notification.Builder b;
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (nm.getNotificationChannel(CHANNEL_PRE) == null) {
+                NotificationChannel ch = new NotificationChannel(CHANNEL_PRE, "تنبيه قبل الأذان", NotificationManager.IMPORTANCE_DEFAULT);
+                ch.setDescription("تذكير قبل دخول وقت الصلاة بدقائق");
+                nm.createNotificationChannel(ch);
+            }
+            b = new Notification.Builder(ctx, CHANNEL_PRE);
+        } else {
+            b = new Notification.Builder(ctx).setDefaults(Notification.DEFAULT_SOUND);
+        }
+        Intent open = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        b.setSmallIcon(R.drawable.ic_stat_adhan).setContentTitle(title).setContentText(text).setAutoCancel(true)
+                .setCategory(Notification.CATEGORY_REMINDER).setColor(0xFF0F5641)
+                .setContentIntent(PendingIntent.getActivity(ctx, 5, open, flags));
+        try { nm.notify(9, b.build()); } catch (SecurityException ignored) { }
+    }
+
     static void fire(Context ctx, String title, String text, boolean fajr) {
+        try {   // the reminder has done its work
+            NotificationManager n0 = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (n0 != null) n0.cancel(9);
+        } catch (Exception ignored) { }
         {   // always played in full by AdhanService (the bundled adhan when the user has not picked one)
             Intent s = new Intent(ctx, AdhanService.class).putExtra("title", title).putExtra("text", text).putExtra("fajr", fajr);
             try {
@@ -156,7 +185,10 @@ public class AdhanReceiver extends BroadcastReceiver {
                 c.optDouble("fajr", 18), c.optDouble("isha", 17), c.optInt("ishaMin", 0), c.optDouble("asr", 1));
     }
 
-    /** The next adhan after `now` for the settings in c: {epochMillis, title, text, isFajr}, or null when none is wanted. */
+    /**
+     * The next alert after `now` for the settings in c: {epochMillis, title, text, isFajr, isReminder}, or null when none is
+     * wanted. An alert is an adhan or, when c.pre > 0, the reminder that many minutes before it.
+     */
     static Object[] nextFromConfig(JSONObject c, long now) {
         if (!c.optBoolean("on", false)) return null;
         JSONObject p = c.optJSONObject("p");
@@ -165,18 +197,25 @@ public class AdhanReceiver extends BroadcastReceiver {
             double[] t = timesOf(c, day);
             long best = Long.MAX_VALUE;
             int bk = -1;
+            boolean bpre = false;
+            int pre = Math.max(0, Math.min(120, c.optInt("pre", 0)));
             for (int k = 0; k < 6; k++) {
                 if (k == PrayerCalc.SUNRISE || (p != null && !p.optBoolean(KEYS[k], true))) continue;
                 int mins = PrayerCalc.minutes(t[k]);
                 if (mins < 0) continue;
                 long at = day * PrayerCalc.DAY + mins * 60000L;
-                if (at > now + 1000 && at < best) { best = at; bk = k; }
+                if (at > now + 1000 && at < best) { best = at; bk = k; bpre = false; }
+                long before = at - pre * 60000L;
+                if (pre > 0 && before > now + 1000 && before < best) { best = before; bk = k; bpre = true; }
             }
             if (bk >= 0) {
                 boolean fajr = bk == PrayerCalc.FAJR;
+                String city = c.optString("city", "نواكشوط");
+                if (bpre) return new Object[]{best, "بعد " + pre + (pre >= 3 && pre <= 10 ? " دقائق" : " دقيقة") + ": أذان " + NAMES[bk],
+                        "يُرفع أذان " + NAMES[bk] + " في " + city + " عند " + PrayerCalc.fmt(t[bk]) + ".", fajr, true};
                 return new Object[]{best, "أذان " + NAMES[bk] + " · " + PrayerCalc.fmt(t[bk]),
                         "حان وقت صلاة " + NAMES[bk] + " في " + c.optString("city", "نواكشوط") + ". "
-                                + (fajr ? "الصلاة خير من النوم." : "حيّ على الصلاة، حيّ على الفلاح."), fajr};
+                                + (fajr ? "الصلاة خير من النوم." : "حيّ على الصلاة، حيّ على الفلاح."), fajr, false};
             }
         }
         return null;
@@ -209,7 +248,7 @@ public class AdhanReceiver extends BroadcastReceiver {
             Object[] n = null;
             try { n = nextFromConfig(c, now); } catch (Exception ignored) { }
             if (n != null) {
-                i.putExtra("title", (String) n[1]).putExtra("text", (String) n[2]).putExtra("fajr", (Boolean) n[3]);
+                i.putExtra("title", (String) n[1]).putExtra("text", (String) n[2]).putExtra("fajr", (Boolean) n[3]).putExtra("pre", (Boolean) n[4]);
                 setAlarm(am, (Long) n[0], PendingIntent.getBroadcast(ctx, 1, i, flags));
             } else {
                 am.cancel(PendingIntent.getBroadcast(ctx, 1, i, flags));
@@ -222,7 +261,7 @@ public class AdhanReceiver extends BroadcastReceiver {
                 JSONArray e = list.getJSONArray(k);
                 long at = e.getLong(0);
                 if (at <= now + 1000) continue;
-                i.putExtra("title", e.getString(1)).putExtra("text", e.getString(2)).putExtra("fajr", e.optBoolean(3, false));
+                i.putExtra("title", e.getString(1)).putExtra("text", e.getString(2)).putExtra("fajr", e.optBoolean(3, false)).putExtra("pre", false);
                 PendingIntent pi = PendingIntent.getBroadcast(ctx, 1, i, flags);
                 setAlarm(am, at, pi);
                 return;

@@ -531,6 +531,8 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+.about summary{cursor:pointer;list-style:none}.about summary::-webkit-details-marker{display:none}.about summary h3{display:inline}.about summary::after{content:" ‹";color:var(--gold)}.about[open] summary::after{content:""}.about p{font-size:.86rem;line-height:1.9;margin:8px 0 0;color:var(--muted)}.about p b{color:var(--ink)}
+.cpick-loc{display:block;width:100%;margin-top:8px}
 .adh-alert .pr{display:flex;flex-wrap:wrap;gap:6px 12px}
 .adh-alert label{display:inline-flex;gap:5px;align-items:center;font-size:.9rem}
 .adh-snd{display:grid;gap:6px;border:1px dashed var(--orn);border-radius:10px;padding:10px}
@@ -655,6 +657,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
       <div class="adh-alert" id="adhAlert" hidden>
         <div class="row" style="margin:0"><label for="adhOn">تنبيه الأذان</label><label><input type="checkbox" id="adhOn"> عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا</label></div>
         <div class="pr" id="adhPr"></div>
+        <div class="row" style="margin:0"><label for="adhPre">تنبيه قبل الأذان</label><select id="adhPre"><option value="0">بدون</option><option value="5">قبله بـ5 دقائق</option><option value="10">قبله بـ10 دقائق</option><option value="15">قبله بـ15 دقيقة</option><option value="20">قبله بـ20 دقيقة</option><option value="30">قبله بـ30 دقيقة</option></select></div>
         <div class="adh-snd">
           <div><b>صوت الأذان</b> <span id="sndMain"></span></div>
           <div class="row2"><button class="btn" id="pickMain">استبدله بتسجيل من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
@@ -664,11 +667,19 @@ a.hd.hit small{color:var(--gold);font-weight:600}
         <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان الآن</button><button class="btn" id="adhStop">إيقاف</button></div>
         <p class="note">يُرفع الأذان المالكي المضمَّن في التطبيق كاملًا بصوت المنبّه عند دخول كل وقت، ولو كان التطبيق مغلقًا، مع زر «إيقاف الأذان» في الإشعار. ويمكنك استبداله بتسجيل آخر من هاتفك (mp3 أو m4a…).</p>
         <p class="warn" id="exWarn" hidden>ليُرفع الأذان في وقته بالضبط اسمح للتطبيق بـ«المنبّهات والتذكيرات»، وإلا فقد يتأخر بضع دقائق. <button class="btn" id="exGo">اسمح الآن</button></p>
+        <p class="warn" id="batWarn" hidden>بعض الهواتف توقف الأذان لتوفير البطارية. افتح إعدادات التطبيق واجعل استعمال البطارية «غير مقيَّد». <button class="btn" id="batGo">افتح الإعدادات</button></p>
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
       </div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
+    <details class="card about" id="aboutBox">
+      <summary><h3>حول التطبيق والخصوصية</h3></summary>
+      <p><b>الخصوصية.</b> التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا إعلانات ولا أدوات تتبّع. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.</p>
+      <p><b>الإنترنت.</b> المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (mushaf.ma وGitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.</p>
+      <p><b>المصادر.</b> نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: مصحف مؤسسة محمد السادس لنشر المصحف الشريف. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.</p>
+      <p><b>الناشر.</b> الرواية · www.erriwaya.com</p>
+    </details>
   </section>
 
   <footer>موريتانيا على توقيت غرينتش طوال السنة، دون توقيت صيفي.<br><span id="appVer" data-v="__APP_VERSION__"></span></footer>
@@ -791,17 +802,34 @@ const $=id=>document.getElementById(id);
 // the city list: every commune, grouped by wilaya then moughataa, with a rule between wilayas only and a search box;
 // choosing one sets the <select> and fires its change
 const fold=t=>t.normalize('NFD').replace(/[̀-ًͯ-ْـ]/g,'').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[^a-z0-9ء-ي]/g,'');
+// the Android app can find the phone's rough position; the nearest commune within 150 km is then chosen
+const canLocate=()=>{const A=window.AndroidApp;return !!A&&typeof A.locate==='function'};
+function nearestCity(lat,lng){let best=null,bd=1e9;
+  for(const c of CITIES){const dy=(c.lat-lat)*111.2,dx=(c.lng-lng)*111.2*cos((c.lat+lat)/2),k=Math.sqrt(dx*dx+dy*dy);if(k<bd){bd=k;best=c}}
+  return bd<=150?best:null}
+const say=t=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.dir='rtl';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)};
 function pickCity(sel){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
   d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المدينة"><div class="cpick-h"><span>اختر المدينة أو البلدية</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-s"><input type="search" placeholder="ابحث باسم البلدية أو المقاطعة…" aria-label="بحث" autocomplete="off"></div><div class="cpick-l">`+
+    <div class="cpick-s"><input type="search" placeholder="ابحث باسم البلدية أو المقاطعة…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب بلدية إلى موقعي</button>':''}</div><div class="cpick-l">`+
     WILAYAS.map(([w,ms])=>`<section class="cpick-w"><h3>ولاية ${w}</h3>${ms.map(([m,cs])=>`<div class="cpick-m" data-k="${fold(m)}">${m&&ms.length>1?`<h4>مقاطعة ${m}</h4>`:''}<div class="cpick-g">${cs.map(([id,name,fr])=>
       `<button type="button" data-id="${id}" data-k="${fold(name)} ${fold(fr)}"${id===sel.value?' aria-current="true"':''}>${name}<small dir="ltr">${fr}</small></button>`).join('')}</div></div>`).join('')}</section>`).join('')+
     `<p class="cpick-0" hidden>لا توجد بلدية بهذا الاسم</p></div></div>`;
   const close=()=>{d.remove();document.removeEventListener('keydown',key)},key=e=>{if(e.key==='Escape')close()};
   d.addEventListener('click',e=>{
     const b=e.target.closest('button');
+    if(b&&'loc' in b.dataset){
+      b.disabled=true;b.textContent='جارٍ تحديد الموقع…';
+      window.onLocated=(lat,lng,ok)=>{window.onLocated=null;
+        const c=ok?nearestCity(lat,lng):null;
+        if(!c){say(ok?'موقعك بعيد عن بلديات موريتانيا. اختر البلدية من القائمة.':'تعذّر تحديد الموقع. شغّل الموقع في الهاتف واسمح به للتطبيق.');b.disabled=false;b.textContent='أقرب بلدية إلى موقعي';return}
+        if(d.isConnected)close();
+        if(sel.value!==c.id){sel.value=c.id;sel.dispatchEvent(new Event('change',{bubbles:true}))}
+        say('أقرب بلدية: '+c.name)};
+      try{window.AndroidApp.locate()}catch(x){window.onLocated(0,0,false)}
+      return;
+    }
     if(b&&b.dataset.id){close();if(sel.value!==b.dataset.id){sel.value=b.dataset.id;sel.dispatchEvent(new Event('change',{bubbles:true}))}}
     else if(b||e.target===d)close();
   });
@@ -1019,7 +1047,7 @@ window.APP={manazil:manazilView,cities:CITIES,options:cityOptions,city:()=>city(
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
-const AD=Object.assign({on:false,p:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}},store.get('adhan',{}));
+const AD=Object.assign({on:false,pre:0,p:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}},store.get('adhan',{}));
 const ADN={fajr:'الفجر',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'};
 function pushAdhan(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -1034,7 +1062,7 @@ function pushAdhan(){
   // the app also gets the settings themselves: it computes the times on its own from them (same formulas, PrayerCalc.java),
   // so the adhan keeps coming however long the app stays closed, and the home-screen widget is drawn from them
   if(typeof A.setAdhanConfig==='function'){const c=city(),M=METHODS[S.method];
-    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,p:AD.p,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
+    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,pre:+AD.pre||0,p:AD.p,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
 }
 (function(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -1042,7 +1070,11 @@ function pushAdhan(){
   $('adhOn').checked=AD.on;
   $('adhPr').innerHTML=Object.entries(ADN).map(([k,n])=>`<label><input type="checkbox" data-k="${k}"${AD.p[k]?' checked':''}> ${n}</label>`).join('');
   const warn=()=>{try{$('adhWarn').hidden=!AD.on||A.notificationsAllowed()}catch(e){}
-    try{$('exWarn').hidden=!AD.on||typeof A.exactAlarmsAllowed!=='function'||A.exactAlarmsAllowed()}catch(e){}};
+    try{$('exWarn').hidden=!AD.on||typeof A.exactAlarmsAllowed!=='function'||A.exactAlarmsAllowed()}catch(e){}
+    try{$('batWarn').hidden=!AD.on||typeof A.batteryUnrestricted!=='function'||A.batteryUnrestricted()}catch(e){}};
+  $('batGo').onclick=()=>{try{A.openBatterySettings()}catch(e){}};
+  $('adhPre').value=String(+AD.pre||0);
+  $('adhPre').addEventListener('change',e=>{AD.pre=+e.target.value||0;store.set('adhan',AD);pushAdhan()});
   $('exGo').onclick=()=>{try{A.requestExactAlarms()}catch(e){}};
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){warn();pushAdhan()}});
   $('adhOn').addEventListener('change',e=>{AD.on=e.target.checked;store.set('adhan',AD);if(AD.on)try{A.requestNotifications()}catch(x){}pushAdhan();setTimeout(warn,1500)});
