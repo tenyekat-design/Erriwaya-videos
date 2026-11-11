@@ -23,7 +23,8 @@ To correct a name or a position, edit communes.tsv and run the two commands abov
 villages.tsv adds the villages (917): id (v + GeoNames id; never change one), ar, fr, lat, lng, the id of the commune
 it is listed under (the nearest commune centre, `km` away), from the GeoNames populated places of Mauritania
 (2014 dump, CC-BY-4.0). The Arabic names were transliterated from the French ones and are being checked by the app
-owner; correct them in the `ar` column. Each village follows the communes of its moughataa as
+owner; correct them in the `ar` column. Villages added by the owner have ids vu1, vu2…; `approx` = 1 when
+only the commune's main village is known as their position (the app then says the position is approximate). Each village follows the communes of its moughataa as
 [id, ar, fr, lat, lng, 0, "commune name"].
 """
 import csv, json, pathlib, re
@@ -50,7 +51,7 @@ name = {r['id']: r['ar'] for r in rows}
 assert all(c in name for c in byc), 'village under an unknown commune'
 for w in tree:
     for m in w[1]:
-        m[1] += [[v['id'], v['ar'], v['fr'], float(v['lat']), float(v['lng']), 0, name[c[0]]] for c in list(m[1]) for v in byc.get(c[0], [])]
+        m[1] += [[v['id'], v['ar'], v['fr'], float(v['lat']), float(v['lng']), 1 if v.get('approx') else 0, name[c[0]]] for c in list(m[1]) for v in byc.get(c[0], [])]
 js = 'const WILAYAS=[\n' + ',\n'.join('  ' + json.dumps(w, ensure_ascii=False, separators=(',', ':')) for w in tree) + '\n];'
 p = ROOT / 'web/index-source.html'
 s = p.read_text(encoding='utf-8')
