@@ -531,6 +531,16 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+#dNotes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.nt{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green);border-radius:6px;padding:2px 4px 2px 10px;padding-inline:10px 4px;font-size:.88rem;font-weight:600}
+.nt small{font-weight:500;color:var(--muted)}.nt button{border:0;background:transparent;color:var(--muted);font-size:.8rem;padding:4px 6px;cursor:pointer}
+.nadd{border:1px dashed var(--orn);background:transparent;color:var(--gold);border-radius:6px;padding:3px 10px;font:600 .84rem var(--f-body);cursor:pointer}
+.cell .ndot{position:absolute;bottom:5px;left:6px;width:6px;height:6px;border-radius:2px;background:var(--green)}
+.cell.sel .ndot,.cell.today .ndot{background:var(--gold)}
+.occ.ram{background:var(--green-soft);color:var(--green)}
+table.ram th:nth-child(2),table.ram td:nth-child(2),table.ram th:nth-child(6),table.ram td:nth-child(6){color:var(--green);font-weight:700}
+.nsheet{height:auto!important;max-height:84vh}.nform{display:grid;gap:10px;padding:12px 16px 20px}.nform input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}.nform .row{margin:0}.nform input[type=time]{padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+#goRam{flex:none}
 .lang-btn{position:absolute;inset-inline-end:0;top:-8px;border:1px solid var(--orn);background:transparent;color:var(--band-ink);border-radius:999px;padding:3px 9px;font:600 .72rem var(--f-body);cursor:pointer}
 .fr .clock{text-align:right}.fr .tabs a{font-size:.62rem;letter-spacing:-.01em}.fr .app-in h1{font-size:1.12rem}.fr .app-in p{font-size:.74rem}.fr .cell em{font-size:.56rem;letter-spacing:-.02em;white-space:nowrap}.fr .row select{max-width:100%;min-width:0}.fr .cpick small{display:none}.fr .about summary::after{content:" ›"}.fr .about[open] summary::after{content:""}.fr .legend i{margin-inline-end:5px}.fr .cell .mzd{left:auto;right:6px}.fr .cell .mzd.x{right:18px}
 .about summary{cursor:pointer;list-style:none}.about summary::-webkit-details-marker{display:none}.about summary h3{display:inline}.about summary::after{content:" ‹";color:var(--gold)}.about[open] summary::after{content:""}.about p{font-size:.86rem;line-height:1.9;margin:8px 0 0;color:var(--muted)}.about p b{color:var(--ink)}
@@ -596,6 +606,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
         <div class="hij" id="dHij"></div>
         <button type="button" class="mnz" id="dMnz"></button>
         <div id="dOcc"></div>
+        <div id="dNotes"></div>
       </div>
       <div class="next" id="next"></div>
     </div>
@@ -635,7 +646,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
   </section>
 
   <section class="card">
-    <div class="sec-h"><h2 id="tblTitle"></h2><small>اضغط على أي يوم لعرض تفاصيله</small></div>
+    <div class="sec-h"><h2 id="tblTitle"></h2><small id="tblHint">اضغط على أي يوم لعرض تفاصيله</small><button type="button" class="btn" id="goRam">إمساكية رمضان</button></div>
     <div class="scroll"><table id="tbl"></table></div>
   </section>
 
@@ -793,7 +804,53 @@ const gDaysIn=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
 const dowOf=jdn=>(jdn+1)%7; // 0 = Sunday
 const hStr=h=>`${h.d} ${HM[h.m-1]} ${h.y} هـ`;
 const gStr=g=>`${g.d} ${GM[g.m-1]} ${g.y}`;
-function events(jdn){const g=gOf(jdn),h=hOfJdn(jdn),out=[];const a=H_EV[h.m+'-'+h.d];if(a)out.push({t:a,nat:false});const b=G_EV[g.m+'-'+g.d];if(b)out.push({t:b,nat:true});return out}
+// official days off in Mauritania (the first day of each; the government may add days around the two Eids)
+const H_OFF=['1-1','3-12','10-1','12-10'],G_OFF=['1-1','5-1','5-25','11-28'];
+function events(jdn){const g=gOf(jdn),h=hOfJdn(jdn),out=[];const a=H_EV[h.m+'-'+h.d];if(a)out.push({t:a,nat:false,off:H_OFF.includes(h.m+'-'+h.d)});const b=G_EV[g.m+'-'+g.d];if(b)out.push({t:b,nat:true,off:G_OFF.includes(g.m+'-'+g.d)});return out}
+const evText=e=>e.t+(e.off?' · عطلة رسمية':'');
+
+/* ---------- the user's own notes ----------
+   A note belongs to a day and may come back every Gregorian or Hijri year; with a reminder it is announced that day
+   at the chosen time (Mauritania's time) by the Android app. Kept in mrcal.notes:
+   {id, t: text, j: its day (JDN), rep: ''|'g'|'h', rem: 0|1, at: 'HH:MM'} */
+let NOTES=store.get('notes',[]);if(!Array.isArray(NOTES))NOTES=[];
+function notesOn(jdn){if(!NOTES.length)return[];let g=null,h=null;
+  return NOTES.filter(n=>{if(n.j===jdn)return true;if(jdn<n.j)return false;
+    if(n.rep==='g'){g=g||gOf(jdn);const o=gOf(n.j);return o.m===g.m&&o.d===g.d}
+    if(n.rep==='h'){h=h||hOfJdn(jdn);const o=hOfJdn(n.j);return o.m===h.m&&o.d===h.d}
+    return false})}
+// the coming reminders, about 13 months ahead: [[epochMillis, text], ...]; notes due at the same minute share one entry
+function noteAlerts(){const rem=NOTES.filter(n=>n.rem);if(!rem.length)return[];
+  const now=Date.now(),t0=todayJdn(),by=new Map();
+  for(let d=0;d<400;d++){for(const n of notesOn(t0+d)){if(!n.rem)continue;
+    const m=/^(\d\d?):(\d\d)$/.exec(n.at||'08:00'),at=(t0+d-2440588)*DAY+((m?+m[1]:8)*60+(m?+m[2]:0))*60000;
+    if(at>now)by.set(at,by.has(at)?by.get(at)+' · '+n.t:n.t)}}
+  return [...by.entries()].sort((a,b)=>a[0]-b[0]).slice(0,60)}
+function noteSheet(jdn){
+  if(document.querySelector('.cpick'))return;
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+  d.innerHTML=`<div class="cpick-in nsheet" role="dialog" aria-label="ملاحظة جديدة"><div class="cpick-h"><span>ملاحظة ليوم ${gStr(gOf(jdn))}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="nform"><input type="text" id="nT" maxlength="120" placeholder="اكتب الملاحظة أو المناسبة…" aria-label="نص الملاحظة" autocomplete="off">
+    <div class="row"><label for="nRep">التكرار</label><select id="nRep"><option value="">لا تتكرر</option><option value="g">كل سنة ميلادية</option><option value="h">كل سنة هجرية</option></select></div>
+    <div class="row"><label><input type="checkbox" id="nRem"> ذكّرني بها في يومها</label><input type="time" id="nAt" value="08:00" aria-label="وقت التذكير"></div>
+    <p class="note" id="nHint" hidden>التذكير يصل من تطبيق أندرويد، بتوقيت موريتانيا.</p>
+    <button type="button" class="btn primary" data-save>حفظ الملاحظة</button></div></div>`;
+  const close=()=>d.remove();
+  const A=window.AndroidApp,canRemind=!!A&&typeof A.setAdhanConfig==='function';
+  d.querySelector('#nRem').closest('.row').hidden=!canRemind;
+  d.addEventListener('change',e=>{if(e.target.id==='nRem'){d.querySelector('#nHint').hidden=!e.target.checked;if(e.target.checked)try{A.requestNotifications()}catch(x){}}});
+  d.addEventListener('click',e=>{
+    const b=e.target.closest('button');
+    if(b&&'save' in b.dataset){const t=d.querySelector('#nT').value.trim();if(!t){d.querySelector('#nT').focus();return}
+      NOTES.push({id:Date.now().toString(36),t,j:jdn,rep:d.querySelector('#nRep').value,rem:canRemind&&d.querySelector('#nRem').checked?1:0,at:d.querySelector('#nAt').value||'08:00'});
+      store.set('notes',NOTES);close();renderCal();renderDay();pushAdhan();say('حُفظت الملاحظة')}
+    else if((b&&'x' in b.dataset)||e.target===d)close();
+  });
+  document.body.append(d);setTimeout(()=>{const i=d.querySelector('#nT');if(i)i.focus()},50);
+}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-note-add],[data-note-del]');if(!t)return;
+  if('noteAdd' in t.dataset)noteSheet(S.sel);
+  else{NOTES=NOTES.filter(n=>n.id!==t.dataset.noteDel);store.set('notes',NOTES);renderCal();renderDay();pushAdhan();say('حُذفت الملاحظة')}});
 
 /* ---------- now ---------- */
 function nowInfo(){const n=new Date();return{y:n.getUTCFullYear(),m:n.getUTCMonth()+1,d:n.getUTCDate(),h:n.getUTCHours()+n.getUTCMinutes()/60+n.getUTCSeconds()/3600,hms:pad(n.getUTCHours())+':'+pad(n.getUTCMinutes())+':'+pad(n.getUTCSeconds())}}
@@ -912,11 +969,15 @@ function renderDay(){
   $('dHij').textContent=hStr(h);
   const mz=mnzOf(S.sel);$('dMnz').innerHTML=`<span>منزلة ${MNZ.m[mz.i][0]} · اليوم ${mz.day} من ${mz.len}</span><small>حسابي ‹</small>`;
   const ev=events(S.sel);
-  let occ=ev.map(e=>`<span class="occ${e.nat?' nat':''}">${e.t}</span>`).join(' ');
+  let occ=ev.map(e=>`<span class="occ${e.nat?' nat':''}">${evText(e)}</span>`).join(' ');
+  if(h.m===9)occ+=` <span class="occ ram">الإمساك ${fmt(t.fajr)} · الإفطار ${fmt(t.maghrib)}</span>`;
   if(!ev.length&&isToday){
     for(let k=1;k<400;k++){const e=events(S.sel+k);if(e.length){occ=`<span class="occ${e[0].nat?' nat':''}">${e[0].t} ${daysWord(k)} · ${hStr(hOfJdn(S.sel+k))}</span>`;break}}
   }
   $('dOcc').innerHTML=occ;
+  const esc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  $('dNotes').innerHTML=notesOn(S.sel).map(n=>`<span class="nt"><span>${esc(n.t)}${n.rep?' <small>(كل سنة)</small>':''}${n.rem?` <small>⏰ ${esc(n.at||'08:00')}</small>`:''}</span><button type="button" data-note-del="${esc(n.id)}" aria-label="حذف الملاحظة">✕</button></span>`).join('')
+    +`<button type="button" class="nadd" data-note-add>＋ أضف ملاحظة أو تذكيرًا</button>`;
   $('times').innerHTML=PR.map(([k,n])=>`<li data-k="${k}" class="${k==='sunrise'?'sun':''}"><span class="t-name">${n}</span><time class="t-val">${fmt(t[k])}</time></li>`).join('');
   // sky band (right = 00:00, left = 24:00)
   const p=x=>(fix(x,24)/24*100).toFixed(2)+'%';
@@ -983,8 +1044,9 @@ function renderCal(){
     const prim=S.mode==='g'?g.d:h.d;
     const other=S.mode==='g'?(h.d===1||j===days[0]?`${h.d} <em>${HM[h.m-1]}</em>`:h.d):(g.d===1||j===days[0]?`${g.d} <em>${GM[g.m-1]}</em>`:g.d);
     const cls=['cell'];if(dowOf(j)===5)cls.push('fri');if(j===tj)cls.push('today');if(j===S.sel)cls.push('sel');
-    const label=`${DAYS[dowOf(j)]} ${gStr(g)} — ${hStr(h)}${ev.length?' — '+ev.map(e=>e.t).join('، '):''}${mzNew?' — بداية منزلة '+MNZ.m[mz.i][0]:''}`;
-    html+=`<button class="${cls.join(' ')}" data-j="${j}" aria-label="${label}" title="${label}">${ev.length?`<span class="dot${ev[0].nat?' nat':''}"></span>`:''}${mzNew?`<span class="mzd${ev.length?' x':''}">✦</span>`:''}<span class="p">${prim}</span>${ev.length?`<span class="ev${ev[0].nat?' nat':''}">${ev[0].t}</span>`:''}<span class="s">${other}</span></button>`;
+    const mine=notesOn(j);
+    const label=`${DAYS[dowOf(j)]} ${gStr(g)} — ${hStr(h)}${ev.length?' — '+ev.map(evText).join('، '):''}${mine.length?' — '+mine.map(n=>n.t).join('، '):''}${mzNew?' — بداية منزلة '+MNZ.m[mz.i][0]:''}`;
+    html+=`<button class="${cls.join(' ')}" data-j="${j}" aria-label="${label}" title="${label}">${ev.length?`<span class="dot${ev[0].nat?' nat':''}"></span>`:''}${mzNew?`<span class="mzd${ev.length?' x':''}">✦</span>`:''}<span class="p">${prim}</span>${mine.length?'<span class="ndot"></span>':''}${ev.length?`<span class="ev${ev[0].nat?' nat':''}">${ev[0].t}</span>`:''}<span class="s">${other}</span></button>`;
   }
   $('grid').innerHTML=html;
   // jump controls
@@ -998,8 +1060,10 @@ function renderCal(){
 }
 function renderTable(days){
   const c=city(),tj=todayJdn();
-  $('tblTitle').textContent=`مواقيت الصلاة في ${c.name} — ${S.mode==='g'?GM[S.gm-1]+' '+S.gy:HM[S.hm-1]+' '+S.hy+' هـ'}`;
-  let h=`<thead><tr><th>التاريخ</th>${PR.map(p=>`<th>${p[1]}</th>`).join('')}</tr></thead><tbody>`;
+  const ram=S.mode==='h'&&S.hm===9;   // Ramadan's timetable is its imsakiya: fasting starts at the fajr adhan and ends at the maghrib adhan
+  $('tblTitle').textContent=ram?`إمساكية رمضان ${S.hy} هـ في ${c.name}`:`مواقيت الصلاة في ${c.name} — ${S.mode==='g'?GM[S.gm-1]+' '+S.gy:HM[S.hm-1]+' '+S.hy+' هـ'}`;
+  $('tbl').classList.toggle('ram',ram);$('tblHint').textContent=ram?'الإمساك عند أذان الفجر، والإفطار عند أذان المغرب':'اضغط على أي يوم لعرض تفاصيله';
+  let h=`<thead><tr><th>التاريخ</th>${PR.map(p=>`<th>${ram&&p[0]==='fajr'?'الإمساك':ram&&p[0]==='maghrib'?'الإفطار':p[1]}</th>`).join('')}</tr></thead><tbody>`;
   for(const j of days){
     const g=gOf(j),hj=hOfJdn(j),t=prayerTimes(g.y,g.m,g.d,c),cls=[];
     if(dowOf(j)===5)cls.push('fri');if(j===tj)cls.push('today');
@@ -1031,6 +1095,7 @@ $('modeH').addEventListener('click',()=>{S.mode='h';syncViewToSel();renderCal()}
 $('jMonth').addEventListener('change',e=>{if(S.mode==='g')S.gm=+e.target.value;else S.hm=+e.target.value;renderCal()});
 $('jYear').addEventListener('change',e=>{const v=parseInt(e.target.value,10);if(!v)return;if(S.mode==='g')S.gy=Math.min(2100,Math.max(1900,v));else S.hy=Math.min(1520,Math.max(1318,v));renderCal()});
 $('goToday').addEventListener('click',()=>select(todayJdn(),true));
+$('goRam').addEventListener('click',()=>{const h=hOfJdn(todayJdn());S.mode='h';S.hy=h.m<=9?h.y:h.y+1;S.hm=9;renderCal();$('tblTitle').scrollIntoView({behavior:'smooth',block:'start'})});
 document.addEventListener('click',e=>{if(e.target.id==='backToday')select(todayJdn(),true)});
 $('sMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}">${m.name}</option>`).join('');
 $('sMethod').value=S.method;$('sAsr').value=S.asr;$('sAdj').value=S.adj;
@@ -1064,7 +1129,7 @@ function pushAdhan(){
   // the app also gets the settings themselves: it computes the times on its own from them (same formulas, PrayerCalc.java),
   // so the adhan keeps coming however long the app stays closed, and the home-screen widget is drawn from them
   if(typeof A.setAdhanConfig==='function'){const c=city(),M=METHODS[S.method];
-    try{A.setAdhanConfig(JSON.stringify({on:!!AD.on,pre:+AD.pre||0,p:AD.p,lang:store.get('lang','ar'),cityFr:c.fr,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
+    try{A.setAdhanConfig(JSON.stringify({notes:noteAlerts(),on:!!AD.on,pre:+AD.pre||0,p:AD.p,lang:store.get('lang','ar'),cityFr:c.fr,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
 }
 (function(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -2047,7 +2112,11 @@ const D=[
 ['الشهر السابق','Mois précédent'],['الشهر التالي','Mois suivant'],['نوع التقويم','Type de calendrier'],['ميلادي','Grégorien'],['هجري','Hégirien'],['الشهر الهجري','Mois hégirien'],['السنة الهجرية','Année hégirienne'],['اليوم الهجري','Jour hégirien'],['الشهر','Mois'],['السنة','Année'],
 ['مناسبة دينية','Fête religieuse'],['مناسبة وطنية','Fête nationale'],['بداية منزلة','Début d’une manzila'],['الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر','Grand chiffre : mois affiché · petit : l’autre calendrier'],
 ['مواقيت الصلاة في ','Horaires de prière à '],['اضغط على أي يوم لعرض تفاصيله','Touchez un jour pour voir ses détails'],['التاريخ','Date'],
-['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],['أدخل يومًا بين 1 و30 وسنة بين 1318 و1520','Entrez un jour entre 1 et 30 et une année entre 1318 et 1520'],['الأذان','Adhan'],['الإقامة','Iqama'],
+['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],
+[' · عطلة رسمية',' · jour férié'],['＋ أضف ملاحظة أو تذكيرًا','＋ Ajouter une note ou un rappel'],['(كل سنة)','(chaque année)'],['حذف الملاحظة','Supprimer la note'],['ملاحظة جديدة','Nouvelle note'],['ملاحظة ليوم ','Note pour le '],
+['اكتب الملاحظة أو المناسبة…','Écrivez la note ou l’événement…'],['نص الملاحظة','Texte de la note'],['التكرار','Répétition'],['لا تتكرر','Aucune'],['كل سنة ميلادية','Chaque année grégorienne'],['كل سنة هجرية','Chaque année hégirienne'],
+['ذكّرني بها في يومها','Me la rappeler ce jour-là'],['وقت التذكير','Heure du rappel'],['التذكير يصل من تطبيق أندرويد، بتوقيت موريتانيا.','Le rappel est envoyé par l’application Android, à l’heure de Mauritanie.'],['حفظ الملاحظة','Enregistrer la note'],['حُفظت الملاحظة','Note enregistrée'],['حُذفت الملاحظة','Note supprimée'],
+['إمساكية رمضان','Imsakiya du Ramadan'],['الإمساك عند أذان الفجر، والإفطار عند أذان المغرب','Le jeûne commence à l’adhan du Fajr et se rompt à l’adhan du Maghrib'],['الإمساك','Imsak'],['الإفطار','Iftar'],['أدخل يومًا بين 1 و30 وسنة بين 1318 و1520','Entrez un jour entre 1 et 30 et une année entre 1318 et 1520'],['الأذان','Adhan'],['الإقامة','Iqama'],
 ['الإعدادات','Réglages'],['طريقة الحساب','Méthode de calcul'],['وقت العصر','Heure de l’Asr'],['الجمهور (المذهب المالكي)','Majorité (école malikite)'],['المذهب الحنفي','École hanafite'],
 ['الإقامة بعد الأذان','Iqama après l’adhan (min)'],['تنبيه الأذان','Alerte de l’adhan'],['عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا','à l’heure de chaque prière, même si l’application est fermée'],
 ['تنبيه قبل الأذان','Rappel avant l’adhan'],['بدون تعديل (أم القرى)','Sans correction (Oumm al-Qura)'],['بدون','Aucun'],
@@ -2089,7 +2158,7 @@ const RX=[
  [/· اليوم$/g,'· aujourd’hui'],
  [/بعد (\d+) (?:أيام|يومًا)/g,'dans $1 jours'],[/بعد يومين/g,'dans 2 jours'],[/غدًا/g,'demain'],
  [/([\d.]+)° ش · ([\d.]+)° غ/g,'$1° N · $2° O'],
- [/^صلاة (\S+) في /g,'Prière de $1 à '],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
+ [/^صلاة (\S+) في /g,'Prière de $1 à '],[/إمساكية رمضان (\d+) هـ في /g,'Imsakiya du Ramadan $1 H à '],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
  [/\(ولاية ([^)]+)\)/g,'(wilaya : $1)'],[/^ولاية (.+)$/g,'Wilaya : $1'],[/^مقاطعة (.+)$/g,'Moughataa : $1'],
  [/(\d) هـ/g,'$1 H']
 ];
