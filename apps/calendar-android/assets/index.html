@@ -541,6 +541,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .adh-play span{font-family:var(--f-naskh);font-weight:700;color:var(--green)}
 .adh-play audio{flex:1;min-width:220px;max-width:100%;height:40px}
 .adh-alert{display:grid;gap:8px}
+.third{display:flex;align-items:center;gap:12px;margin-top:8px;padding:10px 14px;border-radius:10px;background:#1f2a52;color:#f3ecd6}
+.third svg{width:26px;height:26px;flex:none;fill:none;stroke:#e9c46a;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.third span{display:grid;flex:1;min-width:0}.third b{font-size:.95rem}.third small{font-size:.76rem;opacity:.8}.third time{font:700 1.35rem/1 var(--f-display,inherit);font-variant-numeric:tabular-nums}
 .wx{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .wx svg{fill:none;stroke:var(--gold);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .wx-ic{width:30px;height:30px}.wx-t{font:700 1.7rem/1 var(--f-display,inherit);color:var(--ink)}
@@ -648,6 +651,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     </div>
     <div class="band" id="band" aria-hidden="true"></div>
     <ol class="times" id="times"></ol>
+    <div class="third" id="third"></div>
   </section>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
@@ -1086,6 +1090,9 @@ function renderDay(){
   $('dNotes').innerHTML=notesOn(S.sel).map(n=>`<span class="nt"><span>${esc(n.t)}${n.rep?' <small>(كل سنة)</small>':''}${n.rem?` <small>${IC_BELL} ${esc(n.at||'08:00')}</small>`:''}</span><button type="button" data-note-del="${esc(n.id)}" aria-label="حذف الملاحظة">✕</button></span>`).join('')
     ;
   $('times').innerHTML=PR.map(([k,n])=>`<li data-k="${k}" class="${k==='sunrise'?'sun':''}"><svg class="t-ic" viewBox="0 0 24 24" aria-hidden="true">${T_IC[k]}</svg><span class="t-name">${n}</span><time class="t-val">${fmt(t[k])}</time></li>`).join('');
+  // the last third of the night: the night runs from this day's maghrib to the next day's fajr
+  {const g2=gOf(S.sel+1),t2=prayerTimes(g2.y,g2.m,g2.d,c),len=t2.fajr+24-t.maghrib;
+   $('third').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/><path d="M15 3.5h4.5L15 9h4.5"/></svg><span><b>الثلث الأخير من الليل</b><small>من ${fmt(t.maghrib+len*2/3)} إلى الفجر ${fmt(t2.fajr)}</small></span><time>${fmt(t.maghrib+len*2/3)}</time>`}
   // sky band (right = 00:00, left = 24:00)
   const p=x=>(fix(x,24)/24*100).toFixed(2)+'%';
   const st=getComputedStyle(document.documentElement),col=n=>st.getPropertyValue('--'+n).trim();
@@ -2235,7 +2242,7 @@ const D=[
 ['الشهر السابق','Mois précédent'],['الشهر التالي','Mois suivant'],['نوع التقويم','Type de calendrier'],['ميلادي','Grégorien'],['هجري','Hégirien'],['الشهر الهجري','Mois hégirien'],['السنة الهجرية','Année hégirienne'],['اليوم الهجري','Jour hégirien'],['الشهر','Mois'],['السنة','Année'],
 ['مناسبة دينية','Fête religieuse'],['مناسبة وطنية','Fête nationale'],['بداية منزلة','Début d’une manzila'],['الرقم الكبير: الشهر المعروض · الصغير: التقويم الآخر','Grand chiffre : mois affiché · petit : l’autre calendrier'],
 ['مواقيت الصلاة في ','Horaires de prière à '],['اضغط على أي يوم لعرض تفاصيله','Touchez un jour pour voir ses détails'],['التاريخ','Date'],
-['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],
+['تحويل التاريخ','Conversion de date'],['من الميلادي','Du grégorien'],['من الهجري','De l’hégirien'],['تاريخ غير صحيح','Date non valide'],['الثلث الأخير من الليل','Dernier tiers de la nuit'],
 ['رمضان السابق','Ramadan précédent'],['رمضان التالي','Ramadan suivant'],['أول يوم','Premier jour'],['آخر يوم','Dernier jour'],['أقصر صيام','Jeûne le plus court'],['أطول صيام','Jeûne le plus long'],['مدة الصيام','Durée'],
 ['الإمساك عند أذان الفجر، والإفطار عند أذان المغرب. بداية الشهر حسابية وقد تتقدم أو تتأخر يومًا عن رؤية الهلال. الصفوف المظلَّلة: العشر الأواخر.','Le jeûne commence à l’adhan du Fajr et se rompt à l’adhan du Maghrib. Le début du mois est calculé ; il peut avancer ou retarder d’un jour par rapport à l’observation du croissant. Lignes teintées : les dix dernières nuits.'],
 ['صحو','Dégagé'],['غائم جزئيًا','Partiellement nuageux'],['غائم','Nuageux'],['ضباب','Brouillard'],['مطر','Pluie'],['عاصفة رعدية','Orage'],['العظمى','Max'],['الصغرى','Min'],
@@ -2285,7 +2292,7 @@ const RX=[
  [/· اليوم$/g,'· aujourd’hui'],
  [/بعد (\d+) (?:أيام|يومًا)/g,'dans $1 jours'],[/بعد يومين/g,'dans 2 jours'],[/غدًا/g,'demain'],
  [/([\d.]+)° ش · ([\d.]+)° غ/g,'$1° N · $2° O'],
- [/^صلاة (\S+) في /g,'Prière de $1 à '],[/إمساكية رمضان (\d+) هـ/g,'Imsakiya du Ramadan $1 H'],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
+ [/^صلاة (\S+) في /g,'Prière de $1 à '],[/^من ([\d:]+) إلى الفجر ([\d:]+)$/g,'de $1 jusqu’au Fajr $2'],[/إمساكية رمضان (\d+) هـ/g,'Imsakiya du Ramadan $1 H'],[/أُذِّن ([\d:]+) · الإقامة ([\d:]+)/g,'Adhan $1 · iqama $2'],
  [/\(ولاية ([^)]+)\)/g,'(wilaya : $1)'],[/^ولاية (.+)$/g,'Wilaya : $1'],[/^مقاطعة (.+)$/g,'Moughataa : $1'],
  [/(\d) هـ/g,'$1 H']
 ];
