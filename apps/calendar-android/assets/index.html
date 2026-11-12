@@ -140,7 +140,8 @@ button{cursor:pointer}
 .mz-astro dt{font-family:var(--f-display);font-size:.8rem;font-weight:700;color:var(--green)}
 .mz-astro dd{margin:0;font-size:.95rem;line-height:1.75}
 .mz-src{color:var(--muted);font-size:.85rem}
-.mz-moon{width:18px;height:18px;vertical-align:-4px}.mz-moon .dk{fill:#2B3440}.mz-moon .lt{fill:#F2E6B8}
+.mz-moon{width:18px;height:18px;vertical-align:-4px}
+.third.moon{background:#24324a}.third.moon .mz-moon{width:26px;height:26px;flex:none}.third .mo-t{flex:none;display:grid;justify-items:center;gap:0;line-height:1.15}.third .mo-t time{font-size:1.05rem}.third .mo-t small{font-size:.7rem}.mz-moon .dk{fill:#2B3440}.mz-moon .lt{fill:#F2E6B8}
 .cell .mzd{position:absolute;top:2px;left:6px;font-size:.62rem;line-height:1;color:var(--green)}
 .cell .mzd.x{left:18px}
 .cell.sel .mzd{color:var(--on-green)}
@@ -758,6 +759,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     <div class="band" id="band" aria-hidden="true"></div>
     <ol class="times" id="times"></ol>
     <div class="third" id="third"></div>
+    <div class="third moon" id="moonRow"></div>
   </section>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
@@ -1409,9 +1411,7 @@ function manazilView(el){
       ${d.never?`<div><dt>في ${c.name}</dt><dd>لا يطلع فوق الأفق</dd></div>`:`<div><dt>${day===todayJdn()?'اليوم':dd(day)} في ${c.name}</dt><dd>${d.always?'لا يغيب':`يطلع <b class="num">${hm(d.rise)}</b> · يتوسط السماء <b class="num">${hm(d.tr)}</b> · يغرب <b class="num">${hm(d.set)}</b>`}</dd></div>
       <div><dt>يمكث فوق الأفق</dt><dd>${d.always?'طول اليوم':dur(d.up)} كل يوم</dd></div>`}
       ${Y.always?'':`<div><dt>طلوعه الفجري</dt><dd>نحو <b>${dd(Y.first)}</b>: يُرى أول مرة في الشرق قبيل الفجر</dd></div>
-      <div><dt>غيابه</dt><dd>آخر رؤية له مساءً نحو ${dd(Y.last)}، ثم يحتجب في ضوء الشمس نحو <span class="num">${Y.hidden}</span> يومًا، ويُرى بقية السنة</dd></div>`}
-      ${(()=>{const m=moonDay(day,c.lat,c.lng),ic=`<svg class="mz-moon" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="10" class="dk"/><path class="lt" d="${moonPath(m.el)}"/></svg>`;
-        return `<div class="mz-mo"><dt>${ic} القمر ${day===todayJdn()?'اليوم':dd(day)} في ${c.name}</dt><dd>${m.rise!==null?`يطلع <b class="num">${hm(m.rise)}</b>`:'لا يطلع في هذا اليوم'} · ${m.set!==null?`يغرب <b class="num">${hm(m.set)}</b>`:'لا يغرب في هذا اليوم'}<br>${m.ph} · مضاء <span class="num">${Math.round(m.ill*100)}%</span> · عمره نحو <span class="num">${Math.round(m.age)}</span> ${Math.round(m.age)>2&&Math.round(m.age)<11?'أيام':'يومًا'}</dd></div>`})()}</dl>`};
+      <div><dt>غيابه</dt><dd>آخر رؤية له مساءً نحو ${dd(Y.last)}، ثم يحتجب في ضوء الشمس نحو <span class="num">${Y.hidden}</span> يومًا، ويُرى بقية السنة</dd></div>`}</dl>`};
   const here0=(i,r)=>i===cur.i?at:r.a;   // the day the times are for: the chosen day, or the mansion's first day
   const one=i=>{
     const M=MNZ.m[i],r=seg[i],here=i===cur.i,v=star?climSpan(r.a,r.b,si):MNZ.c[i][si],sm=star?mnzOf(Math.round((r.a+r.b)/2)).i:i,SM=MNZ.m[sm];
@@ -1506,6 +1506,10 @@ function renderDay(){
   // the last third of the night: the night runs from this day's maghrib to the next day's fajr
   {const g2=gOf(S.sel+1),t2=prayerTimes(g2.y,g2.m,g2.d,c),len=t2.fajr+24-t.maghrib;
    $('third').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/><path d="M15 3.5h4.5L15 9h4.5"/></svg><span><b>الثلث الأخير من الليل</b><small>من ${fmt(t.maghrib+len*2/3)} إلى الفجر ${fmt(t2.fajr)}</small></span><time>${fmt(t.maghrib+len*2/3)}</time>`}
+  // the moon at the chosen place on the chosen day: phase, lit part, age, rising and setting
+  {const m=moonDay(S.sel,c.lat,c.lng),ag=Math.round(m.age);
+   $('moonRow').innerHTML=`<svg class="mz-moon" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="10" class="dk"/><path class="lt" d="${moonPath(m.el)}"/></svg><span><b>القمر · ${m.ph}</b><small>مضاء ${Math.round(m.ill*100)}% · عمره ${ag} ${ag>2&&ag<11?'أيام':'يومًا'}</small></span>
+     <span class="mo-t"><small>يطلع</small><time>${m.rise!==null?fmt(m.rise):'—'}</time></span><span class="mo-t"><small>يغرب</small><time>${m.set!==null?fmt(m.set):'—'}</time></span>`}
   // sky band (right = 00:00, left = 24:00)
   const p=x=>(fix(x,24)/24*100).toFixed(2)+'%';
   const st=getComputedStyle(document.documentElement),col=n=>st.getPropertyValue('--'+n).trim();
