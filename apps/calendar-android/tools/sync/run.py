@@ -16,7 +16,7 @@ sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import mtime
 HERE=os.path.dirname(os.path.abspath(__file__));DATA=os.path.join(HERE,'..','..','assets','data')
 TARGETS={
-  'rajel':{'a':'alfird77777777777777776479446944696799796444il_002'},
+  'rajel':{'m':'https://media.way2quran.com/alragel-ould-othman/warsh-an-nafi/'},   # 320 kbps
   'rabbani':{'a':'alfirdwsiy1433_35686535653683658668356566586356gmail_002'},
   'laghdaf':{'m':'https://media.way2quran.com/mohamed-laghzaf-weld-mohamed-sidi/qalun-an-nafi/'},
   'naji':{'a':'alfirdwsiy14335787878787858750578780578780'},

@@ -3,12 +3,17 @@
 name: calendar-sync
 on:
   workflow_dispatch:
+    inputs:
+      reciters:
+        description: 'JSON list of the reciters to time, e.g. ["rajel"]'
+        default: '["rajel","rabbani","laghdaf","naji","abdqader"]'
   push:
     paths:
       - "apps/calendar-android/tools/sync/**"
       - ".github/workflows/calendar-sync.yml"
 permissions:
   contents: write
+  actions: write
 concurrency: calendar-sync-${{ github.ref }}
 jobs:
   time:
@@ -17,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        reciter: [rajel, rabbani, laghdaf, naji, abdqader]
+        reciter: ${{ fromJSON(inputs.reciters || '["rajel","rabbani","laghdaf","naji","abdqader"]') }}
         part: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v4
@@ -62,10 +67,16 @@ jobs:
           for rid in S:
               open(f'apps/calendar-android/assets/data/tm-m-{rid}.js','w').write(f'DATA_LOADED("tm-m-{rid}",'+json.dumps(T[rid],separators=(',',':'))+');\n')
               print(rid,sum(1 for x in T[rid] if x),'suras kept; no file:',[i+1 for i,x in enumerate(S[rid]) if x is None],'dropped:',[(i+1,x) for i,x in enumerate(S[rid]) if x is not None and x<0.5],'agreed share by sura:',S[rid])
-          json.dump(S,open('apps/calendar-android/tools/sync-test/last-run.json','w'))
+          import os;LR='apps/calendar-android/tools/sync-test/last-run.json'
+          old=json.load(open(LR)) if os.path.exists(LR) else {};old.update(S)   # keep the reciters not timed in this run
+          json.dump(old,open(LR,'w'))
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add apps/calendar-android/assets/data/tm-m-*.js apps/calendar-android/tools/sync-test/last-run.json
           git diff --cached --quiet || git commit -m "Calendar app: verse timings of the Mauritanian recordings (calendar-sync run ${{ github.run_number }})"
           git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Rebuild the app with the new timings (a push by this token does not start the APK workflow)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run calendar-android.yml --ref "${GITHUB_REF_NAME}" -R "${GITHUB_REPOSITORY}"
