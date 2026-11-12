@@ -733,7 +733,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 }
 
 /* المكتبة (13 Nov 2026): البخاري والموطأ والحصن خلف أيقونة واحدة، كالمصاحف */
-.mus.books .mi{border-radius:10px 16px 16px 10px;box-shadow:inset 6px 0 0 rgba(0,0,0,.18),0 6px 14px rgba(40,30,0,.18)}
+.mus.books .mi{border-radius:4px 10px 10px 4px;margin-left:8px;box-shadow:inset -7px 0 0 rgba(0,0,0,.22),inset -8px 0 0 rgba(233,207,134,.35),0 6px 14px rgba(40,30,0,.2)}
+.mus.books .mi::before{content:"";position:absolute;left:-10px;top:50%;width:11px;height:44%;transform:translateY(-50%);background:inherit;border:2px solid #C9A44C;border-right:0;
+  clip-path:polygon(100% 0,0 50%,100% 100%);border-radius:0;filter:brightness(.82)}
 .mus .mi.bukhari{background:linear-gradient(160deg,#8A5A2B,#4E2F12)}
 .mus .mi.muwatta{background:linear-gradient(160deg,#21706B,#0E3F3C)}
 .mus .mi.hisn{background:linear-gradient(160deg,#5E4596,#33215E)}
@@ -2649,9 +2651,14 @@ const INTRO={
 };
 const hs=()=>st.get('hs',1.06);
 const LIB={bukhari:{n:'البخاري',full:'صحيح البخاري · بترقيم فتح الباري'},muwatta:{n:'الموطأ',full:'موطأ الإمام مالك · رواية يحيى الليثي'},hisn:{n:'الحصن',full:'حصن المسلم · أذكار الكتاب والسنة'}};
-const bookCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><rect x="5" y="5" width="50" height="70" rx="3" fill="none" stroke="#E9CF86" stroke-width="1.6"/><rect x="9" y="9" width="42" height="62" rx="2" fill="none" stroke="#E9CF86" stroke-width=".7" stroke-dasharray="2 1.6"/>
-  <path d="M18 46V27a12 12 0 0 1 24 0v19z" fill="none" stroke="#F3E2AE" stroke-width="1.3"/><path d="M22.5 46V28.5a7.5 7.5 0 0 1 15 0V46" fill="none" stroke="#F3E2AE" stroke-width=".8"/><circle cx="30" cy="30" r="2.2" fill="#F3E2AE"/>
-  <text x="30" y="61" text-anchor="middle" fill="#F3E2AE" font-size="11" font-weight="700" style="font-family:var(--f-display)">${t}</text></svg>`;
+// غلاف كتاب إسلامي: جلد بإطار مذهَّب، شمسة لوزية في الوسط، أرباع شمسة في الأركان، وعنوان في خرطوشة
+const bookCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><g fill="none" stroke="#E9CF86"><rect x="4.5" y="4.5" width="51" height="71" rx="2.5" stroke-width="1.4"/><rect x="7.5" y="7.5" width="45" height="65" rx="1.5" stroke-width=".6" stroke-dasharray="1.2 1.4"/></g>
+  <g fill="#D9B860"><path d="M7.5 7.5h9a9 9 0 0 1-9 9z"/><path d="M52.5 7.5h-9a9 9 0 0 0 9 9z"/><path d="M7.5 72.5h9a9 9 0 0 0-9-9z"/><path d="M52.5 72.5h-9a9 9 0 0 1 9-9z"/></g>
+  <g transform="translate(30 31)"><path d="M0-17C6-12 11-6 11 0S6 12 0 17C-6 12-11 6-11 0S-6-12 0-17z" fill="#D9B860"/><path d="M0-12.5C4.2-9 7.8-4.5 7.8 0S4.2 9 0 12.5C-4.2 9-7.8 4.5-7.8 0S-4.2-9 0-12.5z" fill="none" stroke="#5a3a12" stroke-width=".7" opacity=".55"/>
+  <g fill="#5a3a12" opacity=".55"><rect x="-3.4" y="-3.4" width="6.8" height="6.8"/><rect x="-3.4" y="-3.4" width="6.8" height="6.8" transform="rotate(45)"/></g><circle r="1.6" fill="#F3E2AE"/>
+  <path d="M0-17v-4M0 17v4" stroke="#D9B860" stroke-width="1.2" stroke-linecap="round"/><circle cy="-22" r="1.2" fill="#D9B860"/><circle cy="22" r="1.2" fill="#D9B860"/></g>
+  <rect x="12" y="56" width="36" height="12" rx="6" fill="none" stroke="#E9CF86" stroke-width=".8"/>
+  <text x="30" y="65" text-anchor="middle" fill="#F3E2AE" font-size="9" font-weight="700" style="font-family:var(--f-display)">${t}</text></svg>`;
 function libHome(el){
   const last=st.get('lib.last','');
   el.innerHTML=`<div class="lib-h"><h1>المكتبة</h1><p>الحديث والأذكار</p></div>
