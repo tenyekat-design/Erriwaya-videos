@@ -120,6 +120,24 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void deleteMushaf(String key) { MushafDownload.deleteAll(MainActivity.this, key); }
 
+        /** A whole recitation for offline listening (KhatmaDownload): key = "<riwaya>-<reciter>", list = [["001.mp3","url"],…]. */
+        @JavascriptInterface
+        public void downloadKhatma(String key, String list) { KhatmaDownload.start(MainActivity.this, key, list); }
+
+        @JavascriptInterface
+        public void cancelKhatma() { KhatmaDownload.cancel(); }
+
+        /** "done,total,bytes,running,error" */
+        @JavascriptInterface
+        public String khatmaProgress(String key, int total) { return KhatmaDownload.progress(MainActivity.this, key, total); }
+
+        @JavascriptInterface
+        public void deleteKhatma(String key) { KhatmaDownload.deleteAll(MainActivity.this, key); }
+
+        /** The local copy of one recitation file ("" if not downloaded), as a file:// URL. */
+        @JavascriptInterface
+        public String khatmaFile(String key, String name) { return KhatmaDownload.file(MainActivity.this, key, name); }
+
         /** Exact alarms: Android 12+ lets the user allow them in Settings ("Alarms & reminders"). */
         @JavascriptInterface
         public boolean exactAlarmsAllowed() {

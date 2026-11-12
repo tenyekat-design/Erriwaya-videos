@@ -59,8 +59,10 @@ final class AudioScan {
             STATE.put(id, "running");
             File tmp = new File(app.getCacheDir(), "scan-audio.tmp");
             try {
-                download(url, tmp);
-                String levels = levels(tmp.getPath());
+                String path;
+                if (url.startsWith("file:")) path = android.net.Uri.parse(url).getPath();   // a downloaded khatma: read it in place
+                else { download(url, tmp); path = tmp.getPath(); }
+                String levels = levels(path);
                 File o = out(app, id), part = new File(o.getPath() + ".part");
                 try (OutputStream w = new FileOutputStream(part)) { w.write(levels.getBytes("UTF-8")); }
                 if (!part.renameTo(o)) throw new Exception("rename");
