@@ -1,0 +1,587 @@
+{
+  "schema_version": "1.0",
+  "language": "ar",
+  "country": "موريتانيا",
+  "default_region": "بوتلميت – الترارزة",
+  "about": "تقويمان مستقلان للأسماء نفسها. لا تُخلط مواقيت الطلوع المروية بحساب موقع الشمس الحقيقي أو الطلوع الفلكي المحسوب.",
+  "calendars": {
+    "solar_seasons": {
+      "display_name": "المنازل الشمسية الموسمية",
+      "algorithm": "28 فترات متعاقبة، كل منها 13 يومًا، مع يوم/يومين إداريين لاستكمال 365/366 يومًا في آخر فترة؛ التمديد تصرف حسابي لا نص تراثي.",
+      "source_anchor": {
+        "date": "2023-06-09",
+        "mansion_id": "thurayya",
+        "source_id": "local_2023"
+      },
+      "calendar_anchor_rule": "يُستخدم 9 يونيو من كل سنة كمرساة اصطلاحية مستنتجة من شهادة 2023؛ لا يعني أن هذا ثابت رصديًا أو متفق عليه محليًا كل سنة.",
+      "observational_event": false,
+      "status": "provisional_traditional_reconstruction"
+    },
+    "stellar_poem": {
+      "display_name": "النجوم والطوالع – حساب المنظومة الشنقيطية",
+      "algorithm": "تواريخ شهر/يوم كما في القصيدة المنشورة، مع تمييز ثلاثة تواريخ مستنتجة؛ تتحول إلى جدول سنوي لا إلى حساب الطلوع الحقيقي عند الأفق.",
+      "observational_event": false,
+      "status": "poetic_historical_table_not_verified_ephemeris",
+      "source_id": "poem"
+    }
+  },
+  "climate": {
+    "region": "بوتلميت – الترارزة",
+    "type": "monthly_qualitative_context_not_forecast",
+    "source_id": "boutilimit_climate",
+    "unit": "descriptive",
+    "monthly": {
+      "1": {
+        "seasonal_context": "الشتاء / فترة أكثر اعتدالًا نهارًا وأبرد ليلًا",
+        "description": "مناخ جاف في الغالب وتباين حراري بين الليل والنهار"
+      },
+      "2": {
+        "seasonal_context": "نهاية الشتاء وبداية الدفء التدريجي",
+        "description": "طقس جاف في الغالب وارتفاع تدريجي لدرجات الحرارة"
+      },
+      "3": {
+        "seasonal_context": "الانتقال إلى الموسم الحار",
+        "description": "ارتفاع الحرارة مع استمرار الجفاف"
+      },
+      "4": {
+        "seasonal_context": "الحر والجفاف",
+        "description": "تزايد الحرارة والجفاف؛ قد تنشط الرياح والغبار"
+      },
+      "5": {
+        "seasonal_context": "ذروة الحر قبل موسم الأمطار",
+        "description": "حر مرتفع وجفاف غالبًا؛ غبار ورياح على فترات"
+      },
+      "6": {
+        "seasonal_context": "ذروة الحر وبداية الانتقال نحو الخريف",
+        "description": "حر شديد وقد تحدث موجات غبار؛ الأمطار ما زالت محدودة غالبًا"
+      },
+      "7": {
+        "seasonal_context": "بدايات موسم الأمطار",
+        "description": "احتمال تزايد الأمطار، مع استمرار الحر وتفاوتها بين السنوات"
+      },
+      "8": {
+        "seasonal_context": "قلب موسم الأمطار",
+        "description": "فترة أمطار صيفية أكثر احتمالًا مقارنة بالشتاء"
+      },
+      "9": {
+        "seasonal_context": "استمرار أو انحسار أمطار الخريف",
+        "description": "الحر مستمر مع احتمال أمطار متفرقة"
+      },
+      "10": {
+        "seasonal_context": "انحسار موسم الأمطار",
+        "description": "تناقص فرص المطر وعودة الجفاف تدريجيًا"
+      },
+      "11": {
+        "seasonal_context": "الموسم الجاف",
+        "description": "أمطار قليلة غالبًا واعتدال حراري تدريجي"
+      },
+      "12": {
+        "seasonal_context": "بداية الشتاء الجاف",
+        "description": "ليال أبرد نسبيًا وأمطار قليلة في العادة"
+      }
+    },
+    "notes": "الدلالة المناخية من شهر التاريخ، ولا يُنسب السبـب الفلكي للنجوم أو المنازل. المراجعة المحلية والإقليمية ضرورية."
+  },
+  "mansions": [
+    {
+      "id": "sharatan",
+      "traditional_order": 1,
+      "name_ar": "الشَّرَطان",
+      "name_plain": "الشرطان",
+      "name_variants": [
+        "النطحة"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "09-22",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "butayn",
+      "traditional_order": 2,
+      "name_ar": "البُطَيْن",
+      "name_plain": "البطين",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "10-05",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "thurayya",
+      "traditional_order": 3,
+      "name_ar": "الثُّرَيَّا",
+      "name_plain": "الثريا",
+      "name_variants": [
+        "النجم"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [
+        {
+          "type": "معتقد موسمي",
+          "text": "يُشار إلى طلوع الثريا في بعض الروايات الموريتانية باعتباره من أنجام الحر والغبار؛ وترد تسمية «أدموع الثريا» للأمطار المتوقعة أو المفاجئة خلال موسمه.",
+          "region": "موريتانيا، ورد في شهادة منشورة دون تحديد دقيق للموقع",
+          "source_id": "local_2023",
+          "certainty": "local_report"
+        },
+        {
+          "type": "اسم",
+          "text": "الثريا عنقود نجمي، وليس نجمًا منفردًا؛ اسم «النجم» هنا اسم عربي عام وليس توثيقًا لاسم حساني خاص ببوتلميت.",
+          "source_id": "poem",
+          "certainty": "general_astronomy"
+        }
+      ],
+      "stellar_poem": {
+        "month_day": "10-18",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "dabaran",
+      "traditional_order": 4,
+      "name_ar": "الدَّبَرَان",
+      "name_plain": "الدبران",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [
+        {
+          "type": "حكاية شعبية",
+          "text": "في رواية منشورة يتباهى الدبران على الثريا بشدة «الردم»؛ وهي حكاية تصويرية لشدة الغبار والحر، لا تفسير سببي للطقس.",
+          "region": "رواية شعبية موريتانية منشورة",
+          "source_id": "local_2023",
+          "certainty": "local_report"
+        },
+        {
+          "type": "ممارسة اجتماعية",
+          "text": "يذكر المصدر أن المسافرين في البادية كانوا يحتاطون من حر هذه المواسم ويتزودون بالماء في رحلاتهم.",
+          "source_id": "local_2023",
+          "certainty": "local_report"
+        }
+      ],
+      "stellar_poem": {
+        "month_day": "10-31",
+        "status": "inferred",
+        "source_id": "poem",
+        "caution": "التاريخ مستنتج من انتظام التسلسل وليس لفظًا صريحًا في البيت"
+      }
+    },
+    {
+      "id": "haqaa",
+      "traditional_order": 5,
+      "name_ar": "الهَقْعَة",
+      "name_plain": "الهقعة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "11-13",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "hanaa",
+      "traditional_order": 6,
+      "name_ar": "الهَنْعَة",
+      "name_plain": "الهنعة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "11-26",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "dhiraa",
+      "traditional_order": 7,
+      "name_ar": "الذِّرَاع",
+      "name_plain": "الذراع",
+      "name_variants": [
+        "الذراعان"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "12-09",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "nathra",
+      "traditional_order": 8,
+      "name_ar": "النَّثْرَة",
+      "name_plain": "النثرة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "12-22",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "tarfa",
+      "traditional_order": 9,
+      "name_ar": "الطَّرْفَة",
+      "name_plain": "الطرفة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "01-04",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "jabha",
+      "traditional_order": 10,
+      "name_ar": "الجَبْهَة",
+      "name_plain": "الجبهة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "01-17",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "zubra",
+      "traditional_order": 11,
+      "name_ar": "الزُّبْرَة",
+      "name_plain": "الزبرة",
+      "name_variants": [
+        "الخراتان"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "01-30",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "sarfa",
+      "traditional_order": 12,
+      "name_ar": "الصَّرْفَة",
+      "name_plain": "الصرفة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "02-12",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "awwa",
+      "traditional_order": 13,
+      "name_ar": "العَوَّاء",
+      "name_plain": "العواء",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "02-25",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "simak",
+      "traditional_order": 14,
+      "name_ar": "السِّمَاك",
+      "name_plain": "السماك",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "03-10",
+        "status": "inferred",
+        "source_id": "poem",
+        "caution": "التاريخ مستنتج من انتظام التسلسل وليس لفظًا صريحًا في البيت"
+      }
+    },
+    {
+      "id": "ghafr",
+      "traditional_order": 15,
+      "name_ar": "الغَفْر",
+      "name_plain": "الغفر",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "03-23",
+        "status": "inferred",
+        "source_id": "poem",
+        "caution": "التاريخ مستنتج من انتظام التسلسل وليس لفظًا صريحًا في البيت"
+      }
+    },
+    {
+      "id": "zubana",
+      "traditional_order": 16,
+      "name_ar": "الزُّبَانَا",
+      "name_plain": "الزبانا",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "04-05",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "iklil",
+      "traditional_order": 17,
+      "name_ar": "الإِكْلِيل",
+      "name_plain": "الإكليل",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "04-18",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "qalb",
+      "traditional_order": 18,
+      "name_ar": "القَلْب",
+      "name_plain": "القلب",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "05-01",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "shawla",
+      "traditional_order": 19,
+      "name_ar": "الشَّوْلَة",
+      "name_plain": "الشولة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "05-14",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "naaim",
+      "traditional_order": 20,
+      "name_ar": "النَّعَائِم",
+      "name_plain": "النعائم",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "05-27",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "balda",
+      "traditional_order": 21,
+      "name_ar": "البَلْدَة",
+      "name_plain": "البلدة",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "06-09",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "sad_dhabih",
+      "traditional_order": 22,
+      "name_ar": "سَعْد الذَّابِح",
+      "name_plain": "سعد الذابح",
+      "name_variants": [
+        "سعد الأول"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "06-22",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "sad_bula",
+      "traditional_order": 23,
+      "name_ar": "سَعْد بُلَع",
+      "name_plain": "سعد بلع",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "07-05",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "sad_suud",
+      "traditional_order": 24,
+      "name_ar": "سَعْد السُّعُود",
+      "name_plain": "سعد السعود",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "07-18",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "sad_akhbiya",
+      "traditional_order": 25,
+      "name_ar": "سَعْد الأَخْبِيَة",
+      "name_plain": "سعد الأخبية",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "08-01",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "fargh_muqaddam",
+      "traditional_order": 26,
+      "name_ar": "الفَرْغ المُقَدَّم",
+      "name_plain": "الفرغ المقدم",
+      "name_variants": [
+        "الفرع المقدم"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "08-14",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "fargh_muakhkhar",
+      "traditional_order": 27,
+      "name_ar": "الفَرْغ المُؤَخَّر",
+      "name_plain": "الفرغ المؤخر",
+      "name_variants": [],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "08-27",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    },
+    {
+      "id": "batn_hut",
+      "traditional_order": 28,
+      "name_ar": "بَطْن الحُوت",
+      "name_plain": "بطن الحوت",
+      "name_variants": [
+        "ذو الحوت"
+      ],
+      "local_hassaniya_name_verified": null,
+      "folklore": [],
+      "stellar_poem": {
+        "month_day": "09-09",
+        "status": "direct",
+        "source_id": "poem",
+        "caution": null
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "local_2023",
+      "title": "تدوينة: طلوع الثريا والدبران في هذين التاريخين",
+      "author": "عبد القادر محمد ولد الشيخ",
+      "year": 2023,
+      "url": "https://www.elistitlaa.info/node/9020",
+      "role": "رواية صحفية محلية لتواريخ الثريا والدبران، 13 يوما لكل اسم، وحر وغبار وحكاية شعبية"
+    },
+    {
+      "id": "poem",
+      "title": "قال ابن عبدم مجيب السائل",
+      "author": "محمد ولد ابن ولد أحميدا (كما تنسبه الموسوعة الشعرية)",
+      "url": "https://poetry.dct.gov.ae/poems/118709-%D9%82%D8%A7%D9%84-%D8%A7%D8%A8%D9%86-%D8%B9%D8%A8%D8%AF%D9%85-%D9%85%D8%AC%D9%8A%D8%A8-%D8%A7%D9%84%D8%B3%D8%A7%D8%A6%D9%84",
+      "role": "جدول شعري لمواعيد ظهور المنازل في أول الليل؛ بعض الأسماء والتواريخ مستنتجة من انتظام التسلسل؛ ليس صورة مخطوط أصلية"
+    },
+    {
+      "id": "astronomy_history",
+      "title": "الشناقطة والعلوم البحتة – الحلقة الثالثة",
+      "author": "الشيخ ولد سيدي عبد الله",
+      "year": 2011,
+      "url": "https://www.ami.mr/archives/36751",
+      "role": "تاريخ تدريس علم الفلك والمنازل في المحاظر الموريتانية"
+    },
+    {
+      "id": "boutilimit_climate",
+      "title": "Climate of Boutilimit",
+      "url": "https://www.weatherandclimate.eu/climate/61461",
+      "role": "سياق مناخي شهري لبوتلميت؛ الأوصاف الموسمية في الملف وصف عام مستند إلى الدورة السنوية وليس تنبؤات يومية أو قياسات على مستوى المنزلة"
+    }
+  ],
+  "quality_notes": [
+    "رواية 9 و22 يونيو ثابتة في تدوينة 2023؛ سائر بدايات المنازل الشمسية مستنتجة حسابيًا.",
+    "القصيدة مروية في مواقع شعرية، ولم تُقابل نسختها بخط المؤلف أو نسخة مخطوطة محققة.",
+    "10 و23 مارس اسمان وتاريخان غير صريحين في النص المنشور، و31 أكتوبر مستنتج من التسلسل.",
+    "في التقليد قد يختلف تفسير طلوع النجم فجرًا أو ظهوره مساءً أو سقوطه غربًا؛ لم تحدد القصيدة نوع الرصد لكل منزلة.",
+    "المناخ المعروض توصيف عام شهري لمنطقة بوتلميت؛ ليس بيانات مرصودة عن كل منزلة أو تنبؤًا."
+  ]
+}
