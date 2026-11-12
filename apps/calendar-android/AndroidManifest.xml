@@ -25,6 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".SuggestJob" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="false" />
         <service android:name=".AdhanService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
         <receiver android:name=".AdhanReceiver" android:exported="false">
             <intent-filter>

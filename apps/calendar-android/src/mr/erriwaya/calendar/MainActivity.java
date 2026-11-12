@@ -38,6 +38,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
 
+        /** The admin signed in on «اقتراحات القرى» (Firebase refresh token), or signed out (""): starts or stops the checks. */
+        @JavascriptInterface
+        public void sgAdmin(String refreshToken) { SuggestJob.setAdmin(MainActivity.this, refreshToken); }
+
         /** The coming adhan times from the page: [[epochMillis, "title", "text"], ...] ("[]" turns alerts off). */
         @JavascriptInterface
         public void setAdhanSchedule(String json) { AdhanReceiver.save(MainActivity.this, json); }
@@ -248,7 +252,20 @@ public class MainActivity extends Activity {
         // Android 13+: the back gesture comes through this callback (onBackPressed is no longer called from targetSdk 36)
         if (Build.VERSION.SDK_INT >= 33) Back.register(this);
         if (state != null) web.restoreState(state);
-        else web.loadUrl("file:///android_asset/index.html");
+        else web.loadUrl("file:///android_asset/index.html" + hashOf(getIntent()));
+    }
+
+    /** A notification may open a page of the app (#sg-admin). */
+    private static String hashOf(Intent i) {
+        String h = i == null ? null : i.getStringExtra("hash");
+        return h != null && h.matches("#[a-z0-9-]+") ? h : "";
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String h = hashOf(intent);
+        if (!h.isEmpty() && web != null) web.evaluateJavascript("location.hash='" + h + "'", null);
     }
 
     private void doLocate() {

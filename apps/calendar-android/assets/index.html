@@ -58,6 +58,21 @@ button{cursor:pointer}
 .city-pick label{font-family:var(--f-display);font-weight:600;color:var(--green)}
 .city-pick{cursor:pointer}
 .vil-pick{flex-basis:100%;display:flex;align-items:center;gap:10px}
+.vil-sg{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 14px;padding-inline-start:calc(3.2em + 10px);margin-top:-2px}
+.vil-sg button{border:0;background:none;padding:2px 0;color:var(--green);font:600 .84rem var(--f-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.sg-form .nform{display:grid;gap:10px}.sg-form label{display:grid;gap:4px;font-weight:600;font-size:.92rem;color:var(--green)}
+.sg-form label small{color:var(--muted);font-weight:400}.sg-form input,.sg-form textarea{font:inherit;font-weight:400;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.sg-at{margin:0;color:var(--muted)}.sg-loc{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.sg-loc span{font-size:.85rem;color:var(--muted);flex:1;min-width:150px}
+.sg-loc .ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;vertical-align:-3px}
+.sg-login{display:grid;gap:10px;max-width:420px;margin:12px auto}.sg-login label{display:grid;gap:4px;font-weight:600;color:var(--green)}
+.sg-login input{font:inherit;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}.sg-msg{margin:0;color:var(--red,#B3261E);min-height:1.2em}
+.linkish{border:0;background:none;color:var(--green);font:inherit;text-decoration:underline;padding:0;cursor:pointer}
+.sg-tabs{display:flex;justify-content:center;gap:8px;margin:10px 0}.sg-tabs button{border:1.5px solid var(--orn);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 16px;font:600 .9rem var(--f-body)}
+.sg-tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.sg-it{display:grid;gap:4px}.sg-it h3{margin:0;font-size:1.15rem;color:var(--ink)}.sg-it p{margin:0;font-size:.93rem}.sg-it .mut{color:var(--muted)}
+.sg-k{display:flex;justify-content:space-between;align-items:center}.sg-k b{font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--green);color:var(--on-green)}.sg-k b.fix{background:var(--gold)}.sg-k small{color:var(--muted)}
+.sg-note{background:var(--bg,#f6f1e4);border-radius:8px;padding:6px 10px}.sg-edit{display:grid;gap:4px;font-size:.85rem;color:var(--muted);margin-top:4px}.sg-edit input{font:inherit;padding:7px 10px;border:1.5px solid var(--line);border-radius:10px}
+.sg-act{display:flex;gap:8px;margin-top:6px}
 .vil-pick label{font-family:var(--f-display);font-weight:600;color:var(--green);min-width:3.2em}
 .vil-pick button{flex:1;max-width:300px;text-align:start;font:600 1rem var(--f-body);color:var(--ink);padding:7px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface)}
 .vil-pick button small{color:var(--muted);font-weight:400}
@@ -686,6 +701,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     <div class="city-pick"><label for="citySel">المدينة</label><select id="citySel"></select></div>
     <div class="clock"><b id="clock">--:--:--</b><small>توقيت موريتانيا (غرينتش)</small></div>
     <div class="vil-pick" id="vilRow"><label for="vilBtn">القرية</label><button type="button" id="vilBtn"></button></div>
+    <div class="vil-sg"><button type="button" data-sg="new">＋ اقترح قرية جديدة</button><button type="button" data-sg="fix">✎ اقترح تصحيحًا</button></div>
   </div>
 
 
@@ -819,6 +835,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 <main class="view wrap" id="v-tasbih" dir="rtl" lang="ar" hidden></main>
 <main class="view wrap" id="v-qibla" dir="rtl" lang="ar" hidden></main>
 <main class="view wrap" id="v-manazil" dir="rtl" lang="ar" hidden></main>
+<main class="view wrap" id="v-sg" dir="rtl" lang="ar" hidden></main>
 
 <script>
 (function(){
@@ -1070,6 +1087,127 @@ function pickVil(){
   document.body.append(d);const on=d.querySelector('[aria-current]');if(on)on.scrollIntoView({block:'center'});
 }
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#vilBtn'))pickVil()});
+/* ---------- village suggestions: subscribers suggest a new village or a correction; the admin reviews them.
+   They are kept in Firestore (project erriwaya-68022, its own section village_suggestions, which the Erriwaya app never reads),
+   through the REST API: anyone may add one; only the editor's account reads, accepts or rejects them; accepted ones are
+   public, and every copy of the app merges them into its village list. ---------- */
+const SG_DOCS='projects/erriwaya-68022/databases/(default)/documents',SG_FS='https://firestore.googleapis.com/v1/'+SG_DOCS,
+  SG_KEY='AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc',SG_COL='village_suggestions';
+const sgv=v=>typeof v==='number'?{doubleValue:v}:{stringValue:String(v)};
+const sgRead=d=>{const o={id:d.name.split('/').pop()},F=d.fields||{};for(const k in F){const x=F[k];o[k]='stringValue' in x?x.stringValue:'doubleValue' in x?+x.doubleValue:'integerValue' in x?+x.integerValue:'timestampValue' in x?x.timestampValue:null}return o};
+const sgFetch=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
+// accepted suggestions, merged into the list of villages (a new village, or a corrected name or place)
+function sgApply(L){(L||[]).forEach(s=>{
+  if(s.kind==='fix'){const c=CITIES.find(x=>x.id===s.target);if(!c)return;if(s.name)c.name=s.name;if(typeof s.lat==='number'){c.lat=s.lat;c.lng=s.lng}return}
+  const id='sg-'+s.id,cm=CITIES.find(x=>x.id===s.commune);if(!cm||CITIES.some(x=>x.id===id))return;
+  const v={id,name:s.name,fr:'',lat:typeof s.lat==='number'?s.lat:cm.lat,lng:typeof s.lng==='number'?s.lng:cm.lng,w:cm.w,m:cm.m,approx:typeof s.lat!=='number',vc:cm.id,v:cm.name};
+  CITIES.push(v);VILLAGES.push(v)})}
+sgApply(store.get('sgAcc',[]));
+async function sgSync(){   // once a day, when online
+  if(Date.now()-store.get('sgAt',0)<20*3600e3)return;
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:SG_COL}],where:{fieldFilter:{field:{fieldPath:'status'},op:'EQUAL',value:{stringValue:'accepted'}}},limit:500}})});
+    if(!r.ok)return;const L=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document));
+    store.set('sgAcc',L);store.set('sgAt',Date.now());sgApply(L);renderVil()}catch(e){}
+}
+setTimeout(sgSync,4000);
+
+// the subscriber's form: a new village in the chosen commune, or a correction of the chosen village
+function sgForm(kind){
+  if(document.querySelector('.cpick'))return;
+  const cm=commune(),vil=S.vil&&CITIES.find(c=>c.id===S.vil);
+  if(kind==='fix'&&!vil){say('اختر القرية أولًا من حقل «القرية»، ثم اقترح تصحيحها');return}
+  let pos=null;
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+  d.innerHTML=`<div class="cpick-in sg-form" role="dialog" aria-label="اقتراح"><div class="cpick-h"><span>${kind==='new'?'اقترح قرية جديدة':'اقترح تصحيحًا'}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="nform">
+      <p class="sg-at">${kind==='new'?`في بلدية <b>${vesc(cm.name)}</b>`:`القرية الحالية: <b>${vesc(vil.name)}</b> · بلدية ${vesc(cm.name)}`}</p>
+      <label>${kind==='new'?'اسم القرية':'الاسم الصحيح'}<input type="text" id="sgN" maxlength="60" value="${kind==='fix'?vesc(vil.name):''}" autocomplete="off"></label>
+      <div class="sg-loc"><button type="button" class="btn" data-loc>${IC_PIN} موقعي هنا</button><span id="sgP">${kind==='fix'?'أرسل موقعك إن كنت في القرية وكان موقعها في التطبيق غير دقيق':'إن كنت في القرية الآن، أرسل موقعها'}</span></div>
+      <label>ملاحظة <small>(اختيارية)</small><textarea id="sgT" maxlength="300" rows="2" placeholder="${kind==='new'?'مثلًا: تقع شمال مركز البلدية بعشرة كيلومترات':'ما الخطأ؟ الاسم، أو البلدية، أو الموقع'}"></textarea></label>
+      <label>رقم هاتفك <small>(اختياري، للتواصل معك)</small><input type="tel" id="sgC" maxlength="40" dir="ltr" autocomplete="tel"></label>
+      <button type="button" class="btn primary" data-send>إرسال الاقتراح</button>
+    </div></div>`;
+  const close=()=>d.remove(),P=d.querySelector('#sgP');
+  d.addEventListener('click',async e=>{const b=e.target.closest('button');
+    if(e.target===d||(b&&b.dataset.x!==undefined)){close();return}
+    if(b&&b.dataset.loc!==undefined){P.textContent='جارٍ تحديد موقعك…';
+      const got=(lat,lng,ok)=>{if(ok&&lat){pos=[+(+lat).toFixed(5),+(+lng).toFixed(5)];P.innerHTML=`أُرفق موقعك: <bdi dir="ltr">${pos[0]}, ${pos[1]}</bdi>`}else P.textContent='تعذّر تحديد موقعك. فعّل الموقع في الهاتف ثم أعد المحاولة'};
+      if(window.AndroidApp&&window.AndroidApp.locate){window.onLocated=(a,o,ok)=>{window.onLocated=null;got(a,o,ok)};try{window.AndroidApp.locate()}catch(x){got(0,0,false)}}
+      else if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>got(p.coords.latitude,p.coords.longitude,true),()=>got(0,0,false),{timeout:15000});
+      else got(0,0,false);return}
+    if(b&&b.dataset.send!==undefined){
+      const name=d.querySelector('#sgN').value.trim(),note=d.querySelector('#sgT').value.trim(),contact=d.querySelector('#sgC').value.trim();
+      if(name.length<2){say('اكتب اسم القرية');return}
+      if(kind==='fix'&&name===vil.name&&!pos&&!note){say('اكتب الاسم الصحيح، أو أرفق الموقع، أو اكتب ملاحظة');return}
+      if(pos&&!(pos[0]>14&&pos[0]<28&&pos[1]>-18&&pos[1]<-4)){say('الموقع المرفق خارج موريتانيا');return}
+      if(Date.now()-store.get('sgLast',0)<30e3){say('انتظر قليلًا قبل إرسال اقتراح آخر');return}
+      const f={kind,name,commune:cm.id,cname:cm.name,status:'new'};if(kind==='fix')f.target=vil.id;if(pos){f.lat=pos[0];f.lng=pos[1]}if(note)f.note=note;if(contact)f.contact=contact;
+      const id=Array.from(crypto.getRandomValues(new Uint8Array(10)),x=>x.toString(16).padStart(2,'0')).join('');
+      b.disabled=true;b.textContent='جارٍ الإرسال…';
+      try{const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({writes:[{update:{name:`${SG_DOCS}/${SG_COL}/${id}`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))},currentDocument:{exists:false},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
+        if(!r.ok)throw new Error(r.status);store.set('sgLast',Date.now());close();say('وصل اقتراحك، شكرًا لك. سيُراجَع ويُضاف إلى التطبيق إن قُبل')}
+      catch(err){b.disabled=false;b.textContent='إرسال الاقتراح';say(navigator.onLine===false?'لا يوجد اتصال بالإنترنت':'تعذّر الإرسال، أعد المحاولة بعد قليل')}}
+  });
+  document.body.append(d);d.querySelector('#sgN').focus();
+}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sg]');if(b)sgForm(b.dataset.sg)});
+
+// ---- the admin: signed in with the editor's account (Firebase email/password), reviews the suggestions
+const SG_AUTH='sgAuth';
+async function sgToken(){const a=store.get(SG_AUTH,null);if(!a)return null;
+  if(a.id&&a.exp>Date.now()+60e3)return a.id;
+  const r=await sgFetch('https://securetoken.googleapis.com/v1/token?key='+SG_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(a.rt)});
+  if(!r.ok){if(r.status===400)store.set(SG_AUTH,null);return null}
+  const j=await r.json();a.id=j.id_token;a.rt=j.refresh_token;a.exp=Date.now()+(+j.expires_in)*1000;store.set(SG_AUTH,a);return a.id}
+const sgBg=rt=>{try{window.AndroidApp.sgAdmin(rt||'')}catch(e){}};
+let sgTab='new';
+async function sgAdmin(el){
+  const a=store.get(SG_AUTH,null);
+  if(!a){el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>للمشرف فقط</p></div>
+    <section class="card sg-login"><label>البريد<input type="email" id="sgE" dir="ltr" autocomplete="username"></label><label>كلمة السر<input type="password" id="sgW" dir="ltr" autocomplete="current-password"></label>
+    <button type="button" class="btn primary" id="sgIn">دخول</button><p class="sg-msg" id="sgM"></p></section>`;
+    $('sgIn').onclick=async()=>{const M=$('sgM');M.textContent='جارٍ الدخول…';
+      try{const r=await sgFetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+SG_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('sgE').value.trim(),password:$('sgW').value,returnSecureToken:true})});
+        const j=await r.json();if(!r.ok){M.textContent='البريد أو كلمة السر غير صحيحة';return}
+        store.set(SG_AUTH,{email:j.email,rt:j.refreshToken,id:j.idToken,exp:Date.now()+(+j.expiresIn)*1000});sgBg(j.refreshToken);
+        try{window.AndroidApp.requestNotifications()}catch(e){}sgAdmin(el)}catch(e){M.textContent='تعذّر الاتصال بالإنترنت'}};
+    return}
+  el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>${vesc(a.email)} · <button type="button" class="linkish" id="sgOut">خروج</button></p></div>
+    <div class="sg-tabs" role="tablist">${[['new','جديدة'],['accepted','مقبولة'],['rejected','مرفوضة']].map(([k,t])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${sgTab===k}">${t}</button>`).join('')}</div>
+    <div id="sgL"><p class="empty">جارٍ التحميل…</p></div>`;
+  $('sgOut').onclick=()=>{store.set(SG_AUTH,null);sgBg('');sgAdmin(el)};
+  el.querySelector('.sg-tabs').onclick=e=>{const b=e.target.closest('[data-t]');if(b){sgTab=b.dataset.t;sgAdmin(el)}};
+  const L=$('sgL');let tok;try{tok=await sgToken()}catch(e){}
+  if(!tok){L.innerHTML='<p class="empty">تعذّر الاتصال بالحساب. تحقق من الإنترنت، أو اخرج وادخل من جديد.</p>';return}
+  let rows=[];
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:SG_COL}],orderBy:[{field:{fieldPath:'t'},direction:'DESCENDING'}],limit:300}})});
+    if(!r.ok)throw new Error(r.status);rows=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document))}
+  catch(e){L.innerHTML='<p class="empty">تعذّر تحميل الاقتراحات.</p>';return}
+  store.set('sgSeen',rows.length?rows[0].t:'');
+  const R=rows.filter(s=>(s.status||'new')===sgTab);
+  if(!R.length){L.innerHTML=`<p class="empty">${sgTab==='new'?'لا اقتراحات جديدة':'لا شيء هنا'}</p>`;return}
+  const when=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} ${x.getUTCFullYear()} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
+  L.innerHTML=R.map(s=>{const tg=s.kind==='fix'&&CITIES.find(c=>c.id===s.target),map=typeof s.lat==='number'?`https://www.openstreetmap.org/?mlat=${s.lat}&mlon=${s.lng}#map=14/${s.lat}/${s.lng}`:'';
+    return `<article class="card sg-it" data-id="${s.id}"><div class="sg-k"><b class="${s.kind}">${s.kind==='fix'?'تصحيح':'قرية جديدة'}</b><small>${when(s.t)}</small></div>
+      <h3>${vesc(s.name)}</h3><p>بلدية ${vesc(s.cname||s.commune)}${tg?` · الاسم في التطبيق: <b>${vesc(tg.name)}</b>`:''}</p>
+      ${map?`<p>الموقع: <bdi dir="ltr"><a href="${map}">${s.lat}, ${s.lng}</a></bdi></p>`:'<p class="mut">دون موقع</p>'}
+      ${s.note?`<p class="sg-note">${vesc(s.note)}</p>`:''}${s.contact?`<p>الهاتف: <a href="tel:${vesc(s.contact)}" dir="ltr">${vesc(s.contact)}</a></p>`:''}
+      ${sgTab==='new'?`<label class="sg-edit">الاسم الذي يُعتمد<input type="text" maxlength="60" value="${vesc(s.name)}"></label>
+      <div class="sg-act"><button type="button" class="btn primary" data-do="accepted">قبول</button><button type="button" class="btn" data-do="rejected">رفض</button></div>`
+      :`<div class="sg-act"><button type="button" class="btn" data-do="${sgTab==='accepted'?'rejected':'accepted'}">${sgTab==='accepted'?'إلغاء القبول':'قبول'}</button></div>`}</article>`}).join('');
+  L.onclick=async e=>{const b=e.target.closest('[data-do]');if(!b)return;const it=b.closest('.sg-it'),inp=it.querySelector('.sg-edit input'),f={status:b.dataset.do};
+    if(inp&&inp.value.trim().length>=2)f.name=inp.value.trim();
+    b.disabled=true;try{const t=await sgToken(),r=await sgFetch(`${SG_FS}/${SG_COL}/${it.dataset.id}?${Object.keys(f).map(k=>'updateMask.fieldPaths='+k).join('&')}`,
+        {method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))})});
+      if(!r.ok)throw new Error(r.status);it.remove();say(f.status==='accepted'?'قُبل الاقتراح: يظهر في التطبيق عند المشتركين خلال يوم':'رُفض الاقتراح');store.set('sgAt',0);sgSync()}
+    catch(err){b.disabled=false;say('تعذّر الحفظ، أعد المحاولة')}};
+}
+window.APP=Object.assign(window.APP||{},{sgAdmin});
+// the hidden way in: five quick taps on the version line at the bottom of the calendar
+{let n=0,t0=0;document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('#appVer')))return;const now=Date.now();n=now-t0<700?n+1:1;t0=now;if(n>=5){n=0;location.hash='#sg-admin'}})}
 function renderCities(){
   $('citySel').innerHTML=cityOptions(S.city);$('citySel').value=S.city;
 }
@@ -1209,6 +1347,7 @@ const IC_BELL='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M
  IC_PLUS='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>',
  IC_SUNM='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>',
  IC_STAR='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>',
+ IC_PIN='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg>',
  IC_MOON='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/></svg>';
 /* ---------- temperature (Open-Meteo, for the chosen commune's coordinates; needs the network) ---------- */
 const WX_IC={sun:T_IC.dhuhr,
@@ -1406,7 +1545,7 @@ $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${hmB(i+1)}</option>`).
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-window.APP={manazil:manazilView,cities:CITIES,options:cityOptions,city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
+window.APP={sgAdmin:(window.APP||{}).sgAdmin,manazil:manazilView,cities:CITIES,options:cityOptions,city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
@@ -2519,7 +2658,7 @@ function tasbih(el){
 document.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!$('v-tasbih').hidden&&document.activeElement===document.body){e.preventDefault();window.tasbihTick&&window.tasbihTick()}});
 
 /* ---------- router ---------- */
-const VIEWS=['v-cal','v-quran','v-hadith','v-hisn','v-tasbih','v-qibla','v-manazil'];
+const VIEWS=['v-cal','v-quran','v-hadith','v-hisn','v-tasbih','v-qibla','v-manazil','v-sg'];
 function route(){
   const h=location.hash.replace(/^#/,'');let m,view='v-cal',tab='cal';
   if(h==='quran'){view='v-quran';tab='quran';quranHome($('v-quran'))}
@@ -2533,13 +2672,14 @@ function route(){
   else if((m=h.match(/^hisn-(\d+)$/))){view='v-hisn';tab='hisn';hisnRead($('v-hisn'),+m[1])}
   else if(h==='qibla'){view='v-qibla';tab='qibla';qibla($('v-qibla'))}
   else if(h==='manazil'){view='v-manazil';tab='manazil';window.APP.manazil($('v-manazil'))}
+  else if(h==='sg-admin'){view='v-sg';tab='';window.APP.sgAdmin($('v-sg'))}
   else if(h==='tasbih'){view='v-tasbih';tab='tasbih';tasbih($('v-tasbih'))}
   if(view!=='v-tasbih'&&window.AndroidApp)try{window.AndroidApp.setVolumeKeys(false)}catch(e){}
   VIEWS.forEach(v=>{const e=$(v);if(e)e.hidden=v!==view});
   document.body.classList.toggle('reading',/^page-/.test(h)||h==='tasbih');
   document.body.classList.toggle('mushaf',/^page-/.test(h));if(!/^page-/.test(h)&&TURN)turnEnd();
   document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.v===tab)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  if(view==='v-cal'||view==='v-qibla'||view==='v-manazil'||(view==='v-hadith'&&!/-\d+-/.test(h)))window.scrollTo(0,0);
+  if(view==='v-cal'||view==='v-qibla'||view==='v-manazil'||view==='v-sg'||(view==='v-hadith'&&!/-\d+-/.test(h)))window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',route);route();
 })();

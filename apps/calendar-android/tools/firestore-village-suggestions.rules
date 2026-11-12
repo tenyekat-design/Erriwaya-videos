@@ -1,0 +1,24 @@
+    // ── اقتراحات القرى (تطبيق التقويم الموريتاني) ──
+    // تُلصق هذه الكتلة داخل: match /databases/{database}/documents { ... } بجانب القواعد الحالية.
+    // يضيف أي مشترك اقتراحًا، ولا يقرأ الاقتراحات أو يقبلها أو يرفضها إلا المحرر، والمقبول منها يقرؤه الجميع.
+    match /village_suggestions/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['kind', 'name', 'commune', 'cname', 'target', 'lat', 'lng', 'note', 'contact', 'status', 't'])
+        && request.resource.data.keys().hasAll(['kind', 'name', 'commune', 'status', 't'])
+        && request.resource.data.kind in ['new', 'fix']
+        && request.resource.data.status == 'new'
+        && request.resource.data.name is string && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 60
+        && request.resource.data.commune is string && request.resource.data.commune.size() <= 40
+        && request.resource.data.get('cname', '') is string && request.resource.data.get('cname', '').size() <= 60
+        && request.resource.data.get('target', '') is string && request.resource.data.get('target', '').size() <= 40
+        && request.resource.data.get('lat', 20.0) is number && request.resource.data.get('lat', 20.0) > 14 && request.resource.data.get('lat', 20.0) < 28
+        && request.resource.data.get('lng', -10.0) is number && request.resource.data.get('lng', -10.0) > -18 && request.resource.data.get('lng', -10.0) < -4
+        && request.resource.data.get('note', '') is string && request.resource.data.get('note', '').size() <= 300
+        && request.resource.data.get('contact', '') is string && request.resource.data.get('contact', '').size() <= 40
+        && request.resource.data.t == request.time;
+      allow read: if resource.data.status == 'accepted'
+        || (request.auth != null && request.auth.token.email == 'tenyekat@gmail.com');
+      allow update: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'name'])
+        && request.resource.data.status in ['new', 'accepted', 'rejected'];
+      allow delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
