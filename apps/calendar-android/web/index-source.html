@@ -54,6 +54,10 @@ button{cursor:pointer}
 .city-pick label{font-family:var(--f-display);font-weight:600;color:var(--green)}
 .city-pick{cursor:pointer}
 .vil-pick{flex-basis:100%;display:flex;align-items:center;gap:10px}
+.place-sub{flex-basis:100%;margin-top:-4px;padding-inline-start:calc(4.6em + 10px);font-size:.86rem;color:var(--muted)}.place-sub b{color:var(--ink);font-weight:600}
+.cpick-back{border:0;background:none;color:var(--green);font-size:1.6rem;line-height:1;padding:0 6px 0 2px;cursor:pointer}
+.pk-sg{display:grid;gap:4px;padding:10px 18px 16px;border-top:1.5px solid var(--orn)}
+.pk-sg button{border:0;background:none;text-align:start;color:var(--green);font:600 .9rem var(--f-body);text-decoration:underline;text-underline-offset:3px;padding:4px 0;cursor:pointer}
 .vil-sg{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px 14px;padding-inline-start:calc(3.2em + 10px);margin-top:-2px}
 .vil-sg button{border:0;background:none;padding:2px 0;color:var(--green);font:600 .84rem var(--f-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .sg-form .nform{display:grid;gap:10px}.sg-form label{display:grid;gap:4px;font-weight:600;font-size:.92rem;color:var(--green)}
@@ -692,11 +696,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 </header>
 <div class="wrap view" id="v-cal" dir="rtl" lang="ar">
   <div class="cal-top">
-    <div class="city-pick"><label for="citySel">المدينة</label><select id="citySel"></select></div>
+    <div class="city-pick"><label for="citySel">المقاطعة</label><select id="citySel"></select></div>
     <div class="clock"><b id="clock">--:--:--</b><small>توقيت موريتانيا (غرينتش)</small></div>
-    <div class="vil-pick" id="comRow"><label for="comBtn">البلدية</label><button type="button" id="comBtn"></button></div>
-    <div class="vil-pick" id="vilRow"><label for="vilBtn">القرية</label><button type="button" id="vilBtn"></button></div>
-    <div class="vil-sg"><button type="button" data-sg="new">＋ اقترح قرية جديدة</button><button type="button" data-sg="fix">✎ اقترح تصحيحًا</button></div>
+            <div class="place-sub" id="placeSub"></div>
   </div>
 
 
@@ -1017,41 +1019,60 @@ function nearestCity(lat,lng){let best=null,bd=1e9;
   return bd<=150?best:null}
 const say=t=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.dir='rtl';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)};
 function pickCity(sel){
+  // one sheet, step by step: the moughataa (المقاطعة), then its communes, then the commune's villages
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
-  d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المدينة"><div class="cpick-h"><span>اختر المدينة (المقاطعة)</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-s"><input type="search" placeholder="ابحث باسم المدينة أو إحدى بلدياتها…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب بلدية إلى موقعي</button>':''}</div><div class="cpick-l">`+
-    WILAYAS.map(([w])=>`<section class="cpick-w"><h3>ولاية ${w}</h3><div class="cpick-m" data-k=""><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>{const c=CITIES.find(c=>c.id===x.cap);
-      return `<button type="button" data-id="${x.cap}" data-k="${fold(x.m)} ${fold(c.fr)} ${x.names.map(fold).join(' ')}"${x===moughOf(S.city)?' aria-current="true"':''}>${x.m}<small>${x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة'}</small></button>`}).join('')}</div></div></section>`).join('')+
-    `<p class="cpick-0" hidden>لا توجد مدينة بهذا الاسم</p></div></div>`;
+  const fin=(cid,vid)=>{close();setPlace(cid,vid||'');if(sel&&sel.id!=='citySel'){sel.innerHTML=moughOptions();sel.value=S.city;sel.dispatchEvent(new Event('change',{bubbles:true}))}};
+  const cityOf=id=>CITIES.find(c=>c.id===id);
+  const head=(t,back)=>`<div class="cpick-h">${back?`<button type="button" class="cpick-back" data-back="${back}" aria-label="رجوع">›</button>`:''}<span>${t}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>`;
+  const it=(attrs,name,sub,cur)=>`<button type="button" ${attrs}${cur?' aria-current="true"':''}>${name}${sub?`<small>${sub}</small>`:''}</button>`;
+  let step='m',M=moughOf(S.city),C=commune();
+  const vill=c=>VILLAGES.filter(v=>v.vc===c.id);
+  function show(){
+    let h='';
+    if(step==='m'){
+      h=head('اختر المقاطعة')+`<div class="cpick-s"><input type="search" placeholder="ابحث عن مقاطعة أو بلدية أو قرية…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب مكان إلى موقعي</button>':''}</div><div class="cpick-l" id="pkL">`+
+        WILAYAS.map(([w])=>`<section class="cpick-w"><h3>ولاية ${w}</h3><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>it(`data-m="${x.cap}"`,x.m,x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة',x===moughOf(S.city))).join('')}</div></section>`).join('')+
+        `</div><div class="cpick-l" id="pkR" hidden></div>`;
+    }else if(step==='c'){
+      h=head(`بلديات مقاطعة ${vesc(M.m)}`,'m')+`<div class="cpick-l"><section class="cpick-w"><div class="cpick-g">${M.ids.map(id=>{const c=cityOf(id),n=vill(c).length;return it(`data-c="${id}"`,vesc(c.name),n?`${n} قرية`:'دون قرى مسجلة',id===S.city)}).join('')}</div></section></div>`;
+    }else{
+      const V=vill(C);
+      h=head(`قرى بلدية ${vesc(C.name)}`,M.ids.length>1?'c':'m')+`<div class="cpick-l"><section class="cpick-w"><div class="cpick-g">${it(`data-vl="" data-c2="${C.id}"`,'مركز البلدية',vesc(C.name),C.id===S.city&&!S.vil)}${V.map(v=>it(`data-vl="${v.id}" data-c2="${C.id}"`,vesc(v.name),vesc(v.fr),v.id===S.vil)).join('')}</div></section>
+        <div class="pk-sg"><button type="button" data-sgk="new">＋ اقترح قرية جديدة في ${vesc(C.name)}</button>${C.id===S.city&&S.vil?'<button type="button" data-sgk="fix">✎ اقترح تصحيحًا للقرية المختارة</button>':''}</div></div>`;
+    }
+    d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المكان">${h}</div>`;
+    const inp=d.querySelector('.cpick-s input');if(inp)inp.addEventListener('input',search);
+    const on=d.querySelector('#pkL [aria-current], .cpick-l:not(#pkR) [aria-current]');if(on)on.scrollIntoView({block:'center'});
+  }
+  // one search over the three levels
+  function search(e){const q=fold(e.target.value),L=$('pkL'),R=$('pkR');
+    if(!q){L.hidden=false;R.hidden=true;return}
+    const mo=MOUGH.filter(x=>fold(x.m).includes(q)).slice(0,20),co=CITIES.filter(c=>!c.vc&&(fold(c.name)+' '+fold(c.fr)).includes(q)).slice(0,30),vi=VILLAGES.filter(v=>(fold(v.name)+' '+fold(v.fr)).includes(q)).slice(0,40);
+    const sec=(t,x)=>x?`<section class="cpick-w"><h3>${t}</h3><div class="cpick-g">${x}</div></section>`:'';
+    R.innerHTML=(sec('المقاطعات',mo.map(x=>it(`data-m="${x.cap}"`,x.m,'ولاية '+x.w)).join(''))+sec('البلديات',co.map(c=>it(`data-c="${c.id}"`,vesc(c.name),'مقاطعة '+moughOf(c.id).m)).join(''))
+      +sec('القرى',vi.map(v=>it(`data-vl="${v.id}" data-c2="${v.vc}"`,vesc(v.name),'بلدية '+vesc(v.v))).join('')))||'<p class="cpick-0">لا نتيجة بهذا الاسم</p>';
+    L.hidden=true;R.hidden=false}
   const close=()=>{d.remove();document.removeEventListener('keydown',key)},key=e=>{if(e.key==='Escape')close()};
   d.addEventListener('click',e=>{
     const b=e.target.closest('button');
-    if(b&&'loc' in b.dataset){
+    if(!b){if(e.target===d)close();return}
+    if(b.dataset.x!==undefined){close();return}
+    if(b.dataset.back){step=b.dataset.back;show();return}
+    if('loc' in b.dataset){
       b.disabled=true;b.textContent='جارٍ تحديد الموقع…';
       window.onLocated=(lat,lng,ok)=>{window.onLocated=null;
         const c=ok?nearestCity(lat,lng):null;
-        if(!c){say(ok?'موقعك بعيد عن بلديات موريتانيا. اختر البلدية من القائمة.':'تعذّر تحديد الموقع. شغّل الموقع في الهاتف واسمح به للتطبيق.');b.disabled=false;b.textContent='أقرب بلدية إلى موقعي';return}
-        if(d.isConnected)close();
-        if(c.vc){setPlace(c.vc,c.id)}else if(sel.value!==c.id){sel.value=c.id;sel.dispatchEvent(new Event('change',{bubbles:true}))}
-        say((c.v?'أقرب قرية: ':'أقرب بلدية: ')+c.name+(c.v?` (بلدية ${c.v})`:''))};
+        if(!c){say(ok?'موقعك بعيد عن بلديات موريتانيا. اختر من القائمة.':'تعذّر تحديد الموقع. شغّل الموقع في الهاتف واسمح به للتطبيق.');b.disabled=false;b.textContent='أقرب مكان إلى موقعي';return}
+        fin(c.vc||c.id,c.vc?c.id:'');say((c.vc?'أقرب قرية: ':'أقرب بلدية: ')+c.name+(c.vc?` (بلدية ${c.v})`:''))};
       try{window.AndroidApp.locate()}catch(x){window.onLocated(0,0,false)}
-      return;
-    }
-    if(b&&b.dataset.id){close();if(moughOf(b.dataset.id)!==moughOf(S.city)){setPlace(b.dataset.id,'');if(sel.id!=='citySel'){sel.innerHTML=moughOptions();sel.value=S.city;sel.dispatchEvent(new Event('change',{bubbles:true}))}}}
-    else if(b||e.target===d)close();
+      return}
+    if(b.dataset.sgk){const k=b.dataset.sgk;if(k==='new'&&C.id!==S.city)setPlace(C.id,'');close();sgForm(k);return}
+    if(b.dataset.m){M=moughOf(b.dataset.m);if(M.ids.length>1){step='c';show();return}b.dataset.c=M.cap}
+    if(b.dataset.c){C=cityOf(b.dataset.c);M=moughOf(C.id);if(vill(C).length){step='v';show()}else fin(C.id,'');return}
+    if(b.dataset.vl!==undefined){fin(b.dataset.c2,b.dataset.vl);return}
   });
-  d.querySelector('input').addEventListener('input',e=>{
-    const q=fold(e.target.value);let any=false;
-    d.querySelectorAll('.cpick-w').forEach(w=>{let inW=false;
-      w.querySelectorAll('.cpick-m').forEach(m=>{const all=q&&m.dataset.k.includes(q);let inM=false;  // a moughataa's name shows all its communes
-        m.querySelectorAll('button').forEach(b=>{const on=!q||all||b.dataset.k.includes(q);b.hidden=!on;inM=inM||on});
-        m.hidden=!inM;inW=inW||inM});
-      w.hidden=!inW;any=any||inW});
-    d.querySelector('.cpick-0').hidden=any;
-  });
-  document.addEventListener('keydown',key);document.body.append(d);
-  const on=d.querySelector('[aria-current]');if(on)on.scrollIntoView({block:'center'});
+  document.addEventListener('keydown',key);document.body.append(d);show();
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#dMnz,#dNjm');if(b){mnzAt=S.sel;mnzMode=b.id==='dNjm'?'star':'sun';if(location.hash==='#manazil')window.APP.manazil($('v-manazil'));else location.hash='#manazil'}});
 document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest('.city-pick');if(p){e.preventDefault();pickCity(p.querySelector('select'))}});
@@ -1059,6 +1080,7 @@ document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest
 const vesc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 function setPlace(cid,vid){S.city=cid;S.vil=vid||'';store.set('city',cid);store.set('vil',S.vil);renderCities();renderVil();renderCal();renderDay();renderRam();pushAdhan();loadWx()}
 function renderVil(){
+  const ps=$('placeSub');if(ps){const c=commune(),v=S.vil&&CITIES.find(x=>x.id===S.vil);ps.innerHTML=`بلدية <b>${vesc(c.name)}</b>${v?` · قرية <b>${vesc(v.name)}</b>`:''}`}
   const cb=$('comBtn');if(cb){const M=moughOf(S.city);cb.innerHTML=vesc(commune().name)+(M.ids.length>1?` <small>(${M.ids.length} بلديات)</small>`:'')}
   const b=$('vilBtn');if(!b)return;const L=VILLAGES.filter(c=>c.vc===S.city),v=S.vil&&CITIES.find(c=>c.id===S.vil);
   b.disabled=!L.length&&!v;b.innerHTML=v?vesc(v.name):L.length?`مركز البلدية <small>(${L.length} قرية)</small>`:'<small>لا قرى مسجلة لهذه البلدية</small>';
@@ -2505,7 +2527,7 @@ function qibla(el){
   let ticks='';for(let d=0;d<360;d+=5){const long=d%30===0;ticks+=`<line x1="150" y1="${long?22:26}" x2="150" y2="34" transform="rotate(${d} 150 150)" stroke="currentColor" stroke-width="${long?2:1}" opacity="${long?.8:.45}"/>`}
   const lbl=[['ش',0],['شرق',90],['ج',180],['غرب',270]].map(([t,d])=>`<text x="150" y="56" transform="rotate(${d} 150 150)" text-anchor="middle" font-size="${t.length>1?13:17}" font-weight="700" fill="${d===0?'var(--red)':'currentColor'}">${t}</text>`).join('');
   el.innerHTML=`<div class="lib-h"><h1>اتجاه القبلة</h1><p>من مدينتك نحو الكعبة المشرفة</p></div>
-    <div class="city-pick" style="justify-content:center"><label for="qCity">المدينة</label><select id="qCity">${A.options(A.commune?A.commune():c.id)}</select></div>
+    <div class="city-pick" style="justify-content:center"><label for="qCity">المقاطعة</label><select id="qCity">${A.options(A.commune?A.commune():c.id)}</select></div>
     <div class="compass-wrap">
       <div class="compass"><svg viewBox="0 0 300 300" style="color:var(--ink)" aria-label="بوصلة القبلة">
         <circle cx="150" cy="150" r="146" fill="var(--paper)" stroke="var(--orn)" stroke-width="2"/>
@@ -2722,7 +2744,7 @@ const GM=['janvier','février','mars','avril','mai','juin','juillet','août','se
 const D=[
 ['التقويم الموريتاني','Calendrier mauritanien'],['مواقيت الصلاة · المصحف · الحديث · الأذكار','Horaires de prière · Coran · Hadith · Invocations'],
 ['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المسبحة','Tasbih'],['القبلة','Qibla'],
-['المدينة','Ville'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
+['المدينة','Ville'],['المقاطعة','Moughataa'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
 ['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
 ['تعرض يومًا غير اليوم','Vous affichez un autre jour'],['العودة إلى اليوم','Revenir à aujourd’hui'],
 ['الفجر','Fajr'],['الشروق','Lever'],['الظهر','Dhohr'],['العصر','Asr'],['المغرب','Maghrib'],['العشاء','Icha'],
