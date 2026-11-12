@@ -18,3 +18,4 @@ node infographics/render.js --name camels-maghreb --stills 3,20,45 # صور لل
 - `camels-maghreb/score.py`: موسيقى أصلية ومؤثرات صوتية مركّبة برمجياً على التوقيت نفسه -> `score.wav`
   (يُعاد توليده تلقائياً عند التصيير إذا تغيّر التوقيت؛ يحتاج numpy وscipy).
 - المخرجات: `output/erriwaya-infographic-<name>[-story].mp4` مع غلاف `-cover.jpg` مدمج في الفيديو.
+- `aman-hydrogen/`: إنفوجرافيك مشروع «أمان» للهيدروجين الأخضر في موريتانيا (12 نوفمبر 2026) بقالب الإبل وصور من ويكيميديا كومنز، مع موسيقى عصرية 120 نبضة (future-house)، `--name aman-hydrogen`.
