@@ -44,9 +44,10 @@ def climate(m, sid):
     mean = lambda k: round(sum(c[k] for c in ds) / len(ds), 1)
     return [share('precipitation_30y_mean_total_mm'), share('rainy_days_ge_1mm_mean_per_year_in_period'),
             mean('temp_avg_c'), mean('temp_max_daily_avg_c'), mean('temp_min_daily_avg_c'), mean('relative_humidity_pct'), mean('wind_speed_m_s')]
-# what goes with each mansion (tools/mansions-lore.tsv): other names, its stars, the weather, the land, the sea
+# what goes with each mansion (tools/mansions-lore.tsv): other names, its stars, the weather, the land, the sea,
+# the traditional fruits in season (by the solar mansions' dates; the user's list of 12 Nov 2026)
 import csv
-lore = {int(r['id']): [r['aka'], r['stars'], r['air'], r['land'], r['sea']]
+lore = {int(r['id']): [r['aka'], r['stars'], r['air'], r['land'], r['sea'], r.get('fruit', '')]
         for r in csv.DictReader(open(ROOT / 'tools/mansions-lore.tsv', encoding='utf-8'), delimiter='\t')}
 assert sorted(lore) == list(range(1, 29))
 out = {
