@@ -137,7 +137,7 @@ button{cursor:pointer}
 .mz-astro dd{margin:0;font-size:.95rem;line-height:1.75}
 .mz-src{color:var(--muted);font-size:.85rem}
 .mz-moon{width:18px;height:18px;vertical-align:-4px}
-.third.moon{background:#24324a}.third.moon .mz-moon{width:26px;height:26px;flex:none}.third .mo-t{flex:none;display:grid;justify-items:center;gap:0;line-height:1.15}.third .mo-t time{font-size:1.05rem}.third .mo-t small{font-size:.7rem}.mz-moon .dk{fill:#2B3440}.mz-moon .lt{fill:#F2E6B8}
+.third.moon{background:#24324a}.third.moon .mz-moon{width:34px;height:34px;flex:none;filter:drop-shadow(0 0 3px rgba(255,244,210,.25))}.third .mo-t{flex:none;display:grid;justify-items:center;gap:0;line-height:1.15}.third .mo-t time{font-size:1.05rem}.third .mo-t small{font-size:.7rem}.mz-moon .dk{fill:#2B3440}.mz-moon .lt{fill:#F2E6B8}
 .cell .mzd{position:absolute;top:2px;left:6px;font-size:.62rem;line-height:1;color:var(--green)}
 .cell .mzd.x{left:18px}
 .cell.sel .mzd{color:var(--on-green)}
@@ -1364,6 +1364,20 @@ function moonDay(jdn,lat,lng){
 }
 const moonPath=el=>{const k=cosD(el),w=(10*Math.abs(k)).toFixed(2),wax=el<180;   // terminator: an ellipse of half-width |cos|
   return `M0 -10A10 10 0 0 ${wax?1:0} 0 10A${w} 10 0 0 ${(el<90||el>270)?(wax?0:1):(wax?1:0)} 0 -10Z`};
+// a realistic moon: shaded sphere, its seas (maria) and the crater Tycho, a soft terminator, faint earthshine on the dark part
+let MOONID=0;
+function moonSvg(el,cls){const id='mn'+(++MOONID),lit=moonPath(el);
+  const maria='<path d="M-7.6-3.2c1-1.6 2.4-1.2 2.9.2.6 1.6-.2 3 .5 4.4.8 1.6.2 3.6-1.3 4.1-1.6.5-2.6-.9-2.8-2.6-.3-2.2-.5-4.3.7-6.1z"/><path d="M-5.3-5.2c.8-1.6 3-2 4.4-1.1 1.3.8 1.4 2.6.4 3.6-1.1 1.2-3 1-4.1.1-.9-.7-1.1-1.7-.7-2.6z"/><path d="M1-5.2c.9-.7 2.4-.5 3 .4.6 1-.1 2.2-1.2 2.4-1.2.3-2.4-.3-2.5-1.3 0-.6.2-1.1.7-1.5z"/><path d="M2.3-2.3c1-.6 2.6-.3 3.1.7.7 1.3 0 2.9-1.4 3.1-1.3.2-2.6-.6-2.7-1.8-.1-.8.3-1.6 1-2z"/><ellipse cx="6.6" cy="-2.7" rx="1.05" ry="1.35"/><path d="M4.1 1.2c.9-.4 2-.1 2.3.8.4 1-.1 2.3-1.2 2.5-1 .2-1.8-.5-1.9-1.4-.1-.8.2-1.5.8-1.9z"/><circle cx="3" cy="3.4" r=".9"/><path d="M-3.2 3.1c1-.6 2.6-.4 3.1.6.6 1.1-.1 2.3-1.3 2.5-1.3.2-2.4-.5-2.5-1.6 0-.6.2-1.2.7-1.5z"/><circle cx="-4.5" cy="4.9" r=".9"/><path d="M-1.5-1c.6-.5 1.6-.4 1.9.3.3.7-.2 1.4-1 1.5-.8.1-1.4-.4-1.4-1 0-.3.2-.6.5-.8z"/>';
+  return `<svg class="${cls}" viewBox="-12 -12 24 24" aria-hidden="true"><defs>
+    <radialGradient id="${id}g" cx="40%" cy="38%" r="70%"><stop offset="0" stop-color="#FFFBEE"/><stop offset=".65" stop-color="#E6DFCB"/><stop offset="1" stop-color="#B8B19B"/></radialGradient>
+    <radialGradient id="${id}d" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#3A4458"/><stop offset="1" stop-color="#1E2534"/></radialGradient>
+    <filter id="${id}b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".5"/></filter>
+    <filter id="${id}s" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation=".55"/></filter>
+    <clipPath id="${id}c"><circle r="10"/></clipPath><mask id="${id}m"><path d="${lit}" fill="#fff" filter="url(#${id}b)"/></mask></defs>
+    <g clip-path="url(#${id}c)"><circle r="10" fill="url(#${id}d)"/><g fill="#8D98AE" opacity=".1" filter="url(#${id}s)">${maria}</g>
+      <g mask="url(#${id}m)"><circle r="10" fill="url(#${id}g)"/><g fill="#8F8873" opacity=".38" filter="url(#${id}s)">${maria}</g>
+        <circle cx="-1" cy="7.3" r=".5" fill="#FFFDF2" opacity=".85"/><circle cx="-6.2" cy="-1.6" r=".5" fill="#F7F1DE"/><circle cx="1.6" cy="-6.6" r=".45" fill="#F7F1DE"/></g></g>
+    <circle r="10" fill="none" stroke="rgba(255,255,255,.14)" stroke-width=".35"/></svg>`}
 const hm=h=>{h=(h%24+24)%24;let H=Math.floor(h),M=Math.round((h-H)*60);if(M===60){H=(H+1)%24;M=0}return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0')};
 const dur=h=>{const H=Math.floor(h),M=Math.round((h-H)*60);return `${H} ساعة${M?` و${M} دقيقة`:''}`};
 // a small chart of the mansion's stars as they appear in the sky (east on the left), with the stars around them
@@ -1502,7 +1516,7 @@ function renderDay(){
    $('third').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/><path d="M15 3.5h4.5L15 9h4.5"/></svg><span><b>الثلث الأخير من الليل</b><small>من ${fmt(t.maghrib+len*2/3)} إلى الفجر ${fmt(t2.fajr)}</small></span><time>${fmt(t.maghrib+len*2/3)}</time>`}
   // the moon at the chosen place on the chosen day: phase, lit part, age, rising and setting
   {const m=moonDay(S.sel,c.lat,c.lng),ag=Math.round(m.age);
-   $('moonRow').innerHTML=`<svg class="mz-moon" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="10" class="dk"/><path class="lt" d="${moonPath(m.el)}"/></svg><span><b>القمر · ${m.ph}</b><small>مضاء ${Math.round(m.ill*100)}% · عمره ${ag} ${ag>2&&ag<11?'أيام':'يومًا'}</small></span>
+   $('moonRow').innerHTML=`${moonSvg(m.el,'mz-moon')}<span><b>القمر · ${m.ph}</b><small>مضاء ${Math.round(m.ill*100)}% · عمره ${ag} ${ag>2&&ag<11?'أيام':'يومًا'}</small></span>
      <span class="mo-t"><small>يطلع</small><time>${m.rise!==null?fmt(m.rise):'—'}</time></span><span class="mo-t"><small>يغرب</small><time>${m.set!==null?fmt(m.set):'—'}</time></span>`}
   // sky band (right = 00:00, left = 24:00)
   const p=x=>(fix(x,24)/24*100).toFixed(2)+'%';
