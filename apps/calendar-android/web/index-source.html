@@ -136,6 +136,7 @@ button{cursor:pointer}
 .mz-astro dt{font-family:var(--f-display);font-size:.8rem;font-weight:700;color:var(--green)}
 .mz-astro dd{margin:0;font-size:.95rem;line-height:1.75}
 .mz-src{color:var(--muted);font-size:.85rem}
+.mz-moon{width:18px;height:18px;vertical-align:-4px}.mz-moon .dk{fill:#2B3440}.mz-moon .lt{fill:#F2E6B8}
 .cell .mzd{position:absolute;top:2px;left:6px;font-size:.62rem;line-height:1;color:var(--green)}
 .cell .mzd.x{left:18px}
 .cell.sel .mzd{color:var(--on-green)}
@@ -1340,6 +1341,27 @@ function starYear(st,lat,lng,y){
   if(!best)return {always:1};
   return {last:j0+(best.k-1+N)%N,first:j0+(best.k+best.n)%N,hidden:best.n};
 }
+// the moon (low-precision series of the Astronomical Almanac; a few minutes on rising and setting): ecliptic place, parallax
+function moonPos(jd){const T=(jd-2451545)/36525,s=x=>sinD(x),c=x=>cosD(x);
+  const L=218.32+481267.881*T+6.29*s(135+477198.87*T)-1.27*s(259.3-413335.36*T)+.66*s(235.7+890534.22*T)+.21*s(269.9+954397.74*T)-.19*s(357.5+35999.05*T)-.11*s(186.5+966404.03*T);
+  const B=5.13*s(93.3+483202.02*T)+.28*s(228.2+960400.89*T)-.28*s(318.3+6003.15*T)-.17*s(217.6-407332.21*T);
+  const P=.9508+.0518*c(135+477198.87*T)+.0095*c(259.3-413335.36*T)+.0078*c(235.7+890534.22*T)+.0028*c(269.9+954397.74*T);
+  const e=23.439,ra=Math.atan2(s(L)*c(e)-Math.tan(B*RAD)*s(e),c(L))/RAD,de=Math.asin(s(B)*c(e)+c(B)*s(e)*s(L))/RAD;
+  return {L:(L%360+360)%360,ra:(ra+360)%360,de,P}}
+const sunLon=jd=>{const n=jd-2451545,g=(357.528+.9856003*n)*RAD;return ((280.46+.9856474*n+1.915*Math.sin(g)+.02*Math.sin(2*g))%360+360)%360};
+// rising and setting on a civil day (UTC, Mauritania's time), by the altitude every 10 minutes; the phase at noon
+function moonDay(jdn,lat,lng){
+  const j0=jdn-.5,alt=jd=>{const m=moonPos(jd);return altOf(lat,m.ra,m.de,gmst(jd)+lng)-(.7275*m.P-.5667)};
+  let rise=null,set=null,prev=alt(j0);
+  for(let k=1;k<=144;k++){const jd=j0+k/144,a=alt(jd);
+    if(prev<0&&a>=0&&rise===null)rise=(k-1+(-prev)/(a-prev))/6;
+    if(prev>=0&&a<0&&set===null)set=(k-1+prev/(prev-a))/6;prev=a}
+  const jm=jdn,el=((moonPos(jm).L-sunLon(jm))%360+360)%360,ill=(1-cosD(el))/2,age=el/360*29.53;
+  const ph=el<6?'محاق':el<84?'هلال':el<96?'التربيع الأول':el<174?'أحدب متزايد':el<186?'بدر':el<264?'أحدب متناقص':el<276?'التربيع الثاني':el<354?'هلال آخر الشهر':'محاق';
+  return {rise,set,ill,age,ph,el};
+}
+const moonPath=el=>{const k=cosD(el),w=(10*Math.abs(k)).toFixed(2),wax=el<180;   // terminator: an ellipse of half-width |cos|
+  return `M0 -10A10 10 0 0 ${wax?1:0} 0 10A${w} 10 0 0 ${(el<90||el>270)?(wax?0:1):(wax?1:0)} 0 -10Z`};
 const hm=h=>{h=(h%24+24)%24;let H=Math.floor(h),M=Math.round((h-H)*60);if(M===60){H=(H+1)%24;M=0}return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0')};
 const dur=h=>{const H=Math.floor(h),M=Math.round((h-H)*60);return `${H} ساعة${M?` و${M} دقيقة`:''}`};
 // a small chart of the mansion's stars as they appear in the sky (east on the left), with the stars around them
@@ -1381,14 +1403,16 @@ function manazilView(el){
       ${d.never?`<div><dt>في ${c.name}</dt><dd>لا يطلع فوق الأفق</dd></div>`:`<div><dt>${day===todayJdn()?'اليوم':dd(day)} في ${c.name}</dt><dd>${d.always?'لا يغيب':`يطلع <b class="num">${hm(d.rise)}</b> · يتوسط السماء <b class="num">${hm(d.tr)}</b> · يغرب <b class="num">${hm(d.set)}</b>`}</dd></div>
       <div><dt>يمكث فوق الأفق</dt><dd>${d.always?'طول اليوم':dur(d.up)} كل يوم</dd></div>`}
       ${Y.always?'':`<div><dt>طلوعه الفجري</dt><dd>نحو <b>${dd(Y.first)}</b>: يُرى أول مرة في الشرق قبيل الفجر</dd></div>
-      <div><dt>غيابه</dt><dd>آخر رؤية له مساءً نحو ${dd(Y.last)}، ثم يحتجب في ضوء الشمس نحو <span class="num">${Y.hidden}</span> يومًا، ويُرى بقية السنة</dd></div>`}</dl>`};
+      <div><dt>غيابه</dt><dd>آخر رؤية له مساءً نحو ${dd(Y.last)}، ثم يحتجب في ضوء الشمس نحو <span class="num">${Y.hidden}</span> يومًا، ويُرى بقية السنة</dd></div>`}
+      ${(()=>{const m=moonDay(day,c.lat,c.lng),ic=`<svg class="mz-moon" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="10" class="dk"/><path class="lt" d="${moonPath(m.el)}"/></svg>`;
+        return `<div class="mz-mo"><dt>${ic} القمر ${day===todayJdn()?'اليوم':dd(day)} في ${c.name}</dt><dd>${m.rise!==null?`يطلع <b class="num">${hm(m.rise)}</b>`:'لا يطلع في هذا اليوم'} · ${m.set!==null?`يغرب <b class="num">${hm(m.set)}</b>`:'لا يغرب في هذا اليوم'}<br>${m.ph} · مضاء <span class="num">${Math.round(m.ill*100)}%</span> · عمره نحو <span class="num">${Math.round(m.age)}</span> ${Math.round(m.age)>2&&Math.round(m.age)<11?'أيام':'يومًا'}</dd></div>`})()}</dl>`};
   const here0=(i,r)=>i===cur.i?at:r.a;   // the day the times are for: the chosen day, or the mansion's first day
   const one=i=>{
     const M=MNZ.m[i],r=seg[i],here=i===cur.i,v=star?climSpan(r.a,r.b,si):MNZ.c[i][si],sm=star?mnzOf(Math.round((r.a+r.b)/2)).i:i,SM=MNZ.m[sm];
     return `<div class="mz-name">${M[0]}<small>المنزلة ${i+1} من 28</small></div>
       <div class="mz-dates">${mnzSpan(r.a,r.b)} · ${r.len} يومًا${star&&NJM[i][2]?' · <small>بدايتها مستنتجة من ترتيب القصيدة</small>':''}${here?` · <b>${isToday?'اليوم':'يوم'} ${cur.day} منها</b>`:''}</div>
       ${here?`<div class="mz-bar"><i style="width:${(cur.day/cur.len*100).toFixed(1)}%"></i></div>`:''}
-      ${star?starChart(i)+astro(i,r):''}
+      ${starChart(i)+astro(i,r)}
       <dl class="mz-lore">${[['أسماؤها',M[3]],['نجومها',M[4]]].concat(star?[['الموسم في هذه المدة',`<small class="mz-src">منزلة ${SM[0]} في الحساب الشمسي</small>`],['الأجواء',SM[5]],['الزراعة والرعي',SM[6]],['البحر',SM[7]]]:[['الأجواء',M[5]],['الزراعة والرعي',M[6]],['البحر',M[7]]]).concat([['الموروث',NJM[sm][3].join('<br>')]]).filter(x=>x[1]).map(([t,v])=>`<div><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl>
       ${`<div class="mz-clim"><h3>${star?'مناخ هذه المدة':'مناخ المنزلة'} <small>معدل 1991–2020 · محطة ${MNZ.st[si][0]}</small></h3>
         <dl><div><dt>الحرارة</dt><dd class="num">${n(v[2])}°</dd></div><div><dt>العظمى · الصغرى</dt><dd class="num">${n(v[3])}° · ${n(v[4])}°</dd></div>
