@@ -422,7 +422,7 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .rc .cpick-w button{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .rc .cpick-w em{display:block;font-style:normal;font-size:.72rem;color:var(--muted)}
 .rc .cpick-h span{font-size:1rem}
-.qp-t b small{font-weight:400;color:var(--muted);font-size:.8rem}
+.qp-t b small{font-weight:400;color:#bdbdbd;font-size:.8rem}
 .sy .cpick-in,.cpick-in.sy{height:auto}
 .sy-b{padding:4px 18px 20px;display:grid;gap:10px;justify-items:center;text-align:center}
 .sy-b p{margin:0}
@@ -434,26 +434,31 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .ayhl{position:absolute;inset:0;pointer-events:none}
 .ayhl i{position:absolute;background:#FFE28A;mix-blend-mode:multiply;opacity:.7;border-radius:calc(var(--u)*8)}
 .ay.now{background:rgba(255,226,138,.55);border-radius:6px}
-#qPlayer .sk{position:relative;width:34px}
-#qPlayer .sk svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-#qPlayer .sk b{position:absolute;inset:0;display:grid;place-items:center;font-size:.5rem;font-weight:700;padding-top:5px}
-#qPlayer button[data-a="prev"],#qPlayer button[data-a="next"],#qPlayer button[data-a="close"]{width:30px}
 .qp-t i{cursor:pointer;height:5px}
 .rc .cpick-in{height:auto;max-height:84vh}
 .rc-src{margin:0;padding:8px 18px 16px;font-size:.76rem;color:var(--muted);line-height:1.7}
-#qPlayer{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;align-items:center;gap:4px;background:var(--surface);color:var(--ink);border-top:2px solid var(--orn);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 14px rgba(0,0,0,.14)}
-#qPlayer button{flex:none;width:38px;height:38px;border:0;background:none;color:inherit;font-size:1.25rem;display:grid;place-items:center}
-#qPlayer button[data-a="toggle"]{width:42px;height:42px;border-radius:50%;background:var(--green);color:var(--on-green)}
-#qPlayer svg{width:22px;height:22px;fill:currentColor}
+#qPlayer{position:fixed;left:0;right:0;bottom:0;z-index:45;display:grid;gap:2px;background:#262626;color:#fff;border-radius:18px 18px 0 0;padding:8px 10px calc(4px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.28)}
+.qp-c{display:flex;direction:ltr;justify-content:space-between;align-items:center}
+#qPlayer button{position:relative;flex:none;width:46px;height:46px;border:0;background:none;color:inherit;display:grid;place-items:center;border-radius:50%}
+#qPlayer button:active{background:rgba(255,255,255,.12)}
+#qPlayer svg{width:30px;height:30px;fill:currentColor}
+#qPlayer .ln svg{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+#qPlayer button[aria-pressed="true"]{color:#8fd3a8}
+#qPlayer button em{position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.6rem;font-weight:700;white-space:nowrap;line-height:1}
 #qPlayer .i-pause,#qPlayer.on .i-play{display:none}
 #qPlayer.on .i-pause{display:inline}
-.qp-t{flex:1;min-width:0;display:grid;gap:1px;padding-inline:6px}
+.st-l{display:flex;flex-wrap:wrap;gap:8px;padding:2px 18px 12px}
+.st-l h4{width:100%;margin:0;font-size:.85rem;color:var(--muted);font-weight:400}
+.st-l button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:.9rem}
+.st-l button[aria-pressed="true"]{border-color:var(--green);background:var(--green);color:var(--on-green)}
+.qp-t{min-width:0;display:grid;gap:1px;padding-inline:6px}
 .qp-t b{font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qp-t small{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qp-t i{display:block;height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:2px}
-.qp-t u{display:block;height:100%;width:0;background:var(--green)}
-body.has-player{padding-bottom:64px}
-body.has-player.mushaf #v-quran.paged{padding-bottom:calc(58px + env(safe-area-inset-bottom,0px))}
+.qp-t small{font-size:.74rem;color:#bdbdbd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp-t i{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden;margin-top:2px}
+.qp-t u{display:block;height:100%;width:0;background:#8fd3a8}
+body.has-player{padding-bottom:116px}
+body.has-player .toast{bottom:calc(132px + env(safe-area-inset-bottom,0px))}
+body.has-player.mushaf #v-quran.paged{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 .toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:80;background:var(--band);color:var(--band-ink);padding:9px 16px;border-radius:20px;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.3);white-space:nowrap}
 .marks{display:grid;gap:6px}
 .marks h3{margin:0;font-size:.95rem;color:var(--green)}
@@ -1432,7 +1437,11 @@ function readerTools(Q,key,p,items){
   const mk=$('mkPage'),op=$('ayOpen');if(!mk||!op||!items.length)return;
   const first=items[0],name=i=>Q.suras[i-1].n;
   const pl=$('ayPlay'),names=Q.suras.map(x=>x.n);
-  if(pl)pl.onclick=()=>reciterSheet(key,()=>playSura(key,first[0],names,first[1]),`استمع إلى سورة ${name(first[0])} بصوت`);   // from the page's first verse, where the recording has timings
+  // where to start: the top of the page, the start of the sura it opens in, or of a sura that begins on it
+  const starts=[{l:first[1]===1?`بداية سورة ${name(first[0])} (أول الصفحة)`:`بداية الصفحة (الآية ${first[1]})`,s:first[0],a:first[1]}];
+  if(first[1]>1)starts.push({l:`بداية سورة ${name(first[0])}`,s:first[0],a:1});
+  items.forEach(([s,a],i)=>{if(i&&a===1)starts.push({l:`بداية سورة ${name(s)}`,s,a:1})});
+  if(pl)pl.onclick=()=>reciterSheet(key,x=>{x=x||starts[0];playSura(key,x.s,names,x.a)},`استمع إلى سورة ${name(first[0])} بصوت`,starts);   // a verse after the first is reached by the recording's timings
   syncDraw();
   const so=$('surOpen');
   if(so)so.onclick=()=>{   // the surahs of this mushaf, from inside it: one tap goes to the surah's first page
@@ -1633,7 +1642,7 @@ function syncSet(a){
   const arr=SY.arr,t=PL.audio.currentTime*10;if(!arr||a<1||a>arr.length-1)return;
   const i=Math.max(0,SY.a-1),frac=SY.a?Math.min(1,Math.max(0,(t-arr[i])/Math.max(1,arr[i+1]-arr[i]))):0;
   const L=st.get(syncKey(),[]).filter(x=>x[0]!==a);L.push([a,Math.round(t-frac*(arr[a]-arr[a-1]))]);st.set(syncKey(),L);
-  syncArr();SY.a=-1;syncTick();
+  syncArr();SY.a=-1;PL.jump=1;syncTick();
 }
 // the page a verse is on; for a verse that runs over two pages, by how far through it the recitation is
 function syncPage(key,s,a,frac){
@@ -1650,6 +1659,8 @@ function syncTick(){
     if(t>=T[0]){let lo=0,hi=T.length-2;while(lo<hi){const mid=(lo+hi+1)>>1;if(T[mid]<=t)lo=mid;else hi=mid-1}i=lo}
     a=i+1;frac=i<0?0:(t-T[i])/Math.max(1,T[i+1]-T[i])}
   const page=a?syncPage(PL.key,PL.n,a,frac):0;
+  if(PL.rep==='ay'&&!PL.ay&&!PL.jump&&SY.s===PL.n&&SY.a>=1&&a===SY.a+1&&SY.arr){A.currentTime=SY.arr[SY.a-1]/10;return}   // repeat the verse: back to its start
+  PL.jump=0;
   if(a===SY.a&&PL.n===SY.s&&page===SY.page)return;
   SY.s=PL.n;SY.a=a;titleLine();
   if(page&&page!==SY.page){
@@ -1688,35 +1699,54 @@ function syncDraw(){
 function playerBar(){
   let b=$('qPlayer');if(b)return b;
   b=document.createElement('div');b.id='qPlayer';b.dir='rtl';b.lang='ar';
-  b.innerHTML=`<button type="button" data-a="toggle" aria-label="تشغيل أو إيقاف"><svg viewBox="0 0 24 24"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg></button>
-    <div class="qp-t"><b id="qpTitle" role="button" tabindex="0"></b><small id="qpSub" role="button" tabindex="0"></small><i id="qpBar"><u></u></i></div>
-    <button type="button" class="sk" data-a="back" aria-label="تأخير عشر ثوانٍ"><svg viewBox="0 0 24 24"><path d="M12 5V2.5L8 5.5l4 3V6a6.5 6.5 0 1 1-6.5 6.5"/></svg><b>10</b></button>
-    <button type="button" class="sk" data-a="fwd" aria-label="تقديم عشر ثوانٍ"><svg viewBox="0 0 24 24"><path d="M12 5V2.5l4 3-4 3V6a6.5 6.5 0 1 0 6.5 6.5"/></svg><b>10</b></button>
-    <button type="button" data-a="prev" aria-label="السورة السابقة">›</button><button type="button" data-a="next" aria-label="السورة التالية">‹</button><button type="button" data-a="close" aria-label="إغلاق المشغّل">✕</button>`;
+  b.innerHTML=`<div class="qp-t"><b id="qpTitle" role="button" tabindex="0"></b><small id="qpSub" role="button" tabindex="0"></small><i id="qpBar"><u></u></i></div>
+    <div class="qp-c"><button type="button" data-a="close" aria-label="إيقاف وإغلاق"><svg viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="1.5"/></svg></button>
+    <button type="button" data-a="back" aria-label="الآية السابقة"><svg viewBox="0 0 24 24"><path d="M11.5 6.2v11.6L3 12zM21 6.2v11.6L12.5 12z"/></svg></button>
+    <button type="button" data-a="toggle" aria-label="تشغيل أو إيقاف مؤقت"><svg viewBox="0 0 24 24"><path class="i-play" d="M7 4.5v15l12.5-7.5z"/><path class="i-pause" d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z"/></svg></button>
+    <button type="button" data-a="fwd" aria-label="الآية التالية"><svg viewBox="0 0 24 24"><path d="M12.5 6.2v11.6L21 12zM3 6.2v11.6L11.5 12z"/></svg></button>
+    <button type="button" class="ln" data-a="rep" aria-label="التكرار" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19M16 4l3 3-3 3M19 13v1.5A2.5 2.5 0 0 1 16.5 17H5M8 20l-3-3 3-3"/></svg><em></em></button>
+    <button type="button" class="ln" data-a="rate" aria-label="سرعة التلاوة"><svg viewBox="0 0 24 24"><path d="M4.2 17.5a8.5 8.5 0 1 1 15.6 0z"/><path d="M12 14l4-4.5"/></svg><em></em></button>
+    <button type="button" data-a="set" aria-label="القارئ"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1l.3 2.6h4l.4-2.6a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button></div>`;
   document.body.append(b);
   const a=PL.audio=new Audio();a.preload='none';
+  PL.rate=st.get('qp.rate',1);PL.rep=st.get('qp.rep','');
+  const RATES=[1,1.25,1.5,.75],REPN={'':'',ay:'الآية',su:'السورة'};
+  const qpMarks=()=>{const r=b.querySelector('[data-a=rate]'),p=b.querySelector('[data-a=rep]');r.querySelector('em').textContent=PL.rate===1?'':PL.rate+'×';r.setAttribute('aria-pressed',PL.rate!==1);p.querySelector('em').textContent=REPN[PL.rep];p.setAttribute('aria-pressed',!!PL.rep)};qpMarks();
+  a.addEventListener('play',()=>{a.defaultPlaybackRate=a.playbackRate=PL.rate});
   const state=()=>{b.classList.toggle('on',!a.paused);document.body.classList.toggle('has-player',document.body.contains(b))};
   a.addEventListener('play',state);a.addEventListener('pause',state);
   a.addEventListener('waiting',()=>{$('qpSub').dataset.w='1';subLine()});a.addEventListener('playing',()=>{delete $('qpSub').dataset.w;subLine()});
   a.addEventListener('timeupdate',()=>{if(a.duration)b.querySelector('#qpBar u').style.width=(a.currentTime/a.duration*100).toFixed(1)+'%';subLine();syncTick()});
   a.addEventListener('seeked',syncTick);
-  const seek=d=>{if(isFinite(a.duration))a.currentTime=Math.max(0,Math.min(a.duration-.5,a.currentTime+d))};
+  const seek=d=>{if(isFinite(a.duration)){PL.jump=1;a.currentTime=Math.max(0,Math.min(a.duration-.5,a.currentTime+d))}};
+  // the previous or next verse (by the timings; without them, ten seconds); past the sura's edge, the sura before or after
+  const step=d=>{const n=PL.n,last=r=>r.only?r.only[1]:114;
+    if(PL.ay){const S=loaded['quran-'+PL.key].suras[n-1],i=PL.i+d;if(i<0){if(n>1)playSura(PL.key,n-1,PL.names)}else if(i>S.v.length){if(n<last(reciter(PL.key)))playSura(PL.key,n+1,PL.names)}else ayPlay(i);return}
+    if(!SY.arr)syncArr();const T=SY.arr;if(!T){seek(d*10);return}
+    const N=T.length-1,t=a.currentTime*10,cur=SY.s===n?SY.a:0;
+    let g=d<0&&cur>=1&&t-T[cur-1]>25?cur:cur+d;   // back, well into a verse: to its start
+    if(g<1){if(d<0&&cur>=1){PL.jump=1;a.currentTime=0}else if(d<0&&n>1)playSura(PL.key,n-1,PL.names);return}
+    if(g>N){if(n<last(reciter(PL.key)))playSura(PL.key,n+1,PL.names);return}
+    PL.jump=1;a.currentTime=T[g-1]/10};
   // a tap on the line jumps there (the line fills from the right)
-  b.querySelector('#qpBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();if(isFinite(a.duration))a.currentTime=a.duration*Math.max(0,Math.min(1,(r.right-e.clientX)/r.width))});
+  b.querySelector('#qpBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();PL.jump=1;if(isFinite(a.duration))a.currentTime=a.duration*Math.max(0,Math.min(1,(r.right-e.clientX)/r.width))});
   b.querySelector('#qpSub').addEventListener('click',()=>reciterSheet(PL.key,()=>playSura(PL.key,PL.n,PL.names)));
   b.querySelector('#qpTitle').addEventListener('click',syncSheet);
   a.addEventListener('durationchange',()=>{if(!SY.T)SY.arr=null});   // the estimate needs the recording's length
   a.addEventListener('ended',()=>{const r=reciter(PL.key);
+    if(PL.rep==='ay'){if(PL.ay){ayPlay(PL.i);return}const T=SY.arr;if(T&&SY.a>=1){PL.jump=1;a.currentTime=T[SY.a-1]/10;a.play().catch(()=>{});return}}
     if(PL.ay){const S=loaded['quran-'+PL.key].suras[PL.n-1];if(PL.i<S.v.length){ayPlay(PL.i+1);return}}
+    if(PL.rep==='su'){playSura(PL.key,PL.n,PL.names);return}
     if(PL.n<(r.only?r.only[1]:114))playSura(PL.key,PL.n+1,PL.names)});
   a.addEventListener('error',()=>{
     if(PL.ay&&/everyayah/.test(a.src)){PL.ay=false;SY.arr=null;const r=reciter(PL.key),n=PL.n;suraUrl(r,n).then(u=>{if(PL.n===n){a.src=u;a.play().catch(()=>{})}});return}   // the verse files did not load: the whole sura, followed by estimate
     if(a.src)$('qpSub').textContent='تعذّر تشغيل التلاوة. تحقق من الاتصال بالإنترنت.'});
   b.addEventListener('click',e=>{const x=e.target.closest('button');if(!x)return;const k=x.dataset.a;
     if(k==='toggle'){if(a.paused)a.play().catch(()=>{});else a.pause()}
-    else if(k==='back')seek(-10);else if(k==='fwd')seek(10);
-    else if(k==='prev'&&PL.n>1)playSura(PL.key,PL.n-1,PL.names);
-    else if(k==='next'&&PL.n<114)playSura(PL.key,PL.n+1,PL.names);
+    else if(k==='back')step(-1);else if(k==='fwd')step(1);
+    else if(k==='rep'){PL.rep=PL.rep===''?'ay':PL.rep==='ay'?'su':'';st.set("qp.rep",PL.rep);qpMarks();toast(PL.rep==='ay'?'تكرار الآية':PL.rep==='su'?'تكرار السورة':'بلا تكرار')}
+    else if(k==='rate'){PL.rate=RATES[(RATES.indexOf(PL.rate)+1)%RATES.length];st.set('qp.rate',PL.rate);a.defaultPlaybackRate=a.playbackRate=PL.rate;qpMarks();toast('سرعة التلاوة '+PL.rate+'×')}
+    else if(k==='set')reciterSheet(PL.key,()=>playSura(PL.key,PL.n,PL.names));
     else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player');SY.a=0;syncDraw()}});
   return b;
 }
@@ -1742,14 +1772,17 @@ function playSura(key,n,names,from){
     a.play().catch(()=>{})});
 }
 // choosing a reciter: the Mauritanian reciters are listed first
-function reciterSheet(key,then,title){
+function reciterSheet(key,then,title,starts){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';const cur=reciter(key).id;
   d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>${title?esc(title):'قراء '+RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    ${starts&&starts.length>1?`<div class="st-l"><h4>ابدأ التلاوة من</h4>${starts.map((x,i)=>`<button type="button" data-st="${i}" aria-pressed="${!i}">${esc(x.l)}</button>`).join('')}</div>`:''}
     <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t&&r.mr?'متابعة الآيات بتوقيت مضبوط على تسجيله':r.t?'متابعة الآيات بتوقيت التسجيل':'المتابعة تُضبط آليًا على وقفات القارئ'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}</button>`).join('')}</section>
     <p class="rc-src">التلاوات تُسمع عبر الإنترنت: من موقع mp3quran.net، وقراء حفص آية آية من everyayah.com، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
+  let pick=0;
   d.addEventListener('click',e=>{const b=e.target.closest('button');
-    if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then()}
+    if(b&&b.dataset.st){pick=+b.dataset.st;d.querySelectorAll('[data-st]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+    if(b&&b.dataset.id){st.set('reciter.'+key,b.dataset.id);d.remove();if(then)then(starts&&starts[pick])}
     else if(b||e.target===d)d.remove()});
   document.body.append(d);
 }
