@@ -1,0 +1,14 @@
+name: firebase-probe
+on: push
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          K=AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc
+          echo "== sign-in with a wrong password (key check)"
+          curl -sS -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$K" -H 'Content-Type: application/json' -d '{"email":"probe-nobody@example.com","password":"x-wrong-1","returnSecureToken":true}' | head -c 400; echo
+          echo "== anonymous read of site/info (no key)"
+          curl -sS "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents/site/info" | head -c 200; echo
+          echo "== anonymous query on village_suggestions (expect permission denied before the rules)"
+          curl -sS -X POST "https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents:runQuery" -H 'Content-Type: application/json' -d '{"structuredQuery":{"from":[{"collectionId":"village_suggestions"}],"limit":1}}' | head -c 300; echo
