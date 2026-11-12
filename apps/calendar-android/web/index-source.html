@@ -694,6 +694,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
   <div class="cal-top">
     <div class="city-pick"><label for="citySel">المدينة</label><select id="citySel"></select></div>
     <div class="clock"><b id="clock">--:--:--</b><small>توقيت موريتانيا (غرينتش)</small></div>
+    <div class="vil-pick" id="comRow"><label for="comBtn">البلدية</label><button type="button" id="comBtn"></button></div>
     <div class="vil-pick" id="vilRow"><label for="vilBtn">القرية</label><button type="button" id="vilBtn"></button></div>
     <div class="vil-sg"><button type="button" data-sg="new">＋ اقترح قرية جديدة</button><button type="button" data-sg="fix">✎ اقترح تصحيحًا</button></div>
   </div>
@@ -1018,11 +1019,11 @@ const say=t=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const d
 function pickCity(sel){
   if(document.querySelector('.cpick'))return;
   const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
-  d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المدينة"><div class="cpick-h"><span>اختر المدينة أو البلدية</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
-    <div class="cpick-s"><input type="search" placeholder="ابحث باسم البلدية أو المقاطعة…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب بلدية إلى موقعي</button>':''}</div><div class="cpick-l">`+
-    WILAYAS.map(([w,ms])=>`<section class="cpick-w"><h3>ولاية ${w}</h3>${ms.map(([m,cs])=>`<div class="cpick-m" data-k="${fold(m)}">${m&&ms.length>1?`<h4>مقاطعة ${m}</h4>`:''}<div class="cpick-g">${cs.filter(c=>!c[6]).map(([id,name,fr])=>
-      `<button type="button" data-id="${id}" data-k="${fold(name)} ${fold(fr)}"${id===sel.value?' aria-current="true"':''}>${name}<small dir="ltr">${fr}</small></button>`).join('')}</div></div>`).join('')}</section>`).join('')+
-    `<p class="cpick-0" hidden>لا توجد بلدية بهذا الاسم</p></div></div>`;
+  d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المدينة"><div class="cpick-h"><span>اختر المدينة (المقاطعة)</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="cpick-s"><input type="search" placeholder="ابحث باسم المدينة أو إحدى بلدياتها…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب بلدية إلى موقعي</button>':''}</div><div class="cpick-l">`+
+    WILAYAS.map(([w])=>`<section class="cpick-w"><h3>ولاية ${w}</h3><div class="cpick-m" data-k=""><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>{const c=CITIES.find(c=>c.id===x.cap);
+      return `<button type="button" data-id="${x.cap}" data-k="${fold(x.m)} ${fold(c.fr)} ${x.names.map(fold).join(' ')}"${x===moughOf(S.city)?' aria-current="true"':''}>${x.m}<small>${x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة'}</small></button>`}).join('')}</div></div></section>`).join('')+
+    `<p class="cpick-0" hidden>لا توجد مدينة بهذا الاسم</p></div></div>`;
   const close=()=>{d.remove();document.removeEventListener('keydown',key)},key=e=>{if(e.key==='Escape')close()};
   d.addEventListener('click',e=>{
     const b=e.target.closest('button');
@@ -1037,7 +1038,7 @@ function pickCity(sel){
       try{window.AndroidApp.locate()}catch(x){window.onLocated(0,0,false)}
       return;
     }
-    if(b&&b.dataset.id){close();if(sel.value!==b.dataset.id){sel.value=b.dataset.id;sel.dispatchEvent(new Event('change',{bubbles:true}))}}
+    if(b&&b.dataset.id){close();if(moughOf(b.dataset.id)!==moughOf(S.city)){setPlace(b.dataset.id,'');if(sel.id!=='citySel'){sel.innerHTML=moughOptions();sel.value=S.city;sel.dispatchEvent(new Event('change',{bubbles:true}))}}}
     else if(b||e.target===d)close();
   });
   d.querySelector('input').addEventListener('input',e=>{
@@ -1058,6 +1059,7 @@ document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest
 const vesc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 function setPlace(cid,vid){S.city=cid;S.vil=vid||'';store.set('city',cid);store.set('vil',S.vil);renderCities();renderVil();renderCal();renderDay();renderRam();pushAdhan();loadWx()}
 function renderVil(){
+  const cb=$('comBtn');if(cb){const M=moughOf(S.city);cb.innerHTML=vesc(commune().name)+(M.ids.length>1?` <small>(${M.ids.length} بلديات)</small>`:'')}
   const b=$('vilBtn');if(!b)return;const L=VILLAGES.filter(c=>c.vc===S.city),v=S.vil&&CITIES.find(c=>c.id===S.vil);
   b.disabled=!L.length&&!v;b.innerHTML=v?vesc(v.name):L.length?`مركز البلدية <small>(${L.length} قرية)</small>`:'<small>لا قرى مسجلة لهذه البلدية</small>';
 }
@@ -1081,6 +1083,26 @@ function pickVil(){
   document.body.append(d);const on=d.querySelector('[aria-current]');if(on)on.scrollIntoView({block:'center'});
 }
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#vilBtn'))pickVil()});
+function pickCom(){
+  if(document.querySelector('.cpick'))return;
+  const M=moughOf(S.city),ALL=CITIES.filter(c=>!c.vc);
+  const btn=c=>{const m=moughOf(c.id);return `<button type="button" data-id="${c.id}" data-k="${fold(c.name)} ${fold(c.fr)} ${fold(m.m)}"${c.id===S.city?' aria-current="true"':''}>${vesc(c.name)}<small><span dir="ltr">${vesc(c.fr)}</span>${m!==M?' · مدينة '+vesc(m.m):''}</small></button>`};
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+  d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار البلدية"><div class="cpick-h"><span>بلديات مدينة ${vesc(M.m)}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="cpick-s"><input type="search" placeholder="ابحث عن بلدية في كل المدن…" aria-label="بحث" autocomplete="off"></div><div class="cpick-l">
+    <section class="cpick-w" id="cHere"><div class="cpick-g">${M.ids.map(id=>btn(CITIES.find(c=>c.id===id))).join('')}</div></section>
+    <section class="cpick-w" id="cAll" hidden><div class="cpick-g"></div></section><p class="cpick-0" hidden>لا توجد بلدية بهذا الاسم</p></div></div>`;
+  const close=()=>d.remove();
+  d.addEventListener('click',e=>{const b=e.target.closest('button');
+    if(b&&b.dataset.id){close();if(b.dataset.id!==S.city)setPlace(b.dataset.id,'')}
+    else if(b||e.target===d)close()});
+  d.querySelector('input').addEventListener('input',e=>{const q=fold(e.target.value),here=$('cHere'),all=$('cAll');
+    if(!q){here.hidden=false;all.hidden=true;d.querySelector('.cpick-0').hidden=true;return}
+    const R=ALL.filter(c=>(fold(c.name)+' '+fold(c.fr)+' '+fold(moughOf(c.id).m)).includes(q)).slice(0,80);
+    here.hidden=true;all.hidden=!R.length;all.querySelector('.cpick-g').innerHTML=R.map(btn).join('');d.querySelector('.cpick-0').hidden=!!R.length});
+  document.body.append(d);const on=d.querySelector('[aria-current]');if(on)on.scrollIntoView({block:'center'});
+}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#comBtn'))pickCom()});
 /* ---------- village suggestions: subscribers suggest a new village or a correction; the admin reviews them.
    They are kept in Firestore (project erriwaya-68022, its own section village_suggestions, which the Erriwaya app never reads),
    through the REST API: anyone may add one; only the editor's account reads, accepts or rejects them; accepted ones are
@@ -1202,8 +1224,12 @@ async function sgAdmin(el){
 window.APP=Object.assign(window.APP||{},{sgAdmin});
 // the hidden way in: five quick taps on the version line at the bottom of the calendar
 {let n=0,t0=0;document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('#appVer')))return;const now=Date.now();n=now-t0<700?n+1:1;t0=now;if(n>=5){n=0;location.hash='#sg-admin'}})}
+// a city (مدينة) is a moughataa, its seat the commune of the same name; the commune (بلدية) belongs to it; villages to the commune
+const MOUGH=WILAYAS.flatMap(([w,ms])=>ms.map(([m,cs])=>{const C=cs.filter(c=>!c[6]);const cap=C.find(c=>c[1]===m)||C[0];return {w,m:m||cap[1],cap:cap[0],ids:C.map(c=>c[0]),names:C.map(c=>c[1])}}));
+const moughOf=id=>MOUGH.find(x=>x.ids.includes(id))||MOUGH[0];
+const moughOptions=()=>{const cur=moughOf(S.city);return WILAYAS.map(([w])=>`<optgroup label="ولاية ${w}">${MOUGH.filter(x=>x.w===w).map(x=>`<option value="${x===cur?S.city:x.cap}"${x===cur?' selected':''}>${x.m}</option>`).join('')}</optgroup>`).join('')};
 function renderCities(){
-  $('citySel').innerHTML=cityOptions(S.city);$('citySel').value=S.city;
+  $('citySel').innerHTML=moughOptions();$('citySel').value=S.city;
 }
 function daysWord(n){if(n===0)return'اليوم';if(n===1)return'غدًا';if(n===2)return'بعد يومين';if(n<=10)return`بعد ${n} أيام`;return`بعد ${n} يومًا`}
 
@@ -1539,7 +1565,7 @@ $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${hmB(i+1)}</option>`).
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-window.APP={sgAdmin:(window.APP||{}).sgAdmin,manazil:manazilView,cities:CITIES,options:cityOptions,city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
+window.APP={sgAdmin:(window.APP||{}).sgAdmin,manazil:manazilView,cities:CITIES,options:()=>moughOptions(),city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
