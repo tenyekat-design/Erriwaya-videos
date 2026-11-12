@@ -758,6 +758,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .d-moon text{fill:var(--green);font-family:var(--f-display);font-weight:700;font-size:7.5px;text-anchor:middle}
 @media (max-width:720px){
   .greg .d-ic svg{width:34px;height:34px}.hij .d-ic svg{width:24px;height:24px}
+  .next .cdrow:not(.iq){flex:1;display:flex;justify-content:space-between;align-items:center}.next .cdrow:not(.iq) .cdl{font-size:.95rem}
   .clk-ic{width:24px;height:24px}.clk-ic svg{width:20px;height:20px}.cal-top .clock{display:flex;align-items:center}.cal-top .clock>b{margin-inline-start:4px}
 }
 @media (prefers-reduced-motion:no-preference){
@@ -1588,8 +1589,8 @@ function setDIc(el,cls,svg,txt,key){
 }
 function renderDay(){
   const c=city(),g=gOf(S.sel),h=hOfJdn(S.sel),t=prayerTimes(g.y,g.m,g.d,c),isToday=S.sel===todayJdn();
-  $('dWeek').textContent=DAYS[dowOf(S.sel)]+(isToday?' · اليوم':'');
-  setDIc($('dGreg'),'d-cal',calIc(g.d,g.m),gStr(g),'g'+S.sel);
+  $('dWeek').textContent=DAYS[dowOf(S.sel)];
+  setDIc($('dGreg'),'d-cal',calIc(g.d,g.m),`${GM[g.m-1]} ${g.y}`,'g'+S.sel);
   setDIc($('dHij'),'d-moon',moonIc(h.d),hStr(h),'h'+S.sel);
   const mz=mnzOf(S.sel),nj=njmOf(S.sel);$('dMnz').innerHTML=`${IC_SUNM}<span>منزلة ${MNZ.m[mz.i][0]}</span><small class="num">${mz.day}/${mz.len}</small>`;$('dMnz').title='الحساب الشمسي: اليوم '+mz.day+' من '+mz.len;
   $('dNjm').innerHTML=`${IC_STAR}<span>نجم ${MNZ.m[nj.i][0]}</span><small class="num">${nj.day}/${nj.len}</small>`;$('dNjm').title='الحساب النجمي: اليوم '+nj.day+' من '+nj.len;
@@ -1649,7 +1650,7 @@ function tick(){
   const name=PR.find(x=>x[0]===kk)[1];
   const html=toIqama
     ?`<div class="lbl">صلاة ${name} في ${c.name}</div><div class="pn">أُذِّن ${fmt(t[kk])} · الإقامة ${fmt(tt)}</div><div class="cdrow iq"><span class="cdl">الوقت المتبقي للإقامة</span><span class="cd">${cd}</span></div>`
-    :`<div class="lbl">الصلاة القادمة في ${c.name}</div><div class="pn">${name} · ${fmt(tt)}</div><div class="cdrow"><span class="cdl">الوقت المتبقي للأذان</span><span class="cd">${cd}</span></div>`;
+    :`<div class="lbl">الصلاة القادمة في ${c.name}</div><div class="cdrow"><span class="cdl">المتبقي لأذان ${name}</span><span class="cd">${cd}</span></div>`;
   if(box.innerHTML!==html)box.innerHTML=html;
   document.querySelectorAll('#times li').forEach(li=>li.classList.toggle('on',li.dataset.k===cur));
   const mk=$('nowMk');if(mk)mk.style.right=(n.h/24*100).toFixed(2)+'%';
@@ -2981,7 +2982,7 @@ const D=[
 ['التقويم الموريتاني','Calendrier mauritanien'],['مواقيت الصلاة · المصحف · الحديث · الأذكار','Horaires de prière · Coran · Hadith · Invocations'],
 ['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المكتبة','Bibliothèque'],['المسبحة','Tasbih'],['القبلة','Qibla'],
 ['المدينة','Ville'],['المقاطعة','Moughataa'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
-['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
+['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['المتبقي لأذان ','Avant l’adhan : '],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
 ['تعرض يومًا غير اليوم','Vous affichez un autre jour'],['العودة إلى اليوم','Revenir à aujourd’hui'],
 ['الفجر','Fajr'],['الشروق','Lever'],['الظهر','Dhohr'],['العصر','Asr'],['المغرب','Maghrib'],['العشاء','Icha'],
 ['اتجاه القبلة:','Direction de la qibla :'],['من الشمال (شرقًا)','depuis le nord (vers l’est)'],['الطريقة:','Méthode :'],[' · موقع تقريبي (مركز البلدية)',' · position approximative (centre de la commune)'],
