@@ -729,9 +729,13 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 }
 
 /* المكتبة (13 Nov 2026): البخاري والموطأ والحصن خلف أيقونة واحدة، كالمصاحف */
-.mus.books .mi{border-radius:4px 10px 10px 4px;margin-left:8px;box-shadow:inset -7px 0 0 rgba(0,0,0,.22),inset -8px 0 0 rgba(233,207,134,.35),0 6px 14px rgba(40,30,0,.2)}
-.mus.books .mi::before{content:"";position:absolute;left:-10px;top:50%;width:11px;height:44%;transform:translateY(-50%);background:inherit;border:2px solid #C9A44C;border-right:0;
-  clip-path:polygon(100% 0,0 50%,100% 100%);border-radius:0;filter:brightness(.82)}
+.mus.books .mi{border-radius:3px 12px 12px 3px;margin-left:14px;box-shadow:0 6px 14px rgba(40,30,0,.2)}
+.mus.books .mi .sp{position:absolute;right:0;top:0;bottom:0;width:11px;border-radius:0 10px 10px 0;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.12) 45%,rgba(0,0,0,.42));
+  box-shadow:inset 0 14px 0 -11px #D9B860,inset 0 -14px 0 -11px #D9B860}
+.mus.books .mi .sp::before,.mus.books .mi .sp::after{content:"";position:absolute;left:1px;right:1px;height:3px;border-radius:2px;background:#C9A44C;top:30%}.mus.books .mi .sp::after{top:auto;bottom:30%}
+/* كتاب عربي: الكعب على اليمين، وحافة الأوراق على اليسار يغطيها لسان الغلاف */
+.mus.books .mi::after{content:"";position:absolute;left:-7px;top:5px;bottom:5px;width:6px;border-radius:2px 0 0 2px;background:repeating-linear-gradient(90deg,#F6EED8 0 1px,#D8C9A0 1px 2px);box-shadow:-1px 0 0 #C9A44C}
+.mus.books .mi::before{content:"";position:absolute;left:-13px;top:50%;width:12px;height:40%;transform:translateY(-50%);background:inherit;filter:brightness(.8);clip-path:polygon(100% 0,0 50%,100% 100%);z-index:1}
 .mus .mi.bukhari{background:linear-gradient(160deg,#8A5A2B,#4E2F12)}
 .mus .mi.muwatta{background:linear-gradient(160deg,#21706B,#0E3F3C)}
 .mus .mi.hisn{background:linear-gradient(160deg,#5E4596,#33215E)}
@@ -2656,7 +2660,7 @@ const bookCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><g fill="none" s
 function libHome(el){
   const last=st.get('lib.last','');
   el.innerHTML=`<div class="lib-h"><h1>المكتبة</h1><p>الحديث والأذكار</p></div>
-    <nav class="mus books" aria-label="الكتب">${Object.entries(LIB).map(([k,x])=>`<a href="#${k}"><span class="mi ${k}">${bookCover(x.n)}</span><b>${x.n}</b><small>${esc(x.full)}</small>${k===last?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
+    <nav class="mus books" aria-label="الكتب">${Object.entries(LIB).map(([k,x])=>`<a href="#${k}"><span class="mi ${k}"><i class="sp"></i>${bookCover(x.n)}</span><b>${x.n}</b><small>${esc(x.full)}</small>${k===last?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
 }
 function hadithList(el,c){
   loading(el);
