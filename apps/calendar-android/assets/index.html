@@ -424,7 +424,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .dl{display:grid;gap:8px;border:1px dashed var(--orn);border-radius:12px;padding:10px 12px;font-size:.9rem}
 .dl.ok{border-style:solid;background:var(--green-soft)}
 .dl .warn{color:var(--red)}
-.listen .kd{margin-top:10px}
+.dls .cpick-l{padding:0 16px 18px;display:grid;gap:10px;align-content:start}.dls h4{margin:8px 0 0;font-family:var(--f-display);color:var(--gold);font-size:.92rem}.dls .rc-pick{width:100%}
 .rc .cpick-w small.kd-tag{background:var(--green-soft);color:var(--green);border-color:var(--green)}
 .bar2{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
 .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--gold))}
@@ -1798,6 +1798,7 @@ const loading=el=>{el.innerHTML='<p class="empty">جارٍ التحميل…</p>
 const failed=el=>{el.innerHTML='<p class="empty">تعذّر تحميل البيانات. أعد المحاولة.</p>'};
 const rtop=(names,juz,rn)=>`<div class="rtop"><a class="back" href="#quran" aria-label="المصاحف">›</a><b>${esc(names.map(n=>'سورة '+n).join(' · '))}${juz?`<small> · الجزء ${juz}</small>`:''}</b><span>
   <a class="ix" href="#quran-${rw}" aria-label="فهرس السور والأجزاء"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg></a>
+  <button type="button" id="dlOpen" aria-label="تحميل المصحف والختمة إلى الهاتف"><svg viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5L12 15l4.5-4.5M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2"/></svg></button>
   <button type="button" id="mkPage" aria-label="حفظ الصفحة مرجعية" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1z"/></svg></button></span></div>`;
 // listening and copying stay on every page, in the bar under it, beside the page number
 const pnavMid=p=>`<button type="button" class="pt" id="surOpen" aria-label="سور المصحف"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 2.4 3.5-.2-.2 3.5L20.3 12l-2.4 2.6.2 3.5-3.5-.2L12 20.3l-2.6-2.4-3.5.2.2-3.5L3.7 12l2.4-2.6-.2-3.5 3.5.2z"/><path d="M9.5 10.5h5M9.5 13.5h5"/></svg><small>السور</small></button>
@@ -1825,6 +1826,7 @@ const BM='<svg viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V
 // the verse as it is copied: the number at its end goes between ﴿ ﴾
 const ayText=t=>t.replace(/\u00a0([\u0660-\u0669]+)$/,' ﴿$1﴾');
 function readerTools(Q,key,p,items){
+  const dlb=$('dlOpen');if(dlb)dlb.onclick=()=>dlSheet(key);
   const mk=$('mkPage'),op=$('ayOpen');if(!mk||!op||!items.length)return;
   const first=items[0],name=i=>Q.suras[i-1].n;
   const pl=$('ayPlay'),names=Q.suras.map(x=>x.n);
@@ -2137,7 +2139,7 @@ function playerBar(){
     if(PL.n<(r.only?r.only[1]:114))playSura(PL.key,PL.n+1,PL.names)});
   a.addEventListener('error',()=>{
     if(PL.ay&&/everyayah/.test(a.src)){PL.ay=false;SY.arr=null;const r=reciter(PL.key),n=PL.n;suraUrl(r,n).then(u=>{if(PL.n===n){a.src=u;a.play().catch(()=>{})}});return}   // the verse files did not load: the whole sura, followed by estimate
-    if(a.src)$('qpSub').textContent='تعذّر تشغيل التلاوة. تحقق من الاتصال بالإنترنت، أو حمّل ختمة القارئ إلى الهاتف من صفحة المصحف.'});
+    if(a.src)$('qpSub').textContent='تعذّر تشغيل التلاوة. تحقق من الاتصال بالإنترنت، أو حمّل ختمة القارئ إلى الهاتف بزر التحميل ⤓ أعلى المصحف.'});
   b.addEventListener('click',e=>{const x=e.target.closest('button');if(!x)return;const k=x.dataset.a;
     if(k==='toggle'){if(a.paused){a.play().catch(()=>{});goRecited()}else a.pause()}
     else if(k==='back')step(-1);else if(k==='fwd')step(1);
@@ -2185,7 +2187,7 @@ function reciterSheet(key,then,title,starts){
   d.innerHTML=`<div class="cpick-in rc" role="dialog" aria-label="اختيار القارئ"><div class="cpick-h"><span>${title?esc(title):'قراء '+RW[key].full}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
     ${starts&&starts.length>1?`<div class="st-l"><h4>ابدأ التلاوة من</h4>${starts.map((x,i)=>`<button type="button" data-st="${i}" aria-pressed="${!i}">${esc(x.l)}</button>`).join('')}</div>`:''}
     <div class="cpick-l"><section class="cpick-w">${RECITERS[key].map(r=>`<button type="button" data-id="${r.id}"${r.id===cur?' aria-current="true"':''}><span>${r.n}${r.only?`<em>السور ${r.only[0]}–${r.only[1]} فقط</em>`:''}<em>${r.e?'تلاوة آية آية: المتابعة مطابقة':r.t&&r.mr?'متابعة الآيات بتوقيت مضبوط على تسجيله':r.t?'متابعة الآيات بتوقيت التسجيل':'المتابعة تُضبط آليًا على وقفات القارئ'}</em></span>${r.mr?'<small>قارئ موريتاني</small>':''}${kSaved(key,r)?'<small class="kd-tag">محفوظة في الهاتف</small>':''}</button>`).join('')}</section>
-    <p class="rc-src">التلاوات تُسمع عبر الإنترنت، إلا ما حُمِّل منها إلى الهاتف (زر «حمّل الختمة» في صفحة المصحف): من موقع mp3quran.net، وقراء حفص آية آية من everyayah.com، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
+    <p class="rc-src">التلاوات تُسمع عبر الإنترنت، إلا ما حُمِّل منها إلى الهاتف (زر التحميل ⤓ أعلى صفحات المصحف): من موقع mp3quran.net، وقراء حفص آية آية من everyayah.com، وتلاوات القراء الموريتانيين من أرشيف الإنترنت (archive.org) وموقع way2quran.com.</p></div></div>`;
   let pick=0;
   d.addEventListener('click',e=>{const b=e.target.closest('button');
     if(b&&b.dataset.st){pick=+b.dataset.st;d.querySelectorAll('[data-st]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
@@ -2229,6 +2231,41 @@ let listMode=st.get('qlist','s');
 const musCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><rect x="5" y="5" width="50" height="70" rx="3" fill="none" stroke="#E9CF86" stroke-width="1.6"/><rect x="9" y="9" width="42" height="62" rx="2" fill="none" stroke="#E9CF86" stroke-width=".7" stroke-dasharray="2 1.6"/>
   <g transform="translate(30 30)" fill="none" stroke="#F3E2AE" stroke-width="1.3"><rect x="-11" y="-11" width="22" height="22"/><rect x="-11" y="-11" width="22" height="22" transform="rotate(45)"/><circle r="5.2"/></g>
   <text x="30" y="61" text-anchor="middle" fill="#F3E2AE" font-size="11" font-weight="700" style="font-family:var(--f-display)">${t}</text></svg>`;
+// «حمّل المصحف»: the page images of the mushaf being read, to the phone
+function mushafBox(box,SET,R_){
+  const A=window.AndroidApp;if(!box||!SET||!A||typeof A.downloadMushaf!=='function')return;
+  {let timer=0;
+      const mb=b=>(b/1048576).toFixed(0);
+      const draw=()=>{let pr=['0',String(SET.count),'0','false',''];try{pr=A.mushafProgress(rw,SET.count).split(',')}catch(e){}
+        const done=+pr[0],tot=+pr[1],run=pr[3]==='true',err=pr[4];
+        if(done>=tot){box.innerHTML=`<div class="dl ok">صفحات ${R_.n} كلها محفوظة في الهاتف (${mb(+pr[2])} ميغابايت)، فتُفتح فورًا ودون إنترنت. <button class="btn" id="dlDel">حذفها</button></div>`;$('dlDel').onclick=()=>{A.deleteMushaf(rw);draw()};clearInterval(timer);timer=0;return}
+        box.innerHTML=run
+          ?`<div class="dl"><div>جارٍ تحميل الصفحات: ${done} من ${tot} (${mb(+pr[2])} ميغابايت)</div><div class="bar2"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div><button class="btn" id="dlStop">إيقاف</button></div>`
+          :`<div class="dl"><div>${done?`حُفظت ${done} صفحة من ${tot}. `:''}حمّل صفحات ${R_.n} إلى الهاتف (نحو ${IMG()?'130':'190'} ميغابايت) لتُفتح فورًا ودون إنترنت.${err?` <span class="warn">(انقطع التحميل: تحقق من الاتصال)</span>`:''}</div><button class="btn primary" id="dlGo">${done?'أكمل التحميل':'حمّل المصحف كاملًا'}</button></div>`;
+        if(run){$('dlStop').onclick=()=>{A.cancelMushaf();setTimeout(draw,400)};if(!timer)timer=setInterval(()=>{if(!document.body.contains(box)){clearInterval(timer);timer=0;return}draw()},1000)}
+        else{clearInterval(timer);timer=0;$('dlGo').onclick=()=>{A.downloadMushaf(rw,SET.url,1+SET.offset,SET.count+SET.offset);setTimeout(draw,600)}}};
+      draw();
+    }
+}
+// the reader's download button: the mushaf's pages and the chosen reciter's khatma, in one sheet
+function dlSheet(key){
+  if(document.querySelector('.cpick'))return;
+  const A=window.AndroidApp;
+  const d=document.createElement('div');d.className='cpick';d.dir='rtl';d.lang='ar';
+  d.innerHTML=`<div class="cpick-in dls" role="dialog" aria-label="التحميل إلى الهاتف"><div class="cpick-h"><span>التحميل إلى الهاتف · ${RW[key].n}</span><button type="button" data-x aria-label="إغلاق">✕</button></div>
+    <div class="cpick-l">${A&&typeof A.downloadKhatma==='function'?`<h4>صفحات المصحف</h4><div id="dlBox"></div>
+      <h4>الختمة</h4><button type="button" class="rc-pick" id="dlRc"><small>القارئ</small><b>${esc(reciter(key).n)}</b>${reciter(key).mr?'<i>موريتاني</i>':''}<span>تغيير ‹</span></button><div id="kdBox"></div>`
+      :'<p class="note">التحميل إلى الهاتف متاح في تطبيق أندرويد.</p>'}</div></div>`;
+  d.addEventListener('click',e=>{const b=e.target.closest('button');if((b&&b.hasAttribute('data-x'))||e.target===d)d.remove()});
+  document.body.append(d);
+  if(!(A&&typeof A.downloadKhatma==='function'))return;
+  Promise.all([need('quran-'+key),key==='warsh'?need('mohammadi'):null]).then(([Q,M])=>{
+    if(!document.body.contains(d))return;
+    mushafBox($('dlBox'),M?{url:M.url,offset:M.offset,count:M.count}:PAGESRC[key],RW[key]);
+    khatmaBox($('kdBox'),key,Q);
+    $('dlRc').onclick=()=>{d.remove();reciterSheet(key,()=>dlSheet(key))};
+  });
+}
 // «حمّل الختمة»: the chosen reciter's whole recitation to the phone, for listening without the internet
 function khatmaBox(box,key,Q){
   const A=window.AndroidApp;if(!box||!A||typeof A.downloadKhatma!=='function')return;
@@ -2245,7 +2282,7 @@ function khatmaBox(box,key,Q){
       $('kdDel').onclick=()=>{if(confirm('حذف ختمة '+r.n+' من الهاتف؟')){A.deleteKhatma(K);draw()}};clearInterval(timer);timer=0;return}
     box.innerHTML=run
       ?`<div class="dl kd"><div>جارٍ تحميل ختمة ${esc(r.n)}: ${done} من ${tot} ${unit} (${mb(+pr[2])} ميغابايت). أبقِ التطبيق مفتوحًا حتى يكتمل.</div><div class="bar2"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div><button class="btn" id="kdStop">إيقاف</button></div>`
-      :`<div class="dl kd"><div>${done?`حُفظت ${done} ${unit} من ${tot}. `:''}حمّل ختمة ${esc(r.n)} كاملة إلى الهاتف لتسمعها دون إنترنت. حجمها كبير (مئات الميغابايت)، فيُفضَّل التحميل عبر Wi-Fi.${err?` <span class="warn">(تعذّر تحميل بعض الملفات: تحقق من الاتصال ثم أكمل التحميل)</span>`:''}</div><button class="btn primary" id="kdGo">${done?'أكمل تحميل الختمة':'⤓ حمّل الختمة'}</button></div>`;
+      :`<div class="dl kd"><div>${done?`حُفظت ${done} ${unit} من ${tot}. `:''}حمّل ختمة ${esc(r.n)} كاملة إلى الهاتف لتسمعها دون إنترنت. حجمها كبير (مئات الميغابايت)، فيُفضَّل التحميل عبر <bdi style="white-space:nowrap">Wi-Fi</bdi>.${err?` <span class="warn">(تعذّر تحميل بعض الملفات: تحقق من الاتصال ثم أكمل التحميل)</span>`:''}</div><button class="btn primary" id="kdGo">${done?'أكمل تحميل الختمة':'⤓ حمّل الختمة'}</button></div>`;
     if(run){$('kdStop').onclick=()=>{A.cancelKhatma();setTimeout(draw,500)};if(!timer)timer=setInterval(()=>{if(!document.body.contains(box)){clearInterval(timer);timer=0;return}draw()},1000)}
     else{clearInterval(timer);timer=0;const g=$('kdGo');g.onclick=()=>{g.disabled=true;g.textContent='جارٍ التحضير…';
       list().then(L=>{A.downloadKhatma(K,JSON.stringify(L));setTimeout(draw,800)}).catch(()=>{g.disabled=false;toast('تعذّر بدء التحميل. تحقق من الاتصال بالإنترنت.')})}}};
@@ -2265,31 +2302,14 @@ function quranList(el){
       ${last&&last[2]?(()=>{const lp=M?PG(last[0]-1,last[1]-1):last[2];return`<a class="resume" href="#page-${lp}-${last[0]}-${last[1]}"><span>متابعة القراءة · ${R_.n}<br><b>سورة ${esc(Q.suras[last[0]-1].n)} · الآية ${last[1]} · صفحة ${lp}</b></span><span>‹</span></a>`})():''}
       ${(L=>L.length?`<div class="marks"><h3>المرجعيات</h3>${L.map(m=>`<div><a href="#page-${m.p}${m.a?`-${m.s}-${m.a}`:''}">${m.a?`سورة ${esc(m.n)} · الآية ${m.a}`:`صفحة ${m.p}`} <small>${m.a?`صفحة ${m.p}`:`سورة ${esc(m.n)}`}</small></a><button type="button" data-mkdel="${m.p}|${m.s}|${m.a}" aria-label="حذف المرجعية">✕</button></div>`).join('')}</div>`:'')(marks().filter(m=>m.r===rw))}
       <div class="listen"><button type="button" class="rc-pick" id="rcPick"><small>القارئ</small><b>${reciter(rw).n}</b>${reciter(rw).mr?'<i>موريتاني</i>':''}<span>تغيير ‹</span></button>
-        <div><select id="rcSura" aria-label="السورة">${Q.suras.map((x,i)=>`<option value="${i+1}"${last&&last[0]===i+1?' selected':''}>${i+1}. ${esc(x.n)}</option>`).join('')}</select><button type="button" class="btn primary" id="rcPlay">▶ استمع</button></div><div id="kdBox"></div></div>
+        <div><select id="rcSura" aria-label="السورة">${Q.suras.map((x,i)=>`<option value="${i+1}"${last&&last[0]===i+1?' selected':''}>${i+1}. ${esc(x.n)}</option>`).join('')}</select><button type="button" class="btn primary" id="rcPlay">▶ استمع</button></div></div>
       <div class="seg2" role="group" aria-label="طريقة العرض"><button id="lmS" aria-pressed="${listMode==='s'}">السور</button><button id="lmJ" aria-pressed="${listMode==='j'}">الأجزاء</button></div>
       <input class="search" id="qSearch" type="search" placeholder="ابحث عن سورة أو كلمة في الآيات" autocomplete="off">
-      <div id="dlBox"></div>
       <div id="qOut"></div>
       <p class="src">${IMG()?'صفحات المصحف الأثري برواية ورش، مضبوطًا بألوان التابعين، من GitHub، وتحتاج إلى اتصال بالإنترنت أو إلى تحميلها إلى الهاتف.':PAGESRC[rw]?PAGESRC[rw].src:`النص والخط: مجمع الملك فهد لطباعة المصحف الشريف (${R_.full}، ${R_.ver})`}</p>`;
     $('rcPick').onclick=()=>reciterSheet(rw,()=>quranList(el));
     $('rcPlay').onclick=()=>playSura(rw,+$('rcSura').value,Q.suras.map(x=>x.n));
     el.querySelectorAll('[data-mkdel]').forEach(b=>b.onclick=()=>{const [p,s_,a]=b.dataset.mkdel.split('|').map(Number);markToggle(rw,p,s_,a,'');quranList(el)});
-    const A=window.AndroidApp;
-    const SET=M?{url:M.url,offset:M.offset,count:M.count}:PAGESRC[rw];
-    if(SET&&A&&typeof A.downloadMushaf==='function'){
-      const box=$('dlBox');let timer=0;
-      const mb=b=>(b/1048576).toFixed(0);
-      const draw=()=>{let pr=['0',String(SET.count),'0','false',''];try{pr=A.mushafProgress(rw,SET.count).split(',')}catch(e){}
-        const done=+pr[0],tot=+pr[1],run=pr[3]==='true',err=pr[4];
-        if(done>=tot){box.innerHTML=`<div class="dl ok">صفحات ${R_.n} كلها محفوظة في الهاتف (${mb(+pr[2])} ميغابايت)، فتُفتح فورًا ودون إنترنت. <button class="btn" id="dlDel">حذفها</button></div>`;$('dlDel').onclick=()=>{A.deleteMushaf(rw);draw()};clearInterval(timer);timer=0;return}
-        box.innerHTML=run
-          ?`<div class="dl"><div>جارٍ تحميل الصفحات: ${done} من ${tot} (${mb(+pr[2])} ميغابايت)</div><div class="bar2"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div><button class="btn" id="dlStop">إيقاف</button></div>`
-          :`<div class="dl"><div>${done?`حُفظت ${done} صفحة من ${tot}. `:''}حمّل صفحات ${R_.n} إلى الهاتف (نحو ${IMG()?'130':'190'} ميغابايت) لتُفتح فورًا ودون إنترنت.${err?` <span class="warn">(انقطع التحميل: تحقق من الاتصال)</span>`:''}</div><button class="btn primary" id="dlGo">${done?'أكمل التحميل':'حمّل المصحف كاملًا'}</button></div>`;
-        if(run){$('dlStop').onclick=()=>{A.cancelMushaf();setTimeout(draw,400)};if(!timer)timer=setInterval(()=>{if(!document.body.contains(box)){clearInterval(timer);timer=0;return}draw()},1000)}
-        else{clearInterval(timer);timer=0;$('dlGo').onclick=()=>{A.downloadMushaf(rw,SET.url,1+SET.offset,SET.count+SET.offset);setTimeout(draw,600)}}};
-      draw();
-    }
-    khatmaBox($('kdBox'),rw,Q);
     const out=$('qOut');
     const juz=[];Q.suras.forEach((S,i)=>S.v.forEach((v,j)=>{if(!juz[v[2]])juz[v[2]]=[i+1,j+1,PG(i,j)]}));
     const listHtml=filter=>{
@@ -2403,7 +2423,7 @@ function imagePage(el,p,s,a){
     window.onresize=()=>{if(location.hash.startsWith('#page-'))fit()};
     img.onload=show;
     img.onerror=()=>{if(!warsh){quranTextPage(el,p,s,a);return}  // no internet: the same page from the bundled text
-      msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات مصحف ورش تُحمَّل من GitHub، فتحتاج إلى اتصال بالإنترنت، أو حمّلها كلها إلى الهاتف من صفحة المصحف.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
+      msg.innerHTML='تعذّر تحميل الصفحة.<br>صفحات مصحف ورش تُحمَّل من GitHub، فتحتاج إلى اتصال بالإنترنت، أو حمّلها كلها إلى الهاتف بزر التحميل ⤓ أعلى المصحف.<br><button class="btn primary" id="mRetry" style="margin-top:8px">أعد المحاولة</button>';const r=$('mRetry');if(r)r.onclick=()=>{msg.textContent='جارٍ تحميل الصفحة…';img.src=url(p)+'?r='+Date.now()}};
     if(PCKEY!==key){PCACHE.clear();PCKEY=key}
     const ready=PCACHE.get(p);
     if(ready&&ready.complete&&ready.naturalWidth){img.src=ready.src;show()}else img.src=url(p);
