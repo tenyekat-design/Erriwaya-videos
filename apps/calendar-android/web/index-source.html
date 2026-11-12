@@ -729,8 +729,8 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 }
 
 /* المكتبة (13 Nov 2026): البخاري والموطأ والحصن خلف أيقونة واحدة، كالمصاحف */
-.mus.books .mi{background:none!important;border:0;border-radius:0;box-shadow:none;aspect-ratio:66/84;width:min(100px,26vw);filter:drop-shadow(0 6px 8px rgba(40,30,0,.3))}
-.mus.books .mi svg{width:100%;height:100%}
+.mus.books .mi{background:none!important;border:0;border-radius:22%;box-shadow:none;aspect-ratio:1;width:min(108px,28vw);filter:drop-shadow(0 6px 8px rgba(40,30,0,.3))}
+.mus.books .mi img{width:100%;height:100%;display:block}
 .mus .mi.bukhari{background:linear-gradient(160deg,#8A5A2B,#4E2F12)}
 .mus .mi.muwatta{background:linear-gradient(160deg,#21706B,#0E3F3C)}
 .mus .mi.hisn{background:linear-gradient(160deg,#5E4596,#33215E)}
@@ -2644,30 +2644,11 @@ const INTRO={
 };
 const hs=()=>st.get('hs',1.06);
 const LIB={bukhari:{n:'البخاري',full:'صحيح البخاري · بترقيم فتح الباري'},muwatta:{n:'الموطأ',full:'موطأ الإمام مالك · رواية يحيى الليثي'},hisn:{n:'الحصن',full:'حصن المسلم · أذكار الكتاب والسنة'}};
-// كتاب عربي مجلَّد مرسوم مجسَّمًا (كموطأ مالك المطبوع): وجه أسود بإطار من الزخارف المذهبة وخرطوشة حمراء فيها العنوان،
-// والكعب ظاهر على اليمين مائلًا، عليه أشرطة ذهبية وبطاقة حمراء بالعنوان طولًا
-const bookCover=(t,k,c)=>`<svg viewBox="0 0 66 84" aria-hidden="true">
-  <defs><pattern id="bp-${k}" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="${c}"/><path d="M2.5 .4L4.6 2.5 2.5 4.6 .4 2.5z" fill="none" stroke="#D9B860" stroke-width=".55"/><circle cx="2.5" cy="2.5" r=".6" fill="#B23A2A"/></pattern></defs>
-  <path d="M46 6L61 2.2V78.6L46 82z" fill="${c}"/><path d="M46 6L61 2.2V78.6L46 82z" fill="url(#bp-${k})" opacity=".35"/>
-  <path d="M46 6L61 2.2V78.6L46 82z" fill="rgba(0,0,0,.25)"/>
-  <g stroke="#D9B860" stroke-width=".8"><path d="M46 13.5L61 10M46 15L61 11.5M46 69L61 66M46 70.5L61 67.5"/></g>
-  <path d="M48.6 23.4L58.4 21V44.2L48.6 46.8z" fill="#8E1F17" stroke="#D9B860" stroke-width=".6"/>
-  <text transform="translate(54 34.2) rotate(-90) skewX(-14)" text-anchor="middle" dominant-baseline="central" fill="#F3E2AE" font-size="5.2" font-weight="700" style="font-family:var(--f-display)">${t}</text>
-  <rect x="2" y="6" width="44" height="76" rx="1.2" fill="${c}"/>
-  <rect x="4.2" y="8.2" width="39.6" height="71.6" fill="url(#bp-${k})" stroke="#D9B860" stroke-width=".7"/>
-  <rect x="9.6" y="13.6" width="28.8" height="60.8" fill="${c}" stroke="#D9B860" stroke-width=".7"/>
-  <g fill="#D9B860"><path d="M9.6 13.6h5.5a5.5 5.5 0 0 1-5.5 5.5z"/><path d="M38.4 13.6h-5.5a5.5 5.5 0 0 0 5.5 5.5z"/><path d="M9.6 74.4h5.5a5.5 5.5 0 0 0-5.5-5.5z"/><path d="M38.4 74.4h-5.5a5.5 5.5 0 0 1 5.5-5.5z"/></g>
-  <path d="M24 22.5c6 0 12.5 2.4 12.5 7.5S30 37.5 24 37.5 11.5 35.1 11.5 30 18 22.5 24 22.5z" fill="#D9B860"/>
-  <path d="M24 24c5.3 0 11 2 11 6s-5.7 6-11 6-11-2-11-6 5.7-6 11-6z" fill="#8E1F17"/>
-  <text x="24" y="32.6" text-anchor="middle" fill="#F3E2AE" font-size="7" font-weight="700" textLength="17" lengthAdjust="spacingAndGlyphs" style="font-family:var(--f-display)">${t}</text>
-  <g stroke="#D9B860" stroke-linecap="round"><path d="M17 43h14" stroke-width=".8"/><path d="M19.5 49h9M18 52.5h12" stroke-width=".7"/><path d="M17.5 59h13M19.5 62.5h9" stroke-width=".55"/></g>
-  <rect x="18" y="66.5" width="12" height="4" rx=".6" fill="none" stroke="#D9B860" stroke-width=".5"/>
-  <path d="M46 6V82" stroke="rgba(255,255,255,.18)" stroke-width=".6"/></svg>`;
-const BOOKC={bukhari:'#24170E',muwatta:'#151515',hisn:'#1C1428'};
+// أيقونات الكتب: صور أرسلها صاحب التطبيق (13 نوفمبر 2026)، في assets/img/book-*.webp
 function libHome(el){
   const last=st.get('lib.last','');
   el.innerHTML=`<div class="lib-h"><h1>المكتبة</h1><p>الحديث والأذكار</p></div>
-    <nav class="mus books" aria-label="الكتب">${Object.entries(LIB).map(([k,x])=>`<a href="#${k}"><span class="mi ${k}">${bookCover(x.n,k,BOOKC[k])}</span><b>${x.n}</b><small>${esc(x.full)}</small>${k===last?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
+    <nav class="mus books" aria-label="الكتب">${Object.entries(LIB).map(([k,x])=>`<a href="#${k}"><span class="mi ${k}"><img src="img/book-${k}.webp" alt=""></span><b>${x.n}</b><small>${esc(x.full)}</small>${k===last?'<span class="last">آخر ما قرأت</span>':''}</a>`).join('')}</nav>`;
 }
 function hadithList(el,c){
   loading(el);
