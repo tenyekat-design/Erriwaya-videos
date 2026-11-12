@@ -269,7 +269,23 @@ tbody tr{cursor:pointer}
 footer{color:var(--muted);font-size:.82rem;text-align:center}
 
 @media (max-width:720px){
-  .times{grid-template-columns:repeat(3,1fr)}
+  .times{grid-template-columns:repeat(6,1fr)}
+  .app-band{padding-block:8px 14px}.seal{width:36px;height:36px;border-radius:9px}.app-in h1{font-size:1.12rem}.app-in p{display:none}
+  .cal-top{flex-wrap:nowrap;gap:6px}.place-bar{flex:1 1 auto;gap:6px}
+  .place-chip{padding:5px 8px 5px 6px;border-radius:14px;gap:8px}.pc-ic{width:30px;height:30px;border-radius:10px}.pc-ic svg{width:17px;height:17px}
+  .pc-tx b{font-size:.98rem}.pc-tx small{font-size:.7rem}.pc-chev{display:none}.place-find{width:40px;border-radius:14px}.place-find svg{width:18px;height:18px}
+  .cal-top .clock{flex:none;display:block;margin:0;padding:0}.cal-top .clock b{font-size:1rem}.cal-top .clock small{display:none}
+  section.card[aria-live]{padding:12px 12px 10px}
+  .day-head{gap:8px}.day-head > div:first-child{width:100%;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+  .weekday{font-size:.84rem}.greg{font-size:1.22rem}.hij{flex-basis:100%;font-size:.95rem;margin-top:-2px}
+  .mnz{flex:1 1 40%;min-width:0;margin:2px 0 0;padding:4px 8px;font-size:.82rem;justify-content:center;border-radius:10px}.mnz+.mnz{margin-top:2px}
+  .mnz span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mnz .ic{width:15px;height:15px}
+  #dOcc,#dNotes,.day-head .wx{flex-basis:100%}#dOcc{font-size:.84rem}
+  .next{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;text-align:start;min-width:0}
+  .next .lbl{display:none}.next .pn{font-size:1.05rem}.next .cdrow{display:grid;justify-items:end;gap:0;margin:0}.next .cdl{font-size:.74rem}.next .cd{font-size:1.35rem;line-height:1.1}
+  .band{height:12px;margin:12px 0 10px}.band .hrs,.band .mk span{display:none}.band .now{top:-5px;bottom:-5px}
+  .times{gap:4px}.times li{padding:6px 1px 5px;border-radius:9px;gap:0}.t-ic{width:17px;height:17px;margin-bottom:1px}.t-name{font-size:.72rem}.times .t-val{font-size:.96rem}
+  .third{margin-top:8px;padding:6px 12px}.third time{font-size:1.1rem}
   .tools{grid-template-columns:1fr}
   .next{width:100%}
 }
@@ -1450,8 +1466,8 @@ function renderDay(){
   $('dWeek').textContent=DAYS[dowOf(S.sel)]+(isToday?' · اليوم':'');
   $('dGreg').textContent=gStr(g);
   $('dHij').textContent=hStr(h);
-  const mz=mnzOf(S.sel),nj=njmOf(S.sel);$('dMnz').innerHTML=`${IC_SUNM}<span>منزلة ${MNZ.m[mz.i][0]} · اليوم ${mz.day} من ${mz.len}</span><small>شمسي ‹</small>`;
-  $('dNjm').innerHTML=`${IC_STAR}<span>نجم ${MNZ.m[nj.i][0]} · اليوم ${nj.day} من ${nj.len}</span><small>نجمي ‹</small>`;
+  const mz=mnzOf(S.sel),nj=njmOf(S.sel);$('dMnz').innerHTML=`${IC_SUNM}<span>منزلة ${MNZ.m[mz.i][0]}</span><small class="num">${mz.day}/${mz.len}</small>`;$('dMnz').title='الحساب الشمسي: اليوم '+mz.day+' من '+mz.len;
+  $('dNjm').innerHTML=`${IC_STAR}<span>نجم ${MNZ.m[nj.i][0]}</span><small class="num">${nj.day}/${nj.len}</small>`;$('dNjm').title='الحساب النجمي: اليوم '+nj.day+' من '+nj.len;
   const ev=events(S.sel);
   let occ=ev.map(e=>`<span class="occ${e.nat?' nat':''}">${evText(e)}</span>`).join(' ');
   if(h.m===9)occ+=` <span class="occ ram">الإمساك ${fmt(t.fajr)} · الإفطار ${fmt(t.maghrib)}</span>`;
