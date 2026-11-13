@@ -11,6 +11,8 @@
   وعناوين الكتب بالعربية من sunnah.com (github.com/AhmedBaset/hadith-json). في 16 حديثًا حروف تالفة في المصدر
   الأول، فأُخذ نصها من sunnah.com بعد مطابقته آليًا (السكربت يذكرها ويتوقف إن لم يجد مطابقة).
 - حصن المسلم لسعيد بن علي بن وهف القحطاني: github.com/rn0x/hisn_almuslim_json.
+- مختصر الأخضري في العبادات (طبعة صبيح) ومتن الآجرومية: نصوص المكتبة الشاملة في مدوّنة OpenITI على GitHub (نسخة مثبَّتة)،
+  يبنيها `python3 tools/build-mutun.py`. أيقونتاهما `assets/img/book-akhdari.webp` و`book-ajrumiyya.webp` مشتقتان من أيقونة الموطأ.
 
 - الصفحة كلها في `assets/index.html` (والخطوط في `assets/fonts/`)، والتطبيق نافذة WebView تعرضها.
 - البناء: `.github/workflows/calendar-android.yml` يشغّل `build.sh` على خوادم GitHub عند كل تعديل هنا،
