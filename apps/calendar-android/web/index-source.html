@@ -141,17 +141,20 @@ button{cursor:pointer}
 .cell .mzd{position:absolute;top:2px;left:6px;font-size:.62rem;line-height:1;color:var(--green)}
 .cell .mzd.x{left:18px}
 .cell.sel .mzd{color:var(--on-green)}
-.mz-ring{position:relative;width:min(100%,330px);margin:0 auto 6px}
+.mz-ring{position:relative;width:min(100%,360px);margin:0 auto 6px}
+.mz-in{position:absolute;inset:15.6%;border-radius:50%;overflow:hidden;pointer-events:none;box-shadow:inset 0 0 0 3px rgba(242,210,122,.18)}
+.mz-in .mz-sky{width:100%;margin:0}.mz-in .mz-sky .lb{display:none}.mz-in .mz-sky .dir{font-size:13px}.mz-in .mz-sky .ln line{stroke-width:1.4;opacity:.75}
 .mz-ring svg{display:block;width:100%;height:auto}
 .mz-ring path{fill:none;stroke:var(--line);stroke-width:22;cursor:pointer}
 .mz-ring path.cur{stroke:var(--green)}
 .mz-ring path.sel{stroke:var(--gold)}
 .mz-ring .now{fill:var(--on-green);stroke:var(--gold);stroke-width:2.5;pointer-events:none}
 .mz-ring text{font-size:11px;fill:var(--muted);text-anchor:middle;dominant-baseline:central}
-.mz-mid{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;gap:2px;text-align:center;pointer-events:none;padding:0 22%}
-.mz-mid small{color:var(--muted);font-size:.8rem}
-.mz-mid b{font-family:var(--f-display);font-size:1.7rem;line-height:1.25;color:var(--green)}
-.mz-mid span{font-size:.92rem;font-weight:600}
+.mz-mid{position:absolute;inset:15.6%;display:grid;grid-template-rows:auto 1fr auto auto;justify-items:center;text-align:center;pointer-events:none;padding:9% 14% 15%;text-shadow:0 1px 3px rgba(5,15,28,.9)}
+.mz-mid small{color:#B9C7D6;font-size:.8rem}
+.mz-mid b{grid-row:3;font-family:var(--f-display);font-size:1.7rem;line-height:1.25;color:#F2D27A}
+.mz-mid b.long{font-size:1.3rem;white-space:nowrap}
+.mz-mid span{grid-row:4;font-size:.9rem;font-weight:600;color:#E8EEF5}
 .mz-one{border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
 .mz-name{font-family:var(--f-display);font-size:1.35rem;font-weight:700;color:var(--green);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .mz-name small{font-size:.76rem;font-weight:400;color:var(--muted)}
@@ -1480,18 +1483,18 @@ function moonSvg(el,cls){const id='mn'+(++MOONID),lit=moonPath(el);
 const hm=h=>{h=(h%24+24)%24;let H=Math.floor(h),M=Math.round((h-H)*60);if(M===60){H=(H+1)%24;M=0}return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0')};
 const dur=h=>{const H=Math.floor(h),M=Math.round((h-H)*60);return `${H} ساعة${M?` و${M} دقيقة`:''}`};
 // a small chart of the mansion's stars as they appear in the sky (east on the left), with the stars around them
-function starChart(i){
-  const S=NJS[i],[c0,d0]=S.c,R=150/(2*Math.tan(S.r*RAD/2)*1.05);
+function starChart(i,ring){   // ring: drawn inside the mansions ring, the stars raised and smaller to leave room for the name
+  const S=NJS[i],[c0,d0]=S.c,R=150/(2*Math.tan(S.r*RAD/2)*1.05)*(ring?.56:1),CY=ring?112:160,Z=ring?1.35:1;
   const P=([ra,de])=>{const dA=(ra-c0)*RAD,cc=sinD(d0)*sinD(de)+cosD(d0)*cosD(de)*Math.cos(dA),k=2/(1+cc);
-    return [160-R*k*cosD(de)*Math.sin(dA),160-R*k*(cosD(d0)*sinD(de)-sinD(d0)*cosD(de)*Math.cos(dA))]};
-  const sz=m=>Math.max(.7,3.9-.68*m).toFixed(2),f=x=>x.toFixed(1);
+    return [160-R*k*cosD(de)*Math.sin(dA),CY-R*k*(cosD(d0)*sinD(de)-sinD(d0)*cosD(de)*Math.cos(dA))]};
+  const sz=m=>(Z*Math.max(.7,3.9-.68*m)).toFixed(2),f=x=>x.toFixed(1);
   const pts=S.s.map(P),open=i===2||i===7?S.s.length:0;   // the Pleiades and the Praesepe: no lines
   const lines=open?'':pts.slice(1).map((p,k)=>`<line x1="${f(pts[k][0])}" y1="${f(pts[k][1])}" x2="${f(p[0])}" y2="${f(p[1])}"/>`).join('');
   const [px,py]=pts[0];
   return `<svg class="mz-sky" viewBox="0 0 320 320" role="img" aria-label="نجوم ${S.n} في السماء">
     <defs><clipPath id="skc"><circle cx="160" cy="160" r="156"/></clipPath></defs><circle cx="160" cy="160" r="156" class="bg"/>
     <g clip-path="url(#skc)">${S.f.map(x=>{const [a,b]=P(x);return `<circle cx="${f(a)}" cy="${f(b)}" r="${sz(x[2])}" class="fs"/>`}).join('')}
-    <g class="ln">${lines}</g>${S.s.map((x,k)=>`<circle cx="${f(pts[k][0])}" cy="${f(pts[k][1])}" r="${i===7&&!k?6:sz(x[2])}" class="${i===7&&!k?'cl':'ms'}"/>`).join('')}</g>
+    <g class="ln">${lines}</g>${S.s.map((x,k)=>`<circle cx="${f(pts[k][0])}" cy="${f(pts[k][1])}" r="${i===7&&!k?6*Z:sz(x[2])}" class="${i===7&&!k?'cl':'ms'}"/>`).join('')}</g>
     <text x="${f(px)}" y="${f(py+(py>250?-14:22))}" class="lb">${S.n}</text><text x="20" y="166" class="dir">شرق</text><text x="300" y="166" class="dir">غرب</text></svg>`;
 }
 // the solar-season information for any span of days: the season text of the solar mansion at its middle, and its climate
@@ -1520,12 +1523,15 @@ function manazilView(el){
       ${Y.always?'':`<div><dt>طلوعه الفجري</dt><dd>نحو <b>${dd(Y.first)}</b>: يُرى أول مرة في الشرق قبيل الفجر</dd></div>
       <div><dt>غيابه</dt><dd>آخر رؤية له مساءً نحو ${dd(Y.last)}، ثم يحتجب في ضوء الشمس نحو <span class="num">${Y.hidden}</span> يومًا، ويُرى بقية السنة</dd></div>`}</dl>`};
   const here0=(i,r)=>i===cur.i?at:r.a;   // the day the times are for: the chosen day, or the mansion's first day
+  // the middle of the ring: the stars of the shown mansion as they appear in the sky, with its name
+  const mid=i=>i===cur.i?`<small>${isToday?(star?'نجم اليوم':'منزلة اليوم'):`${g.d} ${GM[g.m-1]} ${g.y}`}</small><b${MNZ.m[i][0].length>8?' class="long"':''}>${MNZ.m[i][0]}</b><span>اليوم ${cur.day} من ${cur.len}</span>`
+    :`<small>المنزلة ${i+1}</small><b${MNZ.m[i][0].length>8?' class="long"':''}>${MNZ.m[i][0]}</b><span>${mnzSpan(seg[i].a,seg[i].b).replace(/ \d{4}$/,'')}</span>`;
   const one=i=>{
     const M=MNZ.m[i],r=seg[i],here=i===cur.i,v=star?climSpan(r.a,r.b,si):MNZ.c[i][si],sm=star?mnzOf(Math.round((r.a+r.b)/2)).i:i,SM=MNZ.m[sm];
     return `<div class="mz-name">${M[0]}<small>المنزلة ${i+1} من 28</small></div>
       <div class="mz-dates">${mnzSpan(r.a,r.b)} · ${r.len} يومًا${star&&NJM[i][2]?' · <small>بدايتها مستنتجة من ترتيب القصيدة</small>':''}${here?` · <b>${isToday?'اليوم':'يوم'} ${cur.day} منها</b>`:''}</div>
       ${here?`<div class="mz-bar"><i style="width:${(cur.day/cur.len*100).toFixed(1)}%"></i></div>`:''}
-      ${starChart(i)+astro(i,r)}
+      ${astro(i,r)}
       <dl class="mz-lore">${[['أسماؤها',M[3]],['نجومها',M[4]]].concat(star?[['الموسم في هذه المدة',`<small class="mz-src">منزلة ${SM[0]} في الحساب الشمسي</small>`],['الأجواء',SM[5]],['الزراعة والرعي',SM[6]],['الثمار التقليدية',SM[8]],['البحر',SM[7]]]:[['الأجواء',M[5]],['الزراعة والرعي',M[6]],['الثمار التقليدية',M[8]],['البحر',M[7]]]).concat([['الموروث',NJM[sm][3].join('<br>')]]).filter(x=>x[1]).map(([t,v])=>`<div><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl>
       ${`<div class="mz-clim"><h3>${star?'مناخ هذه المدة':'مناخ المنزلة'} <small>معدل 1991–2020 · محطة ${MNZ.st[si][0]}</small></h3>
         <dl><div><dt>الحرارة</dt><dd class="num">${n(v[2])}°</dd></div><div><dt>العظمى · الصغرى</dt><dd class="num">${n(v[3])}° · ${n(v[4])}°</dd></div>
@@ -1540,13 +1546,14 @@ function manazilView(el){
         <circle cx="${P(dot,116).split(' ')[0]}" cy="${P(dot,116).split(' ')[1]}" r="5.5" class="now"/>
         ${[0,7,14,21].map(i=>`<text x="${P((i+.5)*360/28,141).split(' ')[0]}" y="${P((i+.5)*360/28,141).split(' ')[1]}" class="num">${i+1}</text>`).join('')}
       </svg>
-      <div class="mz-mid"><small>${isToday?(star?'نجم اليوم':'منزلة اليوم'):`${g.d} ${GM[g.m-1]} ${g.y}`}</small><b>${MNZ.m[cur.i][0]}</b><span>اليوم ${cur.day} من ${cur.len}</span></div></div>
+      <div class="mz-in" id="mzSky">${starChart(cur.i,1)}</div>
+      <div class="mz-mid" id="mzMid">${mid(cur.i)}</div></div>
       <div class="mz-one" id="mzOne">${one(cur.i)}</div>
     </section>
     <section class="card"><h2 class="mz-t">${star?'النجوم ومواعيدها <small>المنظومة الشنقيطية</small>':`المنازل ومناخها <small>محطة ${MNZ.st[si][0]}</small>`}</h2>
     <ol class="mz-list">${MNZ.m.map((M,i)=>{const v=MNZ.c[i][si];return `<li><button type="button" data-i="${i}"${i===cur.i?' aria-current="true"':''}><b class="num">${i+1}</b><span>${M[0]}<small class="num">${mnzSpan(seg[i].a,seg[i].b)}</small></span>${star?`<i class="num">${seg[i].len} يومًا</i>`:`<i class="num">${n(v[2],0)}°</i><i class="num">${n(v[0])} مم</i>`}</button></li>`}).join('')}</ol></section>`;
   const pick=i=>{el.querySelectorAll('.mz-list [aria-current]').forEach(x=>x.removeAttribute('aria-current'));el.querySelector(`.mz-list [data-i="${i}"]`).setAttribute('aria-current','true');
-    el.querySelectorAll('.mz-ring path').forEach(p=>p.classList.toggle('sel',+p.dataset.i===i&&i!==cur.i));$('mzOne').innerHTML=one(i)};
+    el.querySelectorAll('.mz-ring path').forEach(p=>p.classList.toggle('sel',+p.dataset.i===i&&i!==cur.i));$('mzOne').innerHTML=one(i);$('mzSky').innerHTML=starChart(i,1);$('mzMid').innerHTML=mid(i)};
   el.onclick=e=>{const m=e.target.closest('[data-mode]');if(m){if(m.dataset.mode!==mnzMode){mnzMode=m.dataset.mode;mnzAt=at;manazilView(el)}return}
     const b=e.target.closest('[data-i]');if(!b)return;pick(+b.dataset.i);if(b.closest('.mz-list'))el.querySelector('.mz-card').scrollIntoView({behavior:'smooth',block:'start'})};
 }
