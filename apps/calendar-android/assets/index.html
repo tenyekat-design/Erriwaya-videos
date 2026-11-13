@@ -662,6 +662,14 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .ramt tr.l10 td{background:color-mix(in srgb,var(--gold-soft) 60%,transparent)}.ramt tr.today td{background:var(--green-soft);font-weight:700}.ramt tbody tr{cursor:pointer}
 .fr .ramt th{font-size:.7rem}.fr .ramt td{font-size:.86rem;padding:8px 2px}.fr .ramt td.rn b{width:26px;height:26px}
 /* the calendar screen: the day's times stay in view, everything else opens from a tile */
+.spons{display:flex;align-items:center;gap:12px;margin:16px 0 4px;padding:0 14px;min-height:56px;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.spons small{color:var(--muted);font-size:.74rem;white-space:nowrap}
+.spons i{flex:none;width:1px;height:24px;background:var(--line)}
+.spons img{flex:none;width:38px;height:38px;border-radius:10px;object-fit:contain;background:#fff}
+.spons b{flex:1;min-width:0;font-family:var(--f-display);font-size:.95rem;font-weight:700;color:var(--green);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spons em{font-style:normal;font-size:.78rem;color:var(--muted);max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spons svg{flex:none;width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.spons:active{transform:scale(.99)}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 6px;margin:18px 0 6px}
 .tiles button{display:grid;justify-items:center;align-content:start;gap:6px;border:0;background:transparent;color:var(--ink);font:500 .78rem/1.3 var(--f-body);padding:0;cursor:pointer;text-align:center}
 .tile-ic{display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 8px rgba(60,40,0,.06);color:var(--green);transition:background-color .15s,color .15s,transform .1s}
@@ -848,6 +856,8 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     <div class="third" id="third"></div>
     <div class="third moon" id="moonRow"></div>
   </section>
+
+  <a class="spons" id="spons" rel="noopener" hidden><small>بدعم من</small><i aria-hidden="true"></i><img id="sponsLogo" alt="" hidden><b id="sponsName"></b><em id="sponsLine" hidden></em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
     <button type="button" data-open="month" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M8 2.75v3.5M16 2.75v3.5M3.5 9.75h17"/><path class="dot" d="M8.25 14h.01M12 14h.01M15.75 14h.01M8.25 17h.01M12 17h.01"/></svg></span><span>الشهر</span></button>
@@ -3020,7 +3030,7 @@ const D=[
 ['تعذّر نسخ الملف. جرّب ملفًّا صوتيًّا آخر','Copie du fichier impossible. Essayez un autre fichier audio'],
 ['ضبط الهجري','Correction hégirienne'],['تأخير يومين','Retarder de 2 jours'],['تأخير يوم','Retarder d’un jour'],['تقديم يومين','Avancer de 2 jours'],['تقديم يوم','Avancer d’un jour'],
 ['المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.','Les horaires sont calculés astronomiquement pour les coordonnées de chaque commune ; ils peuvent différer d’une ou deux minutes des tableaux officiels. La date hégirienne est calculée ; elle peut avancer ou retarder d’un jour par rapport à l’observation du croissant retenue en Mauritanie : corrigez-la ici au besoin.'],
-['حول التطبيق والخصوصية','À propos et confidentialité'],['الخصوصية.','Confidentialité.'],['الإنترنت.','Internet.'],['المصادر.','Sources.'],['الناشر.','Éditeur.'],['تقويم موريتانيا','Calendrier de Mauritanie'],
+['بدعم من','Avec le soutien de'],['حول التطبيق والخصوصية','À propos et confidentialité'],['الخصوصية.','Confidentialité.'],['الإنترنت.','Internet.'],['المصادر.','Sources.'],['الناشر.','Éditeur.'],['تقويم موريتانيا','Calendrier de Mauritanie'],
 ['التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا إعلانات ولا أدوات تتبّع. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.','L’application ne collecte ni n’envoie aucune donnée vous concernant : ni compte, ni publicité, ni outil de suivi. Vos réglages et vos signets restent sur votre téléphone. Si vous demandez « La commune la plus proche », votre position approximative sert, sur le téléphone seulement, à choisir la commune ; elle n’est ni conservée ni envoyée.'],
 ['المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (GitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.','Les horaires, le calendrier et les textes fonctionnent hors connexion. La connexion ne sert qu’à charger les images des pages du Coran (GitHub) et à écouter les récitations (mp3quran.net et archive.org) ; ces sites voient votre adresse de connexion, comme tout site que vous visitez.'],
 ['نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: المصحف الأثري برواية ورش من طريق الأزرق مضبوطًا بألوان التابعين. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.','Textes et polices du Coran (lectures de Warch, Qaloun et Hafs) : Complexe du Roi Fahd pour l’impression du Noble Coran. Pages de Warch : le Mushaf athari (Warch par al-Azraq), vocalisé aux couleurs des Tâbi‘ûn. Pages de Qaloun et Hafs : Coran de Médine. Sahih al-Boukhari et Mouwatta de Malik : hadith-api et sunnah.com. Hisn al-Mouslim : Saïd ibn Ali ibn Wahf al-Qahtani. Liste et positions des communes : open-admin-data (licence CC-BY-4.0). Les horaires sont un calcul astronomique pour les coordonnées de chaque commune.'],
@@ -3086,6 +3096,18 @@ new MutationObserver(ms=>{for(const m of ms){
     else if(e.closest('.toast')&&(location.hash===''||location.hash==='#cal'))el(n);
   }}}).observe(document.body,{subtree:true,childList:true,characterData:true});
 })();
+</script>
+<script>
+/* الراعي: شريط «بدعم من» تحت بطاقة اليوم. يظهر فقط إذا كُتب الاسم.
+   name: اسم المؤسسة · logo: صورة الشعار داخل مجلد assets (مثل 'img/sponsor.png')، لا من الإنترنت ·
+   line: عبارة قصيرة اختيارية · url: رابط يُفتح في المتصفح عند الضغط (اختياري) */
+const SPONSOR={name:'',logo:'',line:'',url:''};
+(function(){const a=document.getElementById('spons');if(!a||!SPONSOR.name)return;
+  document.getElementById('sponsName').textContent=SPONSOR.name;
+  if(SPONSOR.logo){const im=document.getElementById('sponsLogo');im.src=SPONSOR.logo;im.alt=SPONSOR.name;im.hidden=false;}
+  if(SPONSOR.line){const l=document.getElementById('sponsLine');l.textContent=SPONSOR.line;l.hidden=false;}
+  if(SPONSOR.url)a.href=SPONSOR.url;else a.querySelector('svg').remove();
+  a.setAttribute('aria-label','بدعم من '+SPONSOR.name);a.hidden=false;})();
 </script>
 <script>
 (function(){const sp=document.getElementById('splash');if(!sp)return;
