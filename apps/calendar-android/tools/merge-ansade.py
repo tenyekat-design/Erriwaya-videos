@@ -70,6 +70,8 @@ for m in set(r[5] for r in rows):
         if a in left_a: left_a.remove(a)
         print(f'commune {m} / {f} -> {a["fr"]} ({a["ar"]})')
 
+# the seats of communes whose register name differs from the commune's (the owner's notes, 13 Nov 2026): skipped like the others
+SEATS = {'c128': 'Nouawdar', 'c293': "N'Beike", 'c299': 'Nimlane', 'c245': 'Elbatha'}
 out = {v['id']: dict(v) for v in vil}
 stats = collections.Counter()
 for r in rows:
@@ -77,7 +79,7 @@ for r in rows:
     ar = clean_ar(r[1], fr); stats['ar-dropped'] += bool(r[1]) and not ar
     cid = cm[(r[5], r[6])]; c = C[cid]
     clat, clng = float(c['lat']), float(c['lng'])
-    if sim(fr, c['fr']) >= 0.85 and (lat is None or km(lat, lng, clat, clng) < 5):
+    if (sim(fr, c['fr']) >= 0.85 or sim(fr, SEATS.get(cid, '')) >= 0.85) and (lat is None or km(lat, lng, clat, clng) < 5):
         stats['seat'] += 1; continue
     best = None
     for v in out.values():

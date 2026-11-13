@@ -201,7 +201,7 @@ MR01124	c124	بيريبافات	Beribavat	16.476	-7.5177	geonames	الحوض ا�
 MR01125	c125	انوال	Noual	16.6314	-7.9194	geonames	الحوض الشرقي	النعمة	Néma
 MR01126	c126	أكوينيت	Agoueinit	16.7144	-7.5503	geonames	الحوض الشرقي	النعمة	Néma
 MR01127	oualata	ولاتة	Oualata	17.3	-7.03	app	الحوض الشرقي	ولاتة	Oualata
-MR01128	c128	الباطن	Elbatene	17.177	-7.748	centre	الحوض الشرقي	ولاتة	Oualata
+MR01128	c128	الباطن	Elbatene	16.8308	-7.3418	geonames	الحوض الشرقي	ولاتة	Oualata
 MR01129	timbedra	تمبدغة	Tembedgha	16.24	-8.17	app	الحوض الشرقي	تمبدغة	Timbédra
 MR01130	c130	الطويل	Touil	16.579	-8.293	centre	الحوض الشرقي	تمبدغة	Timbédra
 MR01131	c131	كومبي صالح	Koumbi Saleh	15.7668	-7.9769	geonames	الحوض الشرقي	تمبدغة	Timbédra
@@ -212,13 +212,13 @@ MR01135	adelbagrou	عدل بكرو	Adel Bagrou	15.53	-7.06	app	الحوض الش
 MR01136	c136	المسكول	Elmessgoul	15.874	-6.474	centre	الحوض الشرقي	عدل بكرو	Adel Bagrou
 MR01137	c137	سيفان	Sivane	15.84	-6.882	centre	الحوض الشرقي	عدل بكرو	Adel Bagrou
 MR01292	moudjeria	المجرية	Moudjeria	17.88	-12.33	app	تكانت	المجرية	Moudjéria
-MR01293	c293	انبيكه	N'Beike	17.9811	-12.2542	geonames	تكانت	المجرية	Moudjéria
+MR01293	c293	تامورت انعاج	Tamourt Naaj · N'Beike	17.9811	-12.2542	geonames	تكانت	المجرية	Moudjéria
 MR01294	c294	السدود	Soudoud	17.538	-12.127	centre	تكانت	المجرية	Moudjéria
 MR01295	tichitt	تيشيت	Tichit	18.45	-9.51	app	تكانت	تيشيت	Tichit
 MR01296	c296	لخشب	Lekhcheb	18.4147	-10.5214	geonames	تكانت	تيشيت	Tichit
 MR01297	tidjikja	تجكجة	Tidjikdja	18.5564	-11.4271	app	تكانت	تجكجة	Tidjikja
 MR01298	c298	الواحات	El Wahat	19.043	-11.547	centre	تكانت	تجكجة	Tidjikja
-MR01299	c299	تنسيق	Tensigh	18.21	-11.758	centre	تكانت	تجكجة	Tidjikja
+MR01299	c299	النيملان	Nimlane	18.3982	-11.5968	geonames	تكانت	تجكجة	Tidjikja
 MR01300	c300	بوبكر بن عامر	Boubacar Ben Amer	17.839	-11.641	centre	تكانت	تجكجة	Tidjikja
 MR01301	c301	لحصيرة	Lehsira	17.495	-11.604	centre	تكانت	تجكجة	Tidjikja
 MR01275	aoujeft	أوجفت	Aoujeft	20.03	-13.05	app	آدرار	أوجفت	Aoujeft
