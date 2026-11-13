@@ -71,7 +71,10 @@ for m in set(r[5] for r in rows):
         print(f'commune {m} / {f} -> {a["fr"]} ({a["ar"]})')
 
 # the seats of communes whose register name differs from the commune's (the owner's notes, 13 Nov 2026): skipped like the others
-SEATS = {'c128': 'Nouawdar', 'c293': "N'Beike", 'c299': 'Nimlane', 'c245': 'Elbatha'}
+SEATS = {'c128': 'Nouawdar', 'c293': "N'Beike", 'c299': 'Nimlane', 'c245': 'Elbatha',
+         # Trarza seats the register spells differently (the communes now sit on the register's points)
+         'c250': 'Ajweir', 'c251': 'Nteichitt', 'c259': 'Boyr Etoress', 'c264': 'Awleigatt', 'c268': 'Bareina',
+         'c270': 'Jedr Elmohguene', 'c271': 'Tekane'}
 out = {v['id']: dict(v) for v in vil}
 stats = collections.Counter()
 for r in rows:
