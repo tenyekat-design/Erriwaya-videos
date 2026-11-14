@@ -321,7 +321,11 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
   --divider:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='18' viewBox='0 0 220 18'%3E%3Cg fill='none' stroke='%23B08A2E' stroke-width='1.2'%3E%3Cpath d='M0 9H86M134 9H220'/%3E%3Cpath d='M110 1L118 9 110 17 102 9Z'/%3E%3Cpath d='M104.3 3.3H115.7V14.7H104.3Z'/%3E%3Ccircle cx='92' cy='9' r='2'/%3E%3Ccircle cx='128' cy='9' r='2'/%3E%3C/g%3E%3C/svg%3E");
   --rosette:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%23C9A44C'%3E%3Cpath d='M20 2L24 12 34 8 30 18 40 20 30 22 34 32 24 28 20 38 16 28 6 32 10 22 0 20 10 18 6 8 16 12Z'/%3E%3C/g%3E%3Ccircle cx='20' cy='20' r='5' fill='%230F5641'/%3E%3C/svg%3E");
 }
-body{background-image:var(--khatam-faint);background-size:56px 56px}
+/* page background: the eight-pointed star and cross tiling (zellij) over a parchment wash; drawn by the tile() in the session that added it */
+:root{--zellij:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32.0 0.0L41.4 9.4L54.6 9.4L54.6 22.6L64.0 32.0L54.6 41.4L54.6 54.6L41.4 54.6L32.0 64.0L22.6 54.6L9.4 54.6L9.4 41.4L0.0 32.0L9.4 22.6L9.4 9.4L22.6 9.4Z' fill='%23A9832A' fill-opacity='.05' stroke='%23A9832A' stroke-opacity='.26' stroke-width='1.1'/%3E%3Cg fill='none' stroke='%23A9832A' stroke-opacity='.26' stroke-width='.9'%3E%3Cpath d='M32.0 21.0L35.2 24.2L39.8 24.2L39.8 28.8L43.0 32.0L39.8 35.2L39.8 39.8L35.2 39.8L32.0 43.0L28.8 39.8L24.2 39.8L24.2 35.2L21.0 32.0L24.2 28.8L24.2 24.2L28.8 24.2Z'/%3E%3Ccircle cx='32.0' cy='32.0' r='3'/%3E%3Cpath d='M0 0L4.5 4.5M64 0L59.5 4.5M0 64L4.5 59.5M64 64L59.5 59.5'/%3E%3C/g%3E%3Cg fill='%23A9832A' fill-opacity='.26'%3E%3Ccircle cx='0' cy='0' r='2.2'/%3E%3Ccircle cx='64' cy='0' r='2.2'/%3E%3Ccircle cx='0' cy='64' r='2.2'/%3E%3Ccircle cx='64' cy='64' r='2.2'/%3E%3C/g%3E%3C/svg%3E");--wash:linear-gradient(180deg,#FBF5E3 0,#F3EAD0 55%,#EFE3C4 100%)}
+:root[data-theme="dark"]{--zellij:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32.0 0.0L41.4 9.4L54.6 9.4L54.6 22.6L64.0 32.0L54.6 41.4L54.6 54.6L41.4 54.6L32.0 64.0L22.6 54.6L9.4 54.6L9.4 41.4L0.0 32.0L9.4 22.6L9.4 9.4L22.6 9.4Z' fill='%23D8B25A' fill-opacity='.035' stroke='%23D8B25A' stroke-opacity='.16' stroke-width='1.1'/%3E%3Cg fill='none' stroke='%23D8B25A' stroke-opacity='.16' stroke-width='.9'%3E%3Cpath d='M32.0 21.0L35.2 24.2L39.8 24.2L39.8 28.8L43.0 32.0L39.8 35.2L39.8 39.8L35.2 39.8L32.0 43.0L28.8 39.8L24.2 39.8L24.2 35.2L21.0 32.0L24.2 28.8L24.2 24.2L28.8 24.2Z'/%3E%3Ccircle cx='32.0' cy='32.0' r='3'/%3E%3Cpath d='M0 0L4.5 4.5M64 0L59.5 4.5M0 64L4.5 59.5M64 64L59.5 59.5'/%3E%3C/g%3E%3Cg fill='%23D8B25A' fill-opacity='.16'%3E%3Ccircle cx='0' cy='0' r='2.2'/%3E%3Ccircle cx='64' cy='0' r='2.2'/%3E%3Ccircle cx='0' cy='64' r='2.2'/%3E%3Ccircle cx='64' cy='64' r='2.2'/%3E%3C/g%3E%3C/svg%3E");--wash:linear-gradient(180deg,#0B1A14 0,#08130F 60%,#061009 100%)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--zellij:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32.0 0.0L41.4 9.4L54.6 9.4L54.6 22.6L64.0 32.0L54.6 41.4L54.6 54.6L41.4 54.6L32.0 64.0L22.6 54.6L9.4 54.6L9.4 41.4L0.0 32.0L9.4 22.6L9.4 9.4L22.6 9.4Z' fill='%23D8B25A' fill-opacity='.035' stroke='%23D8B25A' stroke-opacity='.16' stroke-width='1.1'/%3E%3Cg fill='none' stroke='%23D8B25A' stroke-opacity='.16' stroke-width='.9'%3E%3Cpath d='M32.0 21.0L35.2 24.2L39.8 24.2L39.8 28.8L43.0 32.0L39.8 35.2L39.8 39.8L35.2 39.8L32.0 43.0L28.8 39.8L24.2 39.8L24.2 35.2L21.0 32.0L24.2 28.8L24.2 24.2L28.8 24.2Z'/%3E%3Ccircle cx='32.0' cy='32.0' r='3'/%3E%3Cpath d='M0 0L4.5 4.5M64 0L59.5 4.5M0 64L4.5 59.5M64 64L59.5 59.5'/%3E%3C/g%3E%3Cg fill='%23D8B25A' fill-opacity='.16'%3E%3Ccircle cx='0' cy='0' r='2.2'/%3E%3Ccircle cx='64' cy='0' r='2.2'/%3E%3Ccircle cx='0' cy='64' r='2.2'/%3E%3Ccircle cx='64' cy='64' r='2.2'/%3E%3C/g%3E%3C/svg%3E");--wash:linear-gradient(180deg,#0B1A14 0,#08130F 60%,#061009 100%)}}
+body{background-image:var(--zellij),var(--wash);background-size:64px 64px,100% 100%;background-attachment:scroll,fixed}
 
 /* ---------- app header: ornamental band + tabs at the top ---------- */
 .app-band{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--band),var(--band2));color:var(--band-ink);padding-block:16px 22px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -693,6 +697,27 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .ad-contact a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;background:var(--green);color:var(--on-green);font-weight:600;font-size:.86rem;text-decoration:none}
 .ad-contact a+a{background:none;color:var(--green);border:1.5px solid var(--green)}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 6px;margin:18px 0 6px}
+/* compact first screen: the ad slot leads the page, the header and the day card take less height */
+#v-cal{padding-top:12px;gap:12px}
+#v-cal .adslot{margin:0}
+#v-cal .ad-cta{min-height:56px;padding:8px 12px;gap:10px}
+#v-cal .ad-ic{width:38px;height:38px}#v-cal .ad-ic svg{width:21px;height:21px}
+#v-cal .ad-msg b{font-size:.98rem;line-height:1.35}
+#v-cal .ad-msg span{font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-cal .adslot.has-ad .ad-cta{min-height:0;padding:2px 12px}
+#v-cal .ad-row{min-height:56px}
+#v-cal > .card:first-of-type{padding:14px}
+#v-cal .band{margin:18px 0 26px}
+.third-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.third-row .third{margin-top:0;padding:8px 10px;gap:4px 8px;flex-wrap:wrap;align-content:center}
+.third-row .third>svg,.third-row .third.moon .mz-moon{width:22px;height:22px}
+.third-row .third>span:not(.mo-t){flex:1 1 calc(100% - 30px)}
+.third-row .third b{font-size:.8rem;line-height:1.35}.third-row .third small{font-size:.68rem}
+.third-row .third>time{flex:1 1 100%;font-size:1.15rem;text-align:center}
+.third-row .third .mo-t{flex:1 1 0;grid-auto-flow:column;align-items:baseline;justify-content:center;gap:4px}
+.third-row .third .mo-t time{font-size:.98rem}
+@media (max-width:600px){.app-band{padding-block:10px 16px}.seal{width:42px;height:42px}.app-in h1{font-size:1.25rem}.app-in p{display:none}.lang-btn{top:-4px}}
+
 .tiles button{display:grid;justify-items:center;align-content:start;gap:6px;border:0;background:transparent;color:var(--ink);font:500 .78rem/1.3 var(--f-body);padding:0;cursor:pointer;text-align:center}
 .tile-ic{display:grid;place-items:center;width:56px;height:56px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 8px rgba(60,40,0,.06);color:var(--green);transition:background-color .15s,color .15s,transform .1s}
 .tile-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.tile-ic .dot{stroke-width:2.2}
@@ -846,6 +871,26 @@ a.hd.hit small{color:var(--gold);font-weight:600}
   </nav>
 </header>
 <div class="wrap view" id="v-cal" dir="rtl" lang="ar">
+  <section class="adslot" id="adslot" aria-label="خانة الإعلان">
+    <a class="ad-card" id="spons" rel="noopener" hidden>
+      <img class="ad-banner" id="sponsBanner" alt="" hidden>
+      <span class="ad-row"><small id="sponsTag">إعلان</small><img class="ad-logo" id="sponsLogo" alt="" hidden><span class="ad-txt"><b id="sponsName"></b><em id="sponsLine" hidden></em></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>
+    </a>
+    <button type="button" class="ad-cta" id="adCta" aria-expanded="false" aria-controls="adInfo">
+      <span class="ad-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10v4a1 1 0 0 0 1 1h2.5l6.5 4V5L7.5 9H5a1 1 0 0 0-1 1z"/><path d="M17.5 9.5a3.5 3.5 0 0 1 0 5M8 15v3.5a1.5 1.5 0 0 0 3 0V17"/></svg></span>
+      <span class="ad-msg"><b>أعلن هنا</b><span>مساحتك الإعلانية أمام مستخدمي التقويم كل يوم</span></span>
+      <em>التفاصيل</em>
+    </button>
+    <div class="ad-info" id="adInfo" hidden>
+      <h3>أعلن في التقويم الموريتاني</h3>
+      <ul>
+        <li>يظهر إعلانك في أعلى الصفحة الأولى، فوق مواقيت الصلاة، حيث يفتح المستخدم التطبيق كل يوم.</li>
+        <li>شعار مؤسستك واسمها وعبارة قصيرة، مع رابط إلى موقعك أو رقم هاتفك.</li>
+        <li>إعلان واحد في الصفحة، ثابت وهادئ، دون تتبّع للمستخدمين.</li>
+      </ul>
+      <div class="ad-contact" id="adContact" hidden></div>
+    </div>
+  </section>
   <div class="cal-top">
     <div class="place-bar">
       <button type="button" class="place-chip" id="placeChip" aria-label="تغيير المكان"><span class="pc-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg></span>
@@ -873,29 +918,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
     </div>
     <div class="band" id="band" aria-hidden="true"></div>
     <ol class="times" id="times"></ol>
-    <div class="third" id="third"></div>
-    <div class="third moon" id="moonRow"></div>
-  </section>
-
-  <section class="adslot" id="adslot" aria-label="خانة الإعلان">
-    <a class="ad-card" id="spons" rel="noopener" hidden>
-      <img class="ad-banner" id="sponsBanner" alt="" hidden>
-      <span class="ad-row"><small id="sponsTag">إعلان</small><img class="ad-logo" id="sponsLogo" alt="" hidden><span class="ad-txt"><b id="sponsName"></b><em id="sponsLine" hidden></em></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>
-    </a>
-    <button type="button" class="ad-cta" id="adCta" aria-expanded="false" aria-controls="adInfo">
-      <span class="ad-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10v4a1 1 0 0 0 1 1h2.5l6.5 4V5L7.5 9H5a1 1 0 0 0-1 1z"/><path d="M17.5 9.5a3.5 3.5 0 0 1 0 5M8 15v3.5a1.5 1.5 0 0 0 3 0V17"/></svg></span>
-      <span class="ad-msg"><b>أعلن هنا</b><span>مساحتك الإعلانية أمام مستخدمي التقويم كل يوم</span></span>
-      <em>التفاصيل</em>
-    </button>
-    <div class="ad-info" id="adInfo" hidden>
-      <h3>أعلن في التقويم الموريتاني</h3>
-      <ul>
-        <li>يظهر إعلانك في الصفحة الأولى تحت مواقيت الصلاة، حيث يفتح المستخدم التطبيق كل يوم.</li>
-        <li>شعار مؤسستك واسمها وعبارة قصيرة، مع رابط إلى موقعك أو رقم هاتفك.</li>
-        <li>إعلان واحد في الصفحة، ثابت وهادئ، دون تتبّع للمستخدمين.</li>
-      </ul>
-      <div class="ad-contact" id="adContact" hidden></div>
-    </div>
+    <div class="third-row"><div class="third" id="third"></div><div class="third moon" id="moonRow"></div></div>
   </section>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
@@ -3099,7 +3122,7 @@ const D=[
 ['تعذّر نسخ الملف. جرّب ملفًّا صوتيًّا آخر','Copie du fichier impossible. Essayez un autre fichier audio'],
 ['ضبط الهجري','Correction hégirienne'],['تأخير يومين','Retarder de 2 jours'],['تأخير يوم','Retarder d’un jour'],['تقديم يومين','Avancer de 2 jours'],['تقديم يوم','Avancer d’un jour'],
 ['المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.','Les horaires sont calculés astronomiquement pour les coordonnées de chaque commune ; ils peuvent différer d’une ou deux minutes des tableaux officiels. La date hégirienne est calculée ; elle peut avancer ou retarder d’un jour par rapport à l’observation du croissant retenue en Mauritanie : corrigez-la ici au besoin.'],
-['أعلن هنا في التقويم الموريتاني','Votre publicité dans le Calendrier mauritanien'],['أعلن في التقويم الموريتاني','Faites votre publicité dans le Calendrier mauritanien'],['أعلن هنا','Votre publicité ici'],['مساحتك الإعلانية أمام مستخدمي التقويم كل يوم','Votre espace publicitaire, vu chaque jour par les utilisateurs'],['التفاصيل','Détails'],['خانة الإعلان','Espace publicitaire'],['يظهر إعلانك في الصفحة الأولى تحت مواقيت الصلاة، حيث يفتح المستخدم التطبيق كل يوم.','Votre annonce s’affiche sur la première page, sous les horaires de prière, là où l’utilisateur ouvre l’application chaque jour.'],['شعار مؤسستك واسمها وعبارة قصيرة، مع رابط إلى موقعك أو رقم هاتفك.','Le logo et le nom de votre établissement, une courte phrase, et un lien vers votre site ou votre numéro.'],['إعلان واحد في الصفحة، ثابت وهادئ، دون تتبّع للمستخدمين.','Une seule annonce par page, fixe et discrète, sans suivi des utilisateurs.'],['راسلنا على واتساب','Écrivez-nous sur WhatsApp'],['اتصل بنا','Appelez-nous'],['راسلنا بالبريد','Écrivez-nous par e-mail'],['بدعم من','Avec le soutien de'],['إعلان','Annonce'],['المتون.','Textes classiques.'],['مختصر الأخضري (طبعة صبيح بالقاهرة) ومتن الآجرومية: من نصوص المكتبة الشاملة كما في مدوّنة OpenITI.','Le Mukhtasar d’al-Akhdari (édition Subayh, Le Caire) et la Ajurrumiyya : textes d’al-Maktaba al-Shamila, tels que dans le corpus OpenITI.'],['حول التطبيق والخصوصية','À propos et confidentialité'],['الخصوصية.','Confidentialité.'],['الإنترنت.','Internet.'],['المصادر.','Sources.'],['الناشر.','Éditeur.'],['تقويم موريتانيا','Calendrier de Mauritanie'],
+['أعلن هنا في التقويم الموريتاني','Votre publicité dans le Calendrier mauritanien'],['أعلن في التقويم الموريتاني','Faites votre publicité dans le Calendrier mauritanien'],['أعلن هنا','Votre publicité ici'],['مساحتك الإعلانية أمام مستخدمي التقويم كل يوم','Votre espace publicitaire, vu chaque jour par les utilisateurs'],['التفاصيل','Détails'],['خانة الإعلان','Espace publicitaire'],['يظهر إعلانك في أعلى الصفحة الأولى، فوق مواقيت الصلاة، حيث يفتح المستخدم التطبيق كل يوم.','Votre annonce s’affiche en haut de la première page, au-dessus des horaires de prière, là où l’utilisateur ouvre l’application chaque jour.'],['شعار مؤسستك واسمها وعبارة قصيرة، مع رابط إلى موقعك أو رقم هاتفك.','Le logo et le nom de votre établissement, une courte phrase, et un lien vers votre site ou votre numéro.'],['إعلان واحد في الصفحة، ثابت وهادئ، دون تتبّع للمستخدمين.','Une seule annonce par page, fixe et discrète, sans suivi des utilisateurs.'],['راسلنا على واتساب','Écrivez-nous sur WhatsApp'],['اتصل بنا','Appelez-nous'],['راسلنا بالبريد','Écrivez-nous par e-mail'],['بدعم من','Avec le soutien de'],['إعلان','Annonce'],['المتون.','Textes classiques.'],['مختصر الأخضري (طبعة صبيح بالقاهرة) ومتن الآجرومية: من نصوص المكتبة الشاملة كما في مدوّنة OpenITI.','Le Mukhtasar d’al-Akhdari (édition Subayh, Le Caire) et la Ajurrumiyya : textes d’al-Maktaba al-Shamila, tels que dans le corpus OpenITI.'],['حول التطبيق والخصوصية','À propos et confidentialité'],['الخصوصية.','Confidentialité.'],['الإنترنت.','Internet.'],['المصادر.','Sources.'],['الناشر.','Éditeur.'],['تقويم موريتانيا','Calendrier de Mauritanie'],
 ['التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا أدوات تتبّع، وخانة الإعلان فيه نص وصورة ثابتان داخل التطبيق لا يتتبّعانك. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.','L’application ne collecte ni n’envoie aucune donnée vous concernant : ni compte, ni outil de suivi ; l’espace publicitaire est un texte et une image fixes, intégrés à l’application, qui ne vous suivent pas. Vos réglages et vos signets restent sur votre téléphone. Si vous demandez « La commune la plus proche », votre position approximative sert, sur le téléphone seulement, à choisir la commune ; elle n’est ni conservée ni envoyée.'],
 ['المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (GitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.','Les horaires, le calendrier et les textes fonctionnent hors connexion. La connexion ne sert qu’à charger les images des pages du Coran (GitHub) et à écouter les récitations (mp3quran.net et archive.org) ; ces sites voient votre adresse de connexion, comme tout site que vous visitez.'],
 ['نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: المصحف الأثري برواية ورش من طريق الأزرق مضبوطًا بألوان التابعين. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.','Textes et polices du Coran (lectures de Warch, Qaloun et Hafs) : Complexe du Roi Fahd pour l’impression du Noble Coran. Pages de Warch : le Mushaf athari (Warch par al-Azraq), vocalisé aux couleurs des Tâbi‘ûn. Pages de Qaloun et Hafs : Coran de Médine. Sahih al-Boukhari et Mouwatta de Malik : hadith-api et sunnah.com. Hisn al-Mouslim : Saïd ibn Ali ibn Wahf al-Qahtani. Liste et positions des communes : open-admin-data (licence CC-BY-4.0). Les horaires sont un calcul astronomique pour les coordonnées de chaque commune.'],
