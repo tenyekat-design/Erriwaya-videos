@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://erriwaya.com/sitemap.xml
+Sitemap: https://erriwaya.com/news-sitemap.xml
