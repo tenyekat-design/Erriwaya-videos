@@ -709,15 +709,26 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 #v-cal .adslot.has-ad .ad-cta{min-height:0;padding:2px 12px}
 #v-cal .ad-row{min-height:56px}
 #v-cal > .card:first-of-type{padding:14px}
-/* weather: one slim line (now, sky, high and low); a tap opens the three coming days */
-#v-cal .wx{margin-top:8px;padding:3px 10px;gap:0 8px;border-radius:10px;cursor:pointer;flex-wrap:wrap}
-#v-cal .wx-ic{width:22px;height:22px;flex:none}#v-cal .wx-t{font-size:1.15rem;flex:none}
-#v-cal .wx-d{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;font-size:.84rem;white-space:nowrap;overflow:hidden}
-#v-cal .wx-d small{font-size:.74rem;overflow:hidden;text-overflow:ellipsis}
-#v-cal .wx::after{content:"";flex:none;order:2;width:7px;height:7px;border:solid var(--muted);border-width:0 0 1.6px 1.6px;transform:rotate(-45deg);margin:0 2px 3px;transition:transform .15s}
-#v-cal .wx.open::after{transform:rotate(135deg);margin-bottom:-3px}
-#v-cal .wx-n{display:none;order:3;flex:1 1 100%;justify-content:space-around;margin:4px 0 2px;padding-top:6px;border-top:1px solid var(--line)}
-#v-cal .wx.open .wx-n{display:flex}
+/* top of the day card: the calendar leaf sits over the weekday at the right, the date beside it, and the weather in the same row at the far end; a tap on the weather opens the three coming days underneath */
+.dh-top{flex:1 1 100%;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:10px;row-gap:1px;align-items:center}
+.dh-top .greg{display:contents}
+.dh-top .greg .d-ic{grid-column:1;grid-row:1;justify-self:center}
+.dh-top .greg>span:last-child{grid-column:2;grid-row:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-top .weekday{grid-column:1;grid-row:2;align-self:start;text-align:center;font-size:.78rem;line-height:1.2;font-weight:600}
+.dh-top .hij{grid-column:2/4;grid-row:2;min-width:0;margin:0;flex-wrap:wrap;row-gap:0}
+.dh-top .wx{grid-column:3;grid-row:1;margin:0;padding:0;border:0;background:none;gap:0 6px;border-radius:10px;cursor:pointer;flex-wrap:wrap;align-items:center}
+.wx i{font-style:normal}.dh-top .wx:not(.open) .wl,.dh-top .wx.open .ws{display:none}
+.dh-top .wx-ic{width:20px;height:20px;flex:none}.dh-top .wx-t{font-size:1.1rem;flex:none}
+.dh-top .wx-d{display:grid;min-width:0;font-size:.8rem;line-height:1.25;white-space:nowrap}
+.dh-top .wx:not(.open) .wx-d{max-width:80px}.dh-top .wx-d>span{overflow:hidden;text-overflow:ellipsis}
+.dh-top .wx-d small{font-size:.72rem;direction:ltr;text-align:end}.dh-top .wx.open .wx-d small{direction:inherit}
+.dh-top .wx::after{content:"";flex:none;order:2;width:6px;height:6px;border:solid var(--muted);border-width:0 0 1.5px 1.5px;transform:rotate(-45deg);margin:0 1px 3px}
+.dh-top .wx-n{display:none;order:3;flex:1 1 100%;justify-content:space-around;margin:4px 0 2px;padding-top:6px;border-top:1px solid var(--line)}
+.dh-top .wx.open{grid-column:1/-1;grid-row:3;margin-top:6px;padding:4px 10px;border:1px solid var(--line);background:var(--surface)}
+.dh-top .wx.open .wx-d{display:flex;flex:1;align-items:baseline;gap:8px}
+.dh-top .wx.open::after{transform:rotate(135deg);margin-bottom:-3px}
+.dh-top .wx.open .wx-n{display:flex}
+@media (max-width:389px){.dh-top .wx:not(.open) .wx-d>span{display:none}.dh-top .hij{font-size:.9rem}.dh-top .greg>span:last-child{font-size:1.1rem}.dh-top{column-gap:8px}}
 #v-cal .day-head{gap:8px}
 #dNotes:empty{display:none}
 #v-cal .next{padding-block:6px}
@@ -922,14 +933,11 @@ a.hd.hit small{color:var(--gold);font-weight:600}
   <section class="card" aria-live="polite">
     <div class="day-head">
       <div>
-        <div class="weekday" id="dWeek"></div>
-        <div class="greg" id="dGreg"></div>
-        <div class="hij" id="dHij"></div>
+        <div class="dh-top"><div class="weekday" id="dWeek"></div><div class="greg" id="dGreg"></div><div class="hij" id="dHij"></div><div class="wx" id="wx" hidden></div></div>
         <button type="button" class="mnz" id="dMnz"></button>
         <button type="button" class="mnz" id="dNjm"></button>
         <div id="dOcc"></div>
         <div id="dNotes"></div>
-        <div class="wx" id="wx" hidden></div>
       </div>
       <div class="next" id="next"></div>
     </div>
@@ -1666,7 +1674,7 @@ let WX=store.get('wx',null);
 function showWx(){const el=$('wx'),c=city(),w=WX,ok=w&&w.id===c.id&&Date.now()-w.t<6*3600e3&&S.sel===todayJdn();
   el.hidden=!ok;if(!ok)return;
   const k=wxKind(w.code);
-  el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small>العظمى ${w.hi}° · الصغرى ${w.lo}°</small></span>`
+  el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small><i class="wl">العظمى </i>${w.hi}°<i class="wl"> · الصغرى </i><i class="ws"> / </i>${w.lo}°</small></span>`
    +`<span class="wx-n">${w.days.map(d=>`<span><small>${DAYS[dowOf(d.j)]}</small><svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[wxKind(d.code)]}</svg><b>${d.hi}°</b><i>${d.lo}°</i></span>`).join('')}</span>`}
 async function loadWx(){const c=city();
   if(WX&&WX.id===c.id&&Date.now()-WX.t<45*60e3){showWx();return}
