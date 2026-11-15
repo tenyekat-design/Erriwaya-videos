@@ -221,10 +221,11 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setWidgetBg(int percent) { Widgets.setBg(MainActivity.this, percent); }
 
-        /** One of the heritage wallpapers (assets/wallpapers/<name>.jpg) on the home screen (1), the lock screen (2) or both (3); "" or the error. */
+        /** One of the heritage wallpapers (assets/wallpapers/<name>.jpg) on the home screen (1), the lock screen (2) or both (3), for subscribers; "", "locked" or the error. */
         @JavascriptInterface
         public String setWallpaper(String name, int which) {
             if (name == null || !name.matches("[a-z]{2,20}")) return "bad name";
+            if (Sub.paidUntil(MainActivity.this) <= Sub.now(MainActivity.this)) return "locked";   // subscribers only, not the free day
             try (java.io.InputStream in = getAssets().open("wallpapers/" + name + ".jpg")) {
                 android.app.WallpaperManager wm = android.app.WallpaperManager.getInstance(MainActivity.this);
                 if (Build.VERSION.SDK_INT >= 24) {
