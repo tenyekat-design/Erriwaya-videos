@@ -159,48 +159,63 @@ def tc(fmt,size,family,color,extra=''):
 def clockline(attrs,idn='cTime'):
     return f'        <TextClock android:id="@+id/{idn}" android:layout_width="wrap_content" android:layout_height="wrap_content"\n            {attrs} />\n'
 
-def tall(fmt,size,family,color,sx=0.6,extra='',idn='cTime',shadow='android:shadowColor="#80000000" android:shadowRadius="6"',trim=True):
-    """a TextClock whose figures are drawn narrow (textScaleX) so they stand tall; trim pulls in the empty space a line
-    keeps above and below the figures (the font's ascent over the digits, its descent under them), so large sizes fit"""
-    if trim and 'layout_marginTop' not in extra:
-        extra+=f' android:layout_marginTop="-{round(size*0.19)}dp" android:layout_marginBottom="-{round(size*0.2)}dp"'
+# ---- figure styles: tall condensed typefaces (SIL Open Font License, from npm @fontsource), cut down to the digits
+# and the colon, in res/font/clk_*.ttf. Sizes are in dp (not sp) so the trims below stay exact; each figure is given by
+# the height of its digits, and its line box is pulled in to the digits (the font's ascent above, its descent below).
+from fontTools import subset as _subset
+from fontTools.pens.boundsPen import BoundsPen
+FS='/home/claude/fontwork/node_modules/@fontsource/'
+os.makedirs(R+'font',exist_ok=True)
+for f in os.listdir(R+'font'):
+    if f.startswith('clk_'): os.remove(R+'font/'+f)
+FONTS={}
+def font(key,fam,w):
+    src=f'{FS}{fam}/files/{fam}-latin-{w}-normal.woff2'
+    f=TTFont(src);upm=f['head'].unitsPerEm;gs=f.getGlyphSet();cm=f.getBestCmap()
+    bp=BoundsPen(gs);gs[cm[ord('0')]].draw(bp)
+    FONTS[key]=dict(top=bp.bounds[3]/upm,asc=f['hhea'].ascent/upm,desc=-f['hhea'].descent/upm)
+    opt=_subset.Options();opt.flavor=None;opt.layout_features=['tnum','lnum'];opt.name_IDs=['*'];opt.notdef_outline=True
+    sub=_subset.Subsetter(opt);sub.populate(text='0123456789: ');sub.subset(f);f.flavor=None
+    f.save(R+f'font/clk_{key}.ttf')
+for key,fam,w in [('sixcaps','six-caps',400),('shoulders_light','big-shoulders-display',300),('shoulders_black','big-shoulders-display',900),
+                  ('antonio','antonio',700),('league','league-gothic',400),('tulpen','tulpen-one',400),('saira','saira-extra-condensed',500),
+                  ('bebas','bebas-neue',400),('pathway','pathway-gothic-one',400)]:
+    font(key,fam,w)
+def fig(fmt,key,H,color,idn='cTime',extra='',glow=None):
+    m=FONTS[key];size=H/m['top']
+    top=-(size*(m['asc']-m['top'])-1);bot=-(size*m['desc']-0.03*size)
+    sh=f'android:shadowColor="{glow}" android:shadowRadius="16"' if glow else 'android:shadowColor="#80000000" android:shadowRadius="6"'
+    if glow: top,bot=top/2,bot/2
     return (f'<TextClock android:id="@+id/{idn}" android:layout_width="wrap_content" android:layout_height="wrap_content"\n'
-            f'    android:format24Hour="{fmt}" android:format12Hour="{fmt}" android:textSize="{size}sp" android:fontFamily="{family}"\n'
-            f'    android:textColor="{color}" android:textScaleX="{sx}" android:includeFontPadding="false" android:textDirection="ltr"\n'
-            f'    {shadow} {extra} />\n')
+            f'    android:format24Hour="{fmt}" android:format12Hour="{fmt}" android:fontFamily="@font/clk_{key}" android:textSize="{size:.1f}dp"\n'
+            f'    android:textColor="{color}" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"\n'
+            f'    android:layout_marginTop="{top:.1f}dp" android:layout_marginBottom="{bot:.1f}dp" {sh} {extra} />\n')
 def ind(s,n): return ''.join(' '*n+l+'\n' for l in s.rstrip('\n').split('\n'))
 def row(inner,gravity='bottom',baseline=True):
     return (f'        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"\n'
             f'            android:layoutDirection="ltr" android:gravity="{gravity}" android:baselineAligned="{str(baseline).lower()}">\n'
             +ind(inner,12)+'        </LinearLayout>\n')
-def col(inner,gravity='center'):
+def col(inner,gravity='center',extra=''):
     return (f'<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical"\n'
-            f'    android:gravity="{gravity}">\n'+ind(inner,4)+'</LinearLayout>\n')
+            f'    android:gravity="{gravity}" {extra}>\n'+ind(inner,4)+'</LinearLayout>\n')
 def bar(w,h,color=GOLD,extra=''):
     return f'<ImageView android:layout_width="{w}" android:layout_height="{h}" android:background="{color}" android:importantForAccessibility="no" {extra} />\n'
-GLOW=lambda c:f'android:shadowColor="{c}" android:shadowRadius="18"'
 D={}
-# 1 tower: tall thin hours, shorter gold minutes on the same baseline
-D[1]=('الشاهق',row(tall('HH',88,'sans-serif-thin',WHITE,0.58)+tall('mm',48,'sans-serif-thin',GOLD,0.6,'android:layout_marginLeft="5dp"','cMin')))
-# 2 columns: bold condensed hours | gold rule | minutes over seconds
-D[2]=('الأعمدة',row(tall('HH',86,'sans-serif-condensed',WHITE,0.68,'android:textStyle="bold"')
-    +bar('2dp','58dp',GOLD,'android:layout_marginLeft="7dp" android:layout_marginRight="7dp"')
-    +col(tall('mm',44,'sans-serif-condensed',GOLD,0.7,'','cMin')+tall('ss',18,'sans-serif-condensed-light','#B9C2E8',0.8,'','cSec',trim=False),'left'),
-    'center_vertical',False))
-# 3 raised: black hours, minutes up at their top like an exponent
-D[3]=('المرفوع',row(tall('HH',90,'sans-serif-black',WHITE,0.52)+tall('mm',38,'sans-serif-medium',GOLD,0.6,'android:layout_marginLeft="4dp"','cMin'),'top',False))
-# 4 glow: gold figures with a golden halo
-D[4]=('المضيء',row(tall('HH',80,'sans-serif-condensed-light',GOLD,0.58,'',shadow=GLOW('#CCE6BC62'),trim=False)+tall('mm',44,'sans-serif-condensed-light',CREAM,0.58,'android:layout_marginLeft="6dp"','cMin',GLOW('#99E6BC62'),trim=False)))
-# 5 badge: tall hours, minutes in a gold tab
-D[5]=('الشارة',row(tall('HH',88,'sans-serif-thin',WHITE,0.58)+tall('mm',30,'sans-serif-condensed','#0B1F5C',0.8,
-    'android:textStyle="bold" android:background="@drawable/clock_chip" android:paddingLeft="7dp" android:paddingRight="7dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:layout_marginLeft="6dp"','cMin','',trim=False),'center_vertical',False))
-# 6 stacked: hours over a gold rule over minutes
-D[6]=('المكدّس',ind(tall('HH',64,'sans-serif-light',WHITE,0.66)+bar('56dp','2dp',GOLD,'android:layout_marginTop="3dp" android:layout_marginBottom="4dp"')+tall('mm',32,'sans-serif-light',GOLD,0.66,'','cMin'),8))
-# 7 serif: tall classic hours, italic gold minutes
-D[7]=('الكلاسيكي',row(tall('HH',84,'serif',CREAM,0.58)+tall('mm',46,'serif',GOLD,0.6,'android:textStyle="italic" android:layout_marginLeft="5dp"','cMin')))
-# 8 twelve: 12-hour tall hours, minutes over ص/م
-D[8]=('اثنتا عشرة',row(tall('h',88,'sans-serif-thin',WHITE,0.58)+col(tall('mm',44,'sans-serif-thin',GOLD,0.6,'','cMin')+tall('a',15,'sans-serif-medium','#B9C2E8',1,'android:layout_marginTop="3dp"','cAmPm',trim=False),'left'),
-    'center_vertical',False).replace('<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical"','<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="6dp"'))
+H=80   # the hours' digits, in dp (the widget is at least 110 dp high, with the next prayer under the time)
+D[1]=('ستّ',ind(fig('HH:mm','sixcaps',H,WHITE),8))
+D[2]=('ستّ ذهبي',row(fig('HH','sixcaps',H,WHITE)+fig(':mm','sixcaps',50,GOLD,'cMin','android:layout_marginLeft="2dp"')))
+D[3]=('الأكتاف',ind(fig('HH:mm','shoulders_light',H-6,WHITE),8))
+D[4]=('الأكتاف العريض',row(fig('HH','shoulders_black',H,WHITE)+fig('mm','shoulders_black',44,GOLD,'cMin','android:layout_marginLeft="5dp"')))
+D[5]=('أنطونيو',row(fig('HH','antonio',H-4,WHITE)+fig('mm','antonio',38,GOLD,'cMin','android:layout_marginLeft="4dp"'),'top',False))
+D[6]=('القوطي',ind(fig('HH','league',56,WHITE)+bar('48dp','2dp',GOLD,'android:layout_marginTop="4dp" android:layout_marginBottom="4dp"')+fig('mm','league',30,GOLD,'cMin'),8))
+D[7]=('الشعرة',ind(fig('HH:mm','tulpen',H,GOLD,glow='#99E6BC62'),8))
+D[8]=('الأعمدة',row(fig('HH','saira',H-4,WHITE)+bar('2dp','56dp',GOLD,'android:layout_marginLeft="7dp" android:layout_marginRight="7dp"')
+    +fig('mm','saira',40,GOLD,'cMin'),'center_vertical',False))
+D[9]=('الشارة',row(fig('HH','bebas',H-6,WHITE)+fig('mm','bebas',28,'#0B1F5C','cMin',
+    'android:background="@drawable/clock_chip" android:paddingLeft="7dp" android:paddingRight="7dp" android:paddingTop="10dp" android:paddingBottom="8dp" android:layout_marginLeft="6dp"'),'center_vertical',False))
+D[10]=('اثنتا عشرة',row(fig('h','pathway',H-4,WHITE)+col(fig('mm','pathway',40,GOLD,'cMin')
+    +'<TextClock android:id="@+id/cAmPm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:format24Hour="a" android:format12Hour="a"\n    android:textSize="15dp" android:fontFamily="sans-serif-medium" android:textColor="#B9C2E8" android:layout_marginTop="4dp" />\n',
+    'left','android:layout_marginLeft="6dp"'),'center_vertical',False))
 A={1:'ذهبي',2:'أرقام عربية',3:'أرقام لاتينية',4:'بسيط',5:'ميناء فاتح',6:'نجمة',7:'مربّع',8:'مستطيل',9:'مثمّن',10:'سداسي',11:'روماني',12:'معيّن'}
 for k,(name,body) in D.items():
     open(R+f'layout/widget_clock_d{k}.xml','w').write(HEAD.format(name=name,body=body))
