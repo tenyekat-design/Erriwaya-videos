@@ -187,6 +187,29 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
+        /**
+         * Telegram Bot API, for the admin's instant notice of a subscription request: method is sendMessage, getUpdates or
+         * getMe; body is its JSON. Returns Telegram's answer ("" if unreachable). Runs on the bridge's thread, not the UI's.
+         */
+        @JavascriptInterface
+        public String tg(String token, String method, String body) {
+            if (token == null || !token.matches("[0-9]{5,15}:[A-Za-z0-9_-]{30,50}")) return "";
+            if (!"sendMessage".equals(method) && !"getUpdates".equals(method) && !"getMe".equals(method)) return "";
+            java.net.HttpURLConnection c = null;
+            try {
+                c = (java.net.HttpURLConnection) new java.net.URL("https://api.telegram.org/bot" + token + "/" + method).openConnection();
+                c.setConnectTimeout(12000); c.setReadTimeout(15000);
+                c.setRequestMethod("POST"); c.setDoOutput(true);
+                c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+                try (java.io.OutputStream o = c.getOutputStream()) { o.write((body == null ? "{}" : body).getBytes("UTF-8")); }
+                int code = c.getResponseCode();
+                java.io.InputStream in = code / 100 == 2 ? c.getInputStream() : c.getErrorStream();
+                java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+                if (in != null) { byte[] buf = new byte[4096]; int k; while ((k = in.read(buf)) > 0) b.write(buf, 0, k); in.close(); }
+                return b.toString("UTF-8");
+            } catch (Exception e) { return ""; } finally { if (c != null) c.disconnect(); }
+        }
+
         /** How opaque the widgets' background is, 0 (see-through) to 100 (solid). */
         @JavascriptInterface
         public int widgetBg() { return Widgets.bg(MainActivity.this); }

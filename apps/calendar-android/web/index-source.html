@@ -1599,7 +1599,7 @@ async function sgAdmin(el){
 }
 // ---- the admin: subscriptions. What subscribers see (price, payment numbers), the catcher that pairs payments with
 //      requests on this phone (Pay.java), and the requests still waiting, each confirmable with one tap.
-const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
+const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)',''],['tgToken','رمز بوت تيليغرام (من BotFather)','123456789:AA…'],['tgChat','معرّف محادثتك مع البوت','']];
 const subId=i=>i.slice(0,5)+'-'+i.slice(5);
 const subWhen=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
 const subCommit=async writes=>{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({writes})});if(!r.ok)throw new Error(r.status)};
@@ -1610,15 +1610,28 @@ async function subAdmin(el){
     <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
     <section class="card sb" id="sbCatch"></section>
     <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="60"></label>`).join('')}</div>
+      ${nat&&typeof A.tg==='function'?`<p class="mut">إشعار تيليغرام الفوري: أنشئ بوتًا من <b dir="ltr">@BotFather</b> والصق رمزه أعلاه، ثم افتح البوت في تيليغرام وأرسل له أي رسالة، ثم اضغط «اكتشف معرّفي»، ثم «حفظ».</p>
+      <div class="sg-act"><button type="button" class="btn" id="sbTgFind">اكتشف معرّفي</button><button type="button" class="btn" id="sbTgTest">رسالة تجربة</button></div>`:''}
       <button type="button" class="btn primary" id="sbSave">حفظ</button><p class="sg-msg" id="sbCfgM"></p></section>`;
   // what subscribers see
   (async()=>{try{const r=await sgFetch(SG_FS+'/sub_config/public');if(!r.ok)return;const c=sgRead(await r.json());
       el.querySelectorAll('#sbCfg input').forEach(i=>{if(typeof c[i.dataset.k]==='string')i.value=c[i.dataset.k]});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount}))}catch(e){}})();
   $('sbSave').onclick=async()=>{const f={},M=$('sbCfgM');el.querySelectorAll('#sbCfg input').forEach(i=>{f[i.dataset.k]=i.value.trim()});
-    f.amount=f.amount.replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
+    f.amount=f.amount.replace(/\D/g,'');f.tgToken=f.tgToken.replace(/\s/g,'');f.tgChat=f.tgChat.replace(/[^\d-]/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
     try{await subCommit([{update:{name:`${SG_DOCS}/sub_config/public`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))}}]);
       if(nat)A.paySet(JSON.stringify({amount:f.amount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
     catch(e){M.textContent=e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد':'تعذّر الحفظ. هل أُضيفت قواعد الاشتراك في Firestore؟'}};
+  // Telegram: find the admin's chat with the bot, and send a test
+  const tgIn=k=>el.querySelector(`#sbCfg [data-k="${k}"]`);
+  if($('sbTgFind'))$('sbTgFind').onclick=()=>{const t=tgIn('tgToken').value.replace(/\s/g,''),M=$('sbCfgM');if(!t){M.textContent='الصق رمز البوت أولًا';return}
+    let r={};try{r=JSON.parse(A.tg(t,'getUpdates','{}')||'{}')}catch(e){}
+    if(!r.ok){M.textContent=r.error_code===401?'رمز البوت غير صحيح':'تعذّر الاتصال بتيليغرام';return}
+    const u=(r.result||[]).map(x=>x.message||x.edited_message||x.channel_post||x.my_chat_member).filter(x=>x&&x.chat).pop();
+    if(!u){M.textContent='لم يصل البوت شيء بعد: افتحه في تيليغرام وأرسل له أي رسالة ثم أعد المحاولة';return}
+    tgIn('tgChat').value=String(u.chat.id);M.textContent='';say('وُجد معرّفك: اضغط «حفظ»')};
+  if($('sbTgTest'))$('sbTgTest').onclick=()=>{const t=tgIn('tgToken').value.replace(/\s/g,''),c=tgIn('tgChat').value.trim();let r={};
+    try{r=JSON.parse(A.tg(t,'sendMessage',JSON.stringify({chat_id:c,text:'✅ تجربة: إشعارات طلبات الاشتراك في التقويم الموريتاني تصل هنا.'}))||'{}')}catch(e){}
+    say(r.ok?'أُرسلت. افتح تيليغرام':'لم تُرسل: تحقق من الرمز والمعرّف')};
   // the catcher (this phone)
   function drawCatch(){const C=$('sbCatch');if(!C)return;
     if(!nat){C.innerHTML='<h2>اللاقط التلقائي</h2><p class="empty">يعمل في تطبيق أندرويد على هاتف الناشر فقط.</p>';return}
@@ -3475,7 +3488,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','whatsapp','phone'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
@@ -3544,7 +3557,11 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
       if(!r.ok)throw new Error(r.status);
-      const p={at:Date.now(),app:appSel,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0}
+      const p={at:Date.now(),app:appSel,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
+      // the admin's instant notice on Telegram (sub_config: tgToken, tgChat); the request is already saved either way
+      if(SUB.tgToken&&SUB.tgChat&&typeof A.tg==='function'){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
+        const text=`🔔 طلب اشتراك جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
+        setTimeout(()=>{try{A.tg(SUB.tgToken,'sendMessage',JSON.stringify({chat_id:SUB.tgChat,text}))}catch(e){}},0)}}
     catch(e){m.className='';m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت وأعد المحاولة.','Envoi impossible. Vérifiez la connexion et réessayez.')}
     b.disabled=false};
   // looks for this phone's code: every few seconds just after a request, then every minute; every five minutes while locked
