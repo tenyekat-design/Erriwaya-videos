@@ -45,6 +45,26 @@ final class Widgets {
 
     static void setClock(Context ctx, int id, String c) { sp(ctx).edit().putString("c_" + id, c).apply(); }
 
+    /** The widget's own photo (WidgetPhoto: picked, cropped to the widget, dimmed, rounded), or a file that does not exist. */
+    static java.io.File pic(Context ctx, int id) { return new java.io.File(new java.io.File(ctx.getFilesDir(), "wbg"), id + ".png"); }
+
+    static boolean hasPic(Context ctx, int id) { return pic(ctx, id).isFile(); }
+
+    /**
+     * Puts the widget's background into its ImageView: its photo if it has one (served to the launcher by WidgetPics; the
+     * file's time in the address makes the launcher load a new crop), else the drawn ground at the chosen opacity.
+     */
+    static void applyBg(Context ctx, android.widget.RemoteViews v, int view, int id, int ground) {
+        java.io.File f = pic(ctx, id);
+        if (f.isFile()) {
+            v.setImageViewUri(view, android.net.Uri.parse("content://" + WidgetPics.AUTHORITY + "/" + id + "?v=" + f.lastModified()));
+            v.setInt(view, "setImageAlpha", 255);
+        } else {
+            v.setImageViewResource(view, ground);
+            v.setInt(view, "setImageAlpha", bg(ctx, id) * 255 / 100);
+        }
+    }
+
     static void updateAll(Context ctx) {
         ClockWidget.updateAll(ctx);
         CalendarWidget.updateAll(ctx);

@@ -73,7 +73,7 @@ public class DayWidget extends AppWidgetProvider {
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             v.setOnClickPendingIntent(R.id.dRoot, PendingIntent.getActivity(ctx, 6, app, flags));
-            for (int id : ids) { v.setInt(R.id.dBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100); m.updateAppWidget(id, v); }
+            for (int id : ids) { Widgets.applyBg(ctx, v, R.id.dBg, id, R.drawable.widget_day_bg); m.updateAppWidget(id, v); }
             AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
             if (am != null) am.setWindow(AlarmManager.RTC, next + 1000, 60000, tick(ctx));   // need not wake a sleeping phone
         } catch (Exception ignored) { }

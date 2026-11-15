@@ -56,6 +56,11 @@
         </service>
         <!-- /PUBLISHER-ONLY -->
         <!-- each widget's own settings (background, and for the months which names): long-press the widget, then its settings -->
+        <!-- a photo behind a widget: picked, cropped to the widget's shape, dimmed (from the widget's settings) -->
+        <activity android:name=".WidgetPhoto" android:exported="false" android:label="خلفية الويدجت"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:excludeFromRecents="true" />
+        <!-- the launcher reads the widgets' photos from here (files/wbg only, read-only) -->
+        <provider android:name=".WidgetPics" android:authorities="mr.erriwaya.calendar.widgetpics" android:exported="true" />
         <activity android:name=".WidgetConfig" android:exported="true" android:label="إعداد الويدجت"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:excludeFromRecents="true">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /></intent-filter>

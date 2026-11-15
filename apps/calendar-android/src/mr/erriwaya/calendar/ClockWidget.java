@@ -93,7 +93,7 @@ public class ClockWidget extends AppWidgetProvider {
                 v.setViewVisibility(R.id.cNext, Widgets.clockNext(ctx, id) ? View.VISIBLE : View.GONE);
                 v.setViewVisibility(R.id.cBody, open ? View.VISIBLE : View.GONE);
                 v.setViewVisibility(R.id.cLock, open ? View.GONE : View.VISIBLE);
-                v.setInt(R.id.cBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100);
+                Widgets.applyBg(ctx, v, R.id.cBg, id, R.drawable.widget_day_bg);
                 v.setOnClickPendingIntent(R.id.cRoot, PendingIntent.getActivity(ctx, 10, app, flags));
                 m.updateAppWidget(id, v);
             }

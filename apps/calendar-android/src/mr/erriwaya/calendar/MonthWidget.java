@@ -108,7 +108,7 @@ public class MonthWidget extends AppWidgetProvider {
                     }
                 }
                 v.setViewVisibility(R.id.mLock, open ? View.GONE : View.VISIBLE);
-                v.setInt(R.id.mBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100);
+                Widgets.applyBg(ctx, v, R.id.mBg, id, R.drawable.widget_day_bg);
                 v.setOnClickPendingIntent(R.id.mRoot, PendingIntent.getActivity(ctx, 8, app, flags));
                 m.updateAppWidget(id, v);
             }

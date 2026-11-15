@@ -131,10 +131,10 @@ public class CalendarWidget extends AppWidgetProvider {
         // each widget its own background (Widgets.bg); over a wallpaper (less than half solid) the texts turn white
         for (int id : ids) {
             int bg = Widgets.bg(ctx, id);
-            boolean clear = bg < 50;
+            boolean clear = bg < 50 || Widgets.hasPic(ctx, id);   // over a photo too
             int ink = clear ? 0xFFFFFFFF : color(ctx, R.color.w_ink), muted = clear ? 0xFFECECEC : color(ctx, R.color.w_muted),
                     hiInk = color(ctx, R.color.w_hi_ink);
-            v.setInt(R.id.wBg, "setImageAlpha", bg * 255 / 100);
+            Widgets.applyBg(ctx, v, R.id.wBg, id, R.drawable.widget_bg);
             v.setTextColor(R.id.wHijri, clear ? 0xFFFFFFFF : color(ctx, R.color.w_green));
             v.setTextColor(R.id.wCity, clear ? 0xFFFFE9A8 : color(ctx, R.color.w_gold));
             v.setTextColor(R.id.wGreg, muted);

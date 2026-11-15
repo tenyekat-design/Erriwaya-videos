@@ -18,7 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * One widget's settings: how opaque its background is (solid, 75, 50, 25, none), and for the month widget which names it
+ * One widget's settings: how opaque its background is (solid, 75, 50, 25, none) or a photo of one's own (WidgetPhoto),
+ * the clock's model, and for the month widget which names it
  * shows (Hijri, Hassaniya, Gregorian: all, two or one). Opened by long-pressing the widget, then its settings (Android 12
  * and later), or when the widget is placed (older Android). Built in code: a short form, no page.
  */
@@ -119,6 +120,27 @@ public class WidgetConfig extends Activity {
             if (LEVELS[i] == cur) rg.check(r.getId());
         }
         box.addView(rg);
+
+        // a photo of one's own behind the widget, cropped so the time stays clear (WidgetPhoto)
+        box.addView(title("صورة خلفية", dp));
+        LinearLayout pr = new LinearLayout(this);
+        pr.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        Button pickB = new Button(this), dropB = new Button(this);
+        pickB.setText(Widgets.hasPic(this, id) ? "تغيير الصورة وقصّها" : "اختيار صورة وقصّها");
+        dropB.setText("إزالة الصورة");
+        dropB.setVisibility(Widgets.hasPic(this, id) ? View.VISIBLE : View.GONE);
+        pr.addView(pickB, new LinearLayout.LayoutParams(0, -2, 1));
+        pr.addView(dropB, new LinearLayout.LayoutParams(0, -2, 1));
+        box.addView(pr);
+        pickB.setOnClickListener(v -> {
+            if (clock) Widgets.setClock(this, id, chosen[0]);   // the crop screen shows the model chosen here
+            startActivity(new Intent(this, WidgetPhoto.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id));
+        });
+        dropB.setOnClickListener(v -> {
+            WidgetPhoto.remove(this, id);
+            dropB.setVisibility(View.GONE);
+            pickB.setText("اختيار صورة وقصّها");
+        });
 
         final CheckBox[] cb = new CheckBox[3];
         final String[] keys = {"h", "l", "g"};
