@@ -70,9 +70,13 @@ public class MonthWidget extends AppWidgetProvider {
                 v.setImageViewResource(R.id.mH, pic(ctx, "h", hm));
                 v.setImageViewResource(R.id.mL, pic(ctx, "l", hm));
                 v.setImageViewResource(R.id.mG, pic(ctx, "g", gm));
-                v.setViewVisibility(R.id.mH, open && show.contains("h") ? View.VISIBLE : View.GONE);
-                v.setViewVisibility(R.id.mL, open && show.contains("l") ? View.VISIBLE : View.GONE);
-                v.setViewVisibility(R.id.mG, open && show.contains("g") ? View.VISIBLE : View.GONE);
+                v.setViewVisibility(R.id.mHc, open && show.contains("h") ? View.VISIBLE : View.GONE);
+                v.setViewVisibility(R.id.mLc, open && show.contains("l") ? View.VISIBLE : View.GONE);
+                v.setViewVisibility(R.id.mGc, open && show.contains("g") ? View.VISIBLE : View.GONE);
+                // under each month: the day and the year (the Hassaniya months follow the Hijri date)
+                v.setTextViewText(R.id.mHt, h[2] + " · " + h[0] + " هـ");
+                v.setTextViewText(R.id.mLt, h[2] + " · " + h[0] + " هـ");
+                v.setTextViewText(R.id.mGt, g[2] + " · " + g[0] + " م");
                 v.setViewVisibility(R.id.mLock, open ? View.GONE : View.VISIBLE);
                 v.setInt(R.id.mBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100);
                 v.setOnClickPendingIntent(R.id.mRoot, PendingIntent.getActivity(ctx, 8, app, flags));
