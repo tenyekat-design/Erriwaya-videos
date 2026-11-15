@@ -221,6 +221,25 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setWidgetBg(int percent) { Widgets.setBg(MainActivity.this, percent); }
 
+        /** One of the heritage wallpapers (assets/wallpapers/<name>.jpg) on the home screen (1), the lock screen (2) or both (3); "" or the error. */
+        @JavascriptInterface
+        public String setWallpaper(String name, int which) {
+            if (name == null || !name.matches("[a-z]{2,20}")) return "bad name";
+            try (java.io.InputStream in = getAssets().open("wallpapers/" + name + ".jpg")) {
+                android.app.WallpaperManager wm = android.app.WallpaperManager.getInstance(MainActivity.this);
+                if (Build.VERSION.SDK_INT >= 24) {
+                    int f = (which & 1) != 0 ? android.app.WallpaperManager.FLAG_SYSTEM : 0;
+                    if ((which & 2) != 0) f |= android.app.WallpaperManager.FLAG_LOCK;
+                    wm.setStream(in, null, true, f == 0 ? android.app.WallpaperManager.FLAG_SYSTEM : f);
+                } else {
+                    wm.setStream(in);
+                }
+                return "";
+            } catch (Throwable t) {
+                return t.getClass().getSimpleName();
+            }
+        }
+
         // ---- the publisher's phone: automatic activation (Pay) ----
         @JavascriptInterface
         public String payState() { return Pay.state(MainActivity.this); }

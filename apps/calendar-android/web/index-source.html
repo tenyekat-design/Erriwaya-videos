@@ -418,6 +418,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .resume span{font-family:var(--f-naskh);line-height:1.8}
 .row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .empty{color:var(--muted);text-align:center;padding:24px 8px}
+.walls{margin:6px 0 10px}.walls>label{display:block;font-weight:700;margin-bottom:6px}
+.wallGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wallGrid button{border:2px solid transparent;border-radius:12px;padding:0;background:none;overflow:hidden;cursor:pointer;position:relative}
+.wallGrid button[aria-pressed="true"]{border-color:var(--gold)}
+.wallGrid img{display:block;width:100%;aspect-ratio:9/20;object-fit:cover}
+.wallGrid span{position:absolute;bottom:0;inset-inline:0;background:#03062bcc;color:#F2EEDC;font-size:.78rem;padding:3px 0;text-align:center}
 .seg2{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--gold);border-radius:10px;overflow:hidden}
 .seg2 button{border:0;background:var(--surface);padding:8px;font-weight:600;color:var(--muted)}
 .seg2 button[aria-pressed="true"]{background:var(--green);color:var(--on-green)}
@@ -1149,6 +1155,12 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
       </div>
       <div class="row"><label for="sTheme">المظهر</label><select id="sTheme"><option value="auto">تلقائي: ليلي من المغرب إلى الشروق</option><option value="light">نهاري دائمًا</option><option value="dark">ليلي دائمًا</option></select></div>
       <div class="row" id="wBgRow" hidden><label title="لكل الويدجت؛ ولكل ويدجت إعداده: اضغط عليه مطوّلًا ثم الإعدادات">خلفية الويدجت</label><div class="seg" id="wBgSeg" role="group" aria-label="خلفية الويدجت"><button type="button" data-v="100">معتمة</button><button type="button" data-v="75">75%</button><button type="button" data-v="50">50%</button><button type="button" data-v="25">25%</button><button type="button" data-v="0">شفافة</button></div></div>
+      <div id="wallBox" class="walls">
+        <label>خلفيات للهاتف من التراث</label>
+        <div class="wallGrid" id="wallGrid"></div>
+        <div class="row2" id="wallAct" hidden><button class="btn primary" data-w="3">الرئيسية والقفل</button><button class="btn" data-w="1">الشاشة الرئيسية</button><button class="btn" data-w="2">شاشة القفل</button></div>
+        <p class="note" id="wallNote">اختر خلفية ثم مكانها. ألوانها ألوان الويدجت، وأعلاها هادئ لتظهر فوقه الساعة والأيام.</p>
+      </div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
@@ -2164,6 +2176,16 @@ function applyTheme(){const t=themeNow(),r=document.documentElement;if(r.dataset
   $('themeBtn').setAttribute('aria-label',t==='dark'?'الوضع النهاري':'الوضع الليلي');
   if(themeSent!==t){themeSent=t;try{const A=window.AndroidApp;if(A&&typeof A.setTheme==='function')A.setTheme(t==='dark')}catch(e){}}}
 // the widgets' background, from solid to see-through (Android app only)
+{const WALLS=[['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']],g=$('wallGrid');let pick=null;
+  const app=window.AndroidApp&&typeof window.AndroidApp.setWallpaper==='function';
+  WALLS.forEach(([k,n])=>{const b=document.createElement('button');b.type='button';b.dataset.k=k;b.setAttribute('aria-pressed','false');
+    b.innerHTML='<img loading="lazy" alt="" src="wallpapers/'+k+'-s.jpg"><span>'+n+'</span>';g.appendChild(b)});
+  g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;pick=b.dataset.k;
+    g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    if(app)$('wallAct').hidden=false;else{const a=document.createElement('a');a.href='wallpapers/'+pick+'.jpg';a.download='erriwaya-'+pick+'.jpg';a.click()}});
+  $('wallAct').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!pick)return;say('جارٍ تعيين الخلفية…');
+    setTimeout(()=>{let r='';try{r=window.AndroidApp.setWallpaper(pick,+b.dataset.w)}catch(x){r=String(x)}say(r?'تعذّر تعيين الخلفية: '+r:'تم تعيين الخلفية')},30)});
+  if(!app)$('wallNote').textContent='اختر خلفية لتنزيلها بمقاس الهاتف (1080×2400).'}
 if(window.AndroidApp&&typeof window.AndroidApp.setWidgetBg==='function'){const seg=$('wBgSeg'),mark=()=>{let v=100;try{v=window.AndroidApp.widgetBg()}catch(e){}seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===v))};
   $('wBgRow').hidden=false;mark();seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;try{window.AndroidApp.setWidgetBg(+b.dataset.v)}catch(x){}mark();say('خلفية الويدجت: '+b.textContent)})}
 $('sTheme').value=store.get('theme','auto');
