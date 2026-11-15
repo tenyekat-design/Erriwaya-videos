@@ -32,7 +32,13 @@ final class Widgets {
 
     static void setMonths(Context ctx, int id, String m) { sp(ctx).edit().putString("m_" + id, m).apply(); }
 
+    /** The clock widget's face: "d" digital (the default) or "a" with hands. */
+    static String clock(Context ctx, int id) { return sp(ctx).getString("c_" + id, "d"); }
+
+    static void setClock(Context ctx, int id, String c) { sp(ctx).edit().putString("c_" + id, c).apply(); }
+
     static void updateAll(Context ctx) {
+        ClockWidget.updateAll(ctx);
         CalendarWidget.updateAll(ctx);
         DayWidget.updateAll(ctx);
         MonthWidget.updateAll(ctx);

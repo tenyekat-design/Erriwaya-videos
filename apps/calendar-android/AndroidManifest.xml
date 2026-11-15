@@ -58,6 +58,15 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:excludeFromRecents="true">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /></intent-filter>
         </activity>
+        <!-- «الساعة»: digital or with hands, per widget; for the free day and subscribers -->
+        <receiver android:name=".ClockWidget" android:exported="true" android:label="@string/clock_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/clock_widget" />
+        </receiver>
         <!-- «أشهر السنة»: like the weekday widget, for the free day and subscribers -->
         <receiver android:name=".MonthWidget" android:exported="true" android:label="@string/month_widget_name">
             <intent-filter>

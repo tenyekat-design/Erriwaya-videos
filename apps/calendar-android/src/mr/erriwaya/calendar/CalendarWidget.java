@@ -20,13 +20,13 @@ import org.json.JSONObject;
  */
 public class CalendarWidget extends AppWidgetProvider {
     static final String TICK = "mr.erriwaya.calendar.WIDGET_TICK";
-    private static final String[] G_MONTHS = {"يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"};
-    private static final String[] H_MONTHS = {"محرم", "صفر", "ربيع الأول", "ربيع الآخر", "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"};
-    private static final String[] G_MONTHS_FR = {"janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"};
-    private static final String[] H_MONTHS_FR = {"Mouharram", "Safar", "Rabi I", "Rabi II", "Joumada I", "Joumada II", "Rajab", "Chaabane", "Ramadan", "Chawwal", "Dhou al-Qi`da", "Dhou al-Hijja"};
-    private static final String[] DAYS_FR = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
-    private static final String[] DAYS = {"الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"};
-    private static final int[] PRAYERS = {PrayerCalc.FAJR, PrayerCalc.DHUHR, PrayerCalc.ASR, PrayerCalc.MAGHRIB, PrayerCalc.ISHA};
+    static final String[] G_MONTHS = {"يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"};
+    static final String[] H_MONTHS = {"محرم", "صفر", "ربيع الأول", "ربيع الآخر", "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"};
+    static final String[] G_MONTHS_FR = {"janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"};
+    static final String[] H_MONTHS_FR = {"Mouharram", "Safar", "Rabi I", "Rabi II", "Joumada I", "Joumada II", "Rajab", "Chaabane", "Ramadan", "Chawwal", "Dhou al-Qi`da", "Dhou al-Hijja"};
+    static final String[] DAYS_FR = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
+    static final String[] DAYS = {"الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"};
+    static final int[] PRAYERS = {PrayerCalc.FAJR, PrayerCalc.DHUHR, PrayerCalc.ASR, PrayerCalc.MAGHRIB, PrayerCalc.ISHA};
     private static final int[] CELL = {R.id.c0, R.id.c1, R.id.c2, R.id.c3, R.id.c4};
     private static final int[] NAME = {R.id.n0, R.id.n1, R.id.n2, R.id.n3, R.id.n4};
     private static final int[] TIME = {R.id.t0, R.id.t1, R.id.t2, R.id.t3, R.id.t4};

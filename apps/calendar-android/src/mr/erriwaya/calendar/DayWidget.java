@@ -68,7 +68,7 @@ public class DayWidget extends AppWidgetProvider {
             v.setImageViewResource(R.id.dImg, IMG[di]);
             v.setViewVisibility(R.id.dImg, open ? View.VISIBLE : View.INVISIBLE);   // not subscribed: no day, only the invitation
             v.setViewVisibility(R.id.dLock, open ? View.GONE : View.VISIBLE);
-            v.setViewVisibility(R.id.dDate, open ? View.VISIBLE : View.GONE);
+            v.setViewVisibility(R.id.dDate, View.GONE);   // the day alone, larger (the owner's choice, 16 Nov 2026)
             v.setTextViewText(R.id.dDate, h[2] + " " + H_MONTHS[hm] + " " + h[0] + " هـ · " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);

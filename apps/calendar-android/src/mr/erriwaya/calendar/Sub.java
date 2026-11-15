@@ -283,6 +283,7 @@ final class Sub {
                         android.content.pm.PackageManager.DONT_KILL_APP);
             DayWidget.updateAll(ctx);
             MonthWidget.updateAll(ctx);
+            ClockWidget.updateAll(ctx);
         } catch (Exception ignored) { }
     }
 

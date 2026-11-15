@@ -35,6 +35,7 @@ public class WidgetConfig extends Activity {
         if (id == AppWidgetManager.INVALID_APPWIDGET_ID) { finish(); return; }
         AppWidgetProviderInfo info = AppWidgetManager.getInstance(this).getAppWidgetInfo(id);
         final boolean month = info != null && info.provider != null && info.provider.getClassName().endsWith(".MonthWidget");
+        final boolean clock = info != null && info.provider != null && info.provider.getClassName().endsWith(".ClockWidget");
         float dp = getResources().getDisplayMetrics().density;
 
         LinearLayout box = new LinearLayout(this);
@@ -42,6 +43,21 @@ public class WidgetConfig extends Activity {
         box.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         box.setPadding((int) (20 * dp), (int) (16 * dp), (int) (20 * dp), (int) (12 * dp));
 
+        final RadioGroup face = new RadioGroup(this);
+        if (clock) {
+            box.addView(title("شكل الساعة", dp));
+            face.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            String[] fl = {"رقمية", "بعقارب"};
+            for (int i = 0; i < 2; i++) {
+                RadioButton r = new RadioButton(this);
+                r.setId(2000 + i);
+                r.setText(fl[i]);
+                r.setTextSize(16);
+                face.addView(r);
+            }
+            face.check("a".equals(Widgets.clock(this, id)) ? 2001 : 2000);
+            box.addView(face);
+        }
         box.addView(title("خلفية الويدجت", dp));
         final RadioGroup rg = new RadioGroup(this);
         rg.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
@@ -79,6 +95,7 @@ public class WidgetConfig extends Activity {
         ok.setOnClickListener(v -> {
             int sel = rg.getCheckedRadioButtonId() - 1000;
             if (sel >= 0 && sel < LEVELS.length) Widgets.setBg(this, id, LEVELS[sel]);
+            if (clock) Widgets.setClock(this, id, face.getCheckedRadioButtonId() == 2001 ? "a" : "d");
             if (month) {
                 StringBuilder s = new StringBuilder();
                 for (int i = 0; i < 3; i++) if (cb[i].isChecked()) s.append(keys[i]);

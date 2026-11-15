@@ -6,8 +6,8 @@
     <ImageView android:id="@+id/dBg" android:layout_width="match_parent" android:layout_height="match_parent"
         android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
     <ImageView android:id="@+id/dImg" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:paddingBottom="12dp" android:scaleType="fitCenter" android:src="@drawable/day_5" android:contentDescription="@string/day_widget_name" />
-    <TextView android:id="@+id/dDate" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:padding="2dp" android:scaleType="fitCenter" android:src="@drawable/day_5" android:contentDescription="@string/day_widget_name" />
+    <TextView android:id="@+id/dDate" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="7dp"
         android:text="5 جمادى الآخرة 1448 هـ · 15 نوفمبر 2026" android:textSize="12sp" android:maxLines="1"
         android:textColor="#F2EEDC" android:shadowColor="#000000" android:shadowRadius="5" />

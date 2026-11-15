@@ -9,6 +9,9 @@
     <color name="w_hi">#0F5641</color>
     <color name="w_hi_ink">#FBF3DC</color>
     <string name="widget_name">مواقيت الصلاة والتاريخ</string>
+    <string name="clock_widget_name">ساعة التقويم الموريتاني</string>
+    <string name="clock_widget_desc">ساعة رقمية أو بعقارب، مع التاريخ الهجري والميلادي والصلاة القادمة، بخلفية تختار عتمتها</string>
+    <string name="clock_widget_locked">ساعة التقويم الموريتاني\nللمشتركين: اشترك في التقويم الموريتاني</string>
     <string name="month_widget_name">أشهر السنة بالخط العربي</string>
     <string name="month_widget_desc">اسم الشهر الهجري والحساني والميلادي بالخط العربي، كلها أو بعضها، بخلفية تختار عتمتها</string>
     <string name="month_widget_locked">أشهر السنة بالخط العربي\nللمشتركين: اشترك في التقويم الموريتاني</string>
