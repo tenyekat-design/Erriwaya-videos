@@ -3656,7 +3656,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     if(!told){try{localStorage.setItem('mrcal.subTold','1')}catch(e){}setTimeout(()=>toast(L('تجربة مجانية: بقي ','Essai gratuit : il reste ')+left(st.trialEnd-st.now)),2500)}}
 })();
 // «الخلفيات»: a tile of its own; the pictures are seen by all, set only by subscribers (Java checks it too); never downloadable
-(function(){const $=id=>document.getElementById(id),say=t=>{try{toast(t)}catch(e){try{window.say(t)}catch(x){}}};const WALLS=[['qsar','القصر'],['bab','الباب'],['naana','أتاي بالنعناع'],['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']];
+(function(){const $=id=>document.getElementById(id),say=t=>{try{toast(t)}catch(e){try{window.say(t)}catch(x){}}};const WALLS=[['qsar','القصر'],['bab','الباب'],['naana','أتاي بالنعناع'],['arguin','حوض آرگين'],['nahr','النهر'],['kharif','الخريف'],['adrar','آدرار'],['ibil','الإبل'],['badiya','البادية'],['mahdara','المحظرة'],['nujum','النجوم'],['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']];
   const A=window.AndroidApp,app=A&&typeof A.setWallpaper==='function',box=$('walls'),g=$('wallGrid');if(!box||!g)return;
   const LOCK='<i><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></i>';
   const paid=()=>{try{const t=JSON.parse(A.subState());return t.until>t.now}catch(e){return false}};
