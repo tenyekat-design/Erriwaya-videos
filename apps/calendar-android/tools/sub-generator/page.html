@@ -67,6 +67,12 @@ td.i{direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;white-space
     <b>الرموز الصادرة من هذا الهاتف</b>
     <div id="log" class="muted" style="margin-top:6px">لا شيء بعد.</div>
   </div>
+  <div class="card">
+    <b>التفعيل التلقائي (اللاقط)</b>
+    <p class="muted" style="margin:6px 0 10px">لتشغيل اللاقط في تطبيقك: افتح صفحة «الاشتراكات» للمشرف، والصق فيها المفتاح السري. انسخه من هنا على هاتفك أنت فقط.</p>
+    <button id="cpKey" class="alt" style="width:100%">نسخ المفتاح السري</button>
+    <p class="muted" id="keyDone" style="margin:8px 0 0"></p>
+  </div>
   <p class="muted">الرمز خاص بالهاتف الذي كُتب رقمه، ولا يعمل على غيره. الصفحة تعمل دون إنترنت ولا ترسل شيئًا.</p>
 </main>
 <script>/*__SIGN__*/</script>
@@ -111,6 +117,7 @@ function copy(t,what){
   const old=()=>{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();try{document.execCommand('copy');ok()}catch(e){$('done').textContent='تعذّر النسخ؛ حدّد الرمز وانسخه يدويًا.'}a.remove()};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,old);else old();
 }
+$('cpKey').onclick=()=>{const a=document.createElement('textarea');a.value=KEY;document.body.append(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(KEY).then(()=>{$('keyDone').textContent='نُسخ المفتاح. الصقه في صفحة «الاشتراكات» ثم امسح الحافظة بنسخ أي شيء آخر.'},()=>{});if(ok)$('keyDone').textContent='نُسخ المفتاح. الصقه في صفحة «الاشتراكات» ثم امسح الحافظة بنسخ أي شيء آخر.'};
 $('cpMsg').onclick=()=>last&&copy(last.msg,'الرسالة');
 $('cpCode').onclick=()=>last&&copy(last.code,'الرمز');
 $('wa').onclick=()=>{if(last)window.open('https://wa.me/?text='+encodeURIComponent(last.msg),'_blank')};

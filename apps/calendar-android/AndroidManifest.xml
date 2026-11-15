@@ -42,6 +42,13 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/calendar_widget" />
         </receiver>
+        <!-- The publisher's phone only: hears the banks' payment notifications once he grants notification access (Pay) -->
+        <service android:name=".PayListener" android:exported="true" android:label="التقاط رسائل الدفع (للناشر)"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
         <!-- «يوم الأسبوع»: off until a subscription is active (Sub.syncDayWidget turns it on), so it is not offered before -->
         <receiver android:name=".DayWidget" android:exported="true" android:enabled="false" android:label="@string/day_widget_name">
             <intent-filter>

@@ -118,7 +118,7 @@ final class Sub {
         } catch (Exception e) { return -1; }
     }
 
-    private static byte[] decode64(String s) {
+    static byte[] decode64(String s) {
         final String A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         java.io.ByteArrayOutputStream o = new java.io.ByteArrayOutputStream();
         int buf = 0, bits = 0;

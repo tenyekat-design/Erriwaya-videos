@@ -89,6 +89,15 @@ button{cursor:pointer}
 .sg-k{display:flex;justify-content:space-between;align-items:center}.sg-k b{font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--green);color:var(--on-green)}.sg-k b.fix{background:var(--gold)}.sg-k small{color:var(--muted)}
 .sg-note{background:var(--bg,#f6f1e4);border-radius:8px;padding:6px 10px}.sg-edit{display:grid;gap:4px;font-size:.85rem;color:var(--muted);margin-top:4px}.sg-edit input{font:inherit;padding:7px 10px;border:1.5px solid var(--line);border-radius:10px}
 .sg-act{display:flex;gap:8px;margin-top:6px}
+.sb h2{margin:0 0 8px;font-size:1.1rem;color:var(--green)}.sb h2 small{font-size:.75rem;color:var(--muted);font-weight:400;margin-inline-start:6px}.sb h3{margin:14px 0 4px;font-size:.95rem}
+.sb .mut{color:var(--muted);font-size:.84rem;margin:6px 0}.sb-form{display:grid;gap:8px;margin-bottom:10px}.sb-form label{display:grid;gap:3px;font-size:.86rem;font-weight:600;color:var(--muted)}
+.sb-form input,.sb-key input{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);min-width:0}
+.sb-chk{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px;font-size:.92rem}.sb-chk li{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.sb-key input{flex:1}
+.sb-ok{color:var(--green)}.sb-no{color:var(--red)}.sb-tag{display:inline-flex;gap:4px;align-items:center;background:var(--green-soft);border-radius:999px;padding:1px 10px;font-size:.8rem}
+.sb-src>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.86rem}.sb-src small{display:block;color:var(--muted);font-size:.7rem}
+.sb-src span:last-child{display:flex;gap:4px;flex:none}.sb-src .btn{padding:4px 8px;font-size:.76rem}
+.sb-msgs>div{padding:6px 0;border-bottom:1px solid var(--line)}.sb-msgs small{color:var(--muted);font-size:.74rem}.sb-msgs p{margin:2px 0 0;font-size:.86rem;line-height:1.6}.sb-msgs .used{opacity:.6}
+.sb-req+.sb-req{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
 .vil-pick label{font-family:var(--f-display);font-weight:600;color:var(--green);min-width:3.2em}
 .vil-pick button{flex:1;max-width:300px;text-align:start;font:600 1rem var(--f-body);color:var(--ink);padding:7px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--surface)}
 .vil-pick button small{color:var(--muted);font-weight:400}
@@ -852,6 +861,17 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 #lkCode{width:100%;min-height:74px;direction:ltr;text-align:left;font:500 .8rem/1.6 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);margin:0 0 8px;resize:vertical}
 #lkCode::placeholder{font-family:var(--f-body);font-size:.9rem;direction:rtl;text-align:right}
 .fr #lkCode::placeholder{direction:ltr;text-align:left}
+.lk-auto{display:grid;gap:5px;margin:0 0 12px}
+.lk-auto label{font-size:.84rem;font-weight:600;color:var(--muted)}
+.lk-auto input{font:600 1.05rem/1.3 ui-monospace,Menlo,Consolas,monospace;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:center;width:100%}
+.lk-auto .btn{margin-top:6px;padding-block:12px;font-size:1rem}
+#lkAutoMsg{margin:4px 0 0;min-height:1.4em;text-align:center;font-size:.9rem;color:var(--red);line-height:1.7}
+#lkAutoMsg.ok{color:var(--green)}
+.lk-pay button.pm[aria-pressed="true"]{border-color:var(--green);box-shadow:0 0 0 2px var(--green) inset}
+.lk-man{margin:4px 0 0;border-top:1px solid var(--line);padding-top:8px}
+.lk-man summary{cursor:pointer;color:var(--muted);font-size:.88rem;text-align:center;list-style:none}
+.lk-man summary::-webkit-details-marker{display:none}
+.lk-man[open] summary{margin-bottom:10px}
 #lkMsg{min-height:1.5em;margin:6px 0 0;text-align:center;font-size:.9rem;color:var(--red)}
 #lkMsg.ok{color:var(--green)}
 #lock:not([hidden])~.toast{z-index:95}
@@ -966,11 +986,19 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <p id="lkP"></p>
   <ol class="lk-steps" id="lkSteps"></ol>
   <div class="lk-pay" id="lkPay" hidden></div>
-  <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
+  <div class="lk-auto" id="lkAuto">
+    <label id="lkPhoneL" for="lkPhone"></label><input id="lkPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="20" dir="ltr">
+    <label id="lkRefL" for="lkRef"></label><input id="lkRef" type="text" autocomplete="off" maxlength="40" dir="ltr">
+    <button type="button" class="btn primary" id="lkSend"></button>
+    <p id="lkAutoMsg" role="status"></p>
+  </div>
+  <details class="lk-man" id="lkMan"><summary id="lkManS"></summary>
   <div class="lk-row" id="lkContact" hidden></div>
-  <textarea id="lkCode" autocomplete="off" autocapitalize="characters" spellcheck="false"></textarea>
-  <div class="lk-row"><button type="button" class="btn" id="lkPaste"></button><button type="button" class="btn primary" id="lkGo"></button></div>
-  <p id="lkMsg" role="status"></p>
+    <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
+    <textarea id="lkCode" autocomplete="off" autocapitalize="characters" spellcheck="false"></textarea>
+    <div class="lk-row"><button type="button" class="btn" id="lkPaste"></button><button type="button" class="btn primary" id="lkGo"></button></div>
+    <p id="lkMsg" role="status"></p>
+  </details>
 </div></div>
 <header class="app-head" dir="rtl" lang="ar">
   <div class="app-band"><div class="rmd" aria-hidden="true"><svg viewBox="0 0 96 70"><g style="transform-origin:12px 0"><path d="M12 0V25" stroke="#C9A44C" stroke-width=".8"/><g transform="translate(12 25) scale(0.8)"><circle class="glow" cy="13" r="14" fill="#FFC95C" fill-opacity=".3"/><path d="M-2 0h4v2h-4z" fill="#C9A44C"/><path d="M-6 6Q0 -1 6 6z" fill="#C9A44C"/><path d="M-6 6h12l-1.6 13h-8.8z" fill="#FFD77A"/><path d="M-6 6h12M-2 6l-.6 13M2 6l.6 13M-5.2 12.5h10.4" stroke="#8A6A1E" stroke-width=".8" fill="none"/><path d="M-5 19h10l-1.5 2.6h-7z" fill="#C9A44C"/><path d="M0 21.6v4" stroke="#C9A44C" stroke-width=".9"/><circle cy="26.6" r="1.2" fill="#F0A860"/></g></g><g style="transform-origin:45px 0"><path d="M45 0V31" stroke="#C9A44C" stroke-width=".8"/><g transform="translate(45 31) scale(0.9)"><circle class="glow" cy="13" r="14" fill="#FFC95C" fill-opacity=".3"/><path d="M-2 0h4v2h-4z" fill="#C9A44C"/><path d="M-6 6Q0 -1 6 6z" fill="#C9A44C"/><path d="M-6 6h12l-1.6 13h-8.8z" fill="#FFD77A"/><path d="M-6 6h12M-2 6l-.6 13M2 6l.6 13M-5.2 12.5h10.4" stroke="#8A6A1E" stroke-width=".8" fill="none"/><path d="M-5 19h10l-1.5 2.6h-7z" fill="#C9A44C"/><path d="M0 21.6v4" stroke="#C9A44C" stroke-width=".9"/><circle cy="26.6" r="1.2" fill="#F0A860"/></g></g><g style="transform-origin:78px 0"><path d="M78 0V23" stroke="#C9A44C" stroke-width=".8"/><g transform="translate(78 23) scale(0.78)"><circle class="glow" cy="13" r="14" fill="#FFC95C" fill-opacity=".3"/><path d="M-2 0h4v2h-4z" fill="#C9A44C"/><path d="M-6 6Q0 -1 6 6z" fill="#C9A44C"/><path d="M-6 6h12l-1.6 13h-8.8z" fill="#FFD77A"/><path d="M-6 6h12M-2 6l-.6 13M2 6l.6 13M-5.2 12.5h10.4" stroke="#8A6A1E" stroke-width=".8" fill="none"/><path d="M-5 19h10l-1.5 2.6h-7z" fill="#C9A44C"/><path d="M0 21.6v4" stroke="#C9A44C" stroke-width=".9"/><circle cy="26.6" r="1.2" fill="#F0A860"/></g></g></svg></div><div class="app-in">
@@ -1539,7 +1567,7 @@ async function sgAdmin(el){
         store.set(SG_AUTH,{email:j.email,rt:j.refreshToken,id:j.idToken,exp:Date.now()+(+j.expiresIn)*1000});sgBg(j.refreshToken);
         try{window.AndroidApp.requestNotifications()}catch(e){}sgAdmin(el)}catch(e){M.textContent='تعذّر الاتصال بالإنترنت'}};
     return}
-  el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>${vesc(a.email)} · <button type="button" class="linkish" id="sgOut">خروج</button></p></div>
+  el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>${vesc(a.email)} · <a href="#sub-admin">الاشتراكات</a> · <button type="button" class="linkish" id="sgOut">خروج</button></p></div>
     <div class="sg-tabs" role="tablist">${[['new','جديدة'],['accepted','مقبولة'],['rejected','مرفوضة']].map(([k,t])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${sgTab===k}">${t}</button>`).join('')}</div>
     <div id="sgL"><p class="empty">جارٍ التحميل…</p></div>`;
   $('sgOut').onclick=()=>{store.set(SG_AUTH,null);sgBg('');sgAdmin(el)};
@@ -1570,7 +1598,77 @@ async function sgAdmin(el){
       if(!r.ok)throw new Error(r.status);it.remove();say(f.status==='accepted'?'قُبل الاقتراح: يظهر في التطبيق عند المشتركين خلال يوم':'رُفض الاقتراح');store.set('sgAt',0);sgSync()}
     catch(err){b.disabled=false;say('تعذّر الحفظ، أعد المحاولة')}};
 }
-window.APP=Object.assign(window.APP||{},{sgAdmin});
+// ---- the admin: subscriptions. What subscribers see (price, payment numbers), the catcher that pairs payments with
+//      requests on this phone (Pay.java), and the requests still waiting, each confirmable with one tap.
+const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
+const subId=i=>i.slice(0,5)+'-'+i.slice(5);
+const subWhen=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
+const subCommit=async writes=>{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({writes})});if(!r.ok)throw new Error(r.status)};
+async function subAdmin(el){
+  const a=store.get(SG_AUTH,null),A=window.AndroidApp,nat=A&&typeof A.payState==='function';
+  if(!a){el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>للمشرف فقط</p></div><section class="card"><p class="empty">سجّل الدخول أولًا من <a href="#sg-admin">صفحة المشرف</a> ثم عد إلى هنا.</p></section>`;return}
+  el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>${vesc(a.email)} · <a href="#sg-admin">اقتراحات القرى</a></p></div>
+    <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
+    <section class="card sb" id="sbCatch"></section>
+    <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="60"></label>`).join('')}</div>
+      <button type="button" class="btn primary" id="sbSave">حفظ</button><p class="sg-msg" id="sbCfgM"></p></section>`;
+  // what subscribers see
+  (async()=>{try{const r=await sgFetch(SG_FS+'/sub_config/public');if(!r.ok)return;const c=sgRead(await r.json());
+      el.querySelectorAll('#sbCfg input').forEach(i=>{if(typeof c[i.dataset.k]==='string')i.value=c[i.dataset.k]});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount}))}catch(e){}})();
+  $('sbSave').onclick=async()=>{const f={},M=$('sbCfgM');el.querySelectorAll('#sbCfg input').forEach(i=>{f[i.dataset.k]=i.value.trim()});
+    f.amount=f.amount.replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
+    try{await subCommit([{update:{name:`${SG_DOCS}/sub_config/public`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))}}]);
+      if(nat)A.paySet(JSON.stringify({amount:f.amount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
+    catch(e){M.textContent=e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد':'تعذّر الحفظ. هل أُضيفت قواعد الاشتراك في Firestore؟'}};
+  // the catcher (this phone)
+  function drawCatch(){const C=$('sbCatch');if(!C)return;
+    if(!nat){C.innerHTML='<h2>اللاقط التلقائي</h2><p class="empty">يعمل في تطبيق أندرويد على هاتف الناشر فقط.</p>';return}
+    let s={};try{s=JSON.parse(A.payState())}catch(e){}
+    const T=s.trust||[],ok=x=>x?'<b class="sb-ok">✓</b>':'<b class="sb-no">✗</b>',ready=s.key&&s.access&&s.amount&&T.length;
+    C.innerHTML=`<h2>اللاقط التلقائي <small>${s.on&&ready?'يعمل':'متوقف'}</small></h2>
+      <ul class="sb-chk">
+        <li>${ok(s.access)} إذن قراءة الإشعارات ${s.access?'':'<button type="button" class="btn" data-a="access">امنح الإذن</button>'}</li>
+        <li>${ok(s.key)} المفتاح السري ${s.key?'<button type="button" class="linkish" data-a="nokey">حذفه</button>':''}</li>
+        ${s.key?'':'<li class="sb-key"><input id="sbKey" dir="ltr" autocomplete="off" placeholder="الصق المفتاح السري (64 حرفًا) من صفحة الرموز"><button type="button" class="btn" data-a="key">حفظ</button></li>'}
+        <li>${ok(s.amount)} مبلغ الاشتراك للمطابقة: <b class="num">${vesc(s.amount||'لم يُكتب (اكتبه في الأسفل)')}</b></li>
+        <li>${ok(T.length)} مصادر موثوقة: ${T.length?T.map(k=>`<span class="sb-tag">${vesc(k.replace('|',' · '))} <button type="button" class="linkish" data-untrust="${vesc(k)}">✕</button></span>`).join(' '):'لم تُختر بعد'}</li>
+      </ul>
+      <div class="sg-act"><button type="button" class="btn ${s.on?'':'primary'}" data-a="on" ${s.key?'':'disabled'}>${s.on?'إيقاف اللاقط':'تشغيل اللاقط'}</button><button type="button" class="btn" data-a="sync" ${s.on?'':'disabled'}>طابِق الآن</button></div>
+      <p class="mut">أبقِ هذا الهاتف مشغّلًا ومتصلًا بالإنترنت، واستثنِ التطبيق من توفير البطارية. ${s.synced?'آخر مطابقة: '+subWhen(s.synced):''}</p>
+      <h3>من أين تصل رسائل الدفع؟</h3>
+      <p class="mut">بعد تشغيل اللاقط يظهر هنا كل تطبيق يرسل إشعارًا (اسمه وعنوان الإشعار فقط، دون المحتوى). اعتمد تطبيقات البنوك، أو اسم البنك المرسِل في تطبيق الرسائل. لا تعتمد واتساب ولا تطبيق الرسائل كله.</p>
+      <div class="sb-src">${(s.sources||[]).filter(x=>!T.includes(x.pkg)&&!T.includes(x.k)).slice(0,20).map(x=>`<div><span><b>${vesc(x.label)}</b>${x.title?' · '+vesc(x.title):''}<small dir="ltr">${vesc(x.pkg)}</small></span><span><button type="button" class="btn" data-trust="${vesc(x.pkg)}">التطبيق كله</button>${x.title?`<button type="button" class="btn" data-trust="${vesc(x.k)}">هذا المرسِل</button>`:''}</span></div>`).join('')||'<p class="empty">لا إشعارات بعد.</p>'}</div>
+      <h3>رسائل الدفع الملتقطة</h3>
+      <div class="sb-msgs">${(s.msgs||[]).slice(0,30).map(m=>`<div class="${m.used?'used':''}"><small>${subWhen(m.t)} · ${vesc(m.label)}${m.title?' · '+vesc(m.title):''}${m.used?' · <b>فعّلت '+subId(m.used)+'</b>':''}</small><p dir="auto">${vesc(m.text)}</p></div>`).join('')||'<p class="empty">لا رسائل بعد.</p>'}</div>`}
+  drawCatch();
+  $('sbCatch').onclick=e=>{const b=e.target.closest('button');if(!b||!nat)return;let s={};try{s=JSON.parse(A.payState())}catch(x){}
+    const T=s.trust||[];
+    if(b.dataset.trust){T.push(b.dataset.trust);A.paySet(JSON.stringify({trust:T}));drawCatch()}
+    else if(b.dataset.untrust){A.paySet(JSON.stringify({trust:T.filter(k=>k!==b.dataset.untrust)}));drawCatch()}
+    else if(b.dataset.a==='access')A.payAccess();
+    else if(b.dataset.a==='key'){const r=A.paySet(JSON.stringify({key:$('sbKey').value}));if(r)say('هذا ليس المفتاح السري لهذا التطبيق');else{say('حُفظ المفتاح في هذا الهاتف');drawCatch()}}
+    else if(b.dataset.a==='nokey'){A.paySet(JSON.stringify({key:''}));drawCatch()}
+    else if(b.dataset.a==='on'){A.paySet(JSON.stringify({on:!s.on}));if(!s.on&&!s.access)A.payAccess();drawCatch()}
+    else if(b.dataset.a==='sync'){b.disabled=true;say('جارٍ المطابقة…');A.paySync()}};
+  window.onPaySync=n=>{say(n<0?'تعذّر الاتصال بالحساب':n?'فُعّل '+n+' اشتراك':'لا مطابقة جديدة');if($('sbCatch')){drawCatch();loadReq()}};
+  window.onPayManual=(id,ok)=>{say(ok?'فُعّل اشتراك '+subId(id):'تعذّر التفعيل: تحقق من المفتاح والإنترنت');if($('sbReq'))loadReq()};
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('sbCatch'))drawCatch()});
+  // the waiting requests
+  async function loadReq(){const R=$('sbReq');if(!R)return;let rows=[];
+    try{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},
+        body:JSON.stringify({structuredQuery:{from:[{collectionId:'sub_requests'}],where:{fieldFilter:{field:{fieldPath:'status'},op:'EQUAL',value:{stringValue:'new'}}},limit:100}})});
+      if(!r.ok)throw new Error(r.status);rows=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document)).sort((x,y)=>String(y.t).localeCompare(String(x.t)))}
+    catch(e){R.innerHTML=`<p class="empty">${e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد.':'تعذّر التحميل. إن كانت هذه أول مرة فأضف قواعد الاشتراك إلى Firestore.'}</p>`;return}
+    const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
+    R.innerHTML=rows.length?rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}"><div class="sg-k"><b>${vesc(AP[q.app]||q.app||'')}</b><small>${q.t?subWhen(q.t):''}</small></div>
+      <p>دفع من: <b dir="ltr" class="num">${vesc(q.phone||'')}</b>${q.ref?` · العملية: <b dir="ltr">${vesc(q.ref)}</b>`:''}</p><p class="mut">الجهاز <span dir="ltr">${vesc(subId(q.id||''))}</span></p>
+      <div class="sg-act"><button type="button" class="btn primary" data-do="ok">وصل الدفع: فعِّله</button><button type="button" class="btn" data-do="del">حذف الطلب</button></div></article>`).join(''):'<p class="empty">لا طلبات تنتظر.</p>'}
+  loadReq();
+  $('sbReq').onclick=async e=>{const b=e.target.closest('[data-do]');if(!b)return;const id=b.closest('[data-id]').dataset.id;b.disabled=true;
+    if(b.dataset.do==='ok'){if(!nat){say('التفعيل اليدوي من تطبيق أندرويد على هاتف الناشر');b.disabled=false;return}A.payManual(id)}
+    else try{await subCommit([{delete:`${SG_DOCS}/sub_requests/${id}`}]);loadReq()}catch(x){b.disabled=false;say('تعذّر الحذف')}};
+}
+window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin});
 // the hidden way in: five quick taps on the version line at the bottom of the calendar
 {let n=0,t0=0;document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('#appVer')))return;const now=Date.now();n=now-t0<700?n+1:1;t0=now;if(n>=5){n=0;location.hash='#sg-admin'}})}
 // a city (مدينة) is a moughataa, its seat the commune of the same name; the commune (بلدية) belongs to it; villages to the commune
@@ -1976,7 +2074,7 @@ $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${hmB(i+1)}</option>`).
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-window.APP={sgAdmin:(window.APP||{}).sgAdmin,manazil:manazilView,cities:CITIES,options:()=>moughOptions(),city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
+window.APP={sgAdmin:(window.APP||{}).sgAdmin,subAdmin:(window.APP||{}).subAdmin,manazil:manazilView,cities:CITIES,options:()=>moughOptions(),city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
@@ -3202,6 +3300,7 @@ function route(){
   else if(h==='qibla'){view='v-qibla';tab='qibla';qibla($('v-qibla'))}
   else if(h==='manazil'){view='v-manazil';tab='manazil';window.APP.manazil($('v-manazil'))}
   else if(h==='sg-admin'){view='v-sg';tab='';window.APP.sgAdmin($('v-sg'))}
+  else if(h==='sub-admin'){view='v-sg';tab='';window.APP.subAdmin($('v-sg'))}
   else if(h==='tasbih'){view='v-tasbih';tab='tasbih';tasbih($('v-tasbih'))}
   if(view!=='v-tasbih'&&window.AndroidApp)try{window.AndroidApp.setVolumeKeys(false)}catch(e){}
   VIEWS.forEach(v=>{const e=$(v);if(e)e.hidden=v!==view});
@@ -3346,10 +3445,13 @@ const AD_CONTACT={whatsapp:'',phone:'',email:''};
      pay: تطبيقات الدفع؛ يُكتب في num رقم حساب الناشر (أو رمز التاجر) في كل تطبيق، وما تُرك فارغًا يُعرض باسمه فقط ·
      whatsapp و phone: رقم الناشر بالصيغة الدولية بلا + (مثل '222XXXXXXXX') يُرسَل إليه رقم الجهاز وإثبات الدفع. */
 const SUB={price:'',whatsapp:'',phone:'',pay:[
-  {n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
-  {n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
-  {n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
-  {n:'بيم بانك',fr:'BimBank',c:'#7A2E8E',num:''}]};
+  {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
+  {k:'masrvi',n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
+  {k:'sedad',n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
+  {k:'bim',n:'بيم بانك',fr:'BimBank',c:'#7A2E8E',num:''}]};
+/* التفعيل التلقائي: ما في SUB يكتبه الناشر من صفحة «الاشتراكات» للمشرف فيُحفظ في Firestore (sub_config/public) ويقرؤه كل تطبيق.
+   بعد الدفع يرسل المشترك طلبًا (sub_requests/<رقم الجهاز>: التطبيق الذي دفع به ورقم حسابه ورقم العملية إن وُجد)، وهاتف الناشر
+   («اللاقط»، Pay.java) يطابقه مع رسالة البنك ويكتب الرمز في sub_codes/<رقم الجهاز>، وهذا التطبيق يلتقطه ويفتح نفسه. */
 (function(){
   const A=window.AndroidApp,$=id=>document.getElementById(id);
   if(!A||typeof A.subState!=='function')return;   // نسخة الويب: لا اشتراك
@@ -3364,24 +3466,47 @@ const SUB={price:'',whatsapp:'',phone:'',pay:[
   const toast=t=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.dir=fr?'ltr':'rtl';d.setAttribute('data-keep','');d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),3200)};
   const lock=$('lock');if(fr){lock.dir='ltr';lock.lang='fr'}
   let st=state(),locked=false;
+  const FS='https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents',DOCS='projects/erriwaya-68022/databases/(default)/documents';
+  const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
+  const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  function applyCfg(c){if(!c)return;['price','whatsapp','phone'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  applyCfg((jget('mrcal.subCfg')||{}).c);
+  async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
+    try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
+      const F=(await r.json()).fields||{},c={};for(const k in F)if('stringValue' in F[k])c[k]=F[k].stringValue;
+      jset('mrcal.subCfg',{at:Date.now(),c});applyCfg(c);if(!lock.hidden)fill()}catch(e){}}
+  let appSel=(jget('mrcal.subReq')||{}).app||'',lastPoll=0,polling=false;
+  // the code the publisher's phone left for this phone, if any: entering it opens the app
+  async function fetchCode(){if(polling)return;polling=true;
+    try{const r=await net(FS+'/sub_codes/'+st.id);if(r.ok){const F=(await r.json()).fields||{},code=F.code&&F.code.stringValue;
+        if(code&&A.subActivate(code)==='ok'){jset('mrcal.subReq',null);st=state()||st;$('lkAutoMsg').textContent='';hide();toast(L('تم التفعيل تلقائيًا. اشتراكك حتى ','Activé automatiquement. Abonnement jusqu’au ')+dstr(st.until))}}}
+    catch(e){}polling=false}
+  const pendingText=p=>L('وصل طلبك. يُفتح التطبيق تلقائيًا فور وصول الدفع إلى الناشر، في دقائق عادةً. أبقِ الإنترنت مفتوحًا.','Demande reçue. L’application s’ouvrira automatiquement dès que le paiement arrive chez l’éditeur, en général en quelques minutes. Restez connecté.')
+    +(Date.now()-p.at>30*60e3?L(' إن طال الانتظار فتحقق من رقم حسابك أعلاه أو راسل الناشر.',' Si l’attente se prolonge, vérifiez le numéro ci-dessus ou contactez l’éditeur.'):'');
   function fill(){
     const paid=st.until>st.now,trial=!paid&&st.trialEnd>st.now;
     $('lkT').textContent=paid?L('الاشتراك','Abonnement'):trial?L('اشترك في التقويم الموريتاني','Abonnez-vous au Calendrier mauritanien'):st.until?L('انتهى اشتراكك','Votre abonnement est terminé'):L('انتهت التجربة المجانية','L’essai gratuit est terminé');
     $('lkSt').textContent=paid?L('أنت مشترك حتى ','Abonné jusqu’au ')+dstr(st.until):trial?L('تجربة مجانية: بقي ','Essai gratuit : il reste ')+left(st.trialEnd-st.now):'';
     $('lkSt').hidden=!$('lkSt').textContent;
-    $('lkP').textContent=paid?L('لتجديد الاشتراك قبل انتهائه أرسل رقم جهازك إلى الناشر وأدخل الرمز الجديد هنا.','Pour renouveler, envoyez le numéro de votre appareil à l’éditeur et saisissez ici le nouveau code.')
-      :(trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
+    $('lkP').textContent=(paid?L('للتجديد ادفع ثم اضغط «دفعتُ» كما في الاشتراك الأول. ','Pour renouveler, payez puis touchez « J’ai payé », comme la première fois. ')
+      :trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
        +(SUB.price?L('الاشتراك: ','Abonnement : ')+SUB.price+'.':L('الاشتراك سنوي.','L’abonnement est annuel.'));
-    const steps=[L('ادفع قيمة الاشتراك عبر بنكيلي أو مصرفي أو السداد أو بيم بانك.','Réglez l’abonnement avec Bankily, Masrvi, Sedad ou BimBank.'),L('أرسل إلى الناشر رقم جهازك (أسفله) مع إثبات الدفع.','Envoyez à l’éditeur le numéro de votre appareil (ci-dessous) avec la preuve de paiement.'),L('يصلك رمز تفعيل خاص بهاتفك: انسخ الرسالة، ثم اضغط هنا «لصق» ثم «تفعيل».','Vous recevez un code propre à votre téléphone : copiez le message, puis touchez ici « Coller » et « Activer ».')];
+    const steps=[L('ادفع قيمة الاشتراك من أحد التطبيقات أدناه إلى رقم الناشر.','Réglez l’abonnement depuis l’une des applications ci-dessous, au numéro de l’éditeur.'),L('اختر التطبيق الذي دفعت به، واكتب رقم حسابك الذي دفعت منه، ثم اضغط «دفعتُ».','Choisissez l’application utilisée, saisissez le numéro du compte avec lequel vous avez payé, puis touchez « J’ai payé ».'),L('يُفتح التطبيق تلقائيًا بعد وصول الدفع.','L’application s’ouvre automatiquement dès que le paiement est reçu.')];
     $('lkSteps').innerHTML=steps.map(()=>'<li></li>').join('');[...$('lkSteps').children].forEach((li,i)=>{li.textContent=steps[i]});
     {const P=$('lkPay'),any=SUB.pay.some(m=>m.num);P.hidden=!SUB.pay.length;P.innerHTML='';
-     const h=document.createElement('h3');h.textContent=any?L('ادفع عبر أحد هذه التطبيقات (اضغط لنسخ الرقم)','Payez avec l’une de ces applications (touchez pour copier le numéro)'):L('الدفع عبر أحد هذه التطبيقات','Paiement avec l’une de ces applications');P.append(h);
-     for(const m of SUB.pay){const e=document.createElement(m.num?'button':'div');e.className='pm';if(m.num){e.type='button';e.dataset.num=m.num}
+     const h=document.createElement('h3');h.textContent=any?L('اختر التطبيق الذي تدفع به (يُنسخ رقم الناشر بالضغط)','Choisissez l’application de paiement (le numéro de l’éditeur est copié)'):L('اختر التطبيق الذي دفعت به','Choisissez l’application utilisée');P.append(h);
+     for(const m of SUB.pay){const e=document.createElement('button');e.type='button';e.className='pm';e.dataset.app=m.k;e.setAttribute('aria-pressed',appSel===m.k);if(m.num)e.dataset.num=m.num;
        const i=document.createElement('i');i.style.background=m.c;i.textContent=(fr?m.fr:m.n).replace(/^ال/,'').charAt(0);
        const b=document.createElement('b');b.textContent=fr?m.fr:m.n;e.append(i,b);
        if(m.num){const n=document.createElement('span');n.textContent=m.num;e.append(n)}
        else{const n=document.createElement('small');n.textContent=L('الرقم من الناشر','Numéro : auprès de l’éditeur');e.append(n)}
        P.append(e)}}
+    $('lkPhoneL').textContent=L('رقم حسابك الذي دفعت منه','Numéro du compte avec lequel vous avez payé');$('lkPhone').placeholder='4X XX XX XX';
+    $('lkRefL').textContent=L('رقم العملية (اختياري، يسرّع المطابقة)','Référence de l’opération (facultatif)');
+    $('lkSend').textContent=L('دفعتُ — فعّل تطبيقي','J’ai payé — activer mon application');
+    $('lkManS').textContent=L('عندي رمز تفعيل، أو أريد مراسلة الناشر','J’ai un code d’activation, ou je veux écrire à l’éditeur');
+    {const p=jget('mrcal.subReq'),m=$('lkAutoMsg');if(p&&!paid){m.className='ok';m.textContent=pendingText(p);if(!$('lkPhone').value)$('lkPhone').value=p.phone||''}}
     $('lkIdL').textContent=L('رقم جهازك','Numéro de votre appareil');$('lkId').textContent=showId(st.id);$('lkCopy').textContent=L('نسخ','Copier');
     const c=$('lkContact');c.innerHTML='';
     const add=(href,label)=>{const a=document.createElement('a');a.className='btn primary';a.href=href;a.rel='noopener';a.textContent=label;c.append(a)};
@@ -3392,7 +3517,7 @@ const SUB={price:'',whatsapp:'',phone:'',pay:[
     $('lkCode').placeholder=L('الصق رمز التفعيل هنا','Collez ici le code d’activation');
     $('lkPaste').textContent=L('لصق','Coller');$('lkGo').textContent=L('تفعيل','Activer');$('lkX').setAttribute('aria-label',L('إغلاق','Fermer'));
   }
-  function show(force){st=state()||st;fill();$('lkMsg').textContent='';$('lkMsg').className='';lock.hidden=false;
+  function show(force){st=state()||st;loadCfg(lock.hidden);fill();$('lkMsg').textContent='';$('lkMsg').className='';lock.hidden=false;
     if(force&&!locked){locked=true;document.documentElement.classList.add('locked');
       document.querySelectorAll('audio').forEach(a=>{try{a.pause()}catch(e){}});try{A.stopAdhan()}catch(e){}try{A.setVolumeKeys(false)}catch(e){}}}
   function hide(){lock.hidden=true;locked=false;document.documentElement.classList.remove('locked')}
@@ -3401,7 +3526,23 @@ const SUB={price:'',whatsapp:'',phone:'',pay:[
   window.subSheet=()=>show(false);
   $('lkX').onclick=()=>{if(!locked)lock.hidden=true};
   lock.addEventListener('click',e=>{if(e.target===lock&&!locked)lock.hidden=true});
-  $('lkPay').addEventListener('click',e=>{const b=e.target.closest('[data-num]');if(!b)return;let ok=false;try{ok=A.copy(b.dataset.num)}catch(x){}toast(ok?L('نُسخ رقم الدفع','Numéro de paiement copié'):L('تعذّر النسخ','Copie impossible'))});
+  $('lkPay').addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(!b)return;appSel=b.dataset.app;
+    $('lkPay').querySelectorAll('[data-app]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    if(b.dataset.num){let ok=false;try{ok=A.copy(b.dataset.num)}catch(x){}if(ok)toast(L('نُسخ رقم الدفع','Numéro de paiement copié'))}});
+  $('lkSend').onclick=async()=>{const m=$('lkAutoMsg'),ph=west($('lkPhone').value).replace(/\D/g,''),ref=west($('lkRef').value).trim().slice(0,40);m.className='';
+    if(!appSel){m.textContent=L('اختر أولًا التطبيق الذي دفعت به.','Choisissez d’abord l’application utilisée.');return}
+    if(ph.length<8||ph.length>15){m.textContent=L('اكتب رقم حسابك الذي دفعت منه (8 أرقام).','Saisissez le numéro du compte utilisé (8 chiffres).');return}
+    const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
+    try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
+      if(!r.ok)throw new Error(r.status);
+      const p={at:Date.now(),app:appSel,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0}
+    catch(e){m.className='';m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت وأعد المحاولة.','Envoi impossible. Vérifiez la connexion et réessayez.')}
+    b.disabled=false};
+  // looks for this phone's code: every few seconds just after a request, then every minute; every five minutes while locked
+  setInterval(()=>{if(document.hidden)return;const p=jget('mrcal.subReq'),paid=st.until>st.now;if(paid&&!p)return;
+    const every=p?(Date.now()-p.at<20*60e3?8e3:60e3):locked?5*60e3:0;if(!every||Date.now()-lastPoll<every)return;lastPoll=Date.now();fetchCode()},4000);
+  setTimeout(()=>{loadCfg(false);if(!(st.until>st.now)){lastPoll=Date.now();fetchCode()}},1500);
   $('lkCopy').onclick=()=>{let ok=false;try{ok=A.copy(showId(st.id))}catch(e){}toast(ok?L('نُسخ رقم الجهاز','Numéro copié'):L('تعذّر النسخ','Copie impossible'))};
   $('lkPaste').onclick=()=>{let t='';try{t=A.paste()}catch(e){}if(t)$('lkCode').value=t;else{$('lkMsg').className='';$('lkMsg').textContent=L('لا نص منسوخ. انسخ رسالة الرمز أولًا.','Rien à coller. Copiez d’abord le message du code.')}};
   $('lkGo').onclick=()=>{const t=$('lkCode').value.trim(),m=$('lkMsg');m.className='';

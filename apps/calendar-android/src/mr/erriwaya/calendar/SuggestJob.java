@@ -137,26 +137,29 @@ public class SuggestJob extends JobService {
         } finally { if (c != null) c.disconnect(); }
     }
 
-    static void notify(Context ctx, String title, String text) {
+    static void notify(Context ctx, String title, String text) { notify(ctx, title, text, "#sg-admin", 4207); }
+
+    /** A notification for the admin that opens one of the app's admin pages. */
+    static void notify(Context ctx, String title, String text, String hash, int nid) {
         NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm == null) return;
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
         Notification.Builder b;
         if (Build.VERSION.SDK_INT >= 26) {
             if (nm.getNotificationChannel(CHANNEL) == null) {
-                NotificationChannel ch = new NotificationChannel(CHANNEL, "اقتراحات القرى", NotificationManager.IMPORTANCE_DEFAULT);
-                ch.setDescription("للمشرف: اقتراحات المشتركين بإضافة القرى أو تصحيحها");
+                NotificationChannel ch = new NotificationChannel(CHANNEL, "للمشرف", NotificationManager.IMPORTANCE_DEFAULT);
+                ch.setDescription("للمشرف: اقتراحات القرى وطلبات الاشتراك");
                 nm.createNotificationChannel(ch);
             }
             b = new Notification.Builder(ctx, CHANNEL);
         } else {
             b = new Notification.Builder(ctx).setDefaults(Notification.DEFAULT_SOUND);
         }
-        Intent open = new Intent(ctx, MainActivity.class).putExtra("hash", "#sg-admin")
+        Intent open = new Intent(ctx, MainActivity.class).putExtra("hash", hash)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         b.setSmallIcon(R.drawable.ic_stat_adhan).setContentTitle(title).setContentText(text).setAutoCancel(true)
-                .setColor(0xFF0F5641).setContentIntent(PendingIntent.getActivity(ctx, 11, open, flags))
+                .setColor(0xFF0F5641).setContentIntent(PendingIntent.getActivity(ctx, nid, open, flags))
                 .setStyle(new Notification.BigTextStyle().bigText(text));
-        try { nm.notify(4207, b.build()); } catch (SecurityException ignored) { }
+        try { nm.notify(nid, b.build()); } catch (SecurityException ignored) { }
     }
 }

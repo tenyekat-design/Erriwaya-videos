@@ -187,6 +187,38 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
+        // ---- the publisher's phone: automatic activation (Pay) ----
+        @JavascriptInterface
+        public String payState() { return Pay.state(MainActivity.this); }
+
+        /** {"key","on","amount","trust"} (any subset): "" or what is wrong ("key": not this app's private key). */
+        @JavascriptInterface
+        public String paySet(String json) {
+            String r = Pay.set(MainActivity.this, json);
+            if (r.isEmpty()) try { android.service.notification.NotificationListenerService.requestRebind(new android.content.ComponentName(MainActivity.this, PayListener.class)); } catch (Throwable ignored) { }
+            return r;
+        }
+
+        /** Opens the system page where the publisher lets the app hear notifications. */
+        @JavascriptInterface
+        public void payAccess() {
+            try { startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")); } catch (Exception ignored) { }
+        }
+
+        /** Pairs requests and messages now; the page hears window.onPaySync(n) (n: phones activated, -1: no connection or sign-in). */
+        @JavascriptInterface
+        public void paySync() {
+            new Thread(() -> { final int n = Pay.sync(MainActivity.this);
+                runOnUiThread(() -> web.evaluateJavascript("window.onPaySync&&window.onPaySync(" + n + ")", null)); }).start();
+        }
+
+        /** One tap on a waiting request: signs a year's code for that phone and sends it; window.onPayManual(id, ok). */
+        @JavascriptInterface
+        public void payManual(final String id) {
+            new Thread(() -> { final boolean ok = !Pay.manual(MainActivity.this, id, true).isEmpty();
+                runOnUiThread(() -> web.evaluateJavascript("window.onPayManual&&window.onPayManual('" + (id == null ? "" : id.replaceAll("[^A-Z2-7]", "")) + "'," + ok + ")", null)); }).start();
+        }
+
         /** The page's theme (day, or night: it can differ from the phone's own): the bars around the page follow it. */
         @JavascriptInterface
         public void setTheme(boolean night) { runOnUiThread(() -> { pageNight = night; barColors(); }); }
