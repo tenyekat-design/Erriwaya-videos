@@ -11,4 +11,6 @@
     android:previewImage="@drawable/day_preview"
     android:previewLayout="@layout/widget_day"
     android:description="@string/day_widget_desc"
+    android:configure="mr.erriwaya.calendar.WidgetConfig"
+    android:widgetFeatures="reconfigurable|configuration_optional"
     android:widgetCategory="home_screen|keyguard" />

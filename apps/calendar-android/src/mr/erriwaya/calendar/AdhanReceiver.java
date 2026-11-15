@@ -182,7 +182,7 @@ public class AdhanReceiver extends BroadcastReceiver {
     static void saveConfig(Context ctx, String json) {
         ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("config", json).apply();
         scheduleNext(ctx);
-        CalendarWidget.updateAll(ctx);
+        Widgets.updateAll(ctx);   // the Hijri correction may change the date and month
     }
 
     static final String[] NAMES = {"الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"};

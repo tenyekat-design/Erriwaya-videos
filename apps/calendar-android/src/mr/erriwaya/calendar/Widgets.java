@@ -1,18 +1,42 @@
 package mr.erriwaya.calendar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
-/** What the two home-screen widgets share: how opaque their background is (0 see-through … 100 solid), set from the page. */
+/**
+ * What the widgets share. The background's opacity (0 none … 100 solid): one value set from the app's settings, which
+ * each widget can override from its own settings (WidgetConfig); and, for the month widget, which names it shows.
+ */
 final class Widgets {
     private Widgets() { }
 
-    static int bg(Context ctx) {
-        return Math.max(0, Math.min(100, ctx.getSharedPreferences("widgets", Context.MODE_PRIVATE).getInt("bg", 100)));
+    private static SharedPreferences sp(Context ctx) { return ctx.getSharedPreferences("widgets", Context.MODE_PRIVATE); }
+
+    static int bg(Context ctx) { return clamp(sp(ctx).getInt("bg", 100)); }
+
+    /** This widget's background: its own choice, or the app's. */
+    static int bg(Context ctx, int id) { SharedPreferences p = sp(ctx); return clamp(p.getInt("bg_" + id, p.getInt("bg", 100))); }
+
+    /** From the app's settings: every widget follows it (their own choices are cleared). */
+    static void setBg(Context ctx, int percent) {
+        SharedPreferences.Editor e = sp(ctx).edit().putInt("bg", clamp(percent));
+        for (String k : sp(ctx).getAll().keySet()) if (k.startsWith("bg_")) e.remove(k);
+        e.apply();
+        updateAll(ctx);
     }
 
-    static void setBg(Context ctx, int percent) {
-        ctx.getSharedPreferences("widgets", Context.MODE_PRIVATE).edit().putInt("bg", Math.max(0, Math.min(100, percent))).apply();
+    static void setBg(Context ctx, int id, int percent) { sp(ctx).edit().putInt("bg_" + id, clamp(percent)).apply(); }
+
+    /** The month widget's names: any of h (Hijri), l (Hassaniya), g (Gregorian); all three by default. */
+    static String months(Context ctx, int id) { String m = sp(ctx).getString("m_" + id, "hlg"); return m.isEmpty() ? "hlg" : m; }
+
+    static void setMonths(Context ctx, int id, String m) { sp(ctx).edit().putString("m_" + id, m).apply(); }
+
+    static void updateAll(Context ctx) {
         CalendarWidget.updateAll(ctx);
         DayWidget.updateAll(ctx);
+        MonthWidget.updateAll(ctx);
     }
+
+    private static int clamp(int v) { return Math.max(0, Math.min(100, v)); }
 }

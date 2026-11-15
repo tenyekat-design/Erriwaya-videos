@@ -211,7 +211,7 @@ final class Sub {
             e.apply();
         } catch (Exception ignored) { }
         boolean ok = verified(ctx);
-        if (ok) { try { AdhanReceiver.scheduleNext(ctx); CalendarWidget.updateAll(ctx); DayWidget.updateAll(ctx); } catch (Exception ignored) { } }
+        if (ok) { try { AdhanReceiver.scheduleNext(ctx); Widgets.updateAll(ctx); } catch (Exception ignored) { } }
         return ok;
     }
 
@@ -282,6 +282,7 @@ final class Sub {
                 pm.setComponentEnabledSetting(c, android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
                         android.content.pm.PackageManager.DONT_KILL_APP);
             DayWidget.updateAll(ctx);
+            MonthWidget.updateAll(ctx);
         } catch (Exception ignored) { }
     }
 

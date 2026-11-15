@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp" android:minHeight="50dp"
+    android:minResizeWidth="90dp" android:minResizeHeight="40dp"
+    android:targetCellWidth="4" android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="3600000"
+    android:initialLayout="@layout/widget_month"
+    android:initialKeyguardLayout="@layout/widget_month"
+    android:previewImage="@drawable/month_preview"
+    android:previewLayout="@layout/widget_month"
+    android:description="@string/month_widget_desc"
+    android:configure="mr.erriwaya.calendar.WidgetConfig"
+    android:widgetFeatures="reconfigurable|configuration_optional"
+    android:widgetCategory="home_screen|keyguard" />

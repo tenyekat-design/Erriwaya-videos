@@ -8,4 +8,6 @@
     android:initialLayout="@layout/widget_calendar"
     android:previewLayout="@layout/widget_calendar"
     android:description="@string/widget_desc"
+    android:configure="mr.erriwaya.calendar.WidgetConfig"
+    android:widgetFeatures="reconfigurable|configuration_optional"
     android:widgetCategory="home_screen" />

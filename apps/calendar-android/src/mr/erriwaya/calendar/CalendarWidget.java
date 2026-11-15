@@ -110,36 +110,17 @@ public class CalendarWidget extends AppWidgetProvider {
         v.setTextViewText(R.id.wGreg, (fr ? DAYS_FR : DAYS)[di] + " " + g[2] + " " + (fr ? G_MONTHS_FR : G_MONTHS)[g[1] - 1] + " " + g[0]);
         v.setTextViewText(R.id.wNext, (fr ? "Prochaine : " : "القادمة: ") + names[PRAYERS[nextIdx]]
                 + (tomorrow ? (fr ? " demain " : " غدًا ") : " ") + PrayerCalc.fmt(tn[PRAYERS[nextIdx]]));
-        int ink = color(ctx, R.color.w_ink), muted = color(ctx, R.color.w_muted), hiInk = color(ctx, R.color.w_hi_ink);
-        // the background as see-through as the user chose; over a wallpaper (less than half solid) the texts turn white
-        int bg = Widgets.bg(ctx);
-        v.setInt(R.id.wBg, "setImageAlpha", bg * 255 / 100);
-        boolean clear = bg < 50;
-        if (clear) { ink = 0xFFFFFFFF; muted = 0xFFECECEC; }
-        v.setTextColor(R.id.wHijri, clear ? 0xFFFFFFFF : color(ctx, R.color.w_green));
-        v.setTextColor(R.id.wCity, clear ? 0xFFFFE9A8 : color(ctx, R.color.w_gold));
-        v.setTextColor(R.id.wGreg, muted);
-        v.setTextColor(R.id.wNext, muted);
+        boolean locked = !Sub.open(ctx);
         for (int i = 0; i < PRAYERS.length; i++) {
-            boolean hi = i == nextIdx;
             v.setTextViewText(NAME[i], names[PRAYERS[i]]);
-            v.setTextViewText(TIME[i], PrayerCalc.fmt((hi ? tn : t)[PRAYERS[i]]));
-            v.setInt(CELL[i], "setBackgroundResource", hi ? R.drawable.widget_hi : 0);
-            v.setTextColor(NAME[i], hi ? hiInk : muted);
-            v.setTextColor(TIME[i], hi ? hiInk : ink);
+            v.setTextViewText(TIME[i], locked ? "—" : PrayerCalc.fmt((i == nextIdx ? tn : t)[PRAYERS[i]]));
         }
         // locked (the free day is over and there is no subscription): no date and no times, only the way back in
-        if (!Sub.open(ctx)) {
+        if (locked) {
             v.setTextViewText(R.id.wHijri, fr ? "Calendrier mauritanien" : "التقويم الموريتاني");
             v.setTextViewText(R.id.wCity, "");
             v.setTextViewText(R.id.wGreg, fr ? "Essai gratuit terminé" : "انتهت التجربة المجانية");
             v.setTextViewText(R.id.wNext, fr ? "Abonnez-vous" : "اشترك لفتح التطبيق");
-            for (int i = 0; i < PRAYERS.length; i++) {
-                v.setTextViewText(TIME[i], "—");
-                v.setInt(CELL[i], "setBackgroundResource", 0);
-                v.setTextColor(NAME[i], muted);
-                v.setTextColor(TIME[i], muted);
-            }
         } else {
             long end = Math.max(Sub.trialEnd(ctx), Sub.paidUntil(ctx));
             if (end > now) redraw = Math.min(redraw, end);   // redraw at the moment the app locks
@@ -147,7 +128,25 @@ public class CalendarWidget extends AppWidgetProvider {
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
         Intent open = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         v.setOnClickPendingIntent(R.id.wRoot, PendingIntent.getActivity(ctx, 4, open, flags));
-        m.updateAppWidget(ids, v);
+        // each widget its own background (Widgets.bg); over a wallpaper (less than half solid) the texts turn white
+        for (int id : ids) {
+            int bg = Widgets.bg(ctx, id);
+            boolean clear = bg < 50;
+            int ink = clear ? 0xFFFFFFFF : color(ctx, R.color.w_ink), muted = clear ? 0xFFECECEC : color(ctx, R.color.w_muted),
+                    hiInk = color(ctx, R.color.w_hi_ink);
+            v.setInt(R.id.wBg, "setImageAlpha", bg * 255 / 100);
+            v.setTextColor(R.id.wHijri, clear ? 0xFFFFFFFF : color(ctx, R.color.w_green));
+            v.setTextColor(R.id.wCity, clear ? 0xFFFFE9A8 : color(ctx, R.color.w_gold));
+            v.setTextColor(R.id.wGreg, muted);
+            v.setTextColor(R.id.wNext, muted);
+            for (int i = 0; i < PRAYERS.length; i++) {
+                boolean hi = i == nextIdx && !locked;
+                v.setInt(CELL[i], "setBackgroundResource", hi ? R.drawable.widget_hi : 0);
+                v.setTextColor(NAME[i], hi ? hiInk : muted);
+                v.setTextColor(TIME[i], hi ? hiInk : locked ? muted : ink);
+            }
+            m.updateAppWidget(id, v);
+        }
         return redraw + 1000;
     }
 

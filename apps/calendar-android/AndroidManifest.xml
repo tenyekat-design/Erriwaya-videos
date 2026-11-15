@@ -53,6 +53,20 @@
             </intent-filter>
         </service>
         <!-- /PUBLISHER-ONLY -->
+        <!-- each widget's own settings (background, and for the months which names): long-press the widget, then its settings -->
+        <activity android:name=".WidgetConfig" android:exported="true" android:label="إعداد الويدجت"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" android:excludeFromRecents="true">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /></intent-filter>
+        </activity>
+        <!-- «أشهر السنة»: like the weekday widget, for the free day and subscribers -->
+        <receiver android:name=".MonthWidget" android:exported="true" android:label="@string/month_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/month_widget" />
+        </receiver>
         <!-- «يوم الأسبوع»: offered to everyone; it shows the day during the free day and for subscribers, and asks to subscribe otherwise -->
         <receiver android:name=".DayWidget" android:exported="true" android:label="@string/day_widget_name">
             <intent-filter>

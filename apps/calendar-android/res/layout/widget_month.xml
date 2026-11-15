@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «أشهر السنة»: the month's name in calligraphy (res/drawable-nodpi/mh_, ml_, mg_ 01..12: Hijri, Hassaniya, Gregorian;
+     white lettering, no background) over a night-blue ground; which names show and how opaque the ground is are set
+     per widget (WidgetConfig). MonthWidget fills it in. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mRoot" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/mBg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
+    <LinearLayout android:id="@+id/mRow" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="horizontal" android:layoutDirection="rtl" android:gravity="center"
+        android:paddingLeft="6dp" android:paddingRight="6dp" android:paddingTop="4dp" android:paddingBottom="4dp">
+        <ImageView android:id="@+id/mH" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/mh_06" android:contentDescription="الشهر الهجري" />
+        <ImageView android:id="@+id/mL" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/ml_06" android:contentDescription="الشهر بالحسانية" />
+        <ImageView android:id="@+id/mG" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/mg_11" android:contentDescription="الشهر الميلادي" />
+    </LinearLayout>
+    <TextView android:id="@+id/mLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center" android:gravity="center" android:padding="10dp" android:visibility="gone"
+        android:text="@string/month_widget_locked" android:textSize="14sp" android:textStyle="bold" android:maxLines="2"
+        android:textColor="#F6DFA0" android:shadowColor="#000000" android:shadowRadius="5" />
+</FrameLayout>

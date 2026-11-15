@@ -67,14 +67,13 @@ public class DayWidget extends AppWidgetProvider {
             int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
             v.setImageViewResource(R.id.dImg, IMG[di]);
             v.setViewVisibility(R.id.dImg, open ? View.VISIBLE : View.INVISIBLE);   // not subscribed: no day, only the invitation
-            v.setInt(R.id.dBg, "setImageAlpha", Widgets.bg(ctx) * 255 / 100);
             v.setViewVisibility(R.id.dLock, open ? View.GONE : View.VISIBLE);
             v.setViewVisibility(R.id.dDate, open ? View.VISIBLE : View.GONE);
             v.setTextViewText(R.id.dDate, h[2] + " " + H_MONTHS[hm] + " " + h[0] + " هـ · " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             v.setOnClickPendingIntent(R.id.dRoot, PendingIntent.getActivity(ctx, 6, app, flags));
-            m.updateAppWidget(ids, v);
+            for (int id : ids) { v.setInt(R.id.dBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100); m.updateAppWidget(id, v); }
             AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
             if (am != null) am.setWindow(AlarmManager.RTC, next + 1000, 60000, tick(ctx));   // need not wake a sleeping phone
         } catch (Exception ignored) { }
