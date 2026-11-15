@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- «أشهر السنة»: the month's name in calligraphy (res/drawable-nodpi/mh_, ml_, mg_ 01..12: Hijri, Hassaniya, Gregorian;
+<!-- «أشهر السنة»: each month is one picture drawn by MonthWidget (its calligraphy with its date right under it); the month's name in calligraphy (res/drawable-nodpi/mh_, ml_, mg_ 01..12: Hijri, Hassaniya, Gregorian;
      white lettering, no background) over a night-blue ground; which names show and how opaque the ground is are set
      per widget (WidgetConfig). MonthWidget fills it in. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,30 +9,12 @@
     <LinearLayout android:id="@+id/mRow" android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="horizontal" android:layoutDirection="rtl" android:gravity="center"
         android:paddingLeft="6dp" android:paddingRight="6dp" android:paddingTop="4dp" android:paddingBottom="4dp">
-        <LinearLayout android:id="@+id/mHc" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:orientation="vertical" android:gravity="center_horizontal">
-            <ImageView android:id="@+id/mH" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                android:scaleType="fitCenter" android:src="@drawable/mh_06" android:contentDescription="الشهر الهجري" />
-            <TextView android:id="@+id/mHt" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="5 · 1448 هـ" android:textSize="11sp" android:maxLines="1" android:textColor="#F2EEDC"
-                android:shadowColor="#000000" android:shadowRadius="4" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/mLc" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:orientation="vertical" android:gravity="center_horizontal">
-            <ImageView android:id="@+id/mL" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                android:scaleType="fitCenter" android:src="@drawable/ml_06" android:contentDescription="الشهر بالحسانية" />
-            <TextView android:id="@+id/mLt" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="5 · 1448 هـ" android:textSize="11sp" android:maxLines="1" android:textColor="#F2EEDC"
-                android:shadowColor="#000000" android:shadowRadius="4" />
-        </LinearLayout>
-        <LinearLayout android:id="@+id/mGc" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
-            android:orientation="vertical" android:gravity="center_horizontal">
-            <ImageView android:id="@+id/mG" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                android:scaleType="fitCenter" android:src="@drawable/mg_11" android:contentDescription="الشهر الميلادي" />
-            <TextView android:id="@+id/mGt" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="15 · 2026 م" android:textSize="11sp" android:maxLines="1" android:textColor="#F2EEDC"
-                android:shadowColor="#000000" android:shadowRadius="4" />
-        </LinearLayout>
+        <ImageView android:id="@+id/mH" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/mh_06" android:contentDescription="الشهر الهجري" />
+        <ImageView android:id="@+id/mL" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/ml_06" android:contentDescription="الشهر بالحسانية" />
+        <ImageView android:id="@+id/mG" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+            android:scaleType="fitCenter" android:src="@drawable/mg_11" android:contentDescription="الشهر الميلادي" />
     </LinearLayout>
     <TextView android:id="@+id/mLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="center" android:gravity="center" android:padding="10dp" android:visibility="gone"
