@@ -14,8 +14,9 @@ import android.widget.RemoteViews;
 import org.json.JSONObject;
 
 /**
- * «الساعة»: a clock in the widgets' look, digital (large thin figures) or with hands (a gold-ringed dial), chosen per
- * widget (WidgetConfig), with the Hijri and Gregorian date and the next prayer. The time itself is kept by the system
+ * «الساعة»: a clock in the widgets' look, in one of eight figure styles (widget_clock_d1..d8) or six dials with their
+ * hands (widget_clock_a1..a6, drawables clock_dial/hour/minute_1..6; all from tools/clock-models.py), chosen per widget
+ * (WidgetConfig), with the next prayer under it if wished; no date (the owner's choice). The time itself is kept by the system
  * (TextClock, AnalogClock); this redraws the rest at midnight, at each prayer, and when the app locks. Like the other
  * widgets: the free day and subscribers; otherwise only a line inviting to subscribe.
  */
@@ -67,11 +68,6 @@ public class ClockWidget extends AppWidgetProvider {
             if (tomorrow) { ni = 0; t = AdhanReceiver.timesOf(c, day + 1); }
             boolean fr = AdhanReceiver.french(c);
             String[] names = AdhanReceiver.names(c);
-            int[] g = PrayerCalc.gregorian(day), h = CalendarWidget.hijri(day, c.optInt("adj", 0));
-            int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
-            String hijri = h[2] + " " + (fr ? CalendarWidget.H_MONTHS_FR : CalendarWidget.H_MONTHS)[hm] + " " + h[0] + (fr ? " H" : " هـ");
-            String greg = (fr ? CalendarWidget.DAYS_FR : CalendarWidget.DAYS)[di] + " " + g[2] + " "
-                    + (fr ? CalendarWidget.G_MONTHS_FR : CalendarWidget.G_MONTHS)[g[1] - 1] + " " + g[0];
             String nextLine = (fr ? "Prochaine : " : "القادمة: ") + names[CalendarWidget.PRAYERS[ni]]
                     + (tomorrow ? (fr ? " demain " : " غدًا ") : " ") + PrayerCalc.fmt(t[CalendarWidget.PRAYERS[ni]]);
             boolean open = Sub.open(ctx);
@@ -80,11 +76,10 @@ public class ClockWidget extends AppWidgetProvider {
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             for (int id : ids) {
-                boolean analog = "a".equals(Widgets.clock(ctx, id));
-                RemoteViews v = new RemoteViews(ctx.getPackageName(), analog ? R.layout.widget_clock_analog : R.layout.widget_clock_digital);
-                v.setTextViewText(R.id.cHijri, hijri);
-                v.setTextViewText(R.id.cGreg, greg);
+                int layout = ctx.getResources().getIdentifier("widget_clock_" + Widgets.clock(ctx, id), "layout", ctx.getPackageName());
+                RemoteViews v = new RemoteViews(ctx.getPackageName(), layout != 0 ? layout : R.layout.widget_clock_d1);
                 v.setTextViewText(R.id.cNext, nextLine);
+                v.setViewVisibility(R.id.cNext, Widgets.clockNext(ctx, id) ? View.VISIBLE : View.GONE);
                 v.setViewVisibility(R.id.cBody, open ? View.VISIBLE : View.GONE);
                 v.setViewVisibility(R.id.cLock, open ? View.GONE : View.VISIBLE);
                 v.setInt(R.id.cBg, "setImageAlpha", Widgets.bg(ctx, id) * 255 / 100);

@@ -32,8 +32,16 @@ final class Widgets {
 
     static void setMonths(Context ctx, int id, String m) { sp(ctx).edit().putString("m_" + id, m).apply(); }
 
-    /** The clock widget's face: "d" digital (the default) or "a" with hands. */
-    static String clock(Context ctx, int id) { return sp(ctx).getString("c_" + id, "d"); }
+    /** The clock widget's model: d1..d8 (figures) or a1..a6 (hands); d1 by default ("d"/"a" from 1.139 mean d1/a1). */
+    static String clock(Context ctx, int id) {
+        String c = sp(ctx).getString("c_" + id, "d1");
+        return c.length() == 1 ? c + "1" : c;
+    }
+
+    /** Whether the clock widget shows the next prayer under the time (yes by default). */
+    static boolean clockNext(Context ctx, int id) { return sp(ctx).getBoolean("cn_" + id, true); }
+
+    static void setClockNext(Context ctx, int id, boolean on) { sp(ctx).edit().putBoolean("cn_" + id, on).apply(); }
 
     static void setClock(Context ctx, int id, String c) { sp(ctx).edit().putString("c_" + id, c).apply(); }
 
