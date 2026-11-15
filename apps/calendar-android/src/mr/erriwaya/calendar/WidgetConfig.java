@@ -49,9 +49,12 @@ public class WidgetConfig extends Activity {
         if (clock) {
             box.addView(title("نموذج الساعة", dp));
             final java.util.List<View> cards = new java.util.ArrayList<>();
-            String[][] models = {
-                    {"d1", "رفيع"}, {"d2", "عريض"}, {"d3", "مكثّف ذهبي"}, {"d4", "كلاسيكي"}, {"d5", "بالثواني"}, {"d6", "عمودي"}, {"d7", "12 ساعة"}, {"d8", "أحادي"},
-                    {"a1", "ذهبي"}, {"a2", "أرقام عربية"}, {"a3", "أرقام لاتينية"}, {"a4", "بسيط"}, {"a5", "ميناء فاتح"}, {"a6", "نجمة"}};
+            String[][] models = {   // tools/clock-models.json
+                    {"d1", "الشاهق"}, {"d2", "الأعمدة"}, {"d3", "المرفوع"}, {"d4", "المضيء"},
+                    {"d5", "الشارة"}, {"d6", "المكدّس"}, {"d7", "الكلاسيكي"}, {"d8", "اثنتا عشرة"},
+                    {"a1", "ذهبي"}, {"a2", "أرقام عربية"}, {"a3", "أرقام لاتينية"}, {"a4", "بسيط"},
+                    {"a5", "ميناء فاتح"}, {"a6", "نجمة"}, {"a7", "مربّع"}, {"a8", "مستطيل"},
+                    {"a9", "مثمّن"}, {"a10", "سداسي"}, {"a11", "روماني"}, {"a12", "معيّن"}};
             LinearLayout row = null;
             for (int i = 0; i < models.length; i++) {
                 if (i % 3 == 0) {
@@ -65,7 +68,7 @@ public class WidgetConfig extends Activity {
                 card.setOrientation(LinearLayout.VERTICAL);
                 card.setGravity(Gravity.CENTER);
                 card.setPadding((int) (4 * dp), (int) (6 * dp), (int) (4 * dp), (int) (6 * dp));
-                card.addView(preview(key, dp), new LinearLayout.LayoutParams((int) (88 * dp), (int) (88 * dp)));
+                card.addView(preview(key, dp), new LinearLayout.LayoutParams((int) (88 * dp), (int) (55 * dp)));
                 TextView l = new TextView(this);
                 l.setText(models[i][1]);
                 l.setTextSize(12);
@@ -147,50 +150,28 @@ public class WidgetConfig extends Activity {
         card.setBackground(g);
     }
 
-    /** A small picture of a model: the dial with its hands at 10:10, or the figures in their font and colour. */
+    /** A small picture of a model: its widget layout itself, live, drawn at 240×150 dp and shrunk to the card (88×55). */
     private View preview(String key, float dp) {
         android.widget.FrameLayout f = new android.widget.FrameLayout(this);
-        android.graphics.drawable.GradientDrawable ground = new android.graphics.drawable.GradientDrawable();
-        ground.setCornerRadius(12 * dp);
-        ground.setColor(0xFF06104A);
-        f.setBackground(ground);
-        android.widget.FrameLayout.LayoutParams full = new android.widget.FrameLayout.LayoutParams(-1, -1);
-        if (key.startsWith("a")) {
-            String n = key.substring(1);
-            String[] parts = {"clock_dial_", "clock_hour_", "clock_minute_"};
-            float[] rot = {0, 305, 60};
-            for (int i = 0; i < 3; i++) {
-                android.widget.ImageView iv = new android.widget.ImageView(this);
-                iv.setImageResource(getResources().getIdentifier(parts[i] + n, "drawable", getPackageName()));
-                iv.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
-                iv.setPadding((int) (4 * dp), (int) (4 * dp), (int) (4 * dp), (int) (4 * dp));
-                iv.setRotation(rot[i]);
-                f.addView(iv, full);
-            }
-            return f;
-        }
-        TextView t = new TextView(this);
-        t.setGravity(Gravity.CENTER);
-        t.setTextDirection(View.TEXT_DIRECTION_LTR);
-        String fam = "sans-serif-thin", txt = "10:10";
-        int col = 0xFFFFFFFF, style = Typeface.NORMAL;
-        float size = 24;
-        switch (key) {
-            case "d2": fam = "sans-serif-black"; break;
-            case "d3": fam = "sans-serif-condensed"; col = 0xFFE6BC62; size = 27; break;
-            case "d4": fam = "serif"; col = 0xFFF2EEDC; break;
-            case "d5": fam = "sans-serif-light"; txt = "10:10:30"; size = 18; break;
-            case "d6": fam = "sans-serif-light"; txt = "10\n10"; size = 22; break;
-            case "d7": txt = "10:10 م"; size = 21; break;
-            case "d8": fam = "monospace"; col = 0xFFF2EEDC; size = 20; break;
-            default: break;
-        }
-        t.setText(txt);
-        t.setTypeface(Typeface.create(fam, style));
-        t.setTextColor(col);
-        t.setTextSize(size);
-        t.setLineSpacing(0, 0.85f);
-        f.addView(t, full);
+        f.setClipChildren(true);
+        int layout = getResources().getIdentifier("widget_clock_" + key, "layout", getPackageName());
+        if (layout == 0) return f;
+        View w = getLayoutInflater().inflate(layout, f, false);
+        TextView nx = w.findViewById(R.id.cNext);
+        if (nx != null) nx.setText("العشاء 19:47");
+        android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams((int) (240 * dp), (int) (150 * dp));
+        lp.gravity = Gravity.TOP | Gravity.LEFT;
+        w.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        w.setPivotX(0);
+        w.setPivotY(0);
+        w.setScaleX(88f / 240);
+        w.setScaleY(88f / 240);
+        f.addView(w, lp);
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
+        g.setCornerRadius(10 * dp);
+        g.setColor(0xFF06104A);
+        f.setBackground(g);
+        f.setClipToOutline(true);
         return f;
     }
 

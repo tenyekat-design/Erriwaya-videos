@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the gold tab that holds the minutes in the clock model «الشارة» (widget_clock_d5) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#E6BC62" />
+    <corners android:radius="5dp" />
+</shape>

@@ -63,6 +63,70 @@ dials[6]=[S('#99C9A44C',1.4,square(60,0)+square(60,45),'butt'),S('#C9A44C',1.6,c
   F(GOLD,''.join(diamond(math.radians(30*i),80,6 if i%3==0 else 4) for i in range(12)))]
 leaf=lambda L,w:f'M100,108Q{100-w},{100-L*0.35} 100,{100-L}Q{100+w},{100-L*0.35} 100,108Z'
 hands[6]=([F(CREAM,leaf(46,7))],[F(GOLD,leaf(68,5)),F(GOLD,circ(100,100,5)),F('#03062B',circ(100,100,2))])
+
+# ---- shaped dials (7..12): square, rectangle, octagon, hexagon, Roman, diamond; hands of matching shapes
+def ray(a,poly):
+    """distance from the centre to a convex polygon along the direction a (0 = up, clockwise)"""
+    dx,dy=math.sin(a),-math.cos(a);best=1e9
+    for i in range(len(poly)):
+        (x1,y1),(x2,y2)=poly[i],poly[(i+1)%len(poly)]
+        ex,ey=x2-x1,y2-y1;den=dx*ey-dy*ex
+        if abs(den)<1e-9: continue
+        t=((x1-100)*ey-(y1-100)*ex)/den;u=((x1-100)*dy-(y1-100)*dx)/den
+        if t>0 and -1e-6<=u<=1+1e-6: best=min(best,t)
+    return best
+def polyd(poly): return 'M'+'L'.join(f'{x:.2f},{y:.2f}' for x,y in poly)+'Z'
+def rounded(x0,y0,x1,y1,r):
+    return (f'M{x0+r},{y0}L{x1-r},{y0}Q{x1},{y0} {x1},{y0+r}L{x1},{y1-r}Q{x1},{y1} {x1-r},{y1}'
+            f'L{x0+r},{y1}Q{x0},{y1} {x0},{y1-r}L{x0},{y0+r}Q{x0},{y0} {x0+r},{y0}Z')
+def ngon(n,r,rot=0): return [pt(math.radians(rot+360*k/n),r) for k in range(n)]
+def marks(poly,inset,long,short,step=1):
+    out_l='';out_s=''
+    for i in range(0,12,step):
+        a=math.radians(30*i);r=ray(a,poly)-inset
+        if i%3==0: out_l+=seg(a,r-long,r)
+        else: out_s+=seg(a,r-short,r)
+    return out_l,out_s
+def rect_hand(w,L,tail=10): return polyd([(100-w/2,100+tail),(100-w/2,100-L),(100+w/2,100-L),(100+w/2,100+tail)])
+def arrow_hand(w,L,head):
+    return polyd([(100-w/2,100+10),(100-w/2,100-L+head),(100-head*0.55,100-L+head),(100,100-L),(100+head*0.55,100-L+head),(100+w/2,100-L+head),(100+w/2,100+10)])
+def sword(w,L,tail=12): return polyd([(100,100+tail),(100-w,100-L*0.22),(100,100-L),(100+w,100-L*0.22)])
+def dauphine(w,L): return polyd([(100-w,100),(100,100-L),(100+w,100),(100,100+8)])
+def square_at(cx,cy,s): return polyd([(cx-s,cy-s),(cx+s,cy-s),(cx+s,cy+s),(cx-s,cy+s)])
+# 7 square
+sq=[(14,14),(186,14),(186,186),(14,186)]
+ml,ms=marks(sq,12,16,7)
+dials[7]=[S('#C9A44C',2.6,rounded(10,10,190,190,22)),S('#55F2EEDC',1,rounded(18,18,182,182,16)),S(GOLD,5,ml,'butt'),S(CREAM,2.4,ms,'butt')]
+hands[7]=([F(CREAM,rect_hand(9,52))],[F(GOLD,rect_hand(5,76)),F(GOLD,square_at(100,100,6)),F('#03062B',square_at(100,100,2.2))])
+# 8 rectangle (tall)
+rc=[(40,6),(160,6),(160,194),(40,194)]
+ml,ms=marks(rc,10,0,8)
+nums=''.join(text_path(AR,AN[i],*pt(math.radians(30*i),ray(math.radians(30*i),rc)-26),18) for i in (0,3,6,9))
+dials[8]=[S('#C9A44C',2.4,rounded(36,2,164,198,14)),S(CREAM,2.2,ms,'butt'),F(CREAM,nums)]
+hands[8]=([F(WHITE,rect_hand(7,36,8))],[F(GOLD,rect_hand(3.6,54,10)),F(GOLD,rounded(95,95,105,105,2))])
+# 9 octagon, arrow hands
+oc=ngon(8,92,22.5)
+ml,ms=marks(oc,8,14,8)
+dials[9]=[S('#C9A44C',2.4,polyd(oc)),S('#44C9A44C',1,polyd(ngon(8,84,22.5))),S(GOLD,4,ml),S(CREAM,2,ms)]
+hands[9]=([F(CREAM,arrow_hand(5,50,16))],[F(GOLD,arrow_hand(3,74,14)),F(GOLD,circ(100,100,5.5)),F('#03062B',circ(100,100,2))])
+# 10 hexagon, sword hands
+hx=ngon(6,94,0)
+ml,ms=marks(hx,10,14,7)
+dials[10]=[F('#22E6BC62',polyd(hx)),S('#C9A44C',2.2,polyd(hx)),S(GOLD,4.5,ml,'butt'),S(CREAM,2,ms)]
+hands[10]=([F(CREAM,sword(8,50))],[F(GOLD,sword(5.5,76,14)),F(GOLD,circ(100,100,5)),F('#03062B',circ(100,100,2))])
+# 11 Roman numerals, skeleton hands (outlines)
+ROM=['XII','I','II','III','IIII','V','VI','VII','VIII','IX','X','XI']
+rom=''.join(text_path(LA,ROM[i],*pt(math.radians(30*i),73),13 if i%3 else 16) for i in range(12))
+dials[11]=[S('#C9A44C',1.8,circ(100,100,94)),S('#C9A44C',0.8,circ(100,100,88)),F(CREAM,rom),
+  F('#88E6BC62',''.join(circ(*pt(math.radians(6*i),91),0.8) for i in range(60)))]
+skel=lambda L,w:f'M100,112Q{100-w},{100-L*0.4} 100,{100-L}Q{100+w},{100-L*0.4} 100,112Z'
+hands[11]=([S(CREAM,2.4,skel(48,8),'round')],[S(GOLD,2,skel(70,6),'round'),F(GOLD,circ(100,100,4.5))])
+# 12 diamond dial (a square on its point), dauphine hands
+dm=ngon(4,96,0)
+ml,ms=marks(dm,10,14,7)
+dials[12]=[S('#C9A44C',2.6,polyd(dm)),S('#55C9A44C',1,polyd(ngon(4,86,0))),S(GOLD,4.5,ml),S(CREAM,2,ms)]
+hands[12]=([F(CREAM,dauphine(7,46))],[F(GOLD,dauphine(5,70)),F(GOLD,polyd(ngon(4,7,0))),F('#03062B',circ(100,100,2))])
+
 for k in dials:
     open(R+f'drawable/clock_dial_{k}.xml','w').write(vec(dials[k]))
     open(R+f'drawable/clock_hour_{k}.xml','w').write(vec(hands[k][0]))
@@ -94,20 +158,50 @@ def tc(fmt,size,family,color,extra=''):
             f'android:textColor="{color}" android:includeFontPadding="false" android:textDirection="ltr" android:shadowColor="#80000000" android:shadowRadius="6" {extra}')
 def clockline(attrs,idn='cTime'):
     return f'        <TextClock android:id="@+id/{idn}" android:layout_width="wrap_content" android:layout_height="wrap_content"\n            {attrs} />\n'
+
+def tall(fmt,size,family,color,sx=0.6,extra='',idn='cTime',shadow='android:shadowColor="#80000000" android:shadowRadius="6"',trim=True):
+    """a TextClock whose figures are drawn narrow (textScaleX) so they stand tall; trim pulls in the empty space a line
+    keeps above and below the figures (the font's ascent over the digits, its descent under them), so large sizes fit"""
+    if trim and 'layout_marginTop' not in extra:
+        extra+=f' android:layout_marginTop="-{round(size*0.19)}dp" android:layout_marginBottom="-{round(size*0.2)}dp"'
+    return (f'<TextClock android:id="@+id/{idn}" android:layout_width="wrap_content" android:layout_height="wrap_content"\n'
+            f'    android:format24Hour="{fmt}" android:format12Hour="{fmt}" android:textSize="{size}sp" android:fontFamily="{family}"\n'
+            f'    android:textColor="{color}" android:textScaleX="{sx}" android:includeFontPadding="false" android:textDirection="ltr"\n'
+            f'    {shadow} {extra} />\n')
+def ind(s,n): return ''.join(' '*n+l+'\n' for l in s.rstrip('\n').split('\n'))
+def row(inner,gravity='bottom',baseline=True):
+    return (f'        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"\n'
+            f'            android:layoutDirection="ltr" android:gravity="{gravity}" android:baselineAligned="{str(baseline).lower()}">\n'
+            +ind(inner,12)+'        </LinearLayout>\n')
+def col(inner,gravity='center'):
+    return (f'<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical"\n'
+            f'    android:gravity="{gravity}">\n'+ind(inner,4)+'</LinearLayout>\n')
+def bar(w,h,color=GOLD,extra=''):
+    return f'<ImageView android:layout_width="{w}" android:layout_height="{h}" android:background="{color}" android:importantForAccessibility="no" {extra} />\n'
+GLOW=lambda c:f'android:shadowColor="{c}" android:shadowRadius="18"'
 D={}
-D[1]=('رفيع',clockline(tc('HH:mm',60,'sans-serif-thin',WHITE)))
-D[2]=('عريض',clockline(tc('HH:mm',54,'sans-serif-black',WHITE)))
-D[3]=('مكثّف ذهبي',clockline(tc('HH:mm',66,'sans-serif-condensed',GOLD)))
-D[4]=('كلاسيكي',clockline(tc('HH:mm',56,'serif',CREAM)))
-D[5]=('بالثواني','''        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
-            android:layoutDirection="ltr" android:gravity="bottom">
-'''+clockline(tc('HH:mm',56,'sans-serif-light',WHITE)).replace('        <','            <')+clockline(tc('ss',22,'sans-serif-light',GOLD,'android:layout_marginLeft="4dp" android:layout_marginBottom="6dp"'),'cSec').replace('        <','            <')+'        </LinearLayout>\n')
-D[6]=('عمودي',clockline(tc('HH',46,'sans-serif-light',WHITE))+clockline(tc('mm',46,'sans-serif-light',GOLD),'cMin'))
-D[7]=('12 ساعة','''        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
-            android:layoutDirection="ltr" android:gravity="center_vertical">
-'''+clockline(tc('h:mm',58,'sans-serif-thin',WHITE)).replace('        <','            <')+clockline(tc('a',18,'sans-serif',GOLD,'android:layout_marginLeft="6dp"'),'cAmPm').replace('        <','            <')+'        </LinearLayout>\n')
-D[8]=('أحادي',clockline(tc('HH:mm',50,'monospace',CREAM,'android:letterSpacing="0.08"')))
-A={1:'ذهبي',2:'أرقام عربية',3:'أرقام لاتينية',4:'بسيط',5:'ميناء فاتح',6:'نجمة'}
+# 1 tower: tall thin hours, shorter gold minutes on the same baseline
+D[1]=('الشاهق',row(tall('HH',88,'sans-serif-thin',WHITE,0.58)+tall('mm',48,'sans-serif-thin',GOLD,0.6,'android:layout_marginLeft="5dp"','cMin')))
+# 2 columns: bold condensed hours | gold rule | minutes over seconds
+D[2]=('الأعمدة',row(tall('HH',86,'sans-serif-condensed',WHITE,0.68,'android:textStyle="bold"')
+    +bar('2dp','58dp',GOLD,'android:layout_marginLeft="7dp" android:layout_marginRight="7dp"')
+    +col(tall('mm',44,'sans-serif-condensed',GOLD,0.7,'','cMin')+tall('ss',18,'sans-serif-condensed-light','#B9C2E8',0.8,'','cSec',trim=False),'left'),
+    'center_vertical',False))
+# 3 raised: black hours, minutes up at their top like an exponent
+D[3]=('المرفوع',row(tall('HH',90,'sans-serif-black',WHITE,0.52)+tall('mm',38,'sans-serif-medium',GOLD,0.6,'android:layout_marginLeft="4dp"','cMin'),'top',False))
+# 4 glow: gold figures with a golden halo
+D[4]=('المضيء',row(tall('HH',80,'sans-serif-condensed-light',GOLD,0.58,'',shadow=GLOW('#CCE6BC62'),trim=False)+tall('mm',44,'sans-serif-condensed-light',CREAM,0.58,'android:layout_marginLeft="6dp"','cMin',GLOW('#99E6BC62'),trim=False)))
+# 5 badge: tall hours, minutes in a gold tab
+D[5]=('الشارة',row(tall('HH',88,'sans-serif-thin',WHITE,0.58)+tall('mm',30,'sans-serif-condensed','#0B1F5C',0.8,
+    'android:textStyle="bold" android:background="@drawable/clock_chip" android:paddingLeft="7dp" android:paddingRight="7dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:layout_marginLeft="6dp"','cMin','',trim=False),'center_vertical',False))
+# 6 stacked: hours over a gold rule over minutes
+D[6]=('المكدّس',ind(tall('HH',64,'sans-serif-light',WHITE,0.66)+bar('56dp','2dp',GOLD,'android:layout_marginTop="3dp" android:layout_marginBottom="4dp"')+tall('mm',32,'sans-serif-light',GOLD,0.66,'','cMin'),8))
+# 7 serif: tall classic hours, italic gold minutes
+D[7]=('الكلاسيكي',row(tall('HH',84,'serif',CREAM,0.58)+tall('mm',46,'serif',GOLD,0.6,'android:textStyle="italic" android:layout_marginLeft="5dp"','cMin')))
+# 8 twelve: 12-hour tall hours, minutes over ص/م
+D[8]=('اثنتا عشرة',row(tall('h',88,'sans-serif-thin',WHITE,0.58)+col(tall('mm',44,'sans-serif-thin',GOLD,0.6,'','cMin')+tall('a',15,'sans-serif-medium','#B9C2E8',1,'android:layout_marginTop="3dp"','cAmPm',trim=False),'left'),
+    'center_vertical',False).replace('<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical"','<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="6dp"'))
+A={1:'ذهبي',2:'أرقام عربية',3:'أرقام لاتينية',4:'بسيط',5:'ميناء فاتح',6:'نجمة',7:'مربّع',8:'مستطيل',9:'مثمّن',10:'سداسي',11:'روماني',12:'معيّن'}
 for k,(name,body) in D.items():
     open(R+f'layout/widget_clock_d{k}.xml','w').write(HEAD.format(name=name,body=body))
 for k,name in A.items():
@@ -117,5 +211,5 @@ for k,name in A.items():
     open(R+f'layout/widget_clock_a{k}.xml','w').write(HEAD.format(name=name,body=body))
 # names for the settings screen
 import json
-json.dump({'d':{k:v[0] for k,v in D.items()},'a':A},open('/home/claude/clockgen/names.json','w'),ensure_ascii=False)
+json.dump({'d':{k:v[0] for k,v in D.items()},'a':A},open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'clock-models.json'),'w'),ensure_ascii=False)
 print('ok')
