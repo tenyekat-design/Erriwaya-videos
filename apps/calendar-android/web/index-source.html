@@ -1610,8 +1610,8 @@ async function subAdmin(el){
     <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
     <section class="card sb" id="sbCatch"></section>
     <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="${k==='tgToken'?400:60}"></label>`).join('')}</div>
-      ${nat&&typeof A.tg==='function'?`<p class="mut">إشعار تيليغرام الفوري: أنشئ بوتًا من <b dir="ltr">@BotFather</b> والصق رمزه أعلاه، ثم افتح البوت في تيليغرام وأرسل له أي رسالة، ثم اضغط «اكتشف معرّفي»، ثم «حفظ».</p>
-      <div class="sg-act"><button type="button" class="btn" id="sbTgFind">اكتشف معرّفي</button><button type="button" class="btn" id="sbTgTest">رسالة تجربة</button></div>`:''}
+      ${`<p class="mut">إشعار تيليغرام الفوري: أنشئ بوتًا من <b dir="ltr">@BotFather</b> والصق رمزه أعلاه، ثم افتح البوت في تيليغرام وأرسل له أي رسالة، ثم اضغط «اكتشف معرّفي»، ثم «حفظ».</p>
+      <div class="sg-act"><button type="button" class="btn" id="sbTgFind">اكتشف معرّفي</button><button type="button" class="btn" id="sbTgTest">رسالة تجربة</button></div>`}
       <button type="button" class="btn primary" id="sbSave">حفظ</button><p class="sg-msg" id="sbCfgM"></p></section>`;
   // what subscribers see
   (async()=>{try{const r=await sgFetch(SG_FS+'/sub_config/public');if(!r.ok)return;const c=sgRead(await r.json());
@@ -1628,15 +1628,17 @@ async function subAdmin(el){
   const tgWhy=r=>r.error_code===-1?'الرمز غير مكتمل: انسخه كاملًا من رسالة BotFather (أرقام ثم : ثم حروف)':r.error_code===401||r.error_code===404?'رمز البوت غير صحيح أو أُبطل: انسخه من جديد من BotFather'
     :r.error_code===400?'المعرّف غير صحيح: اضغط «اكتشف معرّفي» أولًا':r.error_code===403?'البوت لا يستطيع مراسلتك: افتحه في تيليغرام واضغط Start':r.error_code===409?'البوت مربوط بخدمة أخرى (webhook): أنشئ بوتًا جديدًا'
     :r.error_code===0?'تعذّر الوصول إلى تيليغرام من هذا الهاتف ('+(r.description||'')+'). تحقق من الإنترنت، وإن كان تيليغرام محجوبًا في شبكتك فجرّب شبكة أخرى':'خطأ من تيليغرام: '+(r.description||r.error_code);
-  if($('sbTgFind'))$('sbTgFind').onclick=()=>{const t=tgTok(),M=$('sbCfgM');if(!tgIn('tgToken').value.trim()){M.textContent='الصق رمز البوت أولًا';return}
-    let r={};try{r=JSON.parse(A.tg(t||tgIn('tgToken').value.trim(),'getUpdates','{}')||'{}')}catch(e){}
+  if($('sbTgFind'))$('sbTgFind').onclick=async()=>{const t=tgTok(),M=$('sbCfgM');if(!tgIn('tgToken').value.trim()){M.textContent='الصق رمز البوت أولًا';return}
+    if(!t){M.textContent=tgWhy({error_code:-1});return}
+    M.textContent='جارٍ الاتصال بتيليغرام…';const r=await window.tgCall(t,'getUpdates',{});M.textContent='';
     if(!r.ok){M.textContent=tgWhy(r);return}
     const u=(r.result||[]).map(x=>x.message||x.edited_message||x.channel_post||x.my_chat_member).filter(x=>x&&x.chat).pop();
     if(!u){M.textContent='لم يصل البوت شيء بعد: افتحه في تيليغرام وأرسل له أي رسالة ثم أعد المحاولة';return}
     tgIn('tgChat').value=String(u.chat.id);M.textContent='';say('وُجد معرّفك: اضغط «حفظ»')};
-  if($('sbTgTest'))$('sbTgTest').onclick=()=>{const t=tgTok()||tgIn('tgToken').value.trim(),c=tgIn('tgChat').value.trim();let r={};
-    try{r=JSON.parse(A.tg(t,'sendMessage',JSON.stringify({chat_id:c,text:'✅ تجربة: إشعارات طلبات الاشتراك في التقويم الموريتاني تصل هنا.'}))||'{}')}catch(e){}
-    if(r.ok){$('sbCfgM').textContent='';say('أُرسلت. افتح تيليغرام')}else $('sbCfgM').textContent=tgWhy(r)};
+  if($('sbTgTest'))$('sbTgTest').onclick=async()=>{const t=tgTok(),c=tgIn('tgChat').value.trim(),M=$('sbCfgM');
+    if(!t){M.textContent=tgWhy({error_code:-1});return}if(!c){M.textContent='اضغط «اكتشف معرّفي» أولًا';return}
+    M.textContent='جارٍ الإرسال…';const r=await window.tgCall(t,'sendMessage',{chat_id:c,text:'✅ تجربة: إشعارات طلبات الاشتراك في التقويم الموريتاني تصل هنا.'});M.textContent='';
+    if(r.ok){say(r.blind?'أُرسلت على الأرجح. افتح تيليغرام وتحقق':'أُرسلت. افتح تيليغرام')}else M.textContent=tgWhy(r)};
   // the catcher (this phone)
   function drawCatch(){const C=$('sbCatch');if(!C)return;
     if(!nat){C.innerHTML='<h2>اللاقط التلقائي</h2><p class="empty">يعمل في تطبيق أندرويد على هاتف الناشر فقط.</p>';return}
@@ -3465,6 +3467,14 @@ const AD_CONTACT={whatsapp:'',phone:'',email:''};
      price: السعر كما يُعرض (مثل '200 أوقية جديدة في السنة') ·
      pay: تطبيقات الدفع؛ يُكتب في num رقم حساب الناشر (أو رمز التاجر) في كل تطبيق، وما تُرك فارغًا يُعرض باسمه فقط ·
      whatsapp و phone: رقم الناشر بالصيغة الدولية بلا + (مثل '222XXXXXXXX') يُرسَل إليه رقم الجهاز وإثبات الدفع. */
+/* Telegram Bot API: a plain GET through the WebView (no preflight), then the app's own connection (AndroidApp.tg) if that fails;
+   for sendMessage a last fire-and-forget attempt. Resolves to Telegram's answer, or {ok:false,error_code:0,description}. */
+window.tgCall=async(token,method,params)=>{const q=new URLSearchParams();for(const k in params||{})q.set(k,params[k]);
+  const url='https://api.telegram.org/bot'+token+'/'+method+'?'+q,why=[];
+  try{const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);const r=await fetch(url,{signal:c.signal});clearTimeout(t);return await r.json()}catch(e){why.push('web: '+(e.name||e))}
+  try{const A=window.AndroidApp;if(A&&typeof A.tg==='function'){const r=JSON.parse(A.tg(token,method,JSON.stringify(params||{}))||'{}');if(r.ok||r.error_code)return r.error_code===0?Object.assign(r,{description:why.concat(r.description).join(' / ')}):r}}catch(e){}
+  if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors'});return{ok:true,blind:true}}catch(e){}}
+  return{ok:false,error_code:0,description:why.join(' / ')}};
 const SUB={price:'',whatsapp:'',phone:'',pay:[
   {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
   {k:'masrvi',n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
@@ -3564,9 +3574,9 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       if(!r.ok)throw new Error(r.status);
       const p={at:Date.now(),app:appSel,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
       // the admin's instant notice on Telegram (sub_config: tgToken, tgChat); the request is already saved either way
-      if(SUB.tgToken&&SUB.tgChat&&typeof A.tg==='function'){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
+      if(SUB.tgToken&&SUB.tgChat){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
         const text=`🔔 طلب اشتراك جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
-        setTimeout(()=>{try{A.tg(SUB.tgToken,'sendMessage',JSON.stringify({chat_id:SUB.tgChat,text}))}catch(e){}},0)}}
+        window.tgCall(SUB.tgToken,'sendMessage',{chat_id:SUB.tgChat,text}).catch(()=>{})}}
     catch(e){m.className='';m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت وأعد المحاولة.','Envoi impossible. Vérifiez la connexion et réessayez.')}
     b.disabled=false};
   // looks for this phone's code: every few seconds just after a request, then every minute; every five minutes while locked
