@@ -261,6 +261,7 @@ public class MainActivity extends Activity {
             sChime = pool.load(getAssets().openFd("sounds/chime.wav"), 1);
             sPage = pool.load(getAssets().openFd("sounds/page.wav"), 1);
         } catch (Exception e) { pool = null; }
+        Sub.syncDayWidget(this);
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
         WebSettings s = web.getSettings();

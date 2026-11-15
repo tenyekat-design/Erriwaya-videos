@@ -9,5 +9,8 @@
     <color name="w_hi">#0F5641</color>
     <color name="w_hi_ink">#FBF3DC</color>
     <string name="widget_name">مواقيت الصلاة والتاريخ</string>
+    <string name="day_widget_name">يوم الأسبوع بالخط العربي</string>
+    <string name="day_widget_desc">اسم اليوم بالخط العربي مع التاريخ الهجري والميلادي، رأسيةً للشاشة الرئيسية وشاشة القفل (للمشتركين)</string>
+    <string name="day_widget_locked">انتهى الاشتراك\nجدّده في التقويم الموريتاني لعرض اليوم</string>
     <string name="widget_desc">مواقيت اليوم في مدينتك والصلاة القادمة، مع التاريخ الهجري والميلادي</string>
 </resources>

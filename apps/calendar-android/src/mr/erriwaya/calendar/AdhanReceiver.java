@@ -53,6 +53,7 @@ public class AdhanReceiver extends BroadcastReceiver {
         }
         scheduleNext(ctx);  // also on BOOT_COMPLETED and MY_PACKAGE_REPLACED
         CalendarWidget.updateAll(ctx);
+        Sub.syncDayWidget(ctx);
     }
 
     // ---------- the user's recordings ----------

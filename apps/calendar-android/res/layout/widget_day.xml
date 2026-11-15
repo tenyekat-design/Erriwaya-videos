@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «يوم الأسبوع»: the weekday in calligraphy (res/drawable-nodpi/day_0..6, Sunday first) with the date under it. Subscribers only (DayWidget). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dRoot" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/dImg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitCenter" android:src="@drawable/day_5" android:contentDescription="@string/day_widget_name" />
+    <TextView android:id="@+id/dDate" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="7dp"
+        android:text="5 جمادى الآخرة 1448 هـ · 15 نوفمبر 2026" android:textSize="12sp" android:maxLines="1"
+        android:textColor="#E8E4D2" android:shadowColor="#000000" android:shadowRadius="4" />
+    <TextView android:id="@+id/dLock" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:gravity="center" android:background="@drawable/widget_day_bg" android:visibility="gone"
+        android:text="@string/day_widget_locked" android:textSize="14sp" android:textColor="#E8E4D2" android:padding="12dp" />
+</FrameLayout>

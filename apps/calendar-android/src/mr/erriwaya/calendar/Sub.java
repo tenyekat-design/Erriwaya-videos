@@ -179,7 +179,25 @@ final class Sub {
         ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("code", extract(pasted)).apply();
         AdhanReceiver.scheduleNext(ctx);
         CalendarWidget.updateAll(ctx);
+        syncDayWidget(ctx);
         return "ok";
+    }
+
+    /**
+     * The «يوم الأسبوع» widget is for subscribers: its provider is switched on the first time a paid year is active (until
+     * then the phone does not offer it at all) and stays on; once the year ends the widget itself asks to renew.
+     */
+    static void syncDayWidget(Context ctx) {
+        try {
+            if (now(ctx) < paidUntil(ctx)) {
+                android.content.ComponentName c = new android.content.ComponentName(ctx, DayWidget.class);
+                android.content.pm.PackageManager pm = ctx.getPackageManager();
+                if (pm.getComponentEnabledSetting(c) != android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
+                    pm.setComponentEnabledSetting(c, android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            android.content.pm.PackageManager.DONT_KILL_APP);
+            }
+            DayWidget.updateAll(ctx);
+        } catch (Exception ignored) { }
     }
 
     /** For the page: {"id","now","trialEnd","until","open"}. */

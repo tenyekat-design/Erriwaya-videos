@@ -783,7 +783,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .tiles button[aria-expanded="true"] .tile-ic{background:var(--green);border-color:var(--green);color:var(--on-green)}
 .tiles button[aria-expanded="true"]{color:var(--green);font-weight:700}
 #v-cal [data-sec]{display:none;scroll-margin-top:84px}#v-cal [data-sec].open{display:block}
-.about summary{pointer-events:none}.about summary::after{content:""!important}
+#aboutBox{display:none}#v-cal [data-sec="set"].open~#aboutBox{display:block}
 #v-cal .meta{margin:0 0 12px}
 #dNotes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .nt{display:inline-flex;align-items:center;gap:6px;background:var(--green-soft);color:var(--green);border-radius:6px;padding:2px 4px 2px 10px;padding-inline:10px 4px;font-size:.88rem;font-weight:600}
@@ -836,7 +836,15 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-id b{direction:ltr;font:700 1.25rem/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;unicode-bidi:isolate}
 .lk-row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .lk-row .btn{flex:1 1 auto;text-align:center;text-decoration:none}
-.lk-pay{white-space:pre-line;background:var(--green-soft);border-radius:10px;padding:8px 12px;font-size:.9rem;margin:0 0 10px}
+.lk-pay{margin:0 0 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lk-pay h3{grid-column:1/-1;margin:0;font-size:.86rem;color:var(--muted);font-weight:600}
+.lk-pay .pm{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 8px;border:1px solid var(--line);border-radius:12px;padding:7px 9px;background:var(--surface);color:var(--ink);font:inherit;text-align:start}
+.lk-pay button.pm{cursor:pointer}
+.lk-pay .pm i{grid-row:1/3;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;font:700 .95rem/1 var(--f-display);font-style:normal}
+.lk-pay .pm b{font-size:.92rem}
+.lk-pay .pm span{grid-column:2;direction:ltr;text-align:end;font:600 .95rem/1.2 ui-monospace,Menlo,Consolas,monospace;unicode-bidi:isolate}
+.lk-pay .pm small{grid-column:2;color:var(--muted);font-size:.72rem}
+.fr .lk-pay .pm span{text-align:start}
 #lkCode{width:100%;min-height:74px;direction:ltr;text-align:left;font:500 .8rem/1.6 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);margin:0 0 8px;resize:vertical}
 #lkCode::placeholder{font-family:var(--f-body);font-size:.9rem;direction:rtl;text-align:right}
 .fr #lkCode::placeholder{direction:ltr;text-align:left}
@@ -1027,7 +1035,6 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
     <button type="button" data-open="conv" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="a1" d="M4 8.5h14M14.5 5L18 8.5 14.5 12"/><path class="a2" d="M20 15.5H6M9.5 12L6 15.5 9.5 19"/></svg></span><span>تحويل التاريخ</span></button>
     <button type="button" data-open="adhan" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5v5H8l5 4v-13l-5 4z"/><path class="w1" d="M16.5 9a4.5 4.5 0 0 1 0 6"/><path class="w2" d="M19 6.5a8 8 0 0 1 0 11"/></svg></span><span>الأذان والإقامة</span></button>
     <button type="button" data-open="set" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8.5M17.5 7H20M4 17h2.5M11.5 17H20"/><circle cx="15" cy="7" r="2.5"/><circle cx="9" cy="17" r="2.5"/></svg></span><span>الإعدادات</span></button>
-    <button type="button" data-open="about" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.75"/><path d="M12 11v5.5"/><path class="dot" d="M12 7.75h.01"/></svg></span><span>حول التطبيق</span></button>
   </nav>
 
   <details class="intro adh" id="adhanBox" data-sec="adhan">
@@ -1112,8 +1119,8 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
     </div>
-    <details class="card about" id="aboutBox" data-sec="about" open>
-      <summary><h3>حول التطبيق والخصوصية</h3></summary>
+    <details class="card about" id="aboutBox">
+      <summary><h3>المصادر والخصوصية</h3></summary>
       <p><b>الخصوصية.</b> التطبيق لا يجمع أي بيانات عنك ولا يرسلها: لا حساب فيه ولا أدوات تتبّع، وخانة الإعلان فيه نص وصورة ثابتان داخل التطبيق لا يتتبّعانك. إعداداتك ومرجعياتك تُحفظ في هاتفك وحده. وإن طلبت «أقرب بلدية إلى موقعي» استُعمل موقعك التقريبي داخل الهاتف لاختيار البلدية، ولا يُحفظ ولا يُرسل.</p>
       <p><b>الإنترنت.</b> المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (GitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.</p>
       <p><b>المصادر.</b> نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: المصحف الأثري برواية ورش من طريق الأزرق مضبوطًا بألوان التابعين. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.</p>
@@ -3217,7 +3224,7 @@ if(lang!=='fr')return;
 const GM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const D=[
 ['التقويم الموريتاني','Calendrier mauritanien'],['مواقيت الصلاة · المصحف · الحديث · الأذكار','Horaires de prière · Coran · Hadith · Invocations'],
-['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['الاشتراك','Abonnement'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المكتبة','Bibliothèque'],['المسبحة','Tasbih'],['القبلة','Qibla'],
+['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['الاشتراك','Abonnement'],['المصادر والخصوصية','Sources et confidentialité'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المكتبة','Bibliothèque'],['المسبحة','Tasbih'],['القبلة','Qibla'],
 ['المدينة','Ville'],['المقاطعة','Moughataa'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
 ['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['المتبقي لأذان ','Avant l’adhan : '],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
 ['تعرض يومًا غير اليوم','Vous affichez un autre jour'],['العودة إلى اليوم','Revenir à aujourd’hui'],
@@ -3329,9 +3336,14 @@ const SPONSOR={name:'',logo:'',banner:'',line:'',url:'',tag:'إعلان'};
 const AD_CONTACT={whatsapp:'',phone:'',email:''};
 /* الاشتراك (تطبيق أندرويد فقط؛ التحقق في Sub.java): التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل كله حتى يُدخَل رمز تفعيل سنوي.
    SUB: ما تعرضه شاشة الاشتراك؛ يكتبه الناشر:
-     price: السعر كما يُعرض (مثل '200 أوقية جديدة في السنة') · pay: طريقة الدفع، سطر لكل وسيلة (مثل 'بنكيلي: 4XXXXXXX\nمصرفي: 3XXXXXXX') ·
+     price: السعر كما يُعرض (مثل '200 أوقية جديدة في السنة') ·
+     pay: تطبيقات الدفع؛ يُكتب في num رقم حساب الناشر (أو رمز التاجر) في كل تطبيق، وما تُرك فارغًا يُعرض باسمه فقط ·
      whatsapp و phone: رقم الناشر بالصيغة الدولية بلا + (مثل '222XXXXXXXX') يُرسَل إليه رقم الجهاز وإثبات الدفع. */
-const SUB={price:'',pay:'',whatsapp:'',phone:''};
+const SUB={price:'',whatsapp:'',phone:'',pay:[
+  {n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
+  {n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
+  {n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
+  {n:'بيم بانك',fr:'BimBank',c:'#7A2E8E',num:''}]};
 (function(){
   const A=window.AndroidApp,$=id=>document.getElementById(id);
   if(!A||typeof A.subState!=='function')return;   // نسخة الويب: لا اشتراك
@@ -3354,9 +3366,16 @@ const SUB={price:'',pay:'',whatsapp:'',phone:''};
     $('lkP').textContent=paid?L('لتجديد الاشتراك قبل انتهائه أرسل رقم جهازك إلى الناشر وأدخل الرمز الجديد هنا.','Pour renouveler, envoyez le numéro de votre appareil à l’éditeur et saisissez ici le nouveau code.')
       :(trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
        +(SUB.price?L('الاشتراك: ','Abonnement : ')+SUB.price+'.':L('الاشتراك سنوي.','L’abonnement est annuel.'));
-    const steps=[L('ادفع قيمة الاشتراك.','Réglez l’abonnement.'),L('أرسل إلى الناشر رقم جهازك (أسفله) مع إثبات الدفع.','Envoyez à l’éditeur le numéro de votre appareil (ci-dessous) avec la preuve de paiement.'),L('يصلك رمز تفعيل خاص بهاتفك: انسخ الرسالة، ثم اضغط هنا «لصق» ثم «تفعيل».','Vous recevez un code propre à votre téléphone : copiez le message, puis touchez ici « Coller » et « Activer ».')];
+    const steps=[L('ادفع قيمة الاشتراك عبر بنكيلي أو مصرفي أو السداد أو بيم بانك.','Réglez l’abonnement avec Bankily, Masrvi, Sedad ou BimBank.'),L('أرسل إلى الناشر رقم جهازك (أسفله) مع إثبات الدفع.','Envoyez à l’éditeur le numéro de votre appareil (ci-dessous) avec la preuve de paiement.'),L('يصلك رمز تفعيل خاص بهاتفك: انسخ الرسالة، ثم اضغط هنا «لصق» ثم «تفعيل».','Vous recevez un code propre à votre téléphone : copiez le message, puis touchez ici « Coller » et « Activer ».')];
     $('lkSteps').innerHTML=steps.map(()=>'<li></li>').join('');[...$('lkSteps').children].forEach((li,i)=>{li.textContent=steps[i]});
-    $('lkPay').hidden=!SUB.pay;$('lkPay').textContent=SUB.pay;
+    {const P=$('lkPay'),any=SUB.pay.some(m=>m.num);P.hidden=!SUB.pay.length;P.innerHTML='';
+     const h=document.createElement('h3');h.textContent=any?L('ادفع عبر أحد هذه التطبيقات (اضغط لنسخ الرقم)','Payez avec l’une de ces applications (touchez pour copier le numéro)'):L('الدفع عبر أحد هذه التطبيقات','Paiement avec l’une de ces applications');P.append(h);
+     for(const m of SUB.pay){const e=document.createElement(m.num?'button':'div');e.className='pm';if(m.num){e.type='button';e.dataset.num=m.num}
+       const i=document.createElement('i');i.style.background=m.c;i.textContent=(fr?m.fr:m.n).replace(/^ال/,'').charAt(0);
+       const b=document.createElement('b');b.textContent=fr?m.fr:m.n;e.append(i,b);
+       if(m.num){const n=document.createElement('span');n.textContent=m.num;e.append(n)}
+       else{const n=document.createElement('small');n.textContent=L('الرقم من الناشر','Numéro : auprès de l’éditeur');e.append(n)}
+       P.append(e)}}
     $('lkIdL').textContent=L('رقم جهازك','Numéro de votre appareil');$('lkId').textContent=showId(st.id);$('lkCopy').textContent=L('نسخ','Copier');
     const c=$('lkContact');c.innerHTML='';
     const add=(href,label)=>{const a=document.createElement('a');a.className='btn primary';a.href=href;a.rel='noopener';a.textContent=label;c.append(a)};
@@ -3376,6 +3395,7 @@ const SUB={price:'',pay:'',whatsapp:'',phone:''};
   window.subSheet=()=>show(false);
   $('lkX').onclick=()=>{if(!locked)lock.hidden=true};
   lock.addEventListener('click',e=>{if(e.target===lock&&!locked)lock.hidden=true});
+  $('lkPay').addEventListener('click',e=>{const b=e.target.closest('[data-num]');if(!b)return;let ok=false;try{ok=A.copy(b.dataset.num)}catch(x){}toast(ok?L('نُسخ رقم الدفع','Numéro de paiement copié'):L('تعذّر النسخ','Copie impossible'))});
   $('lkCopy').onclick=()=>{let ok=false;try{ok=A.copy(showId(st.id))}catch(e){}toast(ok?L('نُسخ رقم الجهاز','Numéro copié'):L('تعذّر النسخ','Copie impossible'))};
   $('lkPaste').onclick=()=>{let t='';try{t=A.paste()}catch(e){}if(t)$('lkCode').value=t;else{$('lkMsg').className='';$('lkMsg').textContent=L('لا نص منسوخ. انسخ رسالة الرمز أولًا.','Rien à coller. Copiez d’abord le message du code.')}};
   $('lkGo').onclick=()=>{const t=$('lkCode').value.trim(),m=$('lkMsg');m.className='';
