@@ -19,9 +19,9 @@ import java.security.spec.X509EncodedKeySpec;
  * repository) and sends the code back. The app checks the signature with the public key below, so a code cannot be made
  * without the private key, and it works with no network and no server.
  *
- * The 24 hours count from the day the app was installed (PackageManager.firstInstallTime), so clearing the app's data
- * does not restart them; phones that had the app before subscriptions existed count from LAUNCH. Setting the phone's
- * clock back does not help either: the latest time ever seen is kept and the clock is never read as earlier than it.
+ * The 24 hours count from the first time the phone ever ran the app, which the server keeps (verify), so neither clearing
+ * the app's data nor removing and installing it again restarts them. Setting the phone's clock back does not help
+ * either: the latest time ever seen (the server's included) is kept and the clock is never read as earlier than it.
  */
 final class Sub {
     private Sub() { }
@@ -152,10 +152,96 @@ final class Sub {
         return Math.max(t, seen);
     }
 
-    static long trialEnd(Context ctx) {
+    /** The free day when the server cannot say (see verify): from the install, or from LAUNCH for older installs. */
+    private static long localStart(Context ctx) {
         long first = 0;
         try { first = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).firstInstallTime; } catch (Exception ignored) { }
-        return Math.max(first, LAUNCH) + TRIAL;
+        return Math.max(first, LAUNCH);
+    }
+
+    /** True once the start of this phone's free day is known (from the server, or the server could not be asked properly). */
+    static boolean verified(Context ctx) {
+        SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        return sp.getLong("t0", 0) > 0 || sp.getBoolean("fallback", false);
+    }
+
+    /** The end of the free day; 0 while its start is not known yet (the app then waits for one connection: verify). */
+    static long trialEnd(Context ctx) {
+        SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        long t0 = sp.getLong("t0", 0);
+        if (t0 > 0) return t0 + TRIAL;
+        return sp.getBoolean("fallback", false) ? localStart(ctx) + TRIAL : 0;
+    }
+
+    /**
+     * The free day is counted from the first time this phone ever ran the app, as the server recorded it
+     * (Firestore sub_trials/<the phone's number>: written once, never changed), so removing the app and installing it again
+     * does not start another day: the phone's number survives that. Asks the server (and registers the phone if it is new);
+     * a network call, off the main thread. Without a connection the start stays unknown and the app waits; if the server
+     * answers but refuses (its rules are not in place), the day is counted from the install as before.
+     * The server's clock also corrects a phone clock set back.
+     */
+    static boolean verify(Context ctx) {
+        SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        try {
+            String id = deviceId(ctx), doc = SuggestJob.FS + "/sub_trials/" + id;
+            Object[] r = http("GET", doc, null);
+            int code = (Integer) r[0];
+            long t0 = 0;
+            if (code == 200) t0 = stamp(new org.json.JSONObject((String) r[1]).getJSONObject("fields").getJSONObject("t").getString("timestampValue"));
+            else if (code == 404) {
+                String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
+                String body = "{\"writes\":[{\"update\":{\"name\":\"" + docs + "/sub_trials/" + id + "\",\"fields\":{}},"
+                        + "\"currentDocument\":{\"exists\":false},\"updateTransforms\":[{\"fieldPath\":\"t\",\"setToServerValue\":\"REQUEST_TIME\"}]}]}";
+                Object[] w = http("POST", SuggestJob.FS.replaceAll("/documents$", "") + "/documents:commit", body);
+                int wc = (Integer) w[0];
+                if (wc == 200) t0 = stamp(new org.json.JSONObject((String) w[1]).getString("commitTime"));
+                else if (wc == 403) code = 403;
+                else if (wc > 0) {   // someone registered it meanwhile: read it
+                    Object[] g = http("GET", doc, null);
+                    if ((Integer) g[0] == 200) t0 = stamp(new org.json.JSONObject((String) g[1]).getJSONObject("fields").getJSONObject("t").getString("timestampValue"));
+                }
+                r = w;
+            }
+            SharedPreferences.Editor e = sp.edit();
+            long server = (Long) r[2];
+            if (server > sp.getLong("seen", 0)) e.putLong("seen", server);
+            if (t0 > 0) e.putLong("t0", t0).remove("fallback");
+            else if (code == 403 || code == 400) e.putBoolean("fallback", true);
+            e.apply();
+        } catch (Exception ignored) { }
+        boolean ok = verified(ctx);
+        if (ok) { try { AdhanReceiver.scheduleNext(ctx); CalendarWidget.updateAll(ctx); DayWidget.updateAll(ctx); } catch (Exception ignored) { } }
+        return ok;
+    }
+
+    /** "2026-11-15T08:30:00.123456Z" as milliseconds. */
+    private static long stamp(String iso) throws Exception {
+        java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US);
+        f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        return f.parse(iso.substring(0, 19)).getTime();
+    }
+
+    /** {status (0: no connection), body, the server's clock in ms (0 if unknown)}. */
+    private static Object[] http(String method, String url, String body) {
+        java.net.HttpURLConnection c = null;
+        try {
+            c = (java.net.HttpURLConnection) new java.net.URL(url).openConnection();
+            c.setConnectTimeout(12000); c.setReadTimeout(15000);
+            c.setRequestMethod(method);
+            if (body != null) {
+                c.setDoOutput(true); c.setRequestProperty("Content-Type", "application/json");
+                try (java.io.OutputStream o = c.getOutputStream()) { o.write(body.getBytes(StandardCharsets.UTF_8)); }
+            }
+            int code = c.getResponseCode();
+            long date = c.getHeaderFieldDate("Date", 0);
+            java.io.InputStream in = code / 100 == 2 ? c.getInputStream() : c.getErrorStream();
+            java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+            if (in != null) { byte[] buf = new byte[4096]; int k; while ((k = in.read(buf)) > 0) b.write(buf, 0, k); in.close(); }
+            return new Object[]{code, b.toString("UTF-8"), date};
+        } catch (Exception e) {
+            return new Object[]{0, "", 0L};
+        } finally { if (c != null) c.disconnect(); }
     }
 
     /** The moment the paid year ends (0 without a valid code). */
@@ -199,9 +285,10 @@ final class Sub {
         } catch (Exception ignored) { }
     }
 
-    /** For the page: {"id","now","trialEnd","until","open"}. */
+    /** For the page: {"id","now","trialEnd","until","open","verified"}. */
     static String state(Context ctx) {
         long n = now(ctx), t = trialEnd(ctx), u = paidUntil(ctx);
-        return "{\"id\":\"" + deviceId(ctx) + "\",\"now\":" + n + ",\"trialEnd\":" + t + ",\"until\":" + u + ",\"open\":" + (n < t || n < u) + "}";
+        return "{\"id\":\"" + deviceId(ctx) + "\",\"now\":" + n + ",\"trialEnd\":" + t + ",\"until\":" + u + ",\"open\":" + (n < t || n < u)
+                + ",\"verified\":" + verified(ctx) + "}";
     }
 }

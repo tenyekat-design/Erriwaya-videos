@@ -3493,6 +3493,8 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     const paid=st.until>st.now,trial=!paid&&st.trialEnd>st.now;
     $('lkT').textContent=paid?L('الاشتراك','Abonnement'):trial?L('اشترك في التقويم الموريتاني','Abonnez-vous au Calendrier mauritanien'):st.until?L('انتهى اشتراكك','Votre abonnement est terminé'):L('انتهت التجربة المجانية','L’essai gratuit est terminé');
     $('lkSt').textContent=paid?L('أنت مشترك حتى ','Abonné jusqu’au ')+dstr(st.until):trial?L('تجربة مجانية: بقي ','Essai gratuit : il reste ')+left(st.trialEnd-st.now):'';
+    if(st.verified===false&&!paid){$('lkT').textContent=L('اتصل بالإنترنت لبدء التجربة','Connectez-vous pour commencer l’essai');
+      $('lkSt').textContent=L('تبدأ التجربة المجانية (24 ساعة) بعد اتصال واحد بالإنترنت. افتح الإنترنت وانتظر لحظة.','L’essai gratuit (24 heures) commence après une connexion. Activez Internet et patientez un instant.')}
     $('lkSt').hidden=!$('lkSt').textContent;
     $('lkP').textContent=(paid?L('للتجديد ادفع ثم اضغط «دفعتُ» كما في الاشتراك الأول. ','Pour renouveler, payez puis touchez « J’ai payé », comme la première fois. ')
       :trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
@@ -3562,7 +3564,10 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     b.innerHTML='<span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5v2.5"/></svg></span><span>الاشتراك</span>';
     tiles.insertBefore(b,tiles.querySelector('[data-open="set"]'));
     const n=tiles.querySelectorAll('button').length;if(tiles.style.gridTemplateColumns)tiles.style.gridTemplateColumns='repeat('+(n<=5?n:Math.ceil(n/2))+',minmax(0,1fr))'}
-  check();setInterval(check,20000);
+  // the start of this phone's free day comes from the server once (Sub.verify): ask until it is known
+  window.onSubVerify=ok=>{if(ok)check()};
+  const askVerify=()=>{if(st&&st.verified===false&&!document.hidden){try{A.subVerify()}catch(e){}}};
+  check();setInterval(check,20000);setInterval(askVerify,15000);setTimeout(askVerify,4000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
   // مرة واحدة في بداية التجربة: كم بقي منها
   if(st&&st.open&&st.until<=st.now){let told=false;try{told=!!localStorage.getItem('mrcal.subTold')}catch(e){}

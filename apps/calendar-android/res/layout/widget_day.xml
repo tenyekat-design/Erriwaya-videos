@@ -12,7 +12,7 @@
         android:text="5 جمادى الآخرة 1448 هـ · 15 نوفمبر 2026" android:textSize="12sp" android:maxLines="1"
         android:textColor="#F2EEDC" android:shadowColor="#000000" android:shadowRadius="5" />
     <TextView android:id="@+id/dLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="7dp" android:visibility="gone"
-        android:text="@string/day_widget_locked" android:textSize="12sp" android:textStyle="bold" android:maxLines="1"
+        android:layout_gravity="center" android:gravity="center" android:padding="10dp" android:visibility="gone"
+        android:text="@string/day_widget_locked" android:textSize="14sp" android:textStyle="bold" android:maxLines="2"
         android:textColor="#F6DFA0" android:shadowColor="#000000" android:shadowRadius="5" />
 </FrameLayout>

@@ -11,6 +11,6 @@
     <string name="widget_name">مواقيت الصلاة والتاريخ</string>
     <string name="day_widget_name">يوم الأسبوع بالخط العربي</string>
     <string name="day_widget_desc">اسم اليوم بالخط العربي مع التاريخ الهجري والميلادي، رأسيةً للشاشة الرئيسية وشاشة القفل</string>
-    <string name="day_widget_locked">للمشتركين: اشترك في التقويم الموريتاني</string>
+    <string name="day_widget_locked">يوم الأسبوع بالخط العربي\nللمشتركين: اشترك في التقويم الموريتاني</string>
     <string name="widget_desc">مواقيت اليوم في مدينتك والصلاة القادمة، مع التاريخ الهجري والميلادي</string>
 </resources>

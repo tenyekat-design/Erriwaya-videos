@@ -234,6 +234,13 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String subState() { return Sub.state(MainActivity.this); }
 
+        /** Asks the server when this phone's free day began (Sub.verify); the page hears window.onSubVerify(true|false). */
+        @JavascriptInterface
+        public void subVerify() {
+            new Thread(() -> { final boolean ok = Sub.verify(getApplicationContext());
+                runOnUiThread(() -> web.evaluateJavascript("window.onSubVerify&&window.onSubVerify(" + ok + ")", null)); }).start();
+        }
+
         /** Tries an activation code (a whole pasted message is fine): "ok", "old" or "bad". */
         @JavascriptInterface
         public String subActivate(String text) { return Sub.activate(MainActivity.this, text); }
@@ -301,6 +308,7 @@ public class MainActivity extends Activity {
             sPage = pool.load(getAssets().openFd("sounds/page.wav"), 1);
         } catch (Exception e) { pool = null; }
         Sub.syncDayWidget(this);
+        new Thread(() -> Sub.verify(getApplicationContext())).start();   // when this phone's free day began, from the server
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
         WebSettings s = web.getSettings();

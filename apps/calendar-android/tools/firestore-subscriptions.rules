@@ -26,3 +26,12 @@
       allow get: if true;
       allow list, write: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
     }
+    // sub_trials/<رقم الجهاز>: لحظة أول تشغيل للتطبيق على الهاتف، تُكتب مرة واحدة بوقت الخادم ولا تُغيَّر ولا تُحذف إلا من المشرف؛
+    // منها تُحسب التجربة المجانية، فلا تعيدها إعادة التثبيت.
+    match /sub_trials/{id} {
+      allow get: if true;
+      allow create: if id.matches('^[A-Z2-7]{10}$')
+        && request.resource.data.keys().hasOnly(['t'])
+        && request.resource.data.t == request.time;
+      allow list, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
