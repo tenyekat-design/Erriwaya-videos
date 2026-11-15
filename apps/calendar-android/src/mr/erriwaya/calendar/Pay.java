@@ -273,7 +273,9 @@ final class Pay {
     static String state(Context ctx) {
         try {
             SharedPreferences p = sp(ctx);
-            return new JSONObject().put("key", p.getString("key", null) != null).put("on", p.getBoolean("on", false))
+            boolean listener = true;   // false in the public build, which has no notification listener (see AndroidManifest.xml)
+            try { ctx.getPackageManager().getServiceInfo(new android.content.ComponentName(ctx, PayListener.class), 0); } catch (Exception e) { listener = false; }
+            return new JSONObject().put("listener", listener).put("key", p.getString("key", null) != null).put("on", p.getBoolean("on", false))
                     .put("access", access(ctx)).put("signed", ctx.getSharedPreferences(SuggestJob.PREFS, Context.MODE_PRIVATE).getString("rt", null) != null)
                     .put("amount", p.getString("amount", "")).put("synced", p.getLong("synced", 0))
                     .put("trust", arr(ctx, "trust")).put("sources", arr(ctx, "sources")).put("msgs", arr(ctx, "msgs")).toString();

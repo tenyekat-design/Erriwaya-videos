@@ -1624,6 +1624,7 @@ async function subAdmin(el){
   function drawCatch(){const C=$('sbCatch');if(!C)return;
     if(!nat){C.innerHTML='<h2>اللاقط التلقائي</h2><p class="empty">يعمل في تطبيق أندرويد على هاتف الناشر فقط.</p>';return}
     let s={};try{s=JSON.parse(A.payState())}catch(e){}
+    if(s.listener===false){C.innerHTML='<h2>اللاقط التلقائي</h2><p class="empty">هذه النسخة العامة من التطبيق، ولا تستطيع قراءة الإشعارات. ثبّت على هاتفك «نسخة الناشر» (mauritania-calendar-publisher.apk) ليعمل اللاقط. تأكيد الطلبات يدويًا يعمل هنا بعد لصق المفتاح.</p>'+(s.key?'<p class="mut">المفتاح السري محفوظ. <button type="button" class="linkish" data-a="nokey">حذفه</button></p>':'<ul class="sb-chk"><li class="sb-key"><input id="sbKey" dir="ltr" autocomplete="off" placeholder="الصق المفتاح السري (64 حرفًا) من صفحة الرموز"><button type="button" class="btn" data-a="key">حفظ</button></li></ul>');return}
     const T=s.trust||[],ok=x=>x?'<b class="sb-ok">✓</b>':'<b class="sb-no">✗</b>',ready=s.key&&s.access&&s.amount&&T.length;
     C.innerHTML=`<h2>اللاقط التلقائي <small>${s.on&&ready?'يعمل':'متوقف'}</small></h2>
       <ul class="sb-chk">

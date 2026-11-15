@@ -31,11 +31,11 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: mauritania-calendar-apk
-          path: apps/calendar-android/dist/mauritania-calendar.apk
+          path: apps/calendar-android/dist/mauritania-calendar*.apk
       - name: Commit the APK to the branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f apps/calendar-android/dist/mauritania-calendar.apk
+          git add -f apps/calendar-android/dist/mauritania-calendar.apk apps/calendar-android/dist/mauritania-calendar-publisher.apk
           git diff --cached --quiet || git commit -m "Build calendar APK (run ${{ github.run_number }})"
           git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
