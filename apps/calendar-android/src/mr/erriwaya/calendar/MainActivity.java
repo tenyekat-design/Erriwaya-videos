@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
     /** True while the tasbih page asks to count with the volume keys. */
     private volatile boolean volumeKeysCount = false;
     private volatile String pickKind = "adhan";
+    /** The page's own theme once it has told it (setTheme); until then the phone's. */
+    private Boolean pageNight = null;
     /** Tasbih sounds and the page-turn sound (assets/sounds/*.wav), played natively for a reliable, low-latency sound. */
     private SoundPool pool;
     private int sClick, sClick2, sChime, sPage;
@@ -185,6 +187,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
+        /** The page's theme (day, or night: it can differ from the phone's own): the bars around the page follow it. */
+        @JavascriptInterface
+        public void setTheme(boolean night) { runOnUiThread(() -> { pageNight = night; barColors(); }); }
+
         /** The subscription (Sub): {"id","now","trialEnd","until","open"}. */
         @JavascriptInterface
         public String subState() { return Sub.state(MainActivity.this); }
@@ -334,9 +340,15 @@ public class MainActivity extends Activity {
 
     /** The strips' colours follow the day/night theme (the activity is not restarted when it changes). */
     private void barColors() {
-        boolean night = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        int bg = night ? 0xFF0C1511 : 0xFFF2F5F1;
-        topBar.setBackgroundColor(night ? 0xFF04190F : 0xFF0A3528);
+        boolean night = pageNight != null ? pageNight
+                : (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int bg = night ? 0xFF0E0B2E : 0xFFF2F5F1;
+        int top = night ? 0xFF060920 : 0xFF0A3528;
+        topBar.setBackgroundColor(top);
+        if (Build.VERSION.SDK_INT < 35) {   // before Android 15 the system bars themselves are coloured
+            getWindow().setStatusBarColor(top);
+            getWindow().setNavigationBarColor(bg);
+        }
         bottomBar.setBackgroundColor(bg);
         root.setBackgroundColor(bg);
         if (Build.VERSION.SDK_INT >= 35) Edge.lightNavigationIcons(this, !night);
