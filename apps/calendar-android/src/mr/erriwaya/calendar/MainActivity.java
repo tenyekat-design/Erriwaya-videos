@@ -193,8 +193,8 @@ public class MainActivity extends Activity {
          */
         @JavascriptInterface
         public String tg(String token, String method, String body) {
-            if (token == null || !token.matches("[0-9]{5,15}:[A-Za-z0-9_-]{30,50}")) return "";
-            if (!"sendMessage".equals(method) && !"getUpdates".equals(method) && !"getMe".equals(method)) return "";
+            if (token == null || !token.matches("[0-9]{5,15}:[A-Za-z0-9_-]{30,50}")) return "{\"ok\":false,\"error_code\":-1,\"description\":\"bad token\"}";
+            if (!"sendMessage".equals(method) && !"getUpdates".equals(method) && !"getMe".equals(method)) return "{\"ok\":false,\"error_code\":-2}";
             java.net.HttpURLConnection c = null;
             try {
                 c = (java.net.HttpURLConnection) new java.net.URL("https://api.telegram.org/bot" + token + "/" + method).openConnection();
@@ -206,8 +206,12 @@ public class MainActivity extends Activity {
                 java.io.InputStream in = code / 100 == 2 ? c.getInputStream() : c.getErrorStream();
                 java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
                 if (in != null) { byte[] buf = new byte[4096]; int k; while ((k = in.read(buf)) > 0) b.write(buf, 0, k); in.close(); }
-                return b.toString("UTF-8");
-            } catch (Exception e) { return ""; } finally { if (c != null) c.disconnect(); }
+                String out = b.toString("UTF-8");
+                return out.isEmpty() ? "{\"ok\":false,\"error_code\":" + code + "}" : out;
+            } catch (Exception e) {
+                String d = (e.getClass().getSimpleName() + ": " + e.getMessage()).replace("\\", "/").replace("\"", "'");
+                return "{\"ok\":false,\"error_code\":0,\"description\":\"" + d + "\"}";
+            } finally { if (c != null) c.disconnect(); }
         }
 
         /** How opaque the widgets' background is, 0 (see-through) to 100 (solid). */
