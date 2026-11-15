@@ -144,17 +144,48 @@ public class WidgetPhoto extends Activity {
         bar.addView(sb);
         LinearLayout btns = new LinearLayout(this);
         btns.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        Button save = new Button(this), cancel = new Button(this);
-        save.setText("حفظ الخلفية");
-        cancel.setText("إلغاء");
-        btns.addView(save, new LinearLayout.LayoutParams(0, -2, 1));
-        btns.addView(cancel, new LinearLayout.LayoutParams(0, -2, 1));
+        btns.setPadding(0, (int) (8 * dp), 0, 0);
+        TextView save = button("حفظ الخلفية", 0xFFE6BC62, 0xFF0B1F5C, true);
+        TextView cancel = button("إلغاء", 0x00000000, 0xFFF2EEDC, false);
+        LinearLayout.LayoutParams bl = new LinearLayout.LayoutParams(0, (int) (50 * dp), 1);
+        bl.setMargins((int) (6 * dp), 0, (int) (6 * dp), 0);
+        btns.addView(save, bl);
+        btns.addView(cancel, new LinearLayout.LayoutParams(bl));
         bar.addView(btns);
         box.addView(bar);
         cancel.setOnClickListener(v -> finish());
         save.setOnClickListener(v -> save());
+        // Android 15 draws apps under the status and navigation bars: keep the buttons above the navigation bar
+        box.setOnApplyWindowInsetsListener((v, in) -> {
+            int top = in.getSystemWindowInsetTop(), bottom = in.getSystemWindowInsetBottom();
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                android.graphics.Insets i = in.getInsets(android.view.WindowInsets.Type.systemBars());
+                top = i.top; bottom = i.bottom;
+            }
+            v.setPadding(0, top, 0, bottom);
+            return in;
+        });
         setContentView(box);
+        box.requestApplyInsets();
         tint();
+    }
+
+    /** A large, plain button: gold and filled for saving, outlined for cancelling. */
+    private TextView button(String label, int fill, int ink, boolean bold) {
+        TextView t = new TextView(this);
+        t.setText(label);
+        t.setTextSize(17);
+        t.setTextColor(ink);
+        t.setGravity(Gravity.CENTER);
+        if (bold) t.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable();
+        g.setCornerRadius(12 * dp);
+        g.setColor(fill);
+        g.setStroke((int) (1.5f * dp), 0xFFE6BC62);
+        t.setBackground(g);
+        t.setClickable(true);
+        t.setFocusable(true);
+        return t;
     }
 
     private void tint() { if (dim != null) dim.setBackgroundColor(Color.argb(darkness * 255 / 100, 0, 0, 0)); }
