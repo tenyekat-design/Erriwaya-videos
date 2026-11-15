@@ -6,17 +6,8 @@
         android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
     <LinearLayout android:id="@+id/cBody" android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical" android:gravity="center" android:padding="8dp">
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal"
-            android:layoutDirection="ltr" android:gravity="bottom" android:baselineAligned="true">
-            <TextClock android:id="@+id/cTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:format24Hour="HH" android:format12Hour="HH" android:fontFamily="@font/clk_sixcaps" android:textSize="93.1dp"
-                android:textColor="#FFFFFF" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"
-                android:layout_marginTop="-21.9dp" android:layout_marginBottom="-16.8dp" android:shadowColor="#80000000" android:shadowRadius="6"  />
-            <TextClock android:id="@+id/cMin" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:format24Hour=":mm" android:format12Hour=":mm" android:fontFamily="@font/clk_sixcaps" android:textSize="58.2dp"
-                android:textColor="#E6BC62" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"
-                android:layout_marginTop="-13.3dp" android:layout_marginBottom="-10.5dp" android:shadowColor="#80000000" android:shadowRadius="6" android:layout_marginLeft="2dp" />
-        </LinearLayout>
+        <ImageView android:id="@+id/cTimeImg" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:scaleType="fitCenter" android:adjustViewBounds="true" android:importantForAccessibility="no" />
         <TextView android:id="@+id/cNext" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_marginTop="2dp" android:text="القادمة: العشاء 19:47" android:textSize="12sp" android:maxLines="1"
             android:textColor="#B9C2E8" android:shadowColor="#80000000" android:shadowRadius="4" />

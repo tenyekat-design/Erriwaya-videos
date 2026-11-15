@@ -14,10 +14,11 @@ import android.widget.RemoteViews;
 import org.json.JSONObject;
 
 /**
- * «الساعة»: a clock in the widgets' look, in one of eight figure styles (widget_clock_d1..d8) or six dials with their
- * hands (widget_clock_a1..a6, drawables clock_dial/hour/minute_1..6; all from tools/clock-models.py), chosen per widget
- * (WidgetConfig), with the next prayer under it if wished; no date (the owner's choice). The time itself is kept by the system
- * (TextClock, AnalogClock); this redraws the rest at midnight, at each prayer, and when the app locks. Like the other
+ * «الساعة»: a clock in the widgets' look, in one of ten figure styles in tall typefaces (widget_clock_d1..d10: a picture
+ * drawn by ClockArt every minute, since a widget cannot use the app's fonts) or twelve dials with their hands
+ * (widget_clock_a1..a12, AnalogClock, kept by the system), chosen per widget (WidgetConfig; layouts and drawables from
+ * tools/clock-models.py), with the next prayer under it if wished; no date (the owner's choice). The rest is redrawn at
+ * midnight, at each prayer, and when the app locks. Like the other
  * widgets: the free day and subscribers; otherwise only a line inviting to subscribe.
  */
 public class ClockWidget extends AppWidgetProvider {
@@ -30,7 +31,8 @@ public class ClockWidget extends AppWidgetProvider {
     public void onReceive(Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
         String a = intent.getAction();
-        if (TICK.equals(a) || Intent.ACTION_TIME_CHANGED.equals(a) || Intent.ACTION_TIMEZONE_CHANGED.equals(a)) updateAll(ctx);
+        if (TICK.equals(a) || Intent.ACTION_TIME_CHANGED.equals(a) || Intent.ACTION_TIMEZONE_CHANGED.equals(a)
+                ) updateAll(ctx);
     }
 
     @Override
@@ -75,9 +77,18 @@ public class ClockWidget extends AppWidgetProvider {
             if (open && end > now) next = Math.min(next, end);
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            boolean figures = false;
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTimeInMillis(now);
+            float scale = Math.min(2f, ctx.getResources().getDisplayMetrics().density);   // keeps each picture well under the binder limit
             for (int id : ids) {
-                int layout = ctx.getResources().getIdentifier("widget_clock_" + Widgets.clock(ctx, id), "layout", ctx.getPackageName());
+                String face = Widgets.clock(ctx, id);
+                int layout = ctx.getResources().getIdentifier("widget_clock_" + face, "layout", ctx.getPackageName());
                 RemoteViews v = new RemoteViews(ctx.getPackageName(), layout != 0 ? layout : R.layout.widget_clock_d1);
+                if (face.startsWith("d") && open) {   // the figures are a picture (ClockArt), redrawn every minute
+                    figures = true;
+                    v.setImageViewBitmap(R.id.cTimeImg, ClockArt.render(ctx, face, cal, scale));
+                }
                 v.setTextViewText(R.id.cNext, nextLine);
                 v.setViewVisibility(R.id.cNext, Widgets.clockNext(ctx, id) ? View.VISIBLE : View.GONE);
                 v.setViewVisibility(R.id.cBody, open ? View.VISIBLE : View.GONE);
@@ -87,7 +98,15 @@ public class ClockWidget extends AppWidgetProvider {
                 m.updateAppWidget(id, v);
             }
             AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-            if (am != null) am.setWindow(AlarmManager.RTC, next + 1000, 60000, tick(ctx));
+            if (am == null) return;
+            if (figures) {
+                // the next minute, on the minute; RTC (not _WAKEUP): a sleeping phone is not woken, the alarm comes when it wakes
+                long minute = (now / 60000L + 1) * 60000L;
+                if (Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms()) am.setExact(AlarmManager.RTC, minute, tick(ctx));
+                else am.setWindow(AlarmManager.RTC, minute, 5000, tick(ctx));
+            } else {
+                am.setWindow(AlarmManager.RTC, next + 1000, 60000, tick(ctx));
+            }
         } catch (Exception ignored) { }
     }
 }

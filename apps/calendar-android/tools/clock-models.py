@@ -160,14 +160,14 @@ def clockline(attrs,idn='cTime'):
     return f'        <TextClock android:id="@+id/{idn}" android:layout_width="wrap_content" android:layout_height="wrap_content"\n            {attrs} />\n'
 
 # ---- figure styles: tall condensed typefaces (SIL Open Font License, from npm @fontsource), cut down to the digits
-# and the colon, in res/font/clk_*.ttf. Sizes are in dp (not sp) so the trims below stay exact; each figure is given by
+# and the colon, in assets/fonts/clk_*.ttf. Sizes are in dp (not sp) so the trims below stay exact; each figure is given by
 # the height of its digits, and its line box is pulled in to the digits (the font's ascent above, its descent below).
 from fontTools import subset as _subset
 from fontTools.pens.boundsPen import BoundsPen
 FS='/home/claude/fontwork/node_modules/@fontsource/'
-os.makedirs(R+'font',exist_ok=True)
-for f in os.listdir(R+'font'):
-    if f.startswith('clk_'): os.remove(R+'font/'+f)
+FD=R+'../assets/fonts/'   # a widget cannot use res/font; ClockArt draws the figures from these
+import shutil
+if os.path.isdir(R+'font'): shutil.rmtree(R+'font')
 FONTS={}
 def font(key,fam,w):
     src=f'{FS}{fam}/files/{fam}-latin-{w}-normal.woff2'
@@ -176,7 +176,7 @@ def font(key,fam,w):
     FONTS[key]=dict(top=bp.bounds[3]/upm,asc=f['hhea'].ascent/upm,desc=-f['hhea'].descent/upm)
     opt=_subset.Options();opt.flavor=None;opt.layout_features=['tnum','lnum'];opt.name_IDs=['*'];opt.notdef_outline=True
     sub=_subset.Subsetter(opt);sub.populate(text='0123456789: ');sub.subset(f);f.flavor=None
-    f.save(R+f'font/clk_{key}.ttf')
+    f.save(FD+f'clk_{key}.ttf')
 for key,fam,w in [('sixcaps','six-caps',400),('shoulders_light','big-shoulders-display',300),('shoulders_black','big-shoulders-display',900),
                   ('antonio','antonio',700),('league','league-gothic',400),('tulpen','tulpen-one',400),('saira','saira-extra-condensed',500),
                   ('bebas','bebas-neue',400),('pathway','pathway-gothic-one',400)]:
@@ -200,22 +200,11 @@ def col(inner,gravity='center',extra=''):
             f'    android:gravity="{gravity}" {extra}>\n'+ind(inner,4)+'</LinearLayout>\n')
 def bar(w,h,color=GOLD,extra=''):
     return f'<ImageView android:layout_width="{w}" android:layout_height="{h}" android:background="{color}" android:importantForAccessibility="no" {extra} />\n'
-D={}
-H=80   # the hours' digits, in dp (the widget is at least 110 dp high, with the next prayer under the time)
-D[1]=('ستّ',ind(fig('HH:mm','sixcaps',H,WHITE),8))
-D[2]=('ستّ ذهبي',row(fig('HH','sixcaps',H,WHITE)+fig(':mm','sixcaps',50,GOLD,'cMin','android:layout_marginLeft="2dp"')))
-D[3]=('الأكتاف',ind(fig('HH:mm','shoulders_light',H-6,WHITE),8))
-D[4]=('الأكتاف العريض',row(fig('HH','shoulders_black',H,WHITE)+fig('mm','shoulders_black',44,GOLD,'cMin','android:layout_marginLeft="5dp"')))
-D[5]=('أنطونيو',row(fig('HH','antonio',H-4,WHITE)+fig('mm','antonio',38,GOLD,'cMin','android:layout_marginLeft="4dp"'),'top',False))
-D[6]=('القوطي',ind(fig('HH','league',56,WHITE)+bar('48dp','2dp',GOLD,'android:layout_marginTop="4dp" android:layout_marginBottom="4dp"')+fig('mm','league',30,GOLD,'cMin'),8))
-D[7]=('الشعرة',ind(fig('HH:mm','tulpen',H,GOLD,glow='#99E6BC62'),8))
-D[8]=('الأعمدة',row(fig('HH','saira',H-4,WHITE)+bar('2dp','56dp',GOLD,'android:layout_marginLeft="7dp" android:layout_marginRight="7dp"')
-    +fig('mm','saira',40,GOLD,'cMin'),'center_vertical',False))
-D[9]=('الشارة',row(fig('HH','bebas',H-6,WHITE)+fig('mm','bebas',28,'#0B1F5C','cMin',
-    'android:background="@drawable/clock_chip" android:paddingLeft="7dp" android:paddingRight="7dp" android:paddingTop="10dp" android:paddingBottom="8dp" android:layout_marginLeft="6dp"'),'center_vertical',False))
-D[10]=('اثنتا عشرة',row(fig('h','pathway',H-4,WHITE)+col(fig('mm','pathway',40,GOLD,'cMin')
-    +'<TextClock android:id="@+id/cAmPm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:format24Hour="a" android:format12Hour="a"\n    android:textSize="15dp" android:fontFamily="sans-serif-medium" android:textColor="#B9C2E8" android:layout_marginTop="4dp" />\n',
-    'left','android:layout_marginLeft="6dp"'),'center_vertical',False))
+# the figures are drawn by src/.../ClockArt.java (same keys); the layout only holds the picture
+IMG='''        <ImageView android:id="@+id/cTimeImg" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:scaleType="fitCenter" android:adjustViewBounds="true" android:importantForAccessibility="no" />
+'''
+D={k:(n,IMG) for k,n in enumerate(['ستّ','ستّ ذهبي','الأكتاف','الأكتاف العريض','أنطونيو','القوطي','الشعرة','الأعمدة','الشارة','اثنتا عشرة'],1)}
 A={1:'ذهبي',2:'أرقام عربية',3:'أرقام لاتينية',4:'بسيط',5:'ميناء فاتح',6:'نجمة',7:'مربّع',8:'مستطيل',9:'مثمّن',10:'سداسي',11:'روماني',12:'معيّن'}
 for k,(name,body) in D.items():
     open(R+f'layout/widget_clock_d{k}.xml','w').write(HEAD.format(name=name,body=body))

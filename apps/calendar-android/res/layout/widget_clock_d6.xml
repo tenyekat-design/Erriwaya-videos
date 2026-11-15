@@ -6,15 +6,8 @@
         android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
     <LinearLayout android:id="@+id/cBody" android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical" android:gravity="center" android:padding="8dp">
-        <TextClock android:id="@+id/cTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:format24Hour="HH" android:format12Hour="HH" android:fontFamily="@font/clk_league" android:textSize="75.4dp"
-            android:textColor="#FFFFFF" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"
-            android:layout_marginTop="-15.9dp" android:layout_marginBottom="-15.3dp" android:shadowColor="#80000000" android:shadowRadius="6"  />
-        <ImageView android:layout_width="48dp" android:layout_height="2dp" android:background="#E6BC62" android:importantForAccessibility="no" android:layout_marginTop="4dp" android:layout_marginBottom="4dp" />
-        <TextClock android:id="@+id/cMin" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:format24Hour="mm" android:format12Hour="mm" android:fontFamily="@font/clk_league" android:textSize="40.4dp"
-            android:textColor="#E6BC62" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"
-            android:layout_marginTop="-8.1dp" android:layout_marginBottom="-8.2dp" android:shadowColor="#80000000" android:shadowRadius="6"  />
+        <ImageView android:id="@+id/cTimeImg" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:scaleType="fitCenter" android:adjustViewBounds="true" android:importantForAccessibility="no" />
         <TextView android:id="@+id/cNext" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_marginTop="2dp" android:text="القادمة: العشاء 19:47" android:textSize="12sp" android:maxLines="1"
             android:textColor="#B9C2E8" android:shadowColor="#80000000" android:shadowRadius="4" />

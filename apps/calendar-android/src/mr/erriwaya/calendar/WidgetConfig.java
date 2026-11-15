@@ -29,6 +29,24 @@ public class WidgetConfig extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        try {
+            build();
+        } catch (Throwable t) {
+            // never leave the owner with a screen that will not open: show what failed, so it can be reported
+            TextView e = new TextView(this);
+            android.util.Log.e("WidgetConfig", "settings failed", t);
+            java.io.StringWriter sw = new java.io.StringWriter();
+            t.printStackTrace(new java.io.PrintWriter(sw));
+            e.setText("تعذّر فتح إعدادات الويدجت. أرسل صورة من هذه الشاشة:\n\n" + sw.toString().substring(0, Math.min(1500, sw.toString().length())));
+            e.setTextIsSelectable(true);
+            e.setPadding(30, 30, 30, 30);
+            ScrollView sv = new ScrollView(this);
+            sv.addView(e);
+            setContentView(sv);
+        }
+    }
+
+    private void build() {
         final int id = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         final Intent result = new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id);
         setResult(RESULT_OK, result);   // leaving without a choice keeps the widget as it is
@@ -157,9 +175,20 @@ public class WidgetConfig extends Activity {
         f.setClipChildren(true);
         int layout = getResources().getIdentifier("widget_clock_" + key, "layout", getPackageName());
         if (layout == 0) return f;
-        View w = getLayoutInflater().inflate(layout, f, false);
+        View w;
+        try {
+            w = getLayoutInflater().inflate(layout, f, false);
+        } catch (Throwable t) {   // a preview that cannot be drawn here must not keep the settings from opening
+            android.util.Log.w("WidgetConfig", "preview " + key, t);
+            return f;
+        }
         TextView nx = w.findViewById(R.id.cNext);
         if (nx != null) nx.setText("العشاء 19:47");
+        android.widget.ImageView fig = w.findViewById(R.id.cTimeImg);
+        if (fig != null) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            fig.setImageBitmap(ClockArt.render(this, key, cal, Math.min(2f, dp)));
+        }
         android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams((int) (240 * dp), (int) (150 * dp));
         lp.gravity = Gravity.TOP | Gravity.LEFT;
         w.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);

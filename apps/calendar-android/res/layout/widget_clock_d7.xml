@@ -6,10 +6,8 @@
         android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
     <LinearLayout android:id="@+id/cBody" android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical" android:gravity="center" android:padding="8dp">
-        <TextClock android:id="@+id/cTime" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:format24Hour="HH:mm" android:format12Hour="HH:mm" android:fontFamily="@font/clk_tulpen" android:textSize="116.0dp"
-            android:textColor="#E6BC62" android:includeFontPadding="false" android:textDirection="ltr" android:maxLines="1"
-            android:layout_marginTop="-9.5dp" android:layout_marginBottom="-11.4dp" android:shadowColor="#99E6BC62" android:shadowRadius="16"  />
+        <ImageView android:id="@+id/cTimeImg" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:scaleType="fitCenter" android:adjustViewBounds="true" android:importantForAccessibility="no" />
         <TextView android:id="@+id/cNext" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_marginTop="2dp" android:text="القادمة: العشاء 19:47" android:textSize="12sp" android:maxLines="1"
             android:textColor="#B9C2E8" android:shadowColor="#80000000" android:shadowRadius="4" />
