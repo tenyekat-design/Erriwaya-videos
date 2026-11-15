@@ -45,7 +45,8 @@ public class AdhanReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
-        if ("mr.erriwaya.calendar.ADHAN".equals(intent.getAction())) {
+        // a locked app (the free day is over and there is no subscription: Sub) stays silent
+        if ("mr.erriwaya.calendar.ADHAN".equals(intent.getAction()) && Sub.open(ctx)) {
             if (intent.getBooleanExtra("note", false)) remind(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), true);
             else if (intent.getBooleanExtra("pre", false)) remind(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), false);
             else fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false));

@@ -185,6 +185,26 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
+        /** The subscription (Sub): {"id","now","trialEnd","until","open"}. */
+        @JavascriptInterface
+        public String subState() { return Sub.state(MainActivity.this); }
+
+        /** Tries an activation code (a whole pasted message is fine): "ok", "old" or "bad". */
+        @JavascriptInterface
+        public String subActivate(String text) { return Sub.activate(MainActivity.this, text); }
+
+        /** The text on the clipboard ("" if none), for pasting the activation code. */
+        @JavascriptInterface
+        public String paste() {
+            try {
+                android.content.ClipboardManager cm = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                android.content.ClipData d = cm.getPrimaryClip();
+                if (d == null || d.getItemCount() == 0) return "";
+                CharSequence t = d.getItemAt(0).coerceToText(MainActivity.this);
+                return t == null ? "" : t.toString();
+            } catch (Exception e) { return ""; }
+        }
+
         /** click, click2 (every tenth), chime (count complete) or page (a mushaf page turning). */
         @JavascriptInterface
         public void sound(String name) {

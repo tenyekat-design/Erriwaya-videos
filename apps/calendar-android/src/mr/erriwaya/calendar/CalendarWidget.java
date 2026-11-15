@@ -119,6 +119,22 @@ public class CalendarWidget extends AppWidgetProvider {
             v.setTextColor(NAME[i], hi ? hiInk : muted);
             v.setTextColor(TIME[i], hi ? hiInk : ink);
         }
+        // locked (the free day is over and there is no subscription): no date and no times, only the way back in
+        if (!Sub.open(ctx)) {
+            v.setTextViewText(R.id.wHijri, fr ? "Calendrier mauritanien" : "التقويم الموريتاني");
+            v.setTextViewText(R.id.wCity, "");
+            v.setTextViewText(R.id.wGreg, fr ? "Essai gratuit terminé" : "انتهت التجربة المجانية");
+            v.setTextViewText(R.id.wNext, fr ? "Abonnez-vous" : "اشترك لفتح التطبيق");
+            for (int i = 0; i < PRAYERS.length; i++) {
+                v.setTextViewText(TIME[i], "—");
+                v.setInt(CELL[i], "setBackgroundResource", 0);
+                v.setTextColor(NAME[i], muted);
+                v.setTextColor(TIME[i], muted);
+            }
+        } else {
+            long end = Math.max(Sub.trialEnd(ctx), Sub.paidUntil(ctx));
+            if (end > now) redraw = Math.min(redraw, end);   // redraw at the moment the app locks
+        }
         int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
         Intent open = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         v.setOnClickPendingIntent(R.id.wRoot, PendingIntent.getActivity(ctx, 4, open, flags));

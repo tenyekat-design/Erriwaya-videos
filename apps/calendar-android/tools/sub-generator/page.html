@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رموز تفعيل التقويم الموريتاني</title>
+<style>
+:root{--green:#0B6B4F;--ink:#1D2A26;--muted:#5E6B66;--line:#D9DED9;--bg:#F6F3EA;--card:#fff;--gold:#B8892B;--red:#B3261E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,"Noto Naskh Arabic","Segoe UI",sans-serif}
+main{max-width:560px;margin:0 auto;padding:18px 14px 60px}
+h1{font-size:1.25rem;margin:6px 0 2px;color:var(--green)}
+.warn{background:#FFF4E0;border:1px solid #E8C98A;border-radius:12px;padding:10px 12px;font-size:.88rem;margin:10px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 14px}
+label{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+#id{direction:ltr;text-align:center;font:600 1.25rem/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:600 1rem/1.2 inherit;font-family:inherit;border:0;border-radius:10px;padding:12px 14px;cursor:pointer;background:var(--green);color:#fff}
+button.alt{background:#fff;color:var(--green);border:1px solid var(--green)}
+button:disabled{opacity:.5}
+.go{width:100%;margin-top:14px}
+.err{color:var(--red);font-size:.9rem;min-height:1.4em;margin:6px 0 0}
+#out{display:none}
+#code{direction:ltr;text-align:left;font:500 .82rem/1.7 ui-monospace,Menlo,Consolas,monospace;word-break:break-all;background:#F3F6F4;border:1px dashed var(--green);border-radius:10px;padding:10px;user-select:all}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.acts .wide{grid-column:1/-1}
+small,.muted{color:var(--muted);font-size:.84rem}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+td.i{direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:nowrap}
+.ok{color:var(--green);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <h1>رموز تفعيل «التقويم الموريتاني»</h1>
+  <div class="warn"><b>صفحة خاصة بالناشر.</b> في هذا الملف المفتاح السري الذي تُصنع به الرموز: لا ترسله إلى أحد ولا تنشره، واحفظ نسخة منه في مكان آمن. من حصل عليه استطاع صنع رموز لأي هاتف، وإن ضاع لم يمكن صنع رموز جديدة إلا بإصدار جديد من التطبيق.</div>
+
+  <div class="card">
+    <label for="id">رقم جهاز المشترك (كما يظهر في شاشة الاشتراك)</label>
+    <input id="id" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCDE-FGHIJ" maxlength="24">
+    <div class="two">
+      <div><label for="dur">المدة</label>
+        <select id="dur"><option value="365">سنة</option><option value="730">سنتان</option><option value="30">شهر</option><option value="0">تاريخ آخر…</option></select></div>
+      <div><label for="end">ينتهي في</label><input id="end" type="date"></div>
+    </div>
+    <label for="who">اسم المشترك أو هاتفه <small>(اختياري، للسجل في هذا الهاتف فقط)</small></label>
+    <input id="who" autocomplete="off">
+    <button class="go" id="make">اصنع الرمز</button>
+    <p class="err" id="err"></p>
+  </div>
+
+  <div class="card" id="out">
+    <div class="ok" id="okLine"></div>
+    <div id="code"></div>
+    <div class="acts">
+      <button id="cpMsg" class="wide">نسخ الرسالة الجاهزة</button>
+      <button id="wa" class="alt">إرسال بواتساب</button>
+      <button id="cpCode" class="alt">نسخ الرمز وحده</button>
+    </div>
+    <p class="muted" id="done" style="margin:8px 0 0"></p>
+  </div>
+
+  <div class="card">
+    <b>الرموز الصادرة من هذا الهاتف</b>
+    <div id="log" class="muted" style="margin-top:6px">لا شيء بعد.</div>
+  </div>
+  <p class="muted">الرمز خاص بالهاتف الذي كُتب رقمه، ولا يعمل على غيره. الصفحة تعمل دون إنترنت ولا ترسل شيئًا.</p>
+</main>
+<script>/*__SIGN__*/</script>
+<script>
+(function(){
+"use strict";
+const KEY='__PRIVATE_KEY__',PUB='__PUBLIC_KEY__';
+const $=id=>document.getElementById(id),DAY=86400000;
+const GM=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const dstr=day=>{const d=new Date(day*DAY);return d.getUTCDate()+' '+GM[d.getUTCMonth()]+' '+d.getUTCFullYear()};
+const iso=day=>new Date(day*DAY).toISOString().slice(0,10);
+const today=()=>Math.floor(Date.now()/DAY);
+const groups=c=>c.match(/.{1,6}/g).join('-');
+const showId=i=>i.slice(0,5)+'-'+i.slice(5);
+let LOG=[];try{LOG=JSON.parse(localStorage.getItem('mrcal.sublog'))||[]}catch(e){}
+function drawLog(){
+  if(!LOG.length)return;
+  $('log').innerHTML='<table><tr><th>الجهاز</th><th>المشترك</th><th>صدر</th><th>ينتهي</th></tr>'+LOG.slice().reverse().map(r=>
+    `<tr><td class="i">${showId(r.id)}</td><td>${(r.who||'').replace(/[&<>]/g,'')}</td><td>${dstr(r.at)}</td><td>${dstr(r.day)}</td></tr>`).join('')+'</table>';
+}
+function setEnd(){const v=+$('dur').value;if(v)$('end').value=iso(today()+v)}
+$('dur').onchange=setEnd;$('end').oninput=()=>{$('dur').value='0'};setEnd();drawLog();
+if(window.SUBSIGN.publicKeyOf(KEY)!==PUB)$('err').textContent='تنبيه: المفتاح في هذه الصفحة لا يطابق مفتاح التطبيق الحالي؛ الرموز لن تعمل.';
+let last=null;
+$('make').onclick=()=>{
+  $('err').textContent='';$('out').style.display='none';
+  const id=$('id').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!/^[A-Z2-7]{10}$/.test(id)){$('err').textContent='رقم الجهاز عشرة أحرف وأرقام (الحروف A–Z والأرقام 2–7). تحقق منه.';return}
+  const p=$('end').value.split('-').map(Number),day=Math.floor(Date.UTC(p[0],p[1]-1,p[2])/DAY);
+  if(!(day>today())){$('err').textContent='اختر تاريخ انتهاء بعد اليوم.';return}
+  if(day>65535){$('err').textContent='التاريخ بعيد جدًا.';return}
+  const code=groups(window.SUBSIGN.makeCode(KEY,id,day));
+  const msg=`رمز تفعيل التقويم الموريتاني\nالجهاز: ${showId(id)}\nصالح حتى ${dstr(day)}\n\n${code}\n\nانسخ هذه الرسالة كاملة، ثم افتح التطبيق واضغط «لصق» في شاشة الاشتراك ثم «تفعيل».`;
+  last={code,msg};
+  $('okLine').textContent=`رمز الجهاز ${showId(id)} · صالح حتى ${dstr(day)}`;$('code').textContent=code;$('done').textContent='';$('out').style.display='block';
+  LOG=LOG.filter(r=>!(r.id===id&&r.day===day));LOG.push({id,day,at:today(),who:$('who').value.trim()});
+  try{localStorage.setItem('mrcal.sublog',JSON.stringify(LOG.slice(-500)))}catch(e){}
+  drawLog();$('out').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+function copy(t,what){
+  const ok=()=>{$('done').textContent='نُسخ: '+what};
+  const old=()=>{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();try{document.execCommand('copy');ok()}catch(e){$('done').textContent='تعذّر النسخ؛ حدّد الرمز وانسخه يدويًا.'}a.remove()};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,old);else old();
+}
+$('cpMsg').onclick=()=>last&&copy(last.msg,'الرسالة');
+$('cpCode').onclick=()=>last&&copy(last.code,'الرمز');
+$('wa').onclick=()=>{if(last)window.open('https://wa.me/?text='+encodeURIComponent(last.msg),'_blank')};
+})();
+</script>
+</body>
+</html>

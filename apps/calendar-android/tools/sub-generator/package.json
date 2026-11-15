@@ -1,0 +1,7 @@
+{
+  "name": "mrcal-sub-generator",
+  "private": true,
+  "type": "module",
+  "description": "Builds the publisher's private page that makes activation codes for the calendar app",
+  "dependencies": { "@noble/curves": "1.9.7", "@noble/hashes": "1.8.0", "esbuild": "^0.25.0" }
+}
