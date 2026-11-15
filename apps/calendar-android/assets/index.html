@@ -2182,7 +2182,7 @@ function applyTheme(){const t=themeNow(),r=document.documentElement;if(r.dataset
   $('themeBtn').setAttribute('aria-label',t==='dark'?'الوضع النهاري':'الوضع الليلي');
   if(themeSent!==t){themeSent=t;try{const A=window.AndroidApp;if(A&&typeof A.setTheme==='function')A.setTheme(t==='dark')}catch(e){}}}
 // the widgets' background, from solid to see-through (Android app only)
-{const WALLS=[['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']],g=$('wallGrid');let pick=null;
+{const WALLS=[['qsar','القصر'],['bab','الباب'],['naana','أتاي بالنعناع'],['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']],g=$('wallGrid');let pick=null;
   const app=window.AndroidApp&&typeof window.AndroidApp.setWallpaper==='function';
   WALLS.forEach(([k,n])=>{const b=document.createElement('button');b.type='button';b.dataset.k=k;b.setAttribute('aria-pressed','false');
     b.innerHTML='<img loading="lazy" alt="" src="wallpapers/'+k+'-s.jpg"><span>'+n+'</span>';g.appendChild(b)});
