@@ -30,7 +30,8 @@ import java.util.TimeZone;
 
 /**
  * On the admin's phone only (after signing in on the «اقتراحات القرى» page): about every 15 minutes, asks Firestore for
- * village suggestions newer than the last one seen, and raises a notification that opens that page.
+ * village suggestions newer than the last one seen, and for subscription requests not announced yet, and raises a
+ * notification that opens the matching admin page.
  * The sign-in is kept as the Firebase refresh token; signing out removes it and cancels the job.
  */
 public class SuggestJob extends JobService {
@@ -96,8 +97,11 @@ public class SuggestJob extends JobService {
                 .put("orderBy", new JSONArray().put(new JSONObject().put("field", new JSONObject().put("fieldPath", "t")).put("direction", "ASCENDING")))
                 .put("limit", 50));
         String res = http(FS + ":runQuery", "application/json", q.toString(), id);
-        if (res == null) return;
-        JSONArray a = new JSONArray(res);
+        if (res != null) suggestions(ctx, sp, new JSONArray(res), seen);
+        subRequests(ctx, sp, id);
+    }
+
+    private static void suggestions(Context ctx, SharedPreferences sp, JSONArray a, String seen) throws Exception {
         int n = 0; String last = seen, name = "";
         for (int i = 0; i < a.length(); i++) {
             JSONObject d = a.getJSONObject(i).optJSONObject("document");
@@ -115,6 +119,43 @@ public class SuggestJob extends JobService {
         }
         sp.edit().putString("seen", last).apply();
         if (n > 0) notify(ctx, n == 1 ? "اقتراح جديد للقرى" : n + " اقتراحات جديدة للقرى", n == 1 ? name : "آخرها: " + name);
+    }
+
+    /**
+     * Subscription requests waiting for the admin (sub_requests with status "new"): one notification for those not
+     * announced before, opening the «الاشتراكات» page. Reads only what the subscribers sent; nothing on the phone.
+     */
+    private static void subRequests(Context ctx, SharedPreferences sp, String token) throws Exception {
+        JSONObject q = new JSONObject().put("structuredQuery", new JSONObject()
+                .put("from", new JSONArray().put(new JSONObject().put("collectionId", "sub_requests")))
+                .put("where", new JSONObject().put("fieldFilter", new JSONObject()
+                        .put("field", new JSONObject().put("fieldPath", "status")).put("op", "EQUAL")
+                        .put("value", new JSONObject().put("stringValue", "new"))))
+                .put("limit", 100));
+        String res = http(FS + ":runQuery", "application/json", q.toString(), token);
+        if (res == null) return;
+        JSONArray a = new JSONArray(res);
+        java.util.Set<String> told = new java.util.HashSet<>(sp.getStringSet("subTold", new java.util.HashSet<String>())), now = new java.util.HashSet<>();
+        int fresh = 0; String line = "";
+        String[][] apps = {{"bankily", "بنكيلي"}, {"masrvi", "مصرفي"}, {"sedad", "السداد"}, {"bim", "بيم بانك"}};
+        for (int i = 0; i < a.length(); i++) {
+            JSONObject d = a.getJSONObject(i).optJSONObject("document");
+            JSONObject f = d == null ? null : d.optJSONObject("fields");
+            if (f == null) continue;
+            String rid = f.optJSONObject("id") == null ? "" : f.getJSONObject("id").optString("stringValue");
+            String t = f.optJSONObject("t") == null ? "" : f.getJSONObject("t").optString("timestampValue");
+            String key = rid + "@" + t;
+            now.add(key);
+            if (told.contains(key)) continue;
+            fresh++;
+            String app = f.optJSONObject("app") == null ? "" : f.getJSONObject("app").optString("stringValue");
+            for (String[] x : apps) if (x[0].equals(app)) app = x[1];
+            String ph = f.optJSONObject("phone") == null ? "" : f.getJSONObject("phone").optString("stringValue");
+            line = "عبر " + app + " من الرقم " + ph + ". افتح الصفحة وتأكد من وصول المبلغ ثم فعِّله.";
+        }
+        sp.edit().putStringSet("subTold", now).apply();   // only the requests still waiting are remembered
+        if (fresh > 0) notify(ctx, fresh == 1 ? "طلب اشتراك جديد" : fresh + " طلبات اشتراك جديدة",
+                fresh == 1 ? line : "آخرها " + line, "#sub-admin", 4210);
     }
 
     static String http(String url, String type, String body, String bearer) {
