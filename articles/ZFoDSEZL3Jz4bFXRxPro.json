@@ -1,0 +1,50 @@
+{
+ "createTime": "2026-11-14T16:34:46.102974Z",
+ "fields": {
+  "author": {
+   "stringValue": "tenyekat@gmail.com"
+  },
+  "body": {
+   "stringValue": ""
+  },
+  "breaking": {
+   "booleanValue": true
+  },
+  "category": {
+   "stringValue": ""
+  },
+  "createdAt": {
+   "timestampValue": "2026-11-14T16:34:46.088Z"
+  },
+  "dossier": {
+   "stringValue": ""
+  },
+  "imageCount": {
+   "integerValue": "0"
+  },
+  "portals": {
+   "arrayValue": {
+    "values": [
+     {
+      "stringValue": "mr"
+     }
+    ]
+   }
+  },
+  "thumb": {
+   "stringValue": ""
+  },
+  "title": {
+   "stringValue": "موريتانيا تخبر الأوروبيين بانتهاء اتفاقية الصيد وبضرورة احترام ذلك، مهددة بعقوبات ضد المخالفين"
+  },
+  "updatedAt": {
+   "timestampValue": "2026-11-14T16:35:18.729Z"
+  },
+  "writer": {
+   "stringValue": ""
+  }
+ },
+ "images": [],
+ "name": "projects/erriwaya-68022/databases/(default)/documents/articles/ZFoDSEZL3Jz4bFXRxPro",
+ "updateTime": "2026-11-14T16:35:18.742948Z"
+}
