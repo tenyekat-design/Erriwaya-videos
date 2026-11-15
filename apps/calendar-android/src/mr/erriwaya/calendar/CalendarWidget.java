@@ -111,6 +111,15 @@ public class CalendarWidget extends AppWidgetProvider {
         v.setTextViewText(R.id.wNext, (fr ? "Prochaine : " : "القادمة: ") + names[PRAYERS[nextIdx]]
                 + (tomorrow ? (fr ? " demain " : " غدًا ") : " ") + PrayerCalc.fmt(tn[PRAYERS[nextIdx]]));
         int ink = color(ctx, R.color.w_ink), muted = color(ctx, R.color.w_muted), hiInk = color(ctx, R.color.w_hi_ink);
+        // the background as see-through as the user chose; over a wallpaper (less than half solid) the texts turn white
+        int bg = Widgets.bg(ctx);
+        v.setInt(R.id.wBg, "setImageAlpha", bg * 255 / 100);
+        boolean clear = bg < 50;
+        if (clear) { ink = 0xFFFFFFFF; muted = 0xFFECECEC; }
+        v.setTextColor(R.id.wHijri, clear ? 0xFFFFFFFF : color(ctx, R.color.w_green));
+        v.setTextColor(R.id.wCity, clear ? 0xFFFFE9A8 : color(ctx, R.color.w_gold));
+        v.setTextColor(R.id.wGreg, muted);
+        v.setTextColor(R.id.wNext, muted);
         for (int i = 0; i < PRAYERS.length; i++) {
             boolean hi = i == nextIdx;
             v.setTextViewText(NAME[i], names[PRAYERS[i]]);

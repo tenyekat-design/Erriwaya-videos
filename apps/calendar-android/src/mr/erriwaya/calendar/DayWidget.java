@@ -16,8 +16,9 @@ import org.json.JSONObject;
 /**
  * «يوم الأسبوع»: the day's name in calligraphy (the owner's seven pictures, res/drawable-nodpi/day_0..6, Sunday first) with
  * the Hijri and Gregorian date under it, as a heading for the home screen and, where the phone takes widgets there, the
- * lock screen. For subscribers only: the provider is off in the manifest and Sub.syncDayWidget turns it on once a paid
- * year is active; after the year ends the widget shows a line asking to renew.
+ * lock screen. Anyone can place it: it shows the day while the app is open (the free day, a paid year); otherwise the
+ * day shows faintly under a line inviting to subscribe. The ground behind the lettering is as see-through as the user
+ * chose (Widgets.bg).
  * The day changes at midnight in Mauritania's time (UTC), like the rest of the app.
  */
 public class DayWidget extends AppWidgetProvider {
@@ -57,20 +58,19 @@ public class DayWidget extends AppWidgetProvider {
             long now = System.currentTimeMillis();
             long day = PrayerCalc.fd(now, PrayerCalc.DAY);
             long next = (day + 1) * PrayerCalc.DAY;
-            long paid = Sub.paidUntil(ctx);
-            boolean open = Sub.now(ctx) < paid;
-            if (open && paid > now) next = Math.min(next, paid);
+            boolean open = Sub.open(ctx);
+            long end = Math.max(Sub.trialEnd(ctx), Sub.paidUntil(ctx));
+            if (open && end > now) next = Math.min(next, end);
             RemoteViews v = new RemoteViews(ctx.getPackageName(), R.layout.widget_day);
+            JSONObject c = AdhanReceiver.config(ctx);
+            int[] g = PrayerCalc.gregorian(day), h = CalendarWidget.hijri(day, c == null ? 0 : c.optInt("adj", 0));
+            int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
+            v.setImageViewResource(R.id.dImg, IMG[di]);
+            v.setInt(R.id.dImg, "setImageAlpha", open ? 255 : 70);   // not subscribed: the day shows faintly, as an invitation
+            v.setInt(R.id.dBg, "setImageAlpha", Widgets.bg(ctx) * 255 / 100);
             v.setViewVisibility(R.id.dLock, open ? View.GONE : View.VISIBLE);
-            v.setViewVisibility(R.id.dImg, open ? View.VISIBLE : View.INVISIBLE);
             v.setViewVisibility(R.id.dDate, open ? View.VISIBLE : View.GONE);
-            if (open) {
-                JSONObject c = AdhanReceiver.config(ctx);
-                int[] g = PrayerCalc.gregorian(day), h = CalendarWidget.hijri(day, c == null ? 0 : c.optInt("adj", 0));
-                int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
-                v.setImageViewResource(R.id.dImg, IMG[di]);
-                v.setTextViewText(R.id.dDate, h[2] + " " + H_MONTHS[hm] + " " + h[0] + " هـ · " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);
-            }
+            v.setTextViewText(R.id.dDate, h[2] + " " + H_MONTHS[hm] + " " + h[0] + " هـ · " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             v.setOnClickPendingIntent(R.id.dRoot, PendingIntent.getActivity(ctx, 6, app, flags));

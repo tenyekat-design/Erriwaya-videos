@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- The home-screen widget (CalendarWidget fills it in; the texts here are what the widget picker previews). -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wFrame" android:layout_width="match_parent" android:layout_height="match_parent">
+    <!-- the background, apart from the content: CalendarWidget sets how see-through it is (Widgets.bg) -->
+    <ImageView android:id="@+id/wBg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_bg" android:importantForAccessibility="no" />
+<LinearLayout
     android:id="@+id/wRoot" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:layoutDirection="rtl" android:background="@drawable/widget_bg"
+    android:orientation="vertical" android:layoutDirection="rtl"
     android:paddingLeft="12dp" android:paddingRight="12dp" android:paddingTop="10dp" android:paddingBottom="10dp">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
         <TextView android:id="@+id/wHijri" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
@@ -55,3 +60,4 @@
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
+</FrameLayout>

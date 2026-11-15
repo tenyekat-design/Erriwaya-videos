@@ -53,8 +53,8 @@
             </intent-filter>
         </service>
         <!-- /PUBLISHER-ONLY -->
-        <!-- «يوم الأسبوع»: off until a subscription is active (Sub.syncDayWidget turns it on), so it is not offered before -->
-        <receiver android:name=".DayWidget" android:exported="true" android:enabled="false" android:label="@string/day_widget_name">
+        <!-- «يوم الأسبوع»: offered to everyone; it shows the day during the free day and for subscribers, and asks to subscribe otherwise -->
+        <receiver android:name=".DayWidget" android:exported="true" android:label="@string/day_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIME_SET" />

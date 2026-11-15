@@ -184,18 +184,17 @@ final class Sub {
     }
 
     /**
-     * The «يوم الأسبوع» widget is for subscribers: its provider is switched on the first time a paid year is active (until
-     * then the phone does not offer it at all) and stays on; once the year ends the widget itself asks to renew.
+     * The «يوم الأسبوع» widget is offered to everyone and works while the app is open (the free day, a paid year); otherwise
+     * it shows the day faintly with a line inviting to subscribe. Phones that had the version where its provider was off
+     * until a subscription get it switched on here.
      */
     static void syncDayWidget(Context ctx) {
         try {
-            if (now(ctx) < paidUntil(ctx)) {
-                android.content.ComponentName c = new android.content.ComponentName(ctx, DayWidget.class);
-                android.content.pm.PackageManager pm = ctx.getPackageManager();
-                if (pm.getComponentEnabledSetting(c) != android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
-                    pm.setComponentEnabledSetting(c, android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                            android.content.pm.PackageManager.DONT_KILL_APP);
-            }
+            android.content.ComponentName c = new android.content.ComponentName(ctx, DayWidget.class);
+            android.content.pm.PackageManager pm = ctx.getPackageManager();
+            if (pm.getComponentEnabledSetting(c) == android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
+                pm.setComponentEnabledSetting(c, android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+                        android.content.pm.PackageManager.DONT_KILL_APP);
             DayWidget.updateAll(ctx);
         } catch (Exception ignored) { }
     }

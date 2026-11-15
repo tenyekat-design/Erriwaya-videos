@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- the night blue behind the weekday's lettering (the look of the owner's pictures); DayWidget sets how see-through it is -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#03062B" />
+    <gradient android:type="radial" android:gradientRadius="62%p" android:centerX="50%" android:centerY="55%"
+        android:startColor="#0B1F7A" android:endColor="#03062B" />
     <corners android:radius="18dp" />
 </shape>

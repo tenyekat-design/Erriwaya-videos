@@ -187,6 +187,13 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void clearAdhan(String kind) { AdhanReceiver.fileFor(MainActivity.this, "fajr".equals(kind)).delete(); }
 
+        /** How opaque the widgets' background is, 0 (see-through) to 100 (solid). */
+        @JavascriptInterface
+        public int widgetBg() { return Widgets.bg(MainActivity.this); }
+
+        @JavascriptInterface
+        public void setWidgetBg(int percent) { Widgets.setBg(MainActivity.this, percent); }
+
         // ---- the publisher's phone: automatic activation (Pay) ----
         @JavascriptInterface
         public String payState() { return Pay.state(MainActivity.this); }
