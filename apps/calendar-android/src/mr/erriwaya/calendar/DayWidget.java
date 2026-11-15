@@ -56,8 +56,10 @@ public class DayWidget extends AppWidgetProvider {
             int[] ids = m.getAppWidgetIds(new ComponentName(ctx, DayWidget.class));
             if (ids == null || ids.length == 0) return;
             long now = System.currentTimeMillis();
-            long day = PrayerCalc.fd(now, PrayerCalc.DAY);
-            long next = (day + 1) * PrayerCalc.DAY;
+            // the phone's own day: the weekday turns at its midnight (a subscriber in Doha sees Monday at 00:00 Doha, not 03:00)
+            long off = java.util.TimeZone.getDefault().getOffset(now);
+            long day = PrayerCalc.fd(now + off, PrayerCalc.DAY);
+            long next = (day + 1) * PrayerCalc.DAY - java.util.TimeZone.getDefault().getOffset((day + 1) * PrayerCalc.DAY - off);
             boolean open = Sub.open(ctx);
             long end = Math.max(Sub.trialEnd(ctx), Sub.paidUntil(ctx));
             if (open && end > now) next = Math.min(next, end);
