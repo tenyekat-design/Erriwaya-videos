@@ -625,10 +625,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mus .mi{width:min(104px,27vw);aspect-ratio:3/4;border-radius:16px 10px 10px 16px;display:grid;place-items:center;position:relative;
   box-shadow:inset -6px 0 0 rgba(0,0,0,.18),0 6px 14px rgba(40,30,0,.18);border:2px solid #C9A44C;transition:transform .12s}
 .mus a:active .mi{transform:scale(.95)}
-.mus .mi svg{width:78%;height:78%}
-.mus .mi.warsh{background:linear-gradient(160deg,#2F8A55,#145C38)}
-.mus .mi.qaloon{background:linear-gradient(160deg,#2A6FA8,#163F6E)}
-.mus .mi.hafs{background:linear-gradient(160deg,#9A3A2E,#5E1E17)}
+.mus .mi svg{width:100%;height:100%;border-radius:inherit}
+.mus .mi.warsh{background:linear-gradient(160deg,#17583A,#082A1A)}
+.mus .mi.qaloon{background:linear-gradient(160deg,#173F70,#081A33)}
+.mus .mi.hafs{background:linear-gradient(160deg,#5E1A14,#250806)}
 .mus b{font-family:var(--f-display);font-size:1.15rem;color:var(--green);line-height:1.2}
 .mus small{font-family:var(--f-naskh);font-size:.82rem;color:var(--muted);line-height:1.5}
 .mus .last{font-size:.72rem;color:var(--gold-ink,#8E6B1E);font-weight:700}
@@ -743,9 +743,9 @@ body.mushaf #v-quran.paged{position:fixed;inset:0;z-index:25;max-width:none;marg
 .qp-t small{font-size:.74rem;color:#bdbdbd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qp-t i{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden;margin-top:2px}
 .qp-t u{display:block;height:100%;width:0;background:#8fd3a8}
-body.has-player{padding-bottom:116px}
+body.has-player{padding-bottom:calc(var(--qp-h,116px) + 4px)}
 body.has-player .toast{bottom:calc(132px + env(safe-area-inset-bottom,0px))}
-body.has-player.mushaf #v-quran.paged{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+body.has-player.mushaf #v-quran.paged{padding-bottom:var(--qp-h,120px)}
 .toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:80;background:var(--band);color:var(--band-ink);padding:9px 16px;border-radius:20px;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.3);white-space:nowrap}
 .marks{display:grid;gap:6px}
 .marks h3{margin:0;font-size:.95rem;color:var(--green)}
@@ -1218,10 +1218,6 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 /* ---------- the mushaf, dressed as a printed copy (the owner's request, 16 Nov 2026): leather ground with a gold star lattice,
    the page as paper in gilt rules with corner fleurons, a headpiece plaque and gold bands above and below ---------- */
 body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,38,28,.86)),var(--khatam) 0 0/44px,radial-gradient(ellipse at 50% 35%,#1A6A4E,#06231A 80%)}
-.paged .page.m{margin:13px 13px 13px;padding:6px;background:#FFFDF5;border-radius:3px;
-  box-shadow:0 0 0 1.5px #D9B45A,0 0 0 4.5px #0B3B2C,0 0 0 5.5px #D9B45A,0 0 0 7px #0B3B2C,0 12px 28px rgba(0,0,0,.45)}
-.paged .page.m::before{display:block;content:"";position:absolute;inset:-12px;pointer-events:none;z-index:3;
-  background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cg transform=%22rotate(0 20 20)%22 fill=%22none%22 stroke=%22%23D9B45A%22 stroke-width=%221.3%22%3E%3Cpath d=%22M2 2h20M2 2v20%22/%3E%3Cpath d=%22M6 6h12M6 6v12%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M2 2q14 2 16 16%22 /%3E%3Ccircle cx=%2211%22 cy=%2211%22 r=%224%22 fill=%22%23D9B45A%22 fill-opacity=%22.35%22/%3E%3Cpath d=%22M11 3.5l1.6 4.2 4.4.4-3.4 2.9 1 4.3L11 13l-3.6 2.3 1-4.3L5 8.1l4.4-.4z%22 fill=%22%23F3DE9A%22 stroke=%22%23D9B45A%22 stroke-width=%22.6%22/%3E%3C/g%3E%3C/svg%3E") left top/34px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cg transform=%22rotate(90 20 20)%22 fill=%22none%22 stroke=%22%23D9B45A%22 stroke-width=%221.3%22%3E%3Cpath d=%22M2 2h20M2 2v20%22/%3E%3Cpath d=%22M6 6h12M6 6v12%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M2 2q14 2 16 16%22 /%3E%3Ccircle cx=%2211%22 cy=%2211%22 r=%224%22 fill=%22%23D9B45A%22 fill-opacity=%22.35%22/%3E%3Cpath d=%22M11 3.5l1.6 4.2 4.4.4-3.4 2.9 1 4.3L11 13l-3.6 2.3 1-4.3L5 8.1l4.4-.4z%22 fill=%22%23F3DE9A%22 stroke=%22%23D9B45A%22 stroke-width=%22.6%22/%3E%3C/g%3E%3C/svg%3E") right top/34px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cg transform=%22rotate(270 20 20)%22 fill=%22none%22 stroke=%22%23D9B45A%22 stroke-width=%221.3%22%3E%3Cpath d=%22M2 2h20M2 2v20%22/%3E%3Cpath d=%22M6 6h12M6 6v12%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M2 2q14 2 16 16%22 /%3E%3Ccircle cx=%2211%22 cy=%2211%22 r=%224%22 fill=%22%23D9B45A%22 fill-opacity=%22.35%22/%3E%3Cpath d=%22M11 3.5l1.6 4.2 4.4.4-3.4 2.9 1 4.3L11 13l-3.6 2.3 1-4.3L5 8.1l4.4-.4z%22 fill=%22%23F3DE9A%22 stroke=%22%23D9B45A%22 stroke-width=%22.6%22/%3E%3C/g%3E%3C/svg%3E") left bottom/34px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cg transform=%22rotate(180 20 20)%22 fill=%22none%22 stroke=%22%23D9B45A%22 stroke-width=%221.3%22%3E%3Cpath d=%22M2 2h20M2 2v20%22/%3E%3Cpath d=%22M6 6h12M6 6v12%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M2 2q14 2 16 16%22 /%3E%3Ccircle cx=%2211%22 cy=%2211%22 r=%224%22 fill=%22%23D9B45A%22 fill-opacity=%22.35%22/%3E%3Cpath d=%22M11 3.5l1.6 4.2 4.4.4-3.4 2.9 1 4.3L11 13l-3.6 2.3 1-4.3L5 8.1l4.4-.4z%22 fill=%22%23F3DE9A%22 stroke=%22%23D9B45A%22 stroke-width=%22.6%22/%3E%3C/g%3E%3C/svg%3E") right bottom/34px no-repeat}
 .rtop{position:relative;height:46px;background:radial-gradient(ellipse at 50% -30%,#1E7A59,transparent 70%),linear-gradient(#0E4A37,#08301F);border-bottom:0;padding-bottom:6px}
 .rtop::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2210%22 viewBox=%220 0 24 10%22%3E%3Cpath d=%22M0 .6h24M0 9.4h24%22 stroke=%22%23D9B45A%22 stroke-width=%22.9%22/%3E%3Cpath d=%22M12 2l3 3-3 3-3-3z%22 fill=%22%23D9B45A%22/%3E%3Ccircle cx=%220%22 cy=%225%22 r=%221.2%22 fill=%22%23F3DE9A%22/%3E%3Ccircle cx=%2224%22 cy=%225%22 r=%221.2%22 fill=%22%23F3DE9A%22/%3E%3C/svg%3E") 0 0/19px 8px repeat-x;opacity:.95}
 .rtop b{justify-self:center;padding:3px 26px;border-radius:999px;color:#FBEFC8;font-family:var(--f-naskh);
@@ -1233,7 +1229,6 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 .paged .pnav a,.paged .pnav span.off{background:transparent;border:1px solid rgba(217,180,90,.55);color:#FBEFC8}
 .paged .pnav input{background:#FFFDF5;border:1.5px solid #D9B45A;color:#0B3B2C;border-radius:999px}
 .paged .pnav .pt{color:#F3DE9A}
-@media (prefers-color-scheme:dark){.paged .page.m{background:#FFFDF5}}
 </style>
 </head>
 <body>
@@ -2801,16 +2796,18 @@ function syncPage(key,s,a,frac){
 const shownPage=()=>{const m=/^#page-(\d+)/.exec(location.hash);return m&&$('qpage')&&rw===PL.key?+m[1]:0};
 function syncTick(){
   const A=PL.audio;let a,frac;
-  if(PL.ay){if(!PL.n)return;a=PL.i;frac=A.duration?A.currentTime/A.duration:0;SY.est=false}   // one file per verse: the verse playing is the verse shown
+  let bs=false;   // the basmala before the first verse (its line is mapped on the opening pages): lit in the second half of the time before verse 1, after the isti'adha
+  if(PL.ay){if(!PL.n)return;a=PL.i;frac=A.duration?A.currentTime/A.duration:0;SY.est=false;bs=a===0}   // one file per verse: the verse playing is the verse shown
   else{if(!SY.arr)syncArr();const T=SY.arr;if(!T||!PL.n)return;
     const t=A.currentTime*10;let i=-1;
     if(t>=T[0]){let lo=0,hi=T.length-2;while(lo<hi){const mid=(lo+hi+1)>>1;if(T[mid]<=t)lo=mid;else hi=mid-1}i=lo}
-    a=i+1;frac=i<0?0:(t-T[i])/Math.max(1,T[i+1]-T[i])}
-  const page=a?syncPage(PL.key,PL.n,a,frac):0;
+    a=i+1;frac=i<0?0:(t-T[i])/Math.max(1,T[i+1]-T[i]);bs=i<0&&T[0]>20&&t>=T[0]*.5}
+  bs=bs&&!!(SY.pos[PL.key]&&SY.pos[PL.key].get(PL.n+':0'));
+  const page=a?syncPage(PL.key,PL.n,a,frac):bs?syncPage(PL.key,PL.n,0,0):0;
   if(PL.rep==='ay'&&!PL.ay&&!PL.jump&&SY.s===PL.n&&SY.a>=1&&a===SY.a+1&&SY.arr){A.currentTime=SY.arr[SY.a-1]/10;return}   // repeat the verse: back to its start
   PL.jump=0;
-  if(a===SY.a&&PL.n===SY.s&&page===SY.page)return;
-  SY.s=PL.n;SY.a=a;titleLine();
+  if(a===SY.a&&PL.n===SY.s&&page===SY.page&&bs===!!SY.bs)return;
+  SY.s=PL.n;SY.a=a;SY.bs=bs;titleLine();
   if(page&&page!==SY.page){
     const shown=shownPage();
     if(shown&&shown===SY.was&&shown!==page&&!TURN&&!document.querySelector('.cpick')){SY.page=SY.was=page;turnTo(page,page>shown?1:-1);return}   // the reader was on the page being recited: follow it
@@ -2836,9 +2833,9 @@ function syncSheet(){
 }
 function syncDraw(){
   document.querySelectorAll('.ayhl').forEach(x=>x.remove());document.querySelectorAll('.ay.now').forEach(x=>x.classList.remove('now'));
-  if(!SY.a||!PL.n)return;const shown=shownPage();if(!shown)return;
-  const sp=document.querySelector(`#qpage .ay[data-s="${SY.s}"][data-a="${SY.a}"]`);if(sp){sp.classList.add('now');return}   // a text page
-  const box=$('mFit'),L=SY.pos[PL.key]&&SY.pos[PL.key].get(SY.s+':'+SY.a);if(!box||!L)return;
+  if(!(SY.a||SY.bs)||!PL.n)return;const shown=shownPage();if(!shown)return;
+  const sp=SY.a&&document.querySelector(`#qpage .ay[data-s="${SY.s}"][data-a="${SY.a}"]`);if(sp){sp.classList.add('now');return}   // a text page
+  const box=$('mFit'),L=SY.pos[PL.key]&&SY.pos[PL.key].get(SY.s+':'+(SY.a||0));if(!box||!L)return;
   const here=L.find(x=>x[0]===shown);if(!here)return;
   const d=document.createElement('div');d.className='ayhl';
   d.innerHTML=here[2].map(r=>`<i style="left:calc(var(--u)*${r[0]});bottom:calc(var(--u)*${r[1]});width:calc(var(--u)*${r[2]});height:calc(var(--u)*${r[3]})"></i>`).join('');
@@ -2856,6 +2853,9 @@ function playerBar(){
     <button type="button" class="ln" data-a="rate" aria-label="سرعة التلاوة"><svg viewBox="0 0 24 24"><path d="M4.2 17.5a8.5 8.5 0 1 1 15.6 0z"/><path d="M12 14l4-4.5"/></svg><em></em></button>
     <button type="button" data-a="set" aria-label="القارئ"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.5 7.5 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.5 7.5 0 0 0 1.7 1l.3 2.6h4l.4-2.6a7.5 7.5 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg></button></div>`;
   document.body.append(b);
+  // the page is drawn above the player: its height is kept in --qp-h, and the page is fitted again whenever it changes
+  const room=()=>{const h=document.body.contains(b)?b.offsetHeight:0;document.documentElement.style.setProperty('--qp-h',h+'px');document.body.classList.toggle('has-player',h>0);if(typeof window.onresize==='function')window.onresize()};
+  room();if(window.ResizeObserver)new ResizeObserver(room).observe(b);
   const a=PL.audio=new Audio();a.preload='none';
   PL.rate=st.get('qp.rate',1);PL.rep=st.get('qp.rep','');
   const RATES=[1,1.25,1.5,.75],REPN={'':'',ay:'الآية',su:'السورة'};
@@ -2895,7 +2895,7 @@ function playerBar(){
     else if(k==='rep'){PL.rep=PL.rep===''?'ay':PL.rep==='ay'?'su':'';st.set("qp.rep",PL.rep);qpMarks();toast(PL.rep==='ay'?'تكرار الآية':PL.rep==='su'?'تكرار السورة':'بلا تكرار')}
     else if(k==='rate'){PL.rate=RATES[(RATES.indexOf(PL.rate)+1)%RATES.length];st.set('qp.rate',PL.rate);a.defaultPlaybackRate=a.playbackRate=PL.rate;qpMarks();toast('سرعة التلاوة '+PL.rate+'×')}
     else if(k==='set')reciterSheet(PL.key,()=>playSura(PL.key,PL.n,PL.names));
-    else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player');SY.a=0;syncDraw()}});
+    else if(k==='close'){a.pause();a.removeAttribute('src');PL.n=0;b.remove();document.body.classList.remove('has-player');document.documentElement.style.removeProperty('--qp-h');if(typeof window.onresize==='function')window.onresize();SY.a=0;syncDraw()}});
   return b;
 }
 // to the page of the verse being recited (in the riwaya being recited), and follow it from there
@@ -2977,13 +2977,22 @@ function pagesOf(Q){
 }
 let listMode=st.get('qlist','s');
 // the cover drawn on each mushaf icon: a gold frame, an eight-pointed star and the narration's name
-const musCover=t=>`<svg viewBox="0 0 60 80" aria-hidden="true"><defs><radialGradient id="mcg" cx=".5" cy=".42" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></radialGradient></defs>
-  <rect x="0" y="0" width="60" height="80" fill="url(#mcg)"/>
-  <rect x="4" y="4" width="52" height="72" rx="2" fill="none" stroke="#E9CF86" stroke-width="1.4"/><rect x="7" y="7" width="46" height="66" rx="1.5" fill="none" stroke="#E9CF86" stroke-width=".6" stroke-dasharray="1.6 1.2"/>
-  <g fill="#E9CF86" fill-opacity=".9"><path d="M7 7h9a9 9 0 0 1-9 9z"/><path d="M53 7h-9a9 9 0 0 0 9 9z"/><path d="M7 73h9a9 9 0 0 0-9-9z"/><path d="M53 73h-9a9 9 0 0 1 9-9z"/></g>
-  <g transform="translate(30 34)"><path d="M0.00 -13.00L1.66 -8.34L4.97 -12.01L4.72 -7.07L9.19 -9.19L7.07 -4.72L12.01 -4.97L8.34 -1.66L13.00 -0.00L8.34 1.66L12.01 4.97L7.07 4.72L9.19 9.19L4.72 7.07L4.97 12.01L1.66 8.34L0.00 13.00L-1.66 8.34L-4.97 12.01L-4.72 7.07L-9.19 9.19L-7.07 4.72L-12.01 4.97L-8.34 1.66L-13.00 0.00L-8.34 -1.66L-12.01 -4.97L-7.07 -4.72L-9.19 -9.19L-4.72 -7.07L-4.97 -12.01L-1.66 -8.34Z" fill="#E9CF86" fill-opacity=".22" stroke="#E9CF86" stroke-width=".9"/><circle r="7.5" fill="none" stroke="#F3E2AE" stroke-width=".9"/><path d="M0-6l1.8 4.2 4.2 1.8-4.2 1.8L0 6l-1.8-4.2L-6 0l4.2-1.8z" fill="#F3E2AE"/><path d="M0-20v-3M0 20v3" stroke="#E9CF86" stroke-width=".8"/></g>
-  <rect x="14" y="54" width="32" height="12" rx="6" fill="rgba(0,0,0,.18)" stroke="#E9CF86" stroke-width=".7"/>
-  <text x="30" y="63" text-anchor="middle" fill="#F3E2AE" font-size="9" font-weight="700" style="font-family:var(--f-display)">${t}</text></svg>`;
+// the cover of each mushaf: a binding in the narration's colour, gilt as printed mushafs are (a tooled border, corner
+// pieces, a scalloped central medallion with pendants above and below), with the narration's name in the medallion
+const musCover=t=>{const id='mc'+t.length+t.charCodeAt(0);return `<svg viewBox="0 0 120 160" aria-hidden="true"><defs>
+  <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6DE8E"/><stop offset=".5" stop-color="#C99A2E"/><stop offset="1" stop-color="#F0D07A"/></linearGradient>
+  <pattern id="${id}p" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M5 0.8L9.2 5 5 9.2 0.8 5z" fill="none" stroke="url(#${id}g)" stroke-width="1.1"/><circle cx="5" cy="5" r="1.3" fill="url(#${id}g)"/><path d="M0 0l1.6 1.6M10 0L8.4 1.6M0 10l1.6-1.6M10 10l-1.6-1.6" stroke="url(#${id}g)" stroke-width=".8"/></pattern>
+  <radialGradient id="${id}s" cx=".45" cy=".4" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient></defs>
+  <rect width="120" height="160" fill="url(#${id}s)"/>
+  <path fill-rule="evenodd" fill="url(#${id}p)" d="M7 7h106v146H7zM17 17v126h86V17z"/>
+  <g fill="none" stroke="url(#${id}g)"><rect x="5.5" y="5.5" width="109" height="149" stroke-width="1.6"/><rect x="8.5" y="8.5" width="103" height="143" stroke-width=".6"/><rect x="15.5" y="15.5" width="89" height="129" stroke-width=".6"/><rect x="18.5" y="18.5" width="83" height="123" stroke-width="1.4"/></g>
+  <g fill="url(#${id}g)">${[[22,22,0],[98,22,90],[98,138,180],[22,138,270]].map(([x,y,r])=>`<path transform="translate(${x} ${y}) rotate(${r})" d="M0 0h20c-2 5-7 7-11 6 1 4-1 9-6 11 1-5 0-9-3-10z"/>`).join('')}</g>
+  <g fill="url(#${id}g)"><path d="M60.0 37.6L60.5 37.7L61.0 38.0L61.5 38.5L61.9 39.0L62.4 39.7L62.8 40.5L63.2 41.2L63.6 41.9L64.0 42.4L64.4 42.8L64.8 43.1L65.3 43.2L65.8 43.1L66.2 42.9L66.8 42.5L67.3 42.1L67.9 41.7L68.5 41.3L69.1 40.9L69.7 40.7L70.2 40.6L70.7 40.7L71.2 41.0L71.6 41.5L71.9 42.1L72.2 42.8L72.5 43.7L72.7 44.6L72.9 45.5L73.1 46.4L73.3 47.2L73.5 47.9L73.8 48.4L74.2 48.8L74.6 49.1L75.1 49.2L75.6 49.2L76.2 49.2L76.9 49.1L77.5 49.0L78.2 49.0L78.8 49.1L79.4 49.3L79.8 49.6L80.2 50.0L80.5 50.6L80.8 51.3L80.9 52.2L80.9 53.1L80.9 54.0L80.9 55.0L80.8 55.9L80.8 56.8L80.8 57.6L80.9 58.4L81.0 59.0L81.3 59.5L81.7 59.9L82.1 60.3L82.7 60.6L83.3 60.9L83.9 61.2L84.5 61.5L85.1 61.9L85.6 62.3L86.0 62.8L86.3 63.4L86.5 64.1L86.6 64.9L86.5 65.7L86.4 66.5L86.2 67.4L85.9 68.3L85.6 69.1L85.3 70.0L85.1 70.7L84.9 71.5L84.9 72.2L84.9 72.8L85.1 73.4L85.4 74.0L85.7 74.6L86.2 75.2L86.7 75.8L87.2 76.5L87.6 77.1L88.0 77.8L88.4 78.5L88.6 79.3L88.6 80.0L88.6 80.7L88.4 81.5L88.0 82.2L87.6 82.9L87.2 83.5L86.7 84.2L86.2 84.8L85.7 85.4L85.4 86.0L85.1 86.6L84.9 87.2L84.9 87.8L84.9 88.5L85.1 89.3L85.3 90.0L85.6 90.9L85.9 91.7L86.2 92.6L86.4 93.5L86.5 94.3L86.6 95.1L86.5 95.9L86.3 96.6L86.0 97.2L85.6 97.7L85.1 98.1L84.5 98.5L83.9 98.8L83.3 99.1L82.7 99.4L82.1 99.7L81.7 100.1L81.3 100.5L81.0 101.0L80.9 101.6L80.8 102.4L80.8 103.2L80.8 104.1L80.9 105.0L80.9 106.0L80.9 106.9L80.9 107.8L80.8 108.7L80.5 109.4L80.2 110.0L79.8 110.4L79.4 110.7L78.8 110.9L78.2 111.0L77.5 111.0L76.9 110.9L76.2 110.8L75.6 110.8L75.1 110.8L74.6 110.9L74.2 111.2L73.8 111.6L73.5 112.1L73.3 112.8L73.1 113.6L72.9 114.5L72.7 115.4L72.5 116.3L72.2 117.2L71.9 117.9L71.6 118.5L71.2 119.0L70.7 119.3L70.2 119.4L69.7 119.3L69.1 119.1L68.5 118.7L67.9 118.3L67.3 117.9L66.8 117.5L66.2 117.1L65.8 116.9L65.3 116.8L64.8 116.9L64.4 117.2L64.0 117.6L63.6 118.1L63.2 118.8L62.8 119.5L62.4 120.3L61.9 121.0L61.5 121.5L61.0 122.0L60.5 122.3L60.0 122.4L59.5 122.3L59.0 122.0L58.5 121.5L58.1 121.0L57.6 120.3L57.2 119.5L56.8 118.8L56.4 118.1L56.0 117.6L55.6 117.2L55.2 116.9L54.7 116.8L54.2 116.9L53.8 117.1L53.2 117.5L52.7 117.9L52.1 118.3L51.5 118.7L50.9 119.1L50.3 119.3L49.8 119.4L49.3 119.3L48.8 119.0L48.4 118.5L48.1 117.9L47.8 117.2L47.5 116.3L47.3 115.4L47.1 114.5L46.9 113.6L46.7 112.8L46.5 112.1L46.2 111.6L45.8 111.2L45.4 110.9L44.9 110.8L44.4 110.8L43.8 110.8L43.1 110.9L42.5 111.0L41.8 111.0L41.2 110.9L40.6 110.7L40.2 110.4L39.8 110.0L39.5 109.4L39.2 108.7L39.1 107.8L39.1 106.9L39.1 106.0L39.1 105.0L39.2 104.1L39.2 103.2L39.2 102.4L39.1 101.6L39.0 101.0L38.7 100.5L38.3 100.1L37.9 99.7L37.3 99.4L36.7 99.1L36.1 98.8L35.5 98.5L34.9 98.1L34.4 97.7L34.0 97.2L33.7 96.6L33.5 95.9L33.4 95.1L33.5 94.3L33.6 93.5L33.8 92.6L34.1 91.7L34.4 90.9L34.7 90.0L34.9 89.3L35.1 88.5L35.1 87.8L35.1 87.2L34.9 86.6L34.6 86.0L34.3 85.4L33.8 84.8L33.3 84.2L32.8 83.5L32.4 82.9L32.0 82.2L31.6 81.5L31.4 80.7L31.4 80.0L31.4 79.3L31.6 78.5L32.0 77.8L32.4 77.1L32.8 76.5L33.3 75.8L33.8 75.2L34.3 74.6L34.6 74.0L34.9 73.4L35.1 72.8L35.1 72.2L35.1 71.5L34.9 70.7L34.7 70.0L34.4 69.1L34.1 68.3L33.8 67.4L33.6 66.5L33.5 65.7L33.4 64.9L33.5 64.1L33.7 63.4L34.0 62.8L34.4 62.3L34.9 61.9L35.5 61.5L36.1 61.2L36.7 60.9L37.3 60.6L37.9 60.3L38.3 59.9L38.7 59.5L39.0 59.0L39.1 58.4L39.2 57.6L39.2 56.8L39.2 55.9L39.1 55.0L39.1 54.0L39.1 53.1L39.1 52.2L39.2 51.3L39.5 50.6L39.8 50.0L40.2 49.6L40.6 49.3L41.2 49.1L41.8 49.0L42.5 49.0L43.1 49.1L43.8 49.2L44.4 49.2L44.9 49.2L45.4 49.1L45.8 48.8L46.2 48.4L46.5 47.9L46.7 47.2L46.9 46.4L47.1 45.5L47.3 44.6L47.5 43.7L47.8 42.8L48.1 42.1L48.4 41.5L48.8 41.0L49.3 40.7L49.8 40.6L50.3 40.7L50.9 40.9L51.5 41.3L52.1 41.7L52.7 42.1L53.2 42.5L53.8 42.9L54.2 43.1L54.7 43.2L55.2 43.1L55.6 42.8L56.0 42.4L56.4 41.9L56.8 41.2L57.2 40.5L57.6 39.7L58.1 39.0L58.5 38.5L59.0 38.0L59.5 37.7L60.0 37.6Z"/><path d="M60 33c-4 3-5 6-3 9h6c2-3 1-6-3-9zM57 42h6l-1 4h-4zM60 127c-4-3-5-6-3-9h6c2 3 1 6-3 9zM57 118h6l-1-4h-4z"/>
+   <path d="M60 22c-3 2-3 5 0 8 3-3 3-6 0-8zM60 138c-3-2-3-5 0-8 3 3 3 6 0 8z"/></g>
+  <path d="M60.0 44.3L60.4 44.4L60.8 44.6L61.2 44.9L61.6 45.3L61.9 45.8L62.3 46.4L62.6 46.9L63.0 47.4L63.3 47.8L63.6 48.1L64.0 48.3L64.4 48.4L64.7 48.3L65.1 48.2L65.6 48.0L66.0 47.7L66.4 47.4L66.9 47.2L67.4 47.0L67.8 46.8L68.2 46.8L68.6 46.9L69.0 47.2L69.4 47.5L69.7 48.0L69.9 48.6L70.1 49.2L70.3 49.9L70.5 50.6L70.7 51.3L70.9 51.9L71.1 52.4L71.4 52.9L71.7 53.2L72.0 53.5L72.4 53.6L72.8 53.7L73.3 53.7L73.8 53.7L74.3 53.7L74.7 53.8L75.2 53.9L75.6 54.1L76.0 54.4L76.3 54.8L76.6 55.2L76.8 55.8L76.9 56.5L77.0 57.2L77.0 58.0L77.0 58.7L77.0 59.5L77.0 60.2L77.1 60.8L77.2 61.4L77.3 61.9L77.5 62.4L77.8 62.8L78.2 63.1L78.6 63.4L79.0 63.7L79.5 64.0L79.9 64.3L80.3 64.7L80.7 65.1L81.0 65.5L81.3 66.1L81.4 66.6L81.5 67.3L81.5 67.9L81.4 68.6L81.2 69.3L81.1 70.0L80.9 70.7L80.7 71.4L80.6 72.1L80.5 72.7L80.5 73.3L80.5 73.8L80.6 74.4L80.9 74.9L81.1 75.4L81.4 75.9L81.8 76.5L82.1 77.0L82.4 77.6L82.7 78.2L82.9 78.8L83.1 79.4L83.1 80.0L83.1 80.6L82.9 81.2L82.7 81.8L82.4 82.4L82.1 83.0L81.8 83.5L81.4 84.1L81.1 84.6L80.9 85.1L80.6 85.6L80.5 86.2L80.5 86.7L80.5 87.3L80.6 87.9L80.7 88.6L80.9 89.3L81.1 90.0L81.2 90.7L81.4 91.4L81.5 92.1L81.5 92.7L81.4 93.4L81.3 93.9L81.0 94.5L80.7 94.9L80.3 95.3L79.9 95.7L79.5 96.0L79.0 96.3L78.6 96.6L78.2 96.9L77.8 97.2L77.5 97.6L77.3 98.1L77.2 98.6L77.1 99.2L77.0 99.8L77.0 100.5L77.0 101.3L77.0 102.0L77.0 102.8L76.9 103.5L76.8 104.2L76.6 104.8L76.3 105.2L76.0 105.6L75.6 105.9L75.2 106.1L74.7 106.2L74.3 106.3L73.8 106.3L73.3 106.3L72.8 106.3L72.4 106.4L72.0 106.5L71.7 106.8L71.4 107.1L71.1 107.6L70.9 108.1L70.7 108.7L70.5 109.4L70.3 110.1L70.1 110.8L69.9 111.4L69.7 112.0L69.4 112.5L69.0 112.8L68.6 113.1L68.2 113.2L67.8 113.2L67.4 113.0L66.9 112.8L66.4 112.6L66.0 112.3L65.6 112.0L65.1 111.8L64.7 111.7L64.4 111.6L64.0 111.7L63.6 111.9L63.3 112.2L63.0 112.6L62.6 113.1L62.3 113.6L61.9 114.2L61.6 114.7L61.2 115.1L60.8 115.4L60.4 115.6L60.0 115.7L59.6 115.6L59.2 115.4L58.8 115.1L58.4 114.7L58.1 114.2L57.7 113.6L57.4 113.1L57.0 112.6L56.7 112.2L56.4 111.9L56.0 111.7L55.6 111.6L55.3 111.7L54.9 111.8L54.4 112.0L54.0 112.3L53.6 112.6L53.1 112.8L52.6 113.0L52.2 113.2L51.8 113.2L51.4 113.1L51.0 112.8L50.6 112.5L50.3 112.0L50.1 111.4L49.9 110.8L49.7 110.1L49.5 109.4L49.3 108.7L49.1 108.1L48.9 107.6L48.6 107.1L48.3 106.8L48.0 106.5L47.6 106.4L47.2 106.3L46.7 106.3L46.2 106.3L45.7 106.3L45.3 106.2L44.8 106.1L44.4 105.9L44.0 105.6L43.7 105.2L43.4 104.8L43.2 104.2L43.1 103.5L43.0 102.8L43.0 102.0L43.0 101.3L43.0 100.5L43.0 99.8L42.9 99.2L42.8 98.6L42.7 98.1L42.5 97.6L42.2 97.2L41.8 96.9L41.4 96.6L41.0 96.3L40.5 96.0L40.1 95.7L39.7 95.3L39.3 94.9L39.0 94.5L38.7 93.9L38.6 93.4L38.5 92.7L38.5 92.1L38.6 91.4L38.8 90.7L38.9 90.0L39.1 89.3L39.3 88.6L39.4 87.9L39.5 87.3L39.5 86.7L39.5 86.2L39.4 85.6L39.1 85.1L38.9 84.6L38.6 84.1L38.2 83.5L37.9 83.0L37.6 82.4L37.3 81.8L37.1 81.2L36.9 80.6L36.9 80.0L36.9 79.4L37.1 78.8L37.3 78.2L37.6 77.6L37.9 77.0L38.2 76.5L38.6 75.9L38.9 75.4L39.1 74.9L39.4 74.4L39.5 73.8L39.5 73.3L39.5 72.7L39.4 72.1L39.3 71.4L39.1 70.7L38.9 70.0L38.8 69.3L38.6 68.6L38.5 67.9L38.5 67.3L38.6 66.6L38.7 66.1L39.0 65.5L39.3 65.1L39.7 64.7L40.1 64.3L40.5 64.0L41.0 63.7L41.4 63.4L41.8 63.1L42.2 62.8L42.5 62.4L42.7 61.9L42.8 61.4L42.9 60.8L43.0 60.2L43.0 59.5L43.0 58.7L43.0 58.0L43.0 57.2L43.1 56.5L43.2 55.8L43.4 55.2L43.7 54.8L44.0 54.4L44.4 54.1L44.8 53.9L45.3 53.8L45.7 53.7L46.2 53.7L46.7 53.7L47.2 53.7L47.6 53.6L48.0 53.5L48.3 53.2L48.6 52.9L48.9 52.4L49.1 51.9L49.3 51.3L49.5 50.6L49.7 49.9L49.9 49.2L50.1 48.6L50.3 48.0L50.6 47.5L51.0 47.2L51.4 46.9L51.8 46.8L52.2 46.8L52.6 47.0L53.1 47.2L53.6 47.4L54.0 47.7L54.4 48.0L54.9 48.2L55.3 48.3L55.6 48.4L56.0 48.3L56.4 48.1L56.7 47.8L57.0 47.4L57.4 46.9L57.7 46.4L58.1 45.8L58.4 45.3L58.8 44.9L59.2 44.6L59.6 44.4L60.0 44.3Z" fill="#0B0B0B" fill-opacity=".55" stroke="#F6DE8E" stroke-width=".8"/>
+  <path d="M60.0 53.0L62.3 56.5L66.4 55.6L65.5 59.7L69.0 62.0L65.5 64.3L66.4 68.4L62.3 67.5L60.0 71.0L57.7 67.5L53.6 68.4L54.5 64.3L51.0 62.0L54.5 59.7L53.6 55.6L57.7 56.5Z" fill="none" stroke="url(#${id}g)" stroke-width="1"/><circle cx="60" cy="62" r="3" fill="url(#${id}g)"/>
+  <path d="M60.0 92.0L61.5 94.3L64.2 93.8L63.7 96.5L66.0 98.0L63.7 99.5L64.2 102.2L61.5 101.7L60.0 104.0L58.5 101.7L55.8 102.2L56.3 99.5L54.0 98.0L56.3 96.5L55.8 93.8L58.5 94.3Z" fill="url(#${id}g)" fill-opacity=".8"/>
+  <text x="60" y="85" text-anchor="middle" fill="#F6DE8E" font-size="15" font-weight="700" style="font-family:var(--f-display)">${t}</text></svg>`};
 // «حمّل المصحف»: the page images of the mushaf being read, to the phone
 function mushafBox(box,SET,R_){
   const A=window.AndroidApp;if(!box||!SET||!A||typeof A.downloadMushaf!=='function')return;
