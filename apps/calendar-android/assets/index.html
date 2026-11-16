@@ -1285,7 +1285,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
     <div><h1>التقويم الموريتاني</h1><p>مواقيت الصلاة · المصحف · الحديث · الأذكار</p></div><button type="button" class="theme-btn" id="themeBtn" data-keep aria-label="الوضع الليلي"><svg class="mn" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg></button>
   </div></div>
   <nav class="tabs" aria-label="الأقسام">
-    <a href="#cal" data-v="cal"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M8 2.75v3.5M16 2.75v3.5M3.5 9.75h17"/><path class="dot" d="M8.25 14h.01M12 14h.01M15.75 14h.01M8.25 17h.01M12 17h.01"/></svg>التقويم</a>
+    <a href="#cal" data-v="cal"><svg viewBox="0 0 24 24"><path d="M3.5 11L12 3.8l8.5 7.2"/><path d="M5.5 9.4V19a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.4"/><path d="M10 20.5v-5a2 2 0 0 1 4 0v5"/></svg>الرئيسية</a>
     <a href="#manazil" data-v="manazil"><svg viewBox="0 0 24 24"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/><path class="tw" d="M17 3l.95 2.05L20 6l-2.05.95L17 9l-.95-2.05L14 6l2.05-.95z"/></svg>المنازل</a>
     <a href="#quran" data-v="quran"><svg viewBox="0 0 24 24"><path d="M12 6.8C10.2 5.4 7.6 4.8 4.7 5a1.2 1.2 0 0 0-1.2 1.2v10.6A1.2 1.2 0 0 0 4.8 18c2.8-.2 5.3.4 7.2 1.8 1.9-1.4 4.4-2 7.2-1.8a1.2 1.2 0 0 0 1.3-1.2V6.2A1.2 1.2 0 0 0 19.3 5c-2.9-.2-5.5.4-7.3 1.8zM12 6.8v13"/></svg>المصحف</a>
     <a href="#lib" data-v="lib"><svg viewBox="0 0 24 24"><path d="M3 20.5h18"/><rect class="bk1" x="4.5" y="6" width="4" height="14.5" rx=".9"/><path class="bk1" d="M4.5 9h4M4.5 17.5h4"/><rect class="bk2" x="9.5" y="4" width="4" height="16.5" rx=".9"/><path class="bk2" d="M9.5 7.5h4M9.5 17h4"/><rect class="bk3" x="15.2" y="6.4" width="4" height="14" rx=".9" transform="rotate(14 17.2 20.4)"/></svg>المكتبة</a>
@@ -3718,7 +3718,7 @@ if(lang!=='fr')return;
 const GM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const D=[
 ['التقويم الموريتاني','Calendrier mauritanien'],['مواقيت الصلاة · المصحف · الحديث · الأذكار','Horaires de prière · Coran · Hadith · Invocations'],
-['الأقسام','Rubriques'],['التقويم','Calendrier'],['المنازل','Manazil'],['الاشتراك','Abonnement'],['المصادر والخصوصية','Sources et confidentialité'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المكتبة','Bibliothèque'],['المسبحة','Tasbih'],['القبلة','Qibla'],
+['الأقسام','Rubriques'],['التقويم','Calendrier'],['الرئيسية','Accueil'],['المنازل','Manazil'],['الاشتراك','Abonnement'],['المصادر والخصوصية','Sources et confidentialité'],['المصحف','Coran'],['البخاري','Boukhari'],['الموطأ','Mouwatta'],['الحصن','Hisn'],['المكتبة','Bibliothèque'],['المسبحة','Tasbih'],['القبلة','Qibla'],
 ['المدينة','Ville'],['المقاطعة','Moughataa'],['توقيت موريتانيا (غرينتش)','Heure de Mauritanie (GMT)'],
 ['حسابي ‹','calculé ›'],['الصلاة القادمة في ','Prochaine prière à '],['الوقت المتبقي للأذان','Temps restant avant l’adhan'],['المتبقي لأذان ','Avant l’adhan : '],['الوقت المتبقي للإقامة','Temps restant avant l’iqama'],
 ['تعرض يومًا غير اليوم','Vous affichez un autre jour'],['العودة إلى اليوم','Revenir à aujourd’hui'],
