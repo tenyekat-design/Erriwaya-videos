@@ -2743,7 +2743,7 @@ function scanStart(key,r,n,u){
       subLine()},50)};
   setTimeout(poll,2000);
 }
-const syncKey=()=>`sync.${PL.key}.${reciter(PL.key).id}.${PL.n}`;
+const syncKey=()=>`sync2.${PL.key}.${reciter(PL.key).id}.${PL.n}`;   // sync2: the corrections made on the older timings (before 17 Nov 2026) are dropped
 function syncLoad(key,r){
   // a reader following the recitation keeps following it into the next sura (the page turns by itself)
   const follow=SY.was&&shownPage()===SY.was?SY.was:0;
@@ -2760,7 +2760,8 @@ function syncLoad(key,r){
 function syncArr(){
   const A=PL.audio,n=PL.n,an=st.get(syncKey(),[]).slice().sort((x,y)=>x[0]-y[0]);SY.arr=null;if(!n)return;
   const T=SY.T&&SY.T[n-1];
-  if(T){const last=an[an.length-1],off=last&&T[last[0]-1]!==undefined?last[1]-T[last[0]-1]:0;SY.arr=off?T.map(x=>x+off):T;SY.est=false;return}   // a correction shifts the whole sura
+  if(T){const C=an.filter(([a])=>T[a-1]!==undefined);   // a correction moves the verses from it to the next correction; the ones before it stay as timed
+    SY.arr=C.length?T.map((x,i)=>{let off=0;for(const [a,t] of C)if(i>=a-1)off=t-T[a-1];return x+off}):T;SY.est=false;return}
   if(SY.auto&&SY.auto.n===n){   // found from the recording's own pauses; the listener's corrections are fixed points of a new search
     let arr=SY.auto.arr;
     if(an.length){const Q0=loaded['quran-'+PL.key];
