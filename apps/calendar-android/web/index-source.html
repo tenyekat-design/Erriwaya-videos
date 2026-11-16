@@ -868,6 +868,13 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-in h2{margin:0 0 4px;text-align:center;font-family:var(--f-display);font-size:1.2rem;color:var(--green)}
 .lk-in>p{margin:0 0 10px;text-align:center;color:var(--muted);font-size:.92rem;line-height:1.7}
 .lk-st{text-align:center;font-weight:600;color:var(--ink)!important}
+.lk-perks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:4px 0 12px}.lk-perks[hidden]{display:none}
+.lk-perk{display:flex;gap:8px;align-items:center;padding:8px;border-radius:12px;background:var(--green-soft,#e8f2ec);font-size:.8rem;line-height:1.45;text-align:start}
+.lk-perk i{flex:none;width:30px;height:30px;border-radius:9px;background:var(--green,#13604A);display:grid;place-items:center}
+.lk-perk i svg{width:18px;height:18px;fill:none;stroke:#F3E2AE;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lk-perk b{display:block;font-size:.84rem;color:var(--ink)}
+.lk-share{display:block;text-align:center;margin:0 0 12px;text-decoration:none}.lk-share[hidden]{display:none}
+.lk-day{margin:0 0 12px;text-align:center;font-size:.9rem;font-weight:700;color:var(--gold,#a8771c)}.lk-day[hidden]{display:none}
 .lk-plan{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.lk-plan[hidden]{display:none}
 .lk-plan button{border:1.5px solid var(--line,#ccc);border-radius:12px;background:var(--surface,#fff);color:inherit;padding:8px 6px;font:inherit;text-align:center;cursor:pointer}
 .lk-plan button b{display:block;font-size:.95rem}.lk-plan button small{display:block;font-size:.78rem;opacity:.8;line-height:1.4}
@@ -1016,6 +1023,9 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <h2 id="lkT"></h2>
   <p class="lk-st" id="lkSt"></p>
   <p id="lkP"></p>
+  <div class="lk-perks" id="lkPerks" hidden></div>
+  <p class="lk-day" id="lkDay" hidden></p>
+  <a class="btn lk-share" id="lkShare" hidden rel="noopener"></a>
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
   <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
   <div class="lk-fam" id="lkFam" hidden></div>
@@ -1644,7 +1654,7 @@ async function sgAdmin(el){
 }
 // ---- the admin: subscriptions. What subscribers see (price, payment numbers), the catcher that pairs payments with
 //      requests on this phone (Pay.java), and the requests still waiting, each confirmable with one tap.
-const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['famPrice','سعر الاشتراك العائلي كما يُعرض (حتى 5 هواتف؛ اتركه فارغًا لإخفائه)','500 أوقية جديدة في السنة لخمسة هواتف'],['famAmount','مبلغ العائلي بالأرقام (للمطابقة)','500'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
+const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['link','رابط تحميل التطبيق (لزر «أرسله لصديق»)','https://…'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['famPrice','سعر الاشتراك العائلي كما يُعرض (حتى 5 هواتف؛ اتركه فارغًا لإخفائه)','500 أوقية جديدة في السنة لخمسة هواتف'],['famAmount','مبلغ العائلي بالأرقام (للمطابقة)','500'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
 const subId=i=>i.slice(0,5)+'-'+i.slice(5);
 const subWhen=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
 const subCommit=async writes=>{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({writes})});if(!r.ok)throw new Error(r.status)};
@@ -3534,7 +3544,7 @@ window.tgCall=async(token,method,params)=>{const q=new URLSearchParams();for(con
   try{const A=window.AndroidApp;if(A&&typeof A.tg==='function'){const r=JSON.parse(A.tg(token,method,JSON.stringify(params||{}))||'{}');if(r.ok||r.error_code)return r.error_code===0?Object.assign(r,{description:why.concat(r.description).join(' / ')}):r}}catch(e){}
   if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors'});return{ok:true,blind:true}}catch(e){}}
   return{ok:false,error_code:0,description:why.join(' / ')}};
-const SUB={price:'',famPrice:'',whatsapp:'',phone:'',pay:[
+const SUB={price:'',famPrice:'',amount:'',link:'',whatsapp:'',phone:'',pay:[
   {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
   {k:'masrvi',n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
   {k:'sedad',n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
@@ -3562,7 +3572,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','famPrice','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','famPrice','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
@@ -3593,6 +3603,30 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       b2.firstChild.textContent=L('عائلي','Famille');b2.lastChild.textContent=SUB.famPrice;
       [b1,b2].forEach(b=>b.setAttribute('aria-pressed',b.dataset.plan===planSel))}}
     famBox(paid);
+    {const S=$('lkShare');S.hidden=!SUB.link;if(SUB.link){S.textContent=L('أرسل التطبيق لصديق بواتساب','Envoyer l’application à un ami');
+      S.href='https://wa.me/?text='+encodeURIComponent(L('التقويم الموريتاني: المواقيت والأذان والمنازل والمصحف، وويدجت وخلفيات من تراثنا. جرّبه يومًا مجانًا:\n','Le Calendrier mauritanien : prières, adhan, manazil, Coran, widgets et fonds d’écran. Essai gratuit d’un jour :\n')+SUB.link)}}
+    // what the subscription brings, and what it costs a day: shown to those not (yet) subscribed
+    {const E=$('lkPerks');E.hidden=paid;if(!paid&&!E.children.length){
+      const I={clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',moon:'<path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/>',
+        book:'<path d="M12 6.8C10.2 5.4 7.6 4.8 4.7 5a1.2 1.2 0 0 0-1.2 1.2v10.6A1.2 1.2 0 0 0 4.8 18c2.8-.2 5.3.4 7.2 1.8 1.9-1.4 4.4-2 7.2-1.8a1.2 1.2 0 0 0 1.3-1.2V6.2A1.2 1.2 0 0 0 19.3 5c-2.9-.2-5.5.4-7.3 1.8zM12 6.8v13"/>',
+        grid:'<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="17" height="7.5" rx="2"/>',
+        pic:'<rect x="6" y="2.75" width="12" height="18.5" rx="2.6"/><path d="M6 16l3.6-3.6 2.6 2.6 2.2-2.2L18 16.4"/>',
+        bell:'<path d="M6 10.5a6 6 0 0 1 12 0c0 4.3 1.8 5.4 1.8 5.4H4.2S6 14.8 6 10.5M9.5 18.8a2.5 2.5 0 0 0 5 0"/>',
+        lib:'<path d="M3 20.5h18"/><rect x="4.5" y="6" width="4" height="14.5" rx=".9"/><rect x="9.5" y="4" width="4" height="16.5" rx=".9"/><rect x="15.2" y="6.4" width="4" height="14" rx=".9" transform="rotate(14 17.2 20.4)"/>',
+        lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>'};
+      const P=[['clock',L('المواقيت والأذان','Prières et adhan'),L('لكل بلدية، والأذان في وقته','pour chaque commune')],
+        ['moon',L('المنازل والتقويم','Manazil et calendrier'),L('الشمسية والنجمية والهجري','solaires, stellaires, hégire')],
+        ['book',L('المصحف','Le Coran'),L('ورش وقالون وحفص، وتلاوات','Warsh, Qalun, Hafs')],
+        ['lib',L('المكتبة','Bibliothèque'),L('البخاري والموطأ والأذكار والمتون','Bukhari, Muwatta, adhkar')],
+        ['grid',L('ويدجت للشاشة','Widgets'),L('الساعة واليوم والأشهر والآيات','horloge, jour, mois, versets')],
+        ['pic',L('خلفيات من التراث','Fonds d’écran'),L('17 خلفية موريتانية','17 fonds mauritaniens')],
+        ['bell',L('إمساكية وتذكيرات','Imsakiya et rappels'),L('رمضان وملاحظاتك','Ramadan et vos notes')],
+        ['lock',L('إشعار شاشة القفل','Écran verrouillé'),L('اليوم والصلاة القادمة','le jour et la prochaine prière')]];
+      E.innerHTML=P.map(()=>'<div class="lk-perk"><i><svg viewBox="0 0 24 24" aria-hidden="true"></svg></i><span><b></b><small></small></span></div>').join('');
+      [...E.children].forEach((d,i)=>{d.querySelector('svg').innerHTML=I[P[i][0]];d.querySelector('b').textContent=P[i][1];d.querySelector('small').textContent=P[i][2]})}
+     const D=$('lkDay'),amt=parseInt(String(SUB.amount||'').replace(/\D/g,''),10);D.hidden=paid||!(amt>0);
+     if(!D.hidden){const d=amt/365;D.textContent=d<1?L('أقل من أوقية واحدة في اليوم، طوال السنة','Moins d’un ouguiya par jour, toute l’année')
+       :L('نحو '+Math.ceil(d)+' أوقية في اليوم، طوال السنة','Environ '+Math.ceil(d)+' ouguiyas par jour, toute l’année')}}
     const steps=[L('ادفع قيمة الاشتراك من أحد التطبيقات أدناه إلى رقم الناشر.','Réglez l’abonnement depuis l’une des applications ci-dessous, au numéro de l’éditeur.'),L('اختر التطبيق الذي دفعت به، واكتب رقم حسابك الذي دفعت منه، ثم اضغط «دفعتُ».','Choisissez l’application utilisée, saisissez le numéro du compte avec lequel vous avez payé, puis touchez « J’ai payé ».'),L('يُفتح التطبيق تلقائيًا بعد وصول الدفع.','L’application s’ouvre automatiquement dès que le paiement est reçu.')];
     $('lkSteps').innerHTML=steps.map(()=>'<li></li>').join('');[...$('lkSteps').children].forEach((li,i)=>{li.textContent=steps[i]});
     {const P=$('lkPay'),any=SUB.pay.some(m=>m.num);P.hidden=!SUB.pay.length;P.innerHTML='';
@@ -3649,6 +3683,9 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   function check(){const s=state();if(!s)return;st=s;
     if(!s.open)show(true);else if(locked)hide();else if(!lock.hidden)fill()}
   window.subSheet=()=>show(false);
+  // a reminder notification opens the subscription screen (#subscribe)
+  const fromHash=()=>{if(location.hash==='#subscribe'){history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>show(false),300)}};
+  window.addEventListener('hashchange',fromHash);fromHash();
   $('lkX').onclick=()=>{if(!locked)lock.hidden=true};
   lock.addEventListener('click',e=>{if(e.target===lock&&!locked)lock.hidden=true});
   $('lkPlan').addEventListener('click',e=>{const b=e.target.closest('[data-plan]');if(!b)return;planSel=b.dataset.plan;

@@ -61,6 +61,8 @@
         <!-- a photo behind a widget: picked, cropped to the widget's shape, dimmed (from the widget's settings) -->
         <!-- «إشعار اليوم»: redraws the lock-screen notification at midnight and at each prayer -->
         <receiver android:name=".LockNote" android:exported="false" />
+        <!-- two reminders before the free day ends (TrialNote) -->
+        <receiver android:name=".TrialNote" android:exported="false" />
         <!-- «الويدجت»: the widgets shown as they look, for all; locked for non-subscribers -->
         <activity android:name=".WidgetShow" android:exported="false" android:label="الويدجت"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
