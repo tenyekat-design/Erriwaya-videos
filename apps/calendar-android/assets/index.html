@@ -194,6 +194,7 @@ button{cursor:pointer}
 .cpick-w{padding:10px 14px}
 .cpick-w{border-top:1.5px solid var(--orn)}
 .cpick-w h3{margin:0 4px 4px;font-family:var(--f-display);font-size:.85rem;font-weight:600;color:var(--muted)}
+.cpick-w h3 .wn{display:inline-block;min-width:1.9em;margin-inline-end:6px;padding:0 5px;border-radius:6px;background:var(--green);color:var(--on-green);font-size:.78rem;text-align:center;font-variant-numeric:tabular-nums}
 .cpick-s{flex:none;padding:0 14px 10px}
 .cpick-s input{width:100%;box-sizing:border-box;font:inherit;font-size:1rem;padding:9px 12px;border:1.5px solid var(--orn);border-radius:10px;background:var(--bg);color:var(--ink)}
 .cpick-m h4{margin:8px 4px 2px;font-family:var(--f-display);font-size:.82rem;font-weight:600;color:var(--green)}
@@ -1389,12 +1390,20 @@ const WILAYAS=[
   ["إينشيري",[["أكجوجت",[["akjoujt","أكجوجت","Akjoujt",19.75,-14.3833],["a33141","أقسرمت 2","Aghasremett 2",19.75,-14.3833,1,"akjoujt"],["a40125","الويبده","Lweibda",19.8992,-14.2993,0,"akjoujt"],["a84987","تابرنكوت","Tabrenkoutt",19.75,-14.3833,1,"akjoujt"],["a22668","شلخت أهل مسكه","Chelkhett Ehel Miska",19.75,-14.3833,1,"akjoujt"]]],["بنشاب",[["bennichab","بنشاب","Bennechab",19.45,-15.17],["c329","امحيجرات","Mheijrat",19.0061,-16.2675],["a83820","أمرصيط","Amarassitt",19.45,-15.17,1,"bennichab"],["a75519","الشگ","Chig",19.446,-15.339,0,"bennichab"],["a99972","العصماء","Elasma",19.0146,-15.1838,0,"bennichab"],["v9222767","الميناء","El Mina",19.4333,-15.35,0,"bennichab"],["a60564","الگارح","Elgareh",19.3999,-15.397,0,"bennichab"],["a15957","برجيمات 2","Bourjeimatt 2",19.45,-15.17,1,"bennichab"],["a44259","بنشاب جديد","Bennechab Jedid",19.45,-15.17,1,"bennichab"],["a83595","صونداج أهل عبد الفتاح","Sondage Ehel Abdelvetah",19.7286,-15.6774,0,"bennichab"],["a31113","مشروع لجواد","Mechrouae Lejouad",19.6479,-14.7266,0,"bennichab"],["a17991","امجيجرات الجديدة","Mhayjratt Eljedida",19.0061,-16.2675,1,"c329"],["a34191","امجيجرات القديمه","Mhayjratt Elghadima",19.0061,-16.2675,1,"c329"],["v2598162","امحيجرات","El Mḥaïjrât",19.0061,-16.2675,0,"c329"],["a27624","بلواخ","Belewakh",19.0061,-16.2675,1,"c329"],["a38874","لمسيد","Lemsid",19.0061,-16.2675,1,"c329"],["a23220","مخيم تيويليت","Campement Tiwilitt",19.0061,-16.2675,1,"c329"],["a93864","مخيم لمحيجرات","Campement Lemhaijratt",19.0061,-16.2675,1,"c329"],["a55362","مخيم لمسيد","Campement Lemsid",19.0061,-16.2675,1,"c329"]]]]],
   ["تيرس زمور",[["بير أم اكرين",[["birmoghrein","بير أم اكرين","Birmoughrein",25.24,-11.59],["a68517","ابير مريم","Boir Mariem",25.6307,-11.2182,0,"birmoghrein"],["v2380588","الشكة","Chegga",25.372,-5.7868,0,"birmoghrein"],["a40005","حاس لوقر","Hassi Loughar",25.4075,-10.7491,0,"birmoghrein"],["v2381768","عين بنتيلي","’Aïn Ben Tili",25.9178,-9.5869,0,"birmoghrein"],["v2380476","كرامبيل","Crampel",24.4333,-8.8,0,"birmoghrein"]]],["افديرك",[["fderik","افديرك","F'Deirick",22.68,-12.71],["a79077","اتويرگه","Tweirga",22.6987,-12.6868,0,"fderik"],["a65955","بطحت اصبط","Bathett Esbatt",22.7342,-12.5268,0,"fderik"],["v2598068","تواجيل","Touâjîl",22.1666,-12.6751,0,"fderik"]]],["ازويرات",[["zouerate","ازويرات","Zoueirat",22.7353,-12.4714]]]]]
 ];
+// the wilayas in their official numbering (ISO 3166-2:MR, 01 to 15; «نواكشوط» as a whole just before its three wilayas),
+// in each the wilaya's capital first, and in each moughataa its seat (the commune of the same name) first
+const W_NO={'الحوض الشرقي':1,'الحوض الغربي':2,'لعصابة':3,'كوركول':4,'لبراكنة':5,'اترارزة':6,'آدرار':7,'داخلة نواذيبو':8,'تكانت':9,'كيدي ماغا':10,'تيرس زمور':11,'إينشيري':12,'نواكشوط':12.5,'نواكشوط الغربية':13,'نواكشوط الشمالية':14,'نواكشوط الجنوبية':15};
+const W_CAP={'الحوض الشرقي':'النعمة','الحوض الغربي':'لعيون','لعصابة':'كيفة','كوركول':'كيهيدي','لبراكنة':'ألاگ','اترارزة':'روصو','آدرار':'أطار','داخلة نواذيبو':'نواذيبو','تكانت':'تجكجة','كيدي ماغا':'سيلبابي','تيرس زمور':'ازويرات','إينشيري':'أكجوجت','نواكشوط الغربية':'تفرغ زينة','نواكشوط الشمالية':'دار النعيم','نواكشوط الجنوبية':'عرفات'};
+const wNum=w=>{const n=W_NO[w];return n&&n%1===0?String(n).padStart(2,'0'):''};
+WILAYAS.sort((a,b)=>(W_NO[a[0]]??99)-(W_NO[b[0]]??99));
+WILAYAS.forEach(([w,ms])=>{ms.sort((a,b)=>(b[0]===W_CAP[w])-(a[0]===W_CAP[w]));
+  ms.forEach(([m,cs])=>cs.sort((a,b)=>((b[1]===m&&!b[6])-(a[1]===m&&!a[6]))))});
 // wilaya → moughataa → commune [id, name, French name, lat, lng, 1 if the position is only the commune's centre]; from tools/communes.tsv
 const CITIES=WILAYAS.flatMap(([w,ms])=>ms.flatMap(([m,cs])=>cs.map(([id,name,fr,lat,lng,approx,vc])=>({id,name,fr,lat,lng,w,m,approx:!!approx,vc:vc||''}))));
 // a village has vc = the id of its commune, and v = that commune's name
 {const N=new Map(CITIES.map(c=>[c.id,c.name]));CITIES.forEach(c=>c.v=c.vc?N.get(c.vc)||'':'')}
 const VILLAGES=CITIES.filter(c=>c.vc);
-const cityOptions=sel=>WILAYAS.map(([w,ms])=>`<optgroup label="ولاية ${w}">${ms.flatMap(m=>m[1]).filter(c=>!c[6]).map(([id,name])=>`<option value="${id}"${id===sel?' selected':''}>${name}</option>`).join('')}</optgroup>`).join('');
+const cityOptions=sel=>WILAYAS.map(([w,ms])=>`<optgroup label="${wNum(w)?wNum(w)+' · ':''}ولاية ${w}">${ms.flatMap(m=>m[1]).filter(c=>!c[6]).map(([id,name])=>`<option value="${id}"${id===sel?' selected':''}>${name}</option>`).join('')}</optgroup>`).join('');
 const METHODS={
   mwl:{name:'رابطة العالم الإسلامي (18° / 17°)',fajr:18,isha:17},
   morocco:{name:'وزارة الأوقاف المغربية (19° / 17°)',fajr:19,isha:17},
@@ -1574,7 +1583,7 @@ function pickCity(sel,find){
     let h='';
     if(step==='m'){
       h=head('اختر المقاطعة')+`<div class="cpick-s"><input type="search" placeholder="ابحث عن مقاطعة أو بلدية أو قرية…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب مكان إلى موقعي</button>':''}</div><div class="cpick-l" id="pkL">`+
-        WILAYAS.map(([w])=>`<section class="cpick-w"><h3>ولاية ${w}</h3><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>it(`data-m="${x.cap}"`,x.m,x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة',x===moughOf(S.city))).join('')}</div></section>`).join('')+
+        WILAYAS.map(([w])=>`<section class="cpick-w"><h3>${wNum(w)?`<span class="wn">${wNum(w)}</span>`:''}ولاية ${w}</h3><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>it(`data-m="${x.cap}"`,x.m,x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة',x===moughOf(S.city))).join('')}</div></section>`).join('')+
         `</div><div class="cpick-l" id="pkR" hidden></div>`;
     }else if(step==='c'){
       h=head(`بلديات مقاطعة ${vesc(M.m)}`,'m')+`<div class="cpick-l"><section class="cpick-w"><div class="cpick-g">${M.ids.map(id=>{const c=cityOf(id),n=vill(c).length;return it(`data-c="${id}"`,vesc(c.name),n?`${n} قرية`:'دون قرى مسجلة',id===S.city)}).join('')}</div></section></div>`;
@@ -1896,8 +1905,8 @@ window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin});
 {let n=0,t0=0;document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('#appVer')))return;const now=Date.now();n=now-t0<700?n+1:1;t0=now;if(n>=5){n=0;location.hash='#sg-admin'}})}
 // a city (مدينة) is a moughataa, its seat the commune of the same name; the commune (بلدية) belongs to it; villages to the commune
 const MOUGH=WILAYAS.flatMap(([w,ms])=>ms.map(([m,cs])=>{const C=cs.filter(c=>!c[6]);const cap=C.find(c=>c[1]===m)||C[0];return {w,m:m||cap[1],cap:cap[0],ids:C.map(c=>c[0]),names:C.map(c=>c[1])}}));
-const moughOf=id=>MOUGH.find(x=>x.ids.includes(id))||MOUGH[0];
-const moughOptions=()=>{const cur=moughOf(S.city);return WILAYAS.map(([w])=>`<optgroup label="ولاية ${w}">${MOUGH.filter(x=>x.w===w).map(x=>`<option value="${x===cur?S.city:x.cap}"${x===cur?' selected':''}>${x.m}</option>`).join('')}</optgroup>`).join('')};
+const moughOf=id=>MOUGH.find(x=>x.ids.includes(id))||MOUGH.find(x=>x.cap==='nkc')||MOUGH[0];
+const moughOptions=()=>{const cur=moughOf(S.city);return WILAYAS.map(([w])=>`<optgroup label="${wNum(w)?wNum(w)+' · ':''}ولاية ${w}">${MOUGH.filter(x=>x.w===w).map(x=>`<option value="${x===cur?S.city:x.cap}"${x===cur?' selected':''}>${x.m}</option>`).join('')}</optgroup>`).join('')};
 function renderCities(){
   $('citySel').innerHTML=moughOptions();$('citySel').value=S.city;
 }
