@@ -1081,6 +1081,9 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-step.done header i{background:var(--green);color:var(--on-green);font-size:0}
 .lk-step.done header i::before{content:"✓";font-size:.95rem}
 .lk-step.dim{opacity:.62}
+.lk-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#1FA855!important;color:#fff!important;border-color:#1FA855!important}
+.lk-wa svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6}
+.lk-wa-n{font-size:.8rem!important;text-align:center!important}
 .lk-step .lk-note{margin:0;font-size:.86rem;line-height:1.75;color:var(--muted);text-align:start}
 #lkS4{margin:0}
 .lk-xfer{font-size:.88rem;color:var(--muted);line-height:1.7}
@@ -1090,7 +1093,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-xfer .ln small{display:block;font-size:.76rem;color:var(--muted)}
 .lk-xfer .ln b{display:block;font-size:1.25rem;color:var(--ink);line-height:1.3}
 .lk-xfer .ln b.num{direction:ltr;unicode-bidi:isolate;font:800 1.4rem/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em;text-align:start}
-.lk-xfer .ln .btn{flex:none;padding:8px 14px}
+.lk-xfer .ln .btn{flex:none;padding:8px 14px;text-decoration:none}
 .lk-xfer .ln img{width:34px;height:34px;border-radius:9px;background:#fff;object-fit:contain;flex:none}
 .lk-xfer .tip{margin:2px 0 0;font-size:.8rem}
 .lk-pay .pm[aria-pressed="true"]::after{content:"✓";position:absolute;top:-7px;inset-inline-end:-6px;width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--on-green);font-size:.72rem;font-weight:800;display:grid;place-items:center}
@@ -1211,41 +1214,24 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <div class="lk-perks" id="lkPerks" hidden></div>
   <button type="button" class="btn primary lk-cta" id="lkCta">اشترك الآن</button>
   <section class="lk-how" id="lkHow" aria-labelledby="lkHowT">
-    <h3 id="lkHowT">طريقة الاشتراك في 4 خطوات</h3>
+    <h3 id="lkHowT">طريقة الاشتراك</h3>
     <div class="lk-step" id="lkS1"><header><i>1</i><b>اختر التطبيق الذي ستدفع به</b></header><div class="lk-pay" id="lkPay"></div></div>
-    <div class="lk-step" id="lkS2"><header><i>2</i><b>حوّل المبلغ إلى رقم الناشر</b></header><div class="lk-xfer" id="lkXfer"></div></div>
-    <div class="lk-step" id="lkS3"><header><i>3</i><b>أخبرنا أنك دفعت</b></header>
+    <div class="lk-step" id="lkS2"><header><i>2</i><b>ادفع 200 أوقية جديدة</b></header><div class="lk-xfer" id="lkXfer"></div></div>
+    <div class="lk-step" id="lkS3"><header><i>3</i><b>أرسل صورة العملية على واتساب</b></header>
       <div class="lk-auto" id="lkAuto">
+        <p class="lk-note">بعد الدفع خذ صورة شاشة لرسالة نجاح العملية في تطبيق الدفع، ثم:</p>
         <label id="lkPhoneL" for="lkPhone"></label><input id="lkPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="20" dir="ltr">
-        <label id="lkRefL" for="lkRef"></label><input id="lkRef" type="text" autocomplete="off" maxlength="40" dir="ltr">
-        <button type="button" class="btn primary" id="lkSend"></button>
+        <input id="lkRef" type="hidden">
+        <button type="button" class="btn primary lk-wa" id="lkSend"></button>
+        <p class="lk-note lk-wa-n" id="lkWaN"></p>
         <p id="lkAutoMsg" role="status"></p>
       </div></div>
-    <div class="lk-step" id="lkS4"><header><i>4</i><b>يُفتح التطبيق وحده</b></header><p class="lk-note">يصل الدفع إلى هاتف الناشر فيُفتح تطبيقك تلقائيًا خلال دقائق، لسنة كاملة. أبقِ الإنترنت مفتوحًا، ولا حاجة إلى إرسال أي شيء آخر.</p></div>
+    <div class="lk-step" id="lkS4"><header><i>4</i><b>يُفتح التطبيق</b></header><p class="lk-note">بعد التأكد من وصول المبلغ يُفتح تطبيقك تلقائيًا لسنة كاملة، عادةً خلال دقائق. أبقِ الإنترنت مفتوحًا.</p></div>
   </section>
   <div class="lk-fam" id="lkFam" hidden></div>
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
   <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
   <a class="btn lk-share" id="lkShare" hidden rel="noopener"></a>
-  <details class="lk-man" id="lkMan"><summary id="lkManS"></summary>
-  <div class="lk-row" id="lkContact" hidden></div>
-    <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
-    <textarea id="lkCode" autocomplete="off" autocapitalize="characters" spellcheck="false"></textarea>
-    <div class="lk-row"><button type="button" class="btn" id="lkPaste"></button><button type="button" class="btn primary" id="lkGo"></button></div>
-    <p id="lkMsg" role="status"></p>
-  </details>
-</div></div>
-  <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
-  <div class="lk-fam" id="lkFam" hidden></div>
-  <div class="lk-plan" id="lkPlan" hidden></div>
-  <ol class="lk-steps" id="lkSteps"></ol>
-  <div class="lk-pay" id="lkPay" hidden></div>
-  <div class="lk-auto" id="lkAuto">
-    <label id="lkPhoneL" for="lkPhone"></label><input id="lkPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="20" dir="ltr">
-    <label id="lkRefL" for="lkRef"></label><input id="lkRef" type="text" autocomplete="off" maxlength="40" dir="ltr">
-    <button type="button" class="btn primary" id="lkSend"></button>
-    <p id="lkAutoMsg" role="status"></p>
-  </div>
   <details class="lk-man" id="lkMan"><summary id="lkManS"></summary>
   <div class="lk-row" id="lkContact" hidden></div>
     <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
@@ -3771,7 +3757,7 @@ window.tgCall=async(token,method,params)=>{const q=new URLSearchParams();for(con
   try{const A=window.AndroidApp;if(A&&typeof A.tg==='function'){const r=JSON.parse(A.tg(token,method,JSON.stringify(params||{}))||'{}');if(r.ok||r.error_code)return r.error_code===0?Object.assign(r,{description:why.concat(r.description).join(' / ')}):r}}catch(e){}
   if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors'});return{ok:true,blind:true}}catch(e){}}
   return{ok:false,error_code:0,description:why.join(' / ')}};
-const SUB={price:'',famPrice:'',amount:'',link:'',whatsapp:'',phone:'',pay:[
+const SUB={price:'200 أوقية جديدة في السنة',famPrice:'',amount:'200',link:'',whatsapp:'22236152800',phone:'',pay:[
   {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
   {k:'masrvi',n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
   {k:'sedad',n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
@@ -3799,7 +3785,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','famPrice','amount','famAmount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string'&&c[k].trim())SUB[k]=c[k].trim()});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
@@ -3812,7 +3798,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
         if(F.plan&&F.plan.stringValue==='family')jset('mrcal.fam',{fam:(F.fam&&F.fam.stringValue)||'',at:Date.now()});
         if(code&&A.subActivate(code)==='ok'){jset('mrcal.subReq',null);st=state()||st;$('lkAutoMsg').textContent='';hide();toast(L('تم التفعيل تلقائيًا. اشتراكك حتى ','Activé automatiquement. Abonnement jusqu’au ')+dstr(st.until))}}}
     catch(e){}polling=false}
-  const pendingText=p=>L('وصل طلبك. يُفتح التطبيق تلقائيًا فور وصول الدفع إلى الناشر، في دقائق عادةً. أبقِ الإنترنت مفتوحًا.','Demande reçue. L’application s’ouvrira automatiquement dès que le paiement arrive chez l’éditeur, en général en quelques minutes. Restez connecté.')
+  const pendingText=p=>L('سُجّل طلبك. إن لم ترسل صورة العملية بعد فاضغط الزر مرة أخرى وأرسلها على واتساب. يُفتح التطبيق تلقائيًا بعد التأكد من الدفع.','Demande reçue.')
     +(Date.now()-p.at>30*60e3?L(' إن طال الانتظار فتحقق من رقم حسابك أعلاه أو راسل الناشر.',' Si l’attente se prolonge, vérifiez le numéro ci-dessus ou contactez l’éditeur.'):'');
   function fill(){
     const paid=st.until>st.now,trial=!paid&&st.trialEnd>st.now;
@@ -3861,9 +3847,8 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
        const b=document.createElement('b');b.textContent=fr?m.fr:m.n;e.append(i,b);
        P.append(e)}}
     xferBox();
-    $('lkPhoneL').textContent='رقم حسابك الذي دفعت منه (8 أرقام)';$('lkPhone').placeholder='4X XX XX XX';
-    $('lkRefL').textContent='رقم العملية من رسالة البنك (اختياري، يسرّع التفعيل)';
-    $('lkSend').textContent='دفعتُ — فعّل تطبيقي';
+    $('lkPhoneL').textContent='رقم الحساب الذي دفعت منه';$('lkPhone').placeholder='4X XX XX XX';
+        $('lkSend').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z"/><path d="M8.6 7.6c.3-.6.6-.6.9-.6h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.5.7c-.1.2-.2.3 0 .6.5.9 1.6 2 2.6 2.5.3.2.5.1.6 0l.7-.9c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.3.4.5 0 .9-.6 1.8-1.5 2-1 .3-2.4.1-4.3-1.1-2.3-1.5-3.6-3.6-3.9-4.6-.3-1-.1-2.1.5-2.9z" fill="currentColor" stroke="none"/></svg><span>أرسل صورة الدفع على واتساب</span>';$('lkWaN').textContent='يفتح واتساب برسالة جاهزة فيها رقم جهازك \u2066'+showId(st.id)+'\u2069، أرفق بها صورة العملية ثم اضغط إرسال.';
     $('lkManS').textContent='عندي رمز تفعيل، أو أحتاج مساعدة من الناشر';
     {const p=jget('mrcal.subReq'),m=$('lkAutoMsg');if(p&&!paid){m.className='ok';m.textContent=pendingText(p);if(!$('lkPhone').value)$('lkPhone').value=p.phone||''}}
     $('lkIdL').textContent=L('رقم جهازك','Numéro de votre appareil');$('lkId').textContent=showId(st.id);$('lkCopy').textContent=L('نسخ','Copier');
@@ -3882,6 +3867,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     const text=fam?SUB.famPrice:SUB.price,amt=numIn(fam?(SUB.famAmount||SUB.famPrice):(SUB.amount||SUB.price));
     const unit=/قديم/.test(text)?'أوقية قديمة':'أوقية جديدة';return {fam,text,amt,unit}}
   function priceBox(paid){const E=$('lkPrice'),p=plan();E.innerHTML='';
+    $('lkS2').querySelector('b').textContent=p.amt>0?'ادفع '+p.amt+' '+p.unit:'ادفع قيمة الاشتراك';
     const el=(t,c,x)=>{const d=document.createElement(t);if(c)d.className=c;if(x!=null)d.textContent=x;return d};
     E.append(el('span','tag',paid?'تجديد الاشتراك':p.fam?'الاشتراك العائلي · حتى 5 هواتف':'الاشتراك السنوي'));
     if(p.amt>0){const a=el('div','amt');a.append(el('b','',p.amt.toLocaleString('en-US')),el('span','',p.unit));E.append(a);
@@ -3895,16 +3881,16 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   function xferBox(){const X=$('lkXfer'),m=SUB.pay.find(x=>x.k===appSel),p=plan();X.innerHTML='';
     const el=(t,c,x)=>{const d=document.createElement(t);if(c)d.className=c;if(x!=null)d.textContent=x;return d};
     $('lkS1').className='lk-step '+(m?'done':'on');$('lkS2').className='lk-step '+(m?'on':'dim');$('lkS3').className='lk-step'+(m?'':' dim');
-    if(!m){X.append(el('p','hint','اختر تطبيق الدفع أعلاه ليظهر رقم الناشر فيه.'));return}
+    if(!m){X.append(el('p','hint','اختر تطبيق الدفع أعلاه ليظهر رقم الدفع فيه.'));return}
     const box=el('div','box');
     const l1=el('div','ln'),t1=el('span');t1.append(el('small','','المبلغ'),el('b','',p.amt>0?p.amt.toLocaleString('en-US')+' '+p.unit:(p.text||'اسأل الناشر عن السعر')));l1.append(t1);box.append(l1);
-    const l2=el('div','ln'),t2=el('span');t2.append(el('small','','رقم الناشر في '+m.n));
+    const l2=el('div','ln'),t2=el('span');t2.append(el('small','','حوّل إلى هذا الرقم في '+m.n));
     if(m.num){t2.append(el('b','num',m.num));const c=el('button','btn','نسخ');c.type='button';
       c.onclick=()=>{let ok=false;try{ok=A.copy(m.num)}catch(x){}toast(ok?'نُسخ الرقم، الصقه في '+m.n:'تعذّر النسخ')};l2.append(t2,c)}
     else{t2.append(el('b','','يُرسله إليك الناشر'));l2.append(t2);
       if(SUB.whatsapp){const a=el('a','btn','اطلبه');a.rel='noopener';a.href='https://wa.me/'+SUB.whatsapp+'?text='+encodeURIComponent('السلام عليكم، ما رقم الدفع في '+m.n+' للاشتراك في التقويم الموريتاني؟');l2.append(a)}}
     if(PAY_IMG[m.k]){const i=el('img');i.src=PAY_IMG[m.k];i.alt='';l2.prepend(i)}
-    box.append(l2,el('p','tip','افتح تطبيق '+m.n+'، وحوّل المبلغ كاملًا إلى هذا الرقم، ثم عد إلى هنا.'));X.append(box)}
+    box.append(l2,el('p','tip','افتح تطبيق '+m.n+'، وحوّل '+(p.amt>0?p.amt+' '+p.unit:'المبلغ')+' كاملة إلى هذا الرقم، ثم خذ صورة شاشة لرسالة نجاح العملية.'));X.append(box)}
   // the family: a family subscriber adds up to 4 more phones by their device numbers (sub_family/<this phone>);
   // the publisher's phone gives each its code. The list comes from this phone's code document (fam).
   let famLoaded=0;
@@ -3948,7 +3934,10 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     setTimeout(()=>$('lkS2').scrollIntoView({behavior:'smooth',block:'nearest'}),60)});
   $('lkSend').onclick=async()=>{const m=$('lkAutoMsg'),ph=west($('lkPhone').value).replace(/\D/g,''),ref=west($('lkRef').value).trim().slice(0,40);m.className='';
     if(!appSel){m.textContent=L('اختر أولًا التطبيق الذي دفعت به.','Choisissez d’abord l’application utilisée.');return}
-    if(ph.length<8||ph.length>15){m.textContent=L('اكتب رقم حسابك الذي دفعت منه (8 أرقام).','Saisissez le numéro du compte utilisé (8 chiffres).');return}
+    if(ph.length<8||ph.length>15){m.textContent='اكتب رقم الحساب الذي دفعت منه (8 أرقام).';$('lkPhone').focus();return}
+    {const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'},pl=plan();
+     const t='السلام عليكم، دفعت '+(pl.amt>0?pl.amt+' '+pl.unit:'قيمة الاشتراك')+' للاشتراك في تطبيق التقويم الموريتاني.\nتطبيق الدفع: '+(AP[appSel]||appSel)+'\nدفعت من الرقم: '+ph+'\nرقم جهازي: '+showId(st.id)+'\n\n(أرفقت صورة العملية)';
+     const w=document.createElement('a');w.href='https://wa.me/'+(SUB.whatsapp||'22236152800')+'?text='+encodeURIComponent(t);w.rel='noopener';document.body.append(w);w.click();w.remove()}
     // an individual request stays exactly as before (no plan field: it passes the old rules too); only a family one says so
     const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');if(SUB.famPrice&&planSel==='family')f.plan='family';b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -3961,7 +3950,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       if(tg.tgToken&&tg.tgChat){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
         const text=`🔔 طلب اشتراك ${f.plan==='family'?'عائلي ':''}جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
         window.tgCall(tg.tgToken,'sendMessage',{chat_id:tg.tgChat,text}).catch(()=>{})}}
-    catch(e){m.className='';m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت وأعد المحاولة.','Envoi impossible. Vérifiez la connexion et réessayez.')}
+    catch(e){m.className='ok';m.textContent='أرسل صورة العملية على واتساب، ويُفعَّل تطبيقك بعد التأكد من الدفع. أبقِ الإنترنت مفتوحًا.';jset('mrcal.subReq',{at:Date.now(),app:appSel,phone:ph,plan:'one'});lastPoll=0}
     b.disabled=false};
   // looks for this phone's code: every few seconds just after a request, then every minute; every five minutes while locked
   setInterval(()=>{if(document.hidden)return;const p=jget('mrcal.subReq'),paid=st.until>st.now;if(paid&&!p)return;
