@@ -50,6 +50,10 @@ for n,secs in jobs:
     last=max((i for i in range(len(R)) if at[i] is not None),default=-1)
     nver=vi[last]+1 if last>=0 else 0
     print('  STARTS',json.dumps(starts[:nver+1]),'matched',sum(x is not None for x in at),'of',len(R),flush=True)
-    res[n]={'starts':starts[:nver],'end':W[-1][2] if W else dur,'dur':dur}
+    # every verse: the time of its first word, interpolated between the matched words (monotonic)
+    ia=[i for i in range(len(R)) if at[i] is not None];ta=np.maximum.accumulate(np.array([at[i] for i in ia])) if ia else np.array([])
+    interp=[float(np.interp(idx0,ia,ta)) if ia else None for idx0 in [vi.index(k) for k in range(len(V))]]
+    res[n]={'starts':starts[:nver],'interp':[round(x,2) for x in interp],'end':W[-1][2] if W else dur,'dur':dur,
+            'words':[[w,round(t0,2),round(t1,2)] for w,t0,t1 in W]}
 json.dump(res,open(f'asr-{rid}.json','w'))
 print('RESULT',json.dumps(res),flush=True)
