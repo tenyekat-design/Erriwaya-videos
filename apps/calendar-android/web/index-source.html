@@ -424,8 +424,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wallGrid button[aria-pressed="true"]{border-color:var(--gold)}
 .wallGrid img{display:block;width:100%;aspect-ratio:9/20;object-fit:cover}
 .wallGrid span{position:absolute;bottom:0;inset-inline:0;background:#03062bcc;color:#F2EEDC;font-size:.78rem;padding:3px 0;text-align:center}
-#walls{position:fixed;inset:0;z-index:80;background:#03062B;color:#F2EEDC;overflow:auto;padding:14px 14px 90px}
+#walls{position:fixed;inset:0;z-index:96;background:#03062B;color:#F2EEDC;overflow:auto;padding:14px 14px 90px}
 #walls[hidden]{display:none}
+.locked #walls:not([hidden]){display:block!important}
+.lk-more{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px}
 #walls header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 #walls h2{margin:0;font-size:1.25rem;color:#E6BC62;flex:1}
 #walls .wl-x{border:1.5px solid #E6BC62;background:none;color:#F2EEDC;border-radius:999px;width:36px;height:36px;font-size:1rem}
@@ -1008,6 +1010,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <p class="lk-st" id="lkSt"></p>
   <p id="lkP"></p>
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
+  <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
   <ol class="lk-steps" id="lkSteps"></ol>
   <div class="lk-pay" id="lkPay" hidden></div>
   <div class="lk-auto" id="lkAuto">
@@ -3682,6 +3685,14 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     b.addEventListener('click',e=>{e.stopPropagation();open()});
     tiles.insertBefore(b,tiles.querySelector('[data-open="set"]'));
     const n=tiles.querySelectorAll('button').length;if(tiles.style.gridTemplateColumns)tiles.style.gridTemplateColumns='repeat('+(n<=5?n:Math.ceil(n/2))+',minmax(0,1fr))'}
+  // the widgets' showcase (WidgetShow): a tile of its own too
+  if(A&&typeof A.showWidgets==='function'){
+    if(tiles){const b=document.createElement('button');b.type='button';b.dataset.open='widgets';b.setAttribute('aria-expanded','false');
+      b.innerHTML='<span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="17" height="7.5" rx="2"/></svg></span><span>الويدجت</span>';
+      b.addEventListener('click',e=>{e.stopPropagation();try{A.showWidgets()}catch(x){}});
+      tiles.insertBefore(b,tiles.querySelector('[data-open="walls"]'));
+      const n=tiles.querySelectorAll('button').length;if(tiles.style.gridTemplateColumns)tiles.style.gridTemplateColumns='repeat('+(n<=5?n:Math.ceil(n/2))+',minmax(0,1fr))'}
+    const more=$('lkMore');if(more){more.hidden=false;$('lkSeeW').onclick=()=>{try{A.showWidgets()}catch(x){}};$('lkSeeB').onclick=open}}
   // on the lock screen: a glimpse of them, to make the subscription worth it
   const lw=$('lkWalls');if(lw&&app){lw.querySelector('div').innerHTML=WALLS.map(([k])=>'<img alt="" draggable="false" src="wallpapers/'+k+'-s.jpg">').join('');lw.hidden=false}
 })();

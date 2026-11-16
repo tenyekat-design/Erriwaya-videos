@@ -148,9 +148,10 @@ HEAD='''<?xml version="1.0" encoding="utf-8"?>
             android:textColor="#B9C2E8" android:shadowColor="#80000000" android:shadowRadius="4" />
     </LinearLayout>
     <TextView android:id="@+id/cLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="center" android:gravity="center" android:padding="10dp" android:visibility="gone"
-        android:text="@string/clock_widget_locked" android:textSize="14sp" android:textStyle="bold" android:maxLines="2"
-        android:textColor="#F6DFA0" android:shadowColor="#000000" android:shadowRadius="5" />
+        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="6dp" android:gravity="center"
+        android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:visibility="gone"
+        android:background="@drawable/clock_chip" android:text="@string/widget_locked_short" android:textSize="12sp" android:textStyle="bold"
+        android:maxLines="1" android:textColor="#0B1F5C" />
 </FrameLayout>
 '''
 def tc(fmt,size,family,color,extra=''):

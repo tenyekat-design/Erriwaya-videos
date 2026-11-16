@@ -43,12 +43,12 @@ public class MonthWidget extends AppWidgetProvider {
         return PendingIntent.getBroadcast(ctx, 7, new Intent(ctx, MonthWidget.class).setAction(TICK), flags);
     }
 
-    private static int pic(Context ctx, String set, int month) {
+    static int pic(Context ctx, String set, int month) {
         return ctx.getResources().getIdentifier(String.format(java.util.Locale.ROOT, "m%s_%02d", set, month), "drawable", ctx.getPackageName());
     }
 
     /** The month's lettering with its date under it, as one picture (transparent around them). */
-    private static android.graphics.Bitmap card(Context ctx, int res, String date) {
+    static android.graphics.Bitmap card(Context ctx, int res, String date) {
         android.graphics.BitmapFactory.Options o = new android.graphics.BitmapFactory.Options();
         o.inScaled = false;
         android.graphics.Bitmap art = android.graphics.BitmapFactory.decodeResource(ctx.getResources(), res, o);
@@ -85,7 +85,7 @@ public class MonthWidget extends AppWidgetProvider {
             if (open && end > now) next = Math.min(next, end);
             JSONObject c = AdhanReceiver.config(ctx);
             int[] g = PrayerCalc.gregorian(day), h = CalendarWidget.hijri(day, c == null ? 0 : c.optInt("adj", 0));
-            int hm = Math.max(1, Math.min(12, h[1])), gm = Math.max(1, Math.min(12, g[1]));
+            int hm0 = Math.max(1, Math.min(12, h[1])), gm0 = Math.max(1, Math.min(12, g[1]));
             int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0);
             Intent app = new Intent(ctx, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             for (int id : ids) {
@@ -93,7 +93,10 @@ public class MonthWidget extends AppWidgetProvider {
                 String show = Widgets.months(ctx, id);
                 // each month one picture: its lettering with its date right under it, so the two always stay together
                 String hd = h[2] + " · " + h[0] + " هـ", gd = g[2] + " · " + g[0] + " م";
-                boolean[] on = {open && show.contains("h"), open && show.contains("l"), open && show.contains("g")};
+                int hm = hm0, gm = gm0;
+                // not subscribed: seen but not of use, the first month with no date, dimmed (the owner's choice, 16 Nov 2026)
+                boolean[] on = {show.contains("h"), show.contains("l"), show.contains("g")};
+                if (!open) { hm = 1; gm = 1; hd = ""; gd = ""; }
                 int[] view = {R.id.mH, R.id.mL, R.id.mG};
                 String[] set = {"h", "l", "g"}, date = {hd, hd, gd};
                 int count = 0;
@@ -106,6 +109,7 @@ public class MonthWidget extends AppWidgetProvider {
                     if (on[k]) {
                         if (count == 2) v.setViewPadding(view[k], seen == 0 ? gap : 0, 0, seen == 1 ? gap : 0, 0);
                         v.setImageViewBitmap(view[k], card(ctx, pic(ctx, set[k], k == 2 ? gm : hm), date[k]));
+                        v.setInt(view[k], "setImageAlpha", open ? 255 : 90);
                         seen++;
                     }
                 }

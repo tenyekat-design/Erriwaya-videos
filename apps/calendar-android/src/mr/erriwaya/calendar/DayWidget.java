@@ -67,8 +67,10 @@ public class DayWidget extends AppWidgetProvider {
             JSONObject c = AdhanReceiver.config(ctx);
             int[] g = PrayerCalc.gregorian(day), h = CalendarWidget.hijri(day, c == null ? 0 : c.optInt("adj", 0));
             int di = (int) (((day + 4) % 7 + 7) % 7), hm = Math.max(1, Math.min(12, h[1])) - 1;   // 1970-01-01 was a Thursday
-            v.setImageViewResource(R.id.dImg, IMG[di]);
-            v.setViewVisibility(R.id.dImg, open ? View.VISIBLE : View.INVISIBLE);   // not subscribed: no day, only the invitation
+            // not subscribed: seen but not of use, a fixed day (Friday), dimmed, with the invitation (the owner's choice, 16 Nov 2026)
+            v.setImageViewResource(R.id.dImg, open ? IMG[di] : IMG[5]);
+            v.setViewVisibility(R.id.dImg, View.VISIBLE);
+            v.setInt(R.id.dImg, "setImageAlpha", open ? 255 : 90);
             v.setViewVisibility(R.id.dLock, open ? View.GONE : View.VISIBLE);
             v.setViewVisibility(R.id.dDate, View.GONE);   // the day alone, larger (the owner's choice, 16 Nov 2026)
             v.setTextViewText(R.id.dDate, h[2] + " " + H_MONTHS[hm] + " " + h[0] + " هـ · " + g[2] + " " + G_MONTHS[g[1] - 1] + " " + g[0]);

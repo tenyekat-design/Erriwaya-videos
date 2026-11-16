@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «آية»: a verse in the Warsh script, drawn as a picture by AyatWidget (a widget cannot use the app's fonts), over the
+     night-blue ground; a tap shows the next one, and it turns by itself every hour. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/aRoot" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/aBg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
+    <ImageView android:id="@+id/aImg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:padding="6dp" android:scaleType="fitCenter" android:contentDescription="@string/ayat_widget_name" />
+    <TextView android:id="@+id/aLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="6dp" android:gravity="center"
+        android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:visibility="gone"
+        android:background="@drawable/clock_chip" android:text="@string/widget_locked_short" android:textSize="12sp" android:textStyle="bold"
+        android:maxLines="1" android:textColor="#0B1F5C" />
+</FrameLayout>

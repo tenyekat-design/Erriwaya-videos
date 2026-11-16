@@ -206,10 +206,10 @@ public class WidgetPhoto extends Activity {
             AppWidgetProviderInfo info = AppWidgetManager.getInstance(this).getAppWidgetInfo(id);
             String cls = info != null && info.provider != null ? info.provider.getClassName() : "";
             String layout = cls.endsWith(".ClockWidget") ? "widget_clock_" + Widgets.clock(this, id)
-                    : cls.endsWith(".DayWidget") ? "widget_day" : cls.endsWith(".MonthWidget") ? "widget_month" : "widget_calendar";
+                    : cls.endsWith(".DayWidget") ? "widget_day" : cls.endsWith(".AyatWidget") ? "widget_ayat" : cls.endsWith(".MonthWidget") ? "widget_month" : "widget_calendar";
             int res = getResources().getIdentifier(layout, "layout", getPackageName());
             View w = getLayoutInflater().inflate(res, over, false);
-            for (int bgId : new int[]{R.id.cBg, R.id.dBg, R.id.mBg, R.id.wBg}) {
+            for (int bgId : new int[]{R.id.cBg, R.id.dBg, R.id.mBg, R.id.wBg, R.id.aBg}) {
                 View g = w.findViewById(bgId);
                 if (g != null) g.setVisibility(View.INVISIBLE);
             }

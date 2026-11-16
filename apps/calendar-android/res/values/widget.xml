@@ -15,6 +15,9 @@
     <string name="month_widget_name">أشهر السنة بالخط العربي</string>
     <string name="month_widget_desc">اسم الشهر الهجري والحساني والميلادي بالخط العربي، كلها أو بعضها، بخلفية تختار عتمتها</string>
     <string name="month_widget_locked">أشهر السنة بالخط العربي\nللمشتركين: اشترك في التقويم الموريتاني</string>
+    <string name="ayat_widget_name">آيات من القرآن</string>
+    <string name="ayat_widget_desc">آية من القرآن الكريم برواية ورش، تتبدّل كل ساعة، وتنتقل إلى غيرها باللمس</string>
+    <string name="widget_locked_short">للمشتركين: اشترك في التقويم الموريتاني</string>
     <string name="day_widget_name">يوم الأسبوع بالخط العربي</string>
     <string name="day_widget_desc">اسم اليوم بالخط العربي مع التاريخ الهجري والميلادي، رأسيةً للشاشة الرئيسية وشاشة القفل</string>
     <string name="day_widget_locked">يوم الأسبوع بالخط العربي\nللمشتركين: اشترك في التقويم الموريتاني</string>

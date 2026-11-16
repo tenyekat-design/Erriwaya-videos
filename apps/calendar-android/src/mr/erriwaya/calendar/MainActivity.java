@@ -221,6 +221,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setWidgetBg(int percent) { Widgets.setBg(MainActivity.this, percent); }
 
+        /** «الويدجت»: the showcase of the widgets (WidgetShow). */
+        @JavascriptInterface
+        public void showWidgets() { runOnUiThread(() -> startActivity(new Intent(MainActivity.this, WidgetShow.class))); }
+
         /** «إشعار اليوم» on the lock screen (LockNote): on or off; turning it on asks for notifications if needed. */
         @JavascriptInterface
         public boolean lockNote() { return LockNote.on(MainActivity.this); }

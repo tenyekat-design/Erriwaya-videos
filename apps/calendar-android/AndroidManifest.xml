@@ -61,6 +61,9 @@
         <!-- a photo behind a widget: picked, cropped to the widget's shape, dimmed (from the widget's settings) -->
         <!-- «إشعار اليوم»: redraws the lock-screen notification at midnight and at each prayer -->
         <receiver android:name=".LockNote" android:exported="false" />
+        <!-- «الويدجت»: the widgets shown as they look, for all; locked for non-subscribers -->
+        <activity android:name=".WidgetShow" android:exported="false" android:label="الويدجت"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
         <activity android:name=".WidgetPhoto" android:exported="false" android:label="خلفية الويدجت"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:excludeFromRecents="true" />
         <!-- the launcher reads the widgets' photos from here (files/wbg only, read-only) -->
@@ -88,6 +91,13 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/month_widget" />
         </receiver>
         <!-- «يوم الأسبوع»: offered to everyone; it shows the day during the free day and for subscribers, and asks to subscribe otherwise -->
+        <!-- «آيات من القرآن»: a verse that changes every hour, or on a tap -->
+        <receiver android:name=".AyatWidget" android:exported="true" android:label="@string/ayat_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/ayat_widget" />
+        </receiver>
         <receiver android:name=".DayWidget" android:exported="true" android:label="@string/day_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

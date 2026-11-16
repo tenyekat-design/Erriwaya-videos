@@ -71,6 +71,7 @@ final class Widgets {
         DayWidget.updateAll(ctx);
         MonthWidget.updateAll(ctx);
         LockNote.update(ctx);
+        AyatWidget.updateAll(ctx);
     }
 
     private static int clamp(int v) { return Math.max(0, Math.min(100, v)); }

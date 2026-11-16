@@ -83,15 +83,22 @@ public class ClockWidget extends AppWidgetProvider {
             float scale = Math.min(2f, ctx.getResources().getDisplayMetrics().density);   // keeps each picture well under the binder limit
             for (int id : ids) {
                 String face = Widgets.clock(ctx, id);
+                if (!open) face = "d1";   // not subscribed: a fixed time (10:08), dimmed, with the invitation
                 int layout = ctx.getResources().getIdentifier("widget_clock_" + face, "layout", ctx.getPackageName());
                 RemoteViews v = new RemoteViews(ctx.getPackageName(), layout != 0 ? layout : R.layout.widget_clock_d1);
                 if (face.startsWith("d") && open) {   // the figures are a picture (ClockArt), redrawn every minute
                     figures = true;
                     v.setImageViewBitmap(R.id.cTimeImg, ClockArt.render(ctx, face, cal, scale));
+                } else if (!open) {
+                    java.util.Calendar fixed = java.util.Calendar.getInstance();
+                    fixed.set(java.util.Calendar.HOUR_OF_DAY, 10);
+                    fixed.set(java.util.Calendar.MINUTE, 8);
+                    v.setImageViewBitmap(R.id.cTimeImg, ClockArt.render(ctx, "d1", fixed, scale));
+                    v.setInt(R.id.cTimeImg, "setImageAlpha", 90);
                 }
                 v.setTextViewText(R.id.cNext, nextLine);
-                v.setViewVisibility(R.id.cNext, Widgets.clockNext(ctx, id) ? View.VISIBLE : View.GONE);
-                v.setViewVisibility(R.id.cBody, open ? View.VISIBLE : View.GONE);
+                v.setViewVisibility(R.id.cNext, open && Widgets.clockNext(ctx, id) ? View.VISIBLE : View.GONE);
+                v.setViewVisibility(R.id.cBody, View.VISIBLE);
                 v.setViewVisibility(R.id.cLock, open ? View.GONE : View.VISIBLE);
                 Widgets.applyBg(ctx, v, R.id.cBg, id, R.drawable.widget_day_bg);
                 v.setOnClickPendingIntent(R.id.cRoot, PendingIntent.getActivity(ctx, 10, app, flags));
