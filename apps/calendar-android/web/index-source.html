@@ -3659,11 +3659,12 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   $('lkSend').onclick=async()=>{const m=$('lkAutoMsg'),ph=west($('lkPhone').value).replace(/\D/g,''),ref=west($('lkRef').value).trim().slice(0,40);m.className='';
     if(!appSel){m.textContent=L('اختر أولًا التطبيق الذي دفعت به.','Choisissez d’abord l’application utilisée.');return}
     if(ph.length<8||ph.length>15){m.textContent=L('اكتب رقم حسابك الذي دفعت منه (8 أرقام).','Saisissez le numéro du compte utilisé (8 chiffres).');return}
-    const f={id:st.id,app:appSel,phone:ph,ref,status:'new',plan:SUB.famPrice&&planSel==='family'?'family':'one'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
+    // an individual request stays exactly as before (no plan field: it passes the old rules too); only a family one says so
+    const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');if(SUB.famPrice&&planSel==='family')f.plan='family';b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
       if(!r.ok)throw new Error(r.status);
-      const p={at:Date.now(),app:appSel,phone:ph,plan:f.plan};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
+      const p={at:Date.now(),app:appSel,phone:ph,plan:f.plan||'one'};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
       // the admin's instant notice on Telegram (sub_config: tgToken, tgChat); the request is already saved either way
       let tg={tgToken:SUB.tgToken,tgChat:SUB.tgChat};
       try{const g=await net(FS+'/sub_config/tg');if(g.ok){const F=(await g.json()).fields||{};tg={tgToken:F.tgToken&&F.tgToken.stringValue,tgChat:F.tgChat&&F.tgChat.stringValue}}}catch(e){}
