@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the launcher icon from Android 8: the calendar-clock with the Chinguetti minaret (foreground) on its green (background),
+     so every launcher's mask (circle, squircle…) shows it whole; made by tools/icon.py from the owner's design, 16 Nov 2026 -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@mipmap/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>
