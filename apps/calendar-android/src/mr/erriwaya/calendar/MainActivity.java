@@ -433,6 +433,7 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
         super.onRequestPermissionsResult(req, perms, res);
+        if (req == 8) LockNote.update(this);   // notifications just allowed: show «إشعار اليوم» now
         if (req != Locator.REQUEST) return;
         if (res.length > 0 && res[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) doLocate();
         else located(0, 0, false);
