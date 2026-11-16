@@ -200,12 +200,16 @@ final class Pay {
     private static JSONObject str(String v) throws Exception { return new JSONObject().put("stringValue", v); }
 
     /** Writes the code for a phone and marks its request done, in one commit. */
-    static boolean deliver(String token, String id, String code, int day, String how) {
+    static boolean deliver(String token, String id, String code, int day, String how) { return deliver(token, id, code, day, how, "one"); }
+
+    /** plan "family": the code's document also says so, and keeps the phones added to it (fam, up to FAMILY). */
+    static boolean deliver(String token, String id, String code, int day, String how, String plan) {
         try {
             String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
-            JSONObject w1 = new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + id)
-                    .put("fields", new JSONObject().put("code", str(code)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
-                            .put("how", str(how)).put("t", new JSONObject().put("timestampValue", SuggestJob.iso(System.currentTimeMillis())))));
+            JSONObject fields = new JSONObject().put("code", str(code)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
+                    .put("how", str(how)).put("t", new JSONObject().put("timestampValue", SuggestJob.iso(System.currentTimeMillis())));
+            if ("family".equals(plan)) fields.put("plan", str("family")).put("fam", str(""));
+            JSONObject w1 = new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + id).put("fields", fields));
             JSONObject w2 = new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_requests/" + id)
                     .put("fields", new JSONObject().put("status", str("done"))))
                     .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("status")))
@@ -218,13 +222,86 @@ final class Pay {
         } catch (Exception e) { return false; }
     }
 
+    /** A family subscription: the payer's phone and up to FAMILY more, each with its own code, all ending the same day. */
+    static final int FAMILY = 4;
+
+    private static String sv(JSONObject f, String k) { return f.optJSONObject(k) == null ? "" : f.optJSONObject(k).optString("stringValue"); }
+
+    /**
+     * The phones a family subscriber added (sub_family/<payer>: members, status "new"): each gets a code for the payer's
+     * day, while the family has room; the payer's sub_codes document keeps them (fam). Returns how many were activated.
+     */
+    static int family(String key, String tok) {
+        int done = 0;
+        try {
+            String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
+            String url = SuggestJob.FS.replaceAll("/documents$", "") + "/documents:commit";
+            JSONObject q = new JSONObject().put("structuredQuery", new JSONObject()
+                    .put("from", new JSONArray().put(new JSONObject().put("collectionId", "sub_family")))
+                    .put("where", new JSONObject().put("fieldFilter", new JSONObject()
+                            .put("field", new JSONObject().put("fieldPath", "status")).put("op", "EQUAL").put("value", str("new"))))
+                    .put("limit", 40));
+            String res = SuggestJob.http(SuggestJob.FS + ":runQuery", "application/json", q.toString(), tok);
+            if (res == null) return 0;
+            JSONArray a = new JSONArray(res);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject d = a.getJSONObject(i).optJSONObject("document");
+                if (d == null) continue;
+                String name = d.optString("name"), owner = name.substring(name.lastIndexOf('/') + 1);
+                JSONObject f = d.optJSONObject("fields");
+                if (f == null || !owner.matches("[A-Z2-7]{10}")) continue;
+                java.util.List<String> want = new java.util.ArrayList<>();
+                JSONObject mv = f.optJSONObject("members");
+                JSONArray vals = mv == null || mv.optJSONObject("arrayValue") == null ? null : mv.getJSONObject("arrayValue").optJSONArray("values");
+                if (vals != null) for (int k = 0; k < vals.length(); k++) want.add(vals.getJSONObject(k).optString("stringValue"));
+                // the payer's code: a family one, still running?
+                String got = SuggestJob.http(SuggestJob.FS + ":batchGet", "application/json",
+                        new JSONObject().put("documents", new JSONArray().put(docs + "/sub_codes/" + owner)).toString(), tok);
+                JSONObject of = null;
+                if (got != null) {
+                    JSONArray g = new JSONArray(got);
+                    if (g.length() > 0 && g.getJSONObject(0).optJSONObject("found") != null) of = g.getJSONObject(0).getJSONObject("found").optJSONObject("fields");
+                }
+                JSONArray writes = new JSONArray();
+                String status = "refused";
+                if (of != null && "family".equals(sv(of, "plan"))) {
+                    int day = Integer.parseInt(of.optJSONObject("day") == null ? "0" : of.getJSONObject("day").optString("integerValue", "0"));
+                    java.util.LinkedHashSet<String> fam = new java.util.LinkedHashSet<>();
+                    for (String x : sv(of, "fam").split(",")) if (x.matches("[A-Z2-7]{10}")) fam.add(x);
+                    if (day > System.currentTimeMillis() / Sub.DAY) {
+                        status = "done";
+                        for (String m : want) {
+                            if (!m.matches("[A-Z2-7]{10}") || m.equals(owner) || fam.contains(m)) continue;
+                            if (fam.size() >= FAMILY) { status = "full"; break; }
+                            String code = sign(key, m, day);
+                            if (code == null) continue;
+                            writes.put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + m)
+                                    .put("fields", new JSONObject().put("code", str(code)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
+                                            .put("how", str("family:" + owner)).put("t", new JSONObject().put("timestampValue", SuggestJob.iso(System.currentTimeMillis()))))));
+                            fam.add(m);
+                            done++;
+                        }
+                        writes.put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + owner)
+                                .put("fields", new JSONObject().put("fam", str(android.text.TextUtils.join(",", fam)))))
+                                .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("fam"))));
+                    } else status = "ended";
+                }
+                writes.put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_family/" + owner)
+                        .put("fields", new JSONObject().put("status", str(status))))
+                        .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("status"))));
+                if (SuggestJob.http(url, "application/json", new JSONObject().put("writes", writes).toString(), tok) == null) done = Math.max(0, done - want.size());
+            }
+        } catch (Exception ignored) { }
+        return done;
+    }
+
     static int yearFromNow() { return (int) (System.currentTimeMillis() / Sub.DAY) + YEAR_DAYS; }
 
     /** Pairs the waiting requests with the kept messages; returns how many phones were activated (-1: could not reach the account). */
     static synchronized int sync(Context ctx) {
         try {
             SharedPreferences p = sp(ctx);
-            String key = p.getString("key", null), amount = p.getString("amount", "");
+            String key = p.getString("key", null), amount = p.getString("amount", ""), famAmount = p.getString("famAmount", "");
             if (key == null || !p.getBoolean("on", false)) return 0;
             String tok = token(ctx);
             if (tok == null) return -1;
@@ -247,19 +324,24 @@ final class Pay {
                 String phone = f.optJSONObject("phone") == null ? "" : f.getJSONObject("phone").optString("stringValue");
                 String ref = f.optJSONObject("ref") == null ? "" : f.getJSONObject("ref").optString("stringValue");
                 String stamp = f.optJSONObject("t") == null ? "" : f.getJSONObject("t").optString("timestampValue");
+                String plan = "family".equals(sv(f, "plan")) ? "family" : "one", want = "family".equals(plan) ? famAmount : amount;
+                if (want.isEmpty()) want = amount;
                 if (!id.matches("[A-Z2-7]{10}")) continue;
                 boolean hit = false;
                 for (int k = 0; k < msgs.length() && !hit; k++) {
                     JSONObject m = msgs.getJSONObject(k);
-                    if (!m.optString("used").isEmpty() || !matches(m.optString("text"), phone, ref, amount)) continue;
+                    if (!m.optString("used").isEmpty() || !matches(m.optString("text"), phone, ref, want)) continue;
                     int day = yearFromNow();
                     String code = sign(key, id, day);
-                    if (code != null && deliver(tok, id, code, day, "auto")) {
+                    if (code != null && deliver(tok, id, code, day, "auto", plan)) {
                         m.put("used", id); hit = true; done++; lastId = id;
                     }
                 }
                 if (!hit && told.add(id + "@" + stamp)) { waiting++; lastId = id; }
             }
+            int fam = family(key, tok);
+            if (fam > 0) SuggestJob.notify(ctx, fam == 1 ? "أُضيف هاتف إلى اشتراك عائلي" : "أُضيف " + fam + " هواتف إلى اشتراكات عائلية",
+                    "فُتح التطبيق تلقائيًا لأفراد العائلة", "#sub-admin", 4210);
             p.edit().putString("msgs", msgs.toString()).putStringSet("told", told).putLong("synced", System.currentTimeMillis()).apply();
             if (done > 0) SuggestJob.notify(ctx, done == 1 ? "تم تفعيل اشتراك تلقائيًا" : "تم تفعيل " + done + " اشتراكات تلقائيًا",
                     "وصل الدفع وفُتح التطبيق للمشترك " + lastId.substring(0, 5) + "-" + lastId.substring(5), "#sub-admin", 4208);
@@ -277,7 +359,7 @@ final class Pay {
             try { ctx.getPackageManager().getServiceInfo(new android.content.ComponentName(ctx, PayListener.class), 0); } catch (Exception e) { listener = false; }
             return new JSONObject().put("listener", listener).put("key", p.getString("key", null) != null).put("on", p.getBoolean("on", false))
                     .put("access", access(ctx)).put("signed", ctx.getSharedPreferences(SuggestJob.PREFS, Context.MODE_PRIVATE).getString("rt", null) != null)
-                    .put("amount", p.getString("amount", "")).put("synced", p.getLong("synced", 0))
+                    .put("amount", p.getString("amount", "")).put("famAmount", p.getString("famAmount", "")).put("synced", p.getLong("synced", 0))
                     .put("trust", arr(ctx, "trust")).put("sources", arr(ctx, "sources")).put("msgs", arr(ctx, "msgs")).toString();
         } catch (Exception e) { return "{}"; }
     }
@@ -295,6 +377,7 @@ final class Pay {
             }
             if (o.has("on")) e.putBoolean("on", o.getBoolean("on"));
             if (o.has("amount")) e.putString("amount", digits(o.getString("amount")).replaceAll("[^0-9]", ""));
+            if (o.has("famAmount")) e.putString("famAmount", digits(o.getString("famAmount")).replaceAll("[^0-9]", ""));
             if (o.has("trust")) e.putString("trust", o.getJSONArray("trust").toString());
             e.apply();
             return "";
@@ -302,7 +385,9 @@ final class Pay {
     }
 
     /** A code made by hand from the admin page (one tap on a waiting request): "" when there is no key. */
-    static String manual(Context ctx, String id, boolean deliverIt) {
+    static String manual(Context ctx, String id, boolean deliverIt) { return manual(ctx, id, deliverIt, "one"); }
+
+    static String manual(Context ctx, String id, boolean deliverIt, String plan) {
         String key = sp(ctx).getString("key", null);
         if (key == null || id == null || !id.matches("[A-Z2-7]{10}")) return "";
         int day = yearFromNow();
@@ -310,7 +395,7 @@ final class Pay {
         if (code == null) return "";
         if (deliverIt) {
             String tok = token(ctx);
-            if (tok == null || !deliver(tok, id, code, day, "manual")) return "";
+            if (tok == null || !deliver(tok, id, code, day, "manual", plan)) return "";
         }
         return code;
     }

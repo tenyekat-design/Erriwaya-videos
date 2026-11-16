@@ -4,13 +4,26 @@
     // sub_requests/<رقم الجهاز>: طلب تفعيل يرسله المشترك بعد الدفع؛ يكتبه أي تطبيق، ولا يقرؤه ولا يغيّر حالته ولا يحذفه إلا المشرف.
     match /sub_requests/{id} {
       allow create, update: if id.matches('^[A-Z2-7]{10}$')
-        && request.resource.data.keys().hasOnly(['id', 'app', 'phone', 'ref', 'status', 't'])
+        && request.resource.data.keys().hasOnly(['id', 'app', 'phone', 'ref', 'status', 't', 'plan'])
+        && request.resource.data.get('plan', 'one') in ['one', 'family']
         && request.resource.data.keys().hasAll(['id', 'app', 'phone', 'status', 't'])
         && request.resource.data.id == id
         && request.resource.data.status == 'new'
         && request.resource.data.app in ['bankily', 'masrvi', 'sedad', 'bim']
         && request.resource.data.phone is string && request.resource.data.phone.matches('^[0-9]{8,15}$')
         && request.resource.data.get('ref', '') is string && request.resource.data.get('ref', '').size() <= 40
+        && request.resource.data.t == request.time;
+      allow update: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow read, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
+    // sub_family/<رقم جهاز الدافع>: أجهزة العائلة التي يضيفها المشترك العائلي (حتى 4)؛ يكتبها أي تطبيق، وهاتف الناشر يتحقق
+    // من أن الدافع مشترك عائلي ويعطي كل جهاز رمزه، ولا يقرؤها إلا المشرف.
+    match /sub_family/{id} {
+      allow create, update: if id.matches('^[A-Z2-7]{10}$')
+        && request.resource.data.keys().hasOnly(['members', 'status', 't'])
+        && request.resource.data.members is list && request.resource.data.members.size() <= 4
+        && request.resource.data.status == 'new'
         && request.resource.data.t == request.time;
       allow update: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com'
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);

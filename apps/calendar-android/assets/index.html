@@ -872,6 +872,13 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-in h2{margin:0 0 4px;text-align:center;font-family:var(--f-display);font-size:1.2rem;color:var(--green)}
 .lk-in>p{margin:0 0 10px;text-align:center;color:var(--muted);font-size:.92rem;line-height:1.7}
 .lk-st{text-align:center;font-weight:600;color:var(--ink)!important}
+.lk-plan{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.lk-plan[hidden]{display:none}
+.lk-plan button{border:1.5px solid var(--line,#ccc);border-radius:12px;background:var(--surface,#fff);color:inherit;padding:8px 6px;font:inherit;text-align:center;cursor:pointer}
+.lk-plan button b{display:block;font-size:.95rem}.lk-plan button small{display:block;font-size:.78rem;opacity:.8;line-height:1.4}
+.lk-plan button[aria-pressed="true"]{border-color:var(--gold,#C9952E);box-shadow:0 0 0 2px var(--gold,#C9952E) inset}
+.lk-fam{margin:0 0 14px;padding:10px 12px;border:1.5px solid var(--gold,#C9952E);border-radius:12px}.lk-fam[hidden]{display:none}
+.lk-fam h3{margin:0 0 4px;font-size:1rem}.lk-fam p{margin:0 0 8px;font-size:.85rem}.lk-fam ul{margin:0 0 8px;padding:0 1.2em 0 0;font-size:.9rem}
+.lk-fam .row{display:flex;gap:6px}.lk-fam input{flex:1;min-width:0;direction:ltr;text-transform:uppercase}
 .lk-steps{margin:0 0 12px;padding:0 1.3em 0 0;font-size:.9rem;line-height:1.8}
 .fr .lk-steps{padding:0 0 0 1.3em}
 .lk-id{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px dashed var(--orn);border-radius:12px;padding:8px 12px;margin:0 0 10px}
@@ -1017,6 +1024,8 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <p id="lkP"></p>
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
   <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
+  <div class="lk-fam" id="lkFam" hidden></div>
+  <div class="lk-plan" id="lkPlan" hidden></div>
   <ol class="lk-steps" id="lkSteps"></ol>
   <div class="lk-pay" id="lkPay" hidden></div>
   <div class="lk-auto" id="lkAuto">
@@ -1641,7 +1650,7 @@ async function sgAdmin(el){
 }
 // ---- the admin: subscriptions. What subscribers see (price, payment numbers), the catcher that pairs payments with
 //      requests on this phone (Pay.java), and the requests still waiting, each confirmable with one tap.
-const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
+const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['famPrice','سعر الاشتراك العائلي كما يُعرض (حتى 5 هواتف؛ اتركه فارغًا لإخفائه)','500 أوقية جديدة في السنة لخمسة هواتف'],['famAmount','مبلغ العائلي بالأرقام (للمطابقة)','500'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
 const subId=i=>i.slice(0,5)+'-'+i.slice(5);
 const subWhen=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
 const subCommit=async writes=>{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({writes})});if(!r.ok)throw new Error(r.status)};
@@ -1663,11 +1672,11 @@ async function subAdmin(el){
       const t=g.ok?sgRead(await g.json()):{};if(!r.ok)return;const c=sgRead(await r.json());
       el.querySelectorAll('#sbCfg input').forEach(i=>{if(typeof c[i.dataset.k]==='string')i.value=c[i.dataset.k]});
       // the bot, from its own document (or, once, from where the previous version kept it)
-      el.querySelectorAll('#sbTgF input').forEach(i=>{const v=typeof t[i.dataset.k]==='string'?t[i.dataset.k]:c[i.dataset.k];if(typeof v==='string')i.value=v});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount}))}catch(e){}})();
+      el.querySelectorAll('#sbTgF input').forEach(i=>{const v=typeof t[i.dataset.k]==='string'?t[i.dataset.k]:c[i.dataset.k];if(typeof v==='string')i.value=v});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount,famAmount:c.famAmount||''}))}catch(e){}})();
   $('sbSave').onclick=async()=>{const f={},M=$('sbCfgM');el.querySelectorAll('#sbCfg input').forEach(i=>{f[i.dataset.k]=i.value.trim()});
-    f.amount=f.amount.replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
+    f.amount=f.amount.replace(/\D/g,'');f.famAmount=(f.famAmount||'').replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
     try{await subCommit([{update:{name:`${SG_DOCS}/sub_config/public`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))}}]);
-      if(nat)A.paySet(JSON.stringify({amount:f.amount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
+      if(nat)A.paySet(JSON.stringify({amount:f.amount,famAmount:f.famAmount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
     catch(e){M.textContent=e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد':'تعذّر الحفظ. هل أُضيفت قواعد الاشتراك في Firestore؟'}};
   // Telegram: find the admin's chat with the bot, and send a test
   const tgIn=k=>el.querySelector(`#sbTgF [data-k="${k}"]`);
@@ -1732,12 +1741,13 @@ async function subAdmin(el){
       if(!r.ok)throw new Error(r.status);rows=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document)).sort((x,y)=>String(y.t).localeCompare(String(x.t)))}
     catch(e){R.innerHTML=`<p class="empty">${e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد.':'تعذّر التحميل. إن كانت هذه أول مرة فأضف قواعد الاشتراك إلى Firestore.'}</p>`;return}
     const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
-    R.innerHTML=rows.length?rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}"><div class="sg-k"><b>${vesc(AP[q.app]||q.app||'')}</b><small>${q.t?subWhen(q.t):''}</small></div>
+    R.innerHTML=rows.length?rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}" data-plan="${q.plan==='family'?'family':'one'}"><div class="sg-k"><b>${vesc(AP[q.app]||q.app||'')}${q.plan==='family'?' · عائلي':''}</b><small>${q.t?subWhen(q.t):''}</small></div>
       <p>دفع من: <b dir="ltr" class="num">${vesc(q.phone||'')}</b>${q.ref?` · العملية: <b dir="ltr">${vesc(q.ref)}</b>`:''}</p><p class="mut">الجهاز <span dir="ltr">${vesc(subId(q.id||''))}</span></p>
       <div class="sg-act"><button type="button" class="btn primary" data-do="ok">وصل الدفع: فعِّله</button><button type="button" class="btn" data-do="del">حذف الطلب</button></div></article>`).join(''):'<p class="empty">لا طلبات تنتظر.</p>'}
   loadReq();
   $('sbReq').onclick=async e=>{const b=e.target.closest('[data-do]');if(!b)return;const id=b.closest('[data-id]').dataset.id;b.disabled=true;
-    if(b.dataset.do==='ok'){if(!nat){say('التفعيل اليدوي من تطبيق أندرويد على هاتف الناشر');b.disabled=false;return}A.payManual(id)}
+    if(b.dataset.do==='ok'){if(!nat){say('التفعيل اليدوي من تطبيق أندرويد على هاتف الناشر');b.disabled=false;return}
+      const plan=b.closest('[data-plan]').dataset.plan;if(typeof A.payManualPlan==='function')A.payManualPlan(id,plan);else A.payManual(id)}
     else try{await subCommit([{delete:`${SG_DOCS}/sub_requests/${id}`}]);loadReq()}catch(x){b.disabled=false;say('تعذّر الحذف')}};
 }
 window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin});
@@ -3530,7 +3540,7 @@ window.tgCall=async(token,method,params)=>{const q=new URLSearchParams();for(con
   try{const A=window.AndroidApp;if(A&&typeof A.tg==='function'){const r=JSON.parse(A.tg(token,method,JSON.stringify(params||{}))||'{}');if(r.ok||r.error_code)return r.error_code===0?Object.assign(r,{description:why.concat(r.description).join(' / ')}):r}}catch(e){}
   if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors'});return{ok:true,blind:true}}catch(e){}}
   return{ok:false,error_code:0,description:why.join(' / ')}};
-const SUB={price:'',whatsapp:'',phone:'',pay:[
+const SUB={price:'',famPrice:'',whatsapp:'',phone:'',pay:[
   {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
   {k:'masrvi',n:'مصرفي',fr:'Masrvi',c:'#1F4E9E',num:''},
   {k:'sedad',n:'السداد',fr:'Sedad',c:'#C7751A',num:''},
@@ -3558,16 +3568,17 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','famPrice','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
       const F=(await r.json()).fields||{},c={};for(const k in F)if('stringValue' in F[k])c[k]=F[k].stringValue;
       jset('mrcal.subCfg',{at:Date.now(),c});applyCfg(c);if(!lock.hidden)fill()}catch(e){}}
-  let appSel=(jget('mrcal.subReq')||{}).app||'',lastPoll=0,polling=false;
+  let appSel=(jget('mrcal.subReq')||{}).app||'',planSel=(jget('mrcal.subReq')||{}).plan||'one',lastPoll=0,polling=false;
   // the code the publisher's phone left for this phone, if any: entering it opens the app
   async function fetchCode(){if(polling)return;polling=true;
     try{const r=await net(FS+'/sub_codes/'+st.id);if(r.ok){const F=(await r.json()).fields||{},code=F.code&&F.code.stringValue;
+        if(F.plan&&F.plan.stringValue==='family')jset('mrcal.fam',{fam:(F.fam&&F.fam.stringValue)||'',at:Date.now()});
         if(code&&A.subActivate(code)==='ok'){jset('mrcal.subReq',null);st=state()||st;$('lkAutoMsg').textContent='';hide();toast(L('تم التفعيل تلقائيًا. اشتراكك حتى ','Activé automatiquement. Abonnement jusqu’au ')+dstr(st.until))}}}
     catch(e){}polling=false}
   const pendingText=p=>L('وصل طلبك. يُفتح التطبيق تلقائيًا فور وصول الدفع إلى الناشر، في دقائق عادةً. أبقِ الإنترنت مفتوحًا.','Demande reçue. L’application s’ouvrira automatiquement dès que le paiement arrive chez l’éditeur, en général en quelques minutes. Restez connecté.')
@@ -3582,6 +3593,12 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     $('lkP').textContent=(paid?L('للتجديد ادفع ثم اضغط «دفعتُ» كما في الاشتراك الأول. ','Pour renouveler, payez puis touchez « J’ai payé », comme la première fois. ')
       :trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
        +(SUB.price?L('الاشتراك: ','Abonnement : ')+SUB.price+'.':L('الاشتراك سنوي.','L’abonnement est annuel.'));
+    {const E=$('lkPlan');E.hidden=!SUB.famPrice;if(!E.hidden){
+      E.innerHTML='<button type="button" data-plan="one"><b></b><small></small></button><button type="button" data-plan="family"><b></b><small></small></button>';
+      const [b1,b2]=E.children;b1.firstChild.textContent=L('فردي','Individuel');b1.lastChild.textContent=SUB.price||L('هاتف واحد','Un téléphone');
+      b2.firstChild.textContent=L('عائلي','Famille');b2.lastChild.textContent=SUB.famPrice;
+      [b1,b2].forEach(b=>b.setAttribute('aria-pressed',b.dataset.plan===planSel))}}
+    famBox(paid);
     const steps=[L('ادفع قيمة الاشتراك من أحد التطبيقات أدناه إلى رقم الناشر.','Réglez l’abonnement depuis l’une des applications ci-dessous, au numéro de l’éditeur.'),L('اختر التطبيق الذي دفعت به، واكتب رقم حسابك الذي دفعت منه، ثم اضغط «دفعتُ».','Choisissez l’application utilisée, saisissez le numéro du compte avec lequel vous avez payé, puis touchez « J’ai payé ».'),L('يُفتح التطبيق تلقائيًا بعد وصول الدفع.','L’application s’ouvre automatiquement dès que le paiement est reçu.')];
     $('lkSteps').innerHTML=steps.map(()=>'<li></li>').join('');[...$('lkSteps').children].forEach((li,i)=>{li.textContent=steps[i]});
     {const P=$('lkPay'),any=SUB.pay.some(m=>m.num);P.hidden=!SUB.pay.length;P.innerHTML='';
@@ -3608,6 +3625,29 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     $('lkCode').placeholder=L('الصق رمز التفعيل هنا','Collez ici le code d’activation');
     $('lkPaste').textContent=L('لصق','Coller');$('lkGo').textContent=L('تفعيل','Activer');$('lkX').setAttribute('aria-label',L('إغلاق','Fermer'));
   }
+  // the family: a family subscriber adds up to 4 more phones by their device numbers (sub_family/<this phone>);
+  // the publisher's phone gives each its code. The list comes from this phone's code document (fam).
+  let famLoaded=0;
+  async function famLoad(){if(Date.now()-famLoaded<60e3)return;famLoaded=Date.now();
+    try{const r=await net(FS+'/sub_codes/'+st.id);if(!r.ok)return;const F=(await r.json()).fields||{};
+      if(F.plan&&F.plan.stringValue==='family'){jset('mrcal.fam',{fam:(F.fam&&F.fam.stringValue)||'',at:Date.now()});if(!lock.hidden)famBox(st.until>st.now)}}catch(e){}}
+  function famBox(paid){const E=$('lkFam'),f=jget('mrcal.fam');E.hidden=!(paid&&f);if(E.hidden){if(paid)famLoad();return}
+    const have=String(f.fam||'').split(',').filter(x=>/^[A-Z2-7]{10}$/.test(x)),sent=(f.sent||[]).filter(x=>!have.includes(x)),room=4-have.length;
+    E.innerHTML='<h3></h3><p></p><ul></ul><div class="row"><input id="lkFamIn" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"><button type="button" class="btn primary" id="lkFamAdd"></button></div><p id="lkFamMsg" role="status"></p>';
+    E.querySelector('h3').textContent=L('اشتراكك عائلي','Abonnement famille');
+    E.querySelector('p').textContent=L('أضف حتى 4 هواتف من عائلتك: اكتب «رقم الجهاز» الظاهر في شاشة الاشتراك بهاتف كل فرد. يُفتح تطبيقه تلقائيًا خلال دقائق حتى نهاية اشتراكك.','Ajoutez jusqu’à 4 téléphones de votre famille : saisissez le « numéro de l’appareil » affiché sur l’écran d’abonnement de chacun.')
+      +' '+L('بقي: ','Places restantes : ')+room;
+    E.querySelector('ul').innerHTML=have.map(x=>'<li>✓ '+showId(x)+'</li>').join('')+sent.map(x=>'<li>⏳ '+showId(x)+'</li>').join('');
+    $('lkFamAdd').textContent=L('إضافة','Ajouter');$('lkFamAdd').disabled=room<=0;
+    $('lkFamAdd').onclick=async()=>{const m=$('lkFamMsg'),v=west($('lkFamIn').value).toUpperCase().replace(/[^A-Z2-7]/g,'');
+      if(v.length!==10){m.textContent=L('رقم الجهاز 10 حروف وأرقام، مثل ABCDE-FGH23.','Le numéro compte 10 caractères.');return}
+      if(v===st.id||have.includes(v)){m.textContent=L('هذا الهاتف مشترك أصلًا.','Ce téléphone est déjà abonné.');return}
+      const list=[...new Set([...have,...sent,v])].slice(0,4);m.textContent=L('جارٍ الإرسال…','Envoi…');
+      try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_family/'+st.id,fields:{members:{arrayValue:{values:list.map(x=>({stringValue:x}))}},status:{stringValue:'new'}}},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
+        if(!r.ok)throw new Error(r.status);f.sent=list;jset('mrcal.fam',f);famLoaded=Date.now()+5*60e3;famBox(true);
+        $('lkFamMsg').textContent=L('أُرسل. يُفتح تطبيق هذا الفرد تلقائيًا خلال دقائق (أبقِ الإنترنت مفتوحًا عنده).','Envoyé. Son application s’ouvrira d’elle-même dans quelques minutes.')}
+      catch(e){m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت.','Envoi impossible. Vérifiez la connexion.')}}}
   function show(force){st=state()||st;loadCfg(lock.hidden);fill();$('lkMsg').textContent='';$('lkMsg').className='';lock.hidden=false;
     if(force&&!locked){locked=true;document.documentElement.classList.add('locked');
       document.querySelectorAll('audio').forEach(a=>{try{a.pause()}catch(e){}});try{A.stopAdhan()}catch(e){}try{A.setVolumeKeys(false)}catch(e){}}}
@@ -3617,22 +3657,24 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   window.subSheet=()=>show(false);
   $('lkX').onclick=()=>{if(!locked)lock.hidden=true};
   lock.addEventListener('click',e=>{if(e.target===lock&&!locked)lock.hidden=true});
+  $('lkPlan').addEventListener('click',e=>{const b=e.target.closest('[data-plan]');if(!b)return;planSel=b.dataset.plan;
+    $('lkPlan').querySelectorAll('[data-plan]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
   $('lkPay').addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(!b)return;appSel=b.dataset.app;
     $('lkPay').querySelectorAll('[data-app]').forEach(x=>x.setAttribute('aria-pressed',x===b));
     if(b.dataset.num){let ok=false;try{ok=A.copy(b.dataset.num)}catch(x){}if(ok)toast(L('نُسخ رقم الدفع','Numéro de paiement copié'))}});
   $('lkSend').onclick=async()=>{const m=$('lkAutoMsg'),ph=west($('lkPhone').value).replace(/\D/g,''),ref=west($('lkRef').value).trim().slice(0,40);m.className='';
     if(!appSel){m.textContent=L('اختر أولًا التطبيق الذي دفعت به.','Choisissez d’abord l’application utilisée.');return}
     if(ph.length<8||ph.length>15){m.textContent=L('اكتب رقم حسابك الذي دفعت منه (8 أرقام).','Saisissez le numéro du compte utilisé (8 chiffres).');return}
-    const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
+    const f={id:st.id,app:appSel,phone:ph,ref,status:'new',plan:SUB.famPrice&&planSel==='family'?'family':'one'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
       if(!r.ok)throw new Error(r.status);
-      const p={at:Date.now(),app:appSel,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
+      const p={at:Date.now(),app:appSel,phone:ph,plan:f.plan};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
       // the admin's instant notice on Telegram (sub_config: tgToken, tgChat); the request is already saved either way
       let tg={tgToken:SUB.tgToken,tgChat:SUB.tgChat};
       try{const g=await net(FS+'/sub_config/tg');if(g.ok){const F=(await g.json()).fields||{};tg={tgToken:F.tgToken&&F.tgToken.stringValue,tgChat:F.tgChat&&F.tgChat.stringValue}}}catch(e){}
       if(tg.tgToken&&tg.tgChat){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
-        const text=`🔔 طلب اشتراك جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
+        const text=`🔔 طلب اشتراك ${f.plan==='family'?'عائلي ':''}جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
         window.tgCall(tg.tgToken,'sendMessage',{chat_id:tg.tgChat,text}).catch(()=>{})}}
     catch(e){m.className='';m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت وأعد المحاولة.','Envoi impossible. Vérifiez la connexion et réessayez.')}
     b.disabled=false};

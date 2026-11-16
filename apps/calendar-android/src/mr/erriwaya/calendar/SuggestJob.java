@@ -69,6 +69,8 @@ public class SuggestJob extends JobService {
     public boolean onStartJob(JobParameters params) {
         new Thread(() -> {
             try { check(getApplicationContext()); } catch (Exception ignored) { }
+            // the publisher's phone: waiting requests and phones added to family subscriptions, even with no bank message
+            try { if (Pay.on(getApplicationContext())) Pay.sync(getApplicationContext()); } catch (Exception ignored) { }
             jobFinished(params, false);
         }).start();
         return true;

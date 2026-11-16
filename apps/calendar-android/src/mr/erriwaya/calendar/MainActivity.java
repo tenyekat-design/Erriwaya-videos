@@ -283,8 +283,12 @@ public class MainActivity extends Activity {
 
         /** One tap on a waiting request: signs a year's code for that phone and sends it; window.onPayManual(id, ok). */
         @JavascriptInterface
-        public void payManual(final String id) {
-            new Thread(() -> { final boolean ok = !Pay.manual(MainActivity.this, id, true).isEmpty();
+        public void payManual(final String id) { payManualPlan(id, "one"); }
+
+        /** The same for a family request (plan "family"): the code's document then takes the family's phones. */
+        @JavascriptInterface
+        public void payManualPlan(final String id, final String plan) {
+            new Thread(() -> { final boolean ok = !Pay.manual(MainActivity.this, id, true, "family".equals(plan) ? "family" : "one").isEmpty();
                 runOnUiThread(() -> web.evaluateJavascript("window.onPayManual&&window.onPayManual('" + (id == null ? "" : id.replaceAll("[^A-Z2-7]", "")) + "'," + ok + ")", null)); }).start();
         }
 
