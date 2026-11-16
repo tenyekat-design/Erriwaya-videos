@@ -1063,7 +1063,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-price .amt{display:flex;align-items:baseline;justify-content:center;gap:8px;line-height:1}
 .lk-price .amt b{font:800 3.1rem/1 var(--f-display);color:#FFE7A8;text-shadow:0 2px 0 #0006;font-variant-numeric:lining-nums}
 .lk-price .amt span{font-size:1rem;font-weight:700;color:#F3E2AE}
-.lk-price .per{margin:6px 0 0;font-size:.92rem;color:#E9DDB8}
+.lk-price .per{margin:4px 0;font-size:1.05rem;font-weight:700;color:#F3E2AE}
 .lk-price .day{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:5px 12px;border-radius:999px;background:#ffffff14;border:1px solid #E6BC6266;font-size:.84rem;font-weight:700;color:#FFE7A8}
 .lk-price .ask{margin:4px 0 10px;font-size:1rem;font-weight:700;color:#FFE7A8}
 .lk-price .btn{background:#E6BC62;color:#0A3528;border:0;text-decoration:none;display:inline-block}
@@ -3869,11 +3869,8 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   function priceBox(paid){const E=$('lkPrice'),p=plan();E.innerHTML='';
     $('lkS2').querySelector('b').textContent=p.amt>0?'ادفع '+p.amt+' '+p.unit:'ادفع قيمة الاشتراك';
     const el=(t,c,x)=>{const d=document.createElement(t);if(c)d.className=c;if(x!=null)d.textContent=x;return d};
-    E.append(el('span','tag',paid?'تجديد الاشتراك':p.fam?'الاشتراك العائلي · حتى 5 هواتف':'الاشتراك السنوي'));
-    if(p.amt>0){const a=el('div','amt');a.append(el('b','',p.amt.toLocaleString('en-US')),el('span','',p.unit));E.append(a);
-      E.append(el('p','per',p.fam?'في السنة، لخمسة هواتف من العائلة':'في السنة كاملة، دفعة واحدة'));
-      const d=p.amt/365,ph=Math.ceil(p.amt/5);
-      E.append(el('span','day',p.fam?'نحو '+ph+' '+p.unit+' للهاتف الواحد':d<1?'أقل من أوقية واحدة في اليوم':'نحو '+Math.ceil(d)+' '+p.unit+' في اليوم'))}
+    if(p.amt>0){E.append(el('p','per','الاشتراك'));const a=el('div','amt');a.append(el('b','',p.amt.toLocaleString('en-US')),el('span','',p.unit));E.append(a);
+      E.append(el('p','per','لمدة سنة'))}
     else{E.append(el('p','ask','السعر عند الناشر'));
       if(SUB.whatsapp){const a=el('a','btn','اسأل عن السعر بواتساب');a.rel='noopener';
         a.href='https://wa.me/'+SUB.whatsapp+'?text='+encodeURIComponent('السلام عليكم، كم سعر الاشتراك في التقويم الموريتاني؟');E.append(a)}
