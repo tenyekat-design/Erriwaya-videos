@@ -12,7 +12,7 @@ import android.os.IBinder;
 
 import java.io.File;
 
-/** Plays the adhan (the user's recording, or the Maliki one bundled with the app) in full, at alarm volume, as a foreground service with a stop button. */
+/** Plays the alert (the user's recording, or the short clip bundled with the app: hayya / fajr / iqama; "full" = the whole Maliki adhan) in full, at alarm volume, as a foreground service with a stop button. */
 public class AdhanService extends Service {
     static final String STOP = "mr.erriwaya.calendar.STOP_ADHAN";
     private MediaPlayer mp;
@@ -32,7 +32,10 @@ public class AdhanService extends Service {
         Notification n = AdhanReceiver.build(this, title == null ? "الأذان" : title, text == null ? "" : text, true);
         if (Build.VERSION.SDK_INT >= 29) startForeground(8, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         else startForeground(8, n);
-        File f = AdhanReceiver.audioFor(this, fajr);
+        String kind = intent != null ? intent.getStringExtra("kind") : null;
+        if (kind == null) kind = fajr ? "fajr" : "hayya";
+        // the user's own recording, when picked, for the adhans; else the short clip: حي على الصلاة / الصلاة خير من النوم / قد قامت الصلاة
+        File f = "iqama".equals(kind) ? new File(getFilesDir(), "-none-") : AdhanReceiver.audioFor(this, "fajr".equals(kind));
         try {
             if (mp != null) mp.release();
             mp = new MediaPlayer();
@@ -40,7 +43,7 @@ public class AdhanService extends Service {
                     .setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
             if (f.exists()) mp.setDataSource(f.getAbsolutePath());
             else {  // the Maliki adhan bundled with the app
-                AssetFileDescriptor afd = getAssets().openFd("sounds/adhan.m4a");
+                AssetFileDescriptor afd = getAssets().openFd("sounds/" + ("full".equals(kind) ? "adhan" : kind) + ".m4a");
                 mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
             }

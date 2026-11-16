@@ -49,7 +49,7 @@ public class AdhanReceiver extends BroadcastReceiver {
         if ("mr.erriwaya.calendar.ADHAN".equals(intent.getAction()) && Sub.open(ctx)) {
             if (intent.getBooleanExtra("note", false)) remind(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), true);
             else if (intent.getBooleanExtra("pre", false)) remind(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), false);
-            else fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false));
+            else fire(ctx, intent.getStringExtra("title"), intent.getStringExtra("text"), intent.getBooleanExtra("fajr", false), intent.getStringExtra("kind"));
         }
         scheduleNext(ctx);  // also on BOOT_COMPLETED and MY_PACKAGE_REPLACED
         CalendarWidget.updateAll(ctx);
@@ -109,13 +109,17 @@ public class AdhanReceiver extends BroadcastReceiver {
         try { nm.notify(nid, b.build()); } catch (SecurityException ignored) { }
     }
 
-    static void fire(Context ctx, String title, String text, boolean fajr) {
+    static void fire(Context ctx, String title, String text, boolean fajr) { fire(ctx, title, text, fajr, null); }
+
+    /** kind: "hayya" (حي على الصلاة: every adhan, the sixth's too), "fajr" (الصلاة خير من النوم) or "iqama" (قد قامت الصلاة). */
+    static void fire(Context ctx, String title, String text, boolean fajr, String kind) {
         try {   // the reminder has done its work
             NotificationManager n0 = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
             if (n0 != null) n0.cancel(9);
         } catch (Exception ignored) { }
         {   // always played in full by AdhanService (the bundled adhan when the user has not picked one)
-            Intent s = new Intent(ctx, AdhanService.class).putExtra("title", title).putExtra("text", text).putExtra("fajr", fajr);
+            Intent s = new Intent(ctx, AdhanService.class).putExtra("title", title).putExtra("text", text).putExtra("fajr", fajr)
+                    .putExtra("kind", kind == null ? (fajr ? "fajr" : "hayya") : kind);
             try {
                 if (Build.VERSION.SDK_INT >= 26) ctx.startForegroundService(s);
                 else ctx.startService(s);
@@ -213,7 +217,7 @@ public class AdhanReceiver extends BroadcastReceiver {
     static Object[] nextFromConfig(JSONObject c, long now) {
         Object[] a = nextAdhan(c, now), n = nextNote(c, now);
         if (a == null || (n != null && (Long) n[0] < (Long) a[0])) return n;
-        return new Object[]{a[0], a[1], a[2], a[3], a[4], false};
+        return new Object[]{a[0], a[1], a[2], a[3], a[4], false, a.length > 5 ? a[5] : null};
     }
 
     /**
@@ -232,45 +236,61 @@ public class AdhanReceiver extends BroadcastReceiver {
             if (at > now + 1000 && at < best) { best = at; text = e.optString(1, ""); }
         }
         if (text == null) return null;
-        return new Object[]{best, french(c) ? "Rappel · Calendrier mauritanien" : "تذكير · التقويم الموريتاني", text, false, true, true};
+        return new Object[]{best, french(c) ? "Rappel · Calendrier mauritanien" : "تذكير · التقويم الموريتاني", text, false, true, true, null};
     }
 
-    /** {epochMillis, title, text, isFajr, isReminder} for the next adhan or reminder before one, or null when alerts are off. */
+    /**
+     * {epochMillis, title, text, isFajr, isReminder, kind} for the next alert, or null when alerts are off. Besides each prayer's
+     * adhan (and the reminder before it): the adhan of the sixth (السدس, c.sudus: the start of the night's last sixth, the night
+     * running from maghrib to fajr, as called in Mauritania) and each prayer's iqama (c.iqOn, c.iq = minutes after the adhan).
+     */
     static Object[] nextAdhan(JSONObject c, long now) {
         if (!c.optBoolean("on", false)) return null;
-        JSONObject p = c.optJSONObject("p");
+        JSONObject p = c.optJSONObject("p"), iq = c.optJSONObject("iq");
+        boolean sudus = c.optBoolean("sudus", false), iqOn = c.optBoolean("iqOn", false);
+        int pre = Math.max(0, Math.min(120, c.optInt("pre", 0)));
         long day0 = PrayerCalc.fd(now, PrayerCalc.DAY);
-        for (long day = day0; day <= day0 + 2; day++) {
+        long best = Long.MAX_VALUE;
+        int bk = -1;
+        String bkind = null;
+        double bt = 0;
+        for (long day = day0 - 1; day <= day0 + 2; day++) {
             double[] t = timesOf(c, day);
-            long best = Long.MAX_VALUE;
-            int bk = -1;
-            boolean bpre = false;
-            int pre = Math.max(0, Math.min(120, c.optInt("pre", 0)));
             for (int k = 0; k < 6; k++) {
                 if (k == PrayerCalc.SUNRISE || (p != null && !p.optBoolean(KEYS[k], true))) continue;
                 int mins = PrayerCalc.minutes(t[k]);
                 if (mins < 0) continue;
                 long at = day * PrayerCalc.DAY + mins * 60000L;
-                if (at > now + 1000 && at < best) { best = at; bk = k; bpre = false; }
+                if (at > now + 1000 && at < best) { best = at; bk = k; bkind = k == PrayerCalc.FAJR ? "fajr" : "hayya"; bt = t[k]; }
                 long before = at - pre * 60000L;
-                if (pre > 0 && before > now + 1000 && before < best) { best = before; bk = k; bpre = true; }
-            }
-            if (bk >= 0) {
-                boolean fajr = bk == PrayerCalc.FAJR;
-                String city = cityOf(c);
-                if (french(c)) {
-                    String nm = NAMES_FR[bk], at = PrayerCalc.fmt(t[bk]);
-                    if (bpre) return new Object[]{best, "Dans " + pre + " min : adhan du " + nm, "L’adhan du " + nm + " à " + city + " est à " + at + ".", fajr, true};
-                    return new Object[]{best, "Adhan du " + nm + " · " + at, "C’est l’heure de la prière du " + nm + " à " + city + ".", fajr, false};
+                if (pre > 0 && before > now + 1000 && before < best) { best = before; bk = k; bkind = "pre"; bt = t[k]; }
+                int m = iq != null ? iq.optInt(KEYS[k], 15) : 15;
+                if (iqOn && m > 0 && m <= 90) {
+                    long ia = at + m * 60000L;
+                    if (ia > now + 1000 && ia < best) { best = ia; bk = k; bkind = "iqama"; bt = t[k] + m / 60.0; }
                 }
-                if (bpre) return new Object[]{best, "بعد " + pre + (pre >= 3 && pre <= 10 ? " دقائق" : " دقيقة") + ": أذان " + NAMES[bk],
-                        "يُرفع أذان " + NAMES[bk] + " في " + city + " عند " + PrayerCalc.fmt(t[bk]) + ".", fajr, true};
-                return new Object[]{best, "أذان " + NAMES[bk] + " · " + PrayerCalc.fmt(t[bk]),
-                        "حان وقت صلاة " + NAMES[bk] + " في " + c.optString("city", "نواكشوط") + ". "
-                                + (fajr ? "الصلاة خير من النوم." : "حيّ على الصلاة، حيّ على الفلاح."), fajr, false};
+            }
+            if (sudus) {   // the sixth before this day's fajr: the night from the previous day's maghrib
+                double mg = timesOf(c, day - 1)[PrayerCalc.MAGHRIB], fj = t[PrayerCalc.FAJR];
+                double night = fj + 24 - mg, h = fj - night / 6;
+                if (!Double.isNaN(h) && night > 0 && night < 24) {
+                    long at = day * PrayerCalc.DAY + Math.round(h * 60) * 60000L;
+                    if (at > now + 1000 && at < best) { best = at; bk = -2; bkind = "sudus"; bt = h < 0 ? h + 24 : h; }
+                }
             }
         }
-        return null;
+        if (bkind == null) return null;
+        String city = cityOf(c), at = PrayerCalc.fmt(bt);
+        if ("sudus".equals(bkind))
+            return new Object[]{best, "أذان السدس · " + at, "دخل السدس الأخير من الليل في " + city + ". حيّ على الصلاة.", false, false, "hayya"};
+        String nm = NAMES[bk];
+        if ("iqama".equals(bkind))
+            return new Object[]{best, "إقامة صلاة " + nm + " · " + at, "قد قامت الصلاة، قد قامت الصلاة.", bk == PrayerCalc.FAJR, false, "iqama"};
+        boolean fajr = bk == PrayerCalc.FAJR;
+        if ("pre".equals(bkind)) return new Object[]{best, "بعد " + pre + (pre >= 3 && pre <= 10 ? " دقائق" : " دقيقة") + ": أذان " + nm,
+                "يُرفع أذان " + nm + " في " + city + " عند " + at + ".", fajr, true, null};
+        return new Object[]{best, "أذان " + nm + " · " + at, "حان وقت صلاة " + nm + " في " + city + ". "
+                + (fajr ? "الصلاة خير من النوم." : "حيّ على الصلاة، حيّ على الفلاح."), fajr, false, bkind};
     }
 
     private static void setAlarm(AlarmManager am, long at, PendingIntent pi) {
@@ -300,7 +320,8 @@ public class AdhanReceiver extends BroadcastReceiver {
             Object[] n = null;
             try { n = nextFromConfig(c, now); } catch (Exception ignored) { }
             if (n != null) {
-                i.putExtra("title", (String) n[1]).putExtra("text", (String) n[2]).putExtra("fajr", (Boolean) n[3]).putExtra("pre", (Boolean) n[4]).putExtra("note", (Boolean) n[5]);
+                i.putExtra("title", (String) n[1]).putExtra("text", (String) n[2]).putExtra("fajr", (Boolean) n[3]).putExtra("pre", (Boolean) n[4]).putExtra("note", (Boolean) n[5])
+                        .putExtra("kind", n.length > 6 ? (String) n[6] : null);
                 setAlarm(am, (Long) n[0], PendingIntent.getBroadcast(ctx, 1, i, flags));
             } else {
                 am.cancel(PendingIntent.getBroadcast(ctx, 1, i, flags));

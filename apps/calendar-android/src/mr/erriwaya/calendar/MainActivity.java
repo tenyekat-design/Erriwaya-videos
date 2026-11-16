@@ -168,6 +168,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void testAdhan(String title, String text) { AdhanReceiver.fire(MainActivity.this, title, text, false); }
 
+        /** Plays one of the alert clips now: "hayya", "fajr", "iqama", or "full" (the whole adhan). */
+        @JavascriptInterface
+        public void testClip(String kind, String title, String text) { AdhanReceiver.fire(MainActivity.this, title, text, "fajr".equals(kind), kind); }
+
         @JavascriptInterface
         public void stopAdhan() { AdhanReceiver.stop(MainActivity.this); }
 

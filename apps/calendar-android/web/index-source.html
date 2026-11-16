@@ -393,6 +393,12 @@ tbody tr{cursor:pointer}
 .out{margin-top:4px;padding:8px 12px;border-radius:8px;background:var(--green-soft);font-weight:600}
 .note{color:var(--muted);font-size:.84rem;margin:0}
 #iqBox{display:flex;flex-wrap:wrap;gap:6px}
+.adh-more{margin-top:4px}
+.adh-clips{display:grid;gap:6px;margin:10px 0}.adh-clips[hidden]{display:none}
+.adh-clips>b{font-size:.9rem}
+.adh-clips .btn{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:start;font-weight:700;padding:9px 12px}
+.adh-clips .btn span{font-weight:500;font-size:.78rem;color:var(--muted)}
+.adh-clips .btn::after{content:"▶";font-size:.8rem;color:var(--gold);order:3}
 #iqBox label{min-width:0;display:grid;justify-items:center;font-size:.74rem;color:var(--muted);gap:2px}
 #iqBox input{width:3.6em;text-align:center;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 footer{color:var(--muted);font-size:.82rem;text-align:center}
@@ -1376,15 +1382,22 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
       <div class="adh-alert" id="adhAlert" hidden>
         <div class="row" style="margin:0"><label for="adhOn">تنبيه الأذان</label><label><input type="checkbox" id="adhOn"> عند دخول وقت كل صلاة، ولو كان التطبيق مغلقًا</label></div>
         <div class="pr" id="adhPr"></div>
+        <div class="pr adh-more"><label><input type="checkbox" id="adhSudus"> أذان السدس (آخر سدس الليل)</label><label><input type="checkbox" id="adhIqama"> الإقامة (بعد الأذان بالدقائق المحددة أعلاه)</label></div>
         <div class="row" style="margin:0"><label for="adhPre">تنبيه قبل الأذان</label><select id="adhPre"><option value="0">بدون</option><option value="5">قبله بـ5 دقائق</option><option value="10">قبله بـ10 دقائق</option><option value="15">قبله بـ15 دقيقة</option><option value="20">قبله بـ20 دقيقة</option><option value="30">قبله بـ30 دقيقة</option></select></div>
-        <div class="adh-snd">
-          <div><b>صوت الأذان</b> <span id="sndMain"></span></div>
-          <div class="row2"><button class="btn" id="pickMain">استبدله بتسجيل من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
-          <div><b>أذان الفجر</b> <span id="sndFajr"></span></div>
-          <div class="row2"><button class="btn" id="pickFajr">اختر تسجيلًا خاصًا بالفجر</button><button class="btn" id="clrFajr" hidden>حذف</button></div>
+        <div class="adh-clips">
+          <b>مقاطع التنبيه</b>
+          <button type="button" class="btn" data-clip="hayya"><span>كل أذان، والسدس</span>حيّ على الصلاة، حيّ على الصلاة</button>
+          <button type="button" class="btn" data-clip="fajr"><span>أذان الفجر</span>الصلاة خير من النوم</button>
+          <button type="button" class="btn" data-clip="iqama"><span>الإقامة</span>قد قامت الصلاة، قد قامت الصلاة</button>
         </div>
-        <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان الآن</button><button class="btn" id="adhStop">إيقاف</button></div>
-        <p class="note">يُرفع الأذان المالكي المضمَّن في التطبيق كاملًا بصوت المنبّه عند دخول كل وقت، ولو كان التطبيق مغلقًا، مع زر «إيقاف الأذان» في الإشعار. ويمكنك استبداله بتسجيل آخر من هاتفك (mp3 أو m4a…).</p>
+        <div class="adh-snd">
+          <div><b>بدل مقطع الأذان</b> <span id="sndMain"></span></div>
+          <div class="row2"><button class="btn" id="pickMain">ضع تسجيلًا من الهاتف</button><button class="btn" id="clrMain" hidden>حذف</button></div>
+          <div><b>بدل مقطع الفجر</b> <span id="sndFajr"></span></div>
+          <div class="row2"><button class="btn" id="pickFajr">ضع تسجيلًا خاصًا بالفجر</button><button class="btn" id="clrFajr" hidden>حذف</button></div>
+        </div>
+        <div class="row2"><button class="btn primary" id="adhTest">استمع إلى الأذان كاملًا</button><button class="btn" id="adhStop">إيقاف</button></div>
+        <p class="note">عند دخول كل وقت، ولو كان التطبيق مغلقًا، يُسمع بصوت المنبّه مقطع قصير: «حيّ على الصلاة» عند كل أذان وعند السدس، و«الصلاة خير من النوم» عند الفجر، و«قد قامت الصلاة» عند الإقامة، مع زر «إيقاف» في الإشعار.</p>
         <p class="warn" id="exWarn" hidden>ليُرفع الأذان في وقته بالضبط اسمح للتطبيق بـ«المنبّهات والتذكيرات»، وإلا فقد يتأخر بضع دقائق. <button class="btn" id="exGo">اسمح الآن</button></p>
         <p class="warn" id="batWarn" hidden>بعض الهواتف توقف الأذان لتوفير البطارية. افتح إعدادات التطبيق واجعل استعمال البطارية «غير مقيَّد». <button class="btn" id="batGo">افتح الإعدادات</button></p>
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
@@ -2359,7 +2372,7 @@ document.addEventListener('click',e=>{if(e.target.id==='backToday')select(todayJ
 $('sMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>`<option value="${k}">${m.name}</option>`).join('');
 $('sMethod').value=S.method;$('sAsr').value=S.asr;$('sAdj').value=S.adj;
 $('iqBox').innerHTML=[['fajr','الفجر'],['dhuhr','الظهر'],['asr','العصر'],['maghrib','المغرب'],['isha','العشاء']].map(([k,n])=>`<label>${n}<input type="number" id="iq-${k}" min="0" max="60" inputmode="numeric" value="${S.iq[k]}" aria-label="دقائق الإقامة بعد أذان ${n}"></label>`).join('');
-$('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');const v=Math.max(0,Math.min(60,parseInt(e.target.value,10)||0));e.target.value=v;S.iq[k]=v;store.set('iq',S.iq);tick()});
+$('iqBox').addEventListener('change',e=>{const k=e.target.id.replace('iq-','');const v=Math.max(0,Math.min(60,parseInt(e.target.value,10)||0));e.target.value=v;S.iq[k]=v;store.set('iq',S.iq);tick();if(typeof pushAdhan==='function')pushAdhan()});
 $('sMethod').addEventListener('change',e=>{S.method=e.target.value;store.set('method',S.method);renderCal();renderDay();pushAdhan()});
 $('sAsr').addEventListener('change',e=>{S.asr=+e.target.value;store.set('asr',S.asr);renderCal();renderDay();pushAdhan()});
 $('sAdj').addEventListener('change',e=>{S.adj=+e.target.value;store.set('adj',S.adj);syncViewToSel();allRender();pushAdhan()});
@@ -2373,7 +2386,7 @@ window.APP={sgAdmin:(window.APP||{}).sgAdmin,subAdmin:(window.APP||{}).subAdmin,
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
-const AD=Object.assign({on:false,pre:0,p:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}},store.get('adhan',{}));
+const AD=Object.assign({on:false,pre:0,sudus:true,iqama:true,p:{fajr:true,dhuhr:true,asr:true,maghrib:true,isha:true}},store.get('adhan',{}));
 const ADN={fajr:'الفجر',dhuhr:'الظهر',asr:'العصر',maghrib:'المغرب',isha:'العشاء'};
 function pushAdhan(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -2388,7 +2401,7 @@ function pushAdhan(){
   // the app also gets the settings themselves: it computes the times on its own from them (same formulas, PrayerCalc.java),
   // so the adhan keeps coming however long the app stays closed, and the home-screen widget is drawn from them
   if(typeof A.setAdhanConfig==='function'){const c=city(),M=METHODS[S.method];
-    try{A.setAdhanConfig(JSON.stringify({notes:noteAlerts(),on:!!AD.on,pre:+AD.pre||0,p:AD.p,lang:store.get('lang','ar'),cityFr:c.fr,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
+    try{A.setAdhanConfig(JSON.stringify({notes:noteAlerts(),on:!!AD.on,pre:+AD.pre||0,p:AD.p,sudus:AD.sudus!==false,iqOn:AD.iqama!==false,iq:S.iq,lang:store.get('lang','ar'),cityFr:c.fr,city:c.name,lat:c.lat,lng:c.lng,fajr:M.fajr,isha:M.isha||0,ishaMin:M.ishaMin||0,asr:+S.asr,adj:+S.adj}))}catch(e){}}
 }
 (function(){
   const A=window.AndroidApp;if(!A||typeof A.setAdhanSchedule!=='function')return;
@@ -2405,11 +2418,17 @@ function pushAdhan(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){warn();pushAdhan()}});
   $('adhOn').addEventListener('change',e=>{AD.on=e.target.checked;store.set('adhan',AD);if(AD.on)try{A.requestNotifications()}catch(x){}pushAdhan();setTimeout(warn,1500)});
   $('adhPr').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;AD.p[k]=e.target.checked;store.set('adhan',AD);pushAdhan()});
-  $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();A.testAdhan('أذان (تجربة)','هكذا يُرفع الأذان عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
+  $('adhTest').addEventListener('click',()=>{try{A.requestNotifications();if(typeof A.testClip==='function')A.testClip('full','الأذان المالكي','الأذان كاملًا.');else A.testAdhan('أذان (تجربة)','هكذا يُرفع الأذان عند دخول وقت الصلاة.')}catch(e){}setTimeout(warn,1500)});
+  $('adhSudus').checked=AD.sudus!==false;$('adhIqama').checked=AD.iqama!==false;
+  $('adhSudus').addEventListener('change',e=>{AD.sudus=e.target.checked;store.set('adhan',AD);pushAdhan()});
+  $('adhIqama').addEventListener('change',e=>{AD.iqama=e.target.checked;store.set('adhan',AD);pushAdhan()});
+  {const T={hayya:['أذان (تجربة)','حيّ على الصلاة، حيّ على الصلاة.'],fajr:['أذان الفجر (تجربة)','الصلاة خير من النوم.'],iqama:['الإقامة (تجربة)','قد قامت الصلاة، قد قامت الصلاة.']};
+   const box=document.querySelector('.adh-clips');if(typeof A.testClip!=='function')box.hidden=true;
+   else box.addEventListener('click',e=>{const b=e.target.closest('[data-clip]');if(!b)return;const k=b.dataset.clip;try{A.requestNotifications();A.testClip(k,T[k][0],T[k][1])}catch(x){}})}
   const has=k=>{try{return A.hasAdhan(k)}catch(e){return false}};
   const showSnd=()=>{const m=has('adhan'),f=has('fajr');
-    $('sndMain').textContent=m?': تسجيلك':': الأذان المالكي المضمَّن في التطبيق';$('clrMain').hidden=!m;
-    $('sndFajr').textContent=f?': تسجيلك الخاص بالفجر':(m?': تسجيلك نفسه':': الأذان المضمَّن نفسه');$('clrFajr').hidden=!f};
+    $('sndMain').textContent=m?': تسجيلك':'';$('clrMain').hidden=!m;
+    $('sndFajr').textContent=f?': تسجيلك الخاص بالفجر':(m?': تسجيلك نفسه':'');$('clrFajr').hidden=!f};
   if(typeof A.pickAdhan==='function'){
     $('pickMain').onclick=()=>A.pickAdhan('adhan');$('pickFajr').onclick=()=>A.pickAdhan('fajr');
     $('clrMain').onclick=()=>{A.clearAdhan('adhan');showSnd()};$('clrFajr').onclick=()=>{A.clearAdhan('fajr');showSnd()};
