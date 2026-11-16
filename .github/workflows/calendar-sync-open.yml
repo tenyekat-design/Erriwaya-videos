@@ -1,4 +1,4 @@
-# تشخيص توقيت الفاتحة وبداية البقرة لتلاوات القراء الموريتانيين (السجل فقط)
+# توقيت الفاتحة وبداية البقرة لتلاوات القراء الموريتانيين بالتعرف على الكلام (Whisper)، للتصحيح اليدوي
 name: calendar-sync-open
 on:
   workflow_dispatch:
@@ -7,20 +7,30 @@ on:
       - "apps/calendar-android/tools/sync-open/**"
       - ".github/workflows/calendar-sync-open.yml"
 jobs:
-  diag:
+  asr:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 340
     strategy:
       fail-fast: false
       matrix:
-        reciter: [rajel, laghdaf, abdqader]
+        include:
+          - {reciter: rajel, jobs: "1:0,2:360"}
+          - {reciter: abdqader, jobs: "1:0,2:360"}
+          - {reciter: laghdaf, jobs: "1:0,2:0"}
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
+            tools
             apps/calendar-android/tools
             apps/calendar-android/assets/data
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          pip install -q numpy scipy librosa
-      - run: python3 apps/calendar-android/tools/sync-open/open.py ${{ matrix.reciter }}
+          pip install -q numpy scipy librosa faster-whisper soundfile
+          bash tools/setup-asr.sh
+      - run: python3 apps/calendar-android/tools/sync-open/asr.py ${{ matrix.reciter }} ${{ matrix.jobs }} .asr-model
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: asr-${{ matrix.reciter }}
+          path: asr-${{ matrix.reciter }}.json
