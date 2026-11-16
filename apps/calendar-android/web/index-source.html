@@ -995,8 +995,6 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .locked .lk-in{border-radius:18px;margin:16px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .lk-x{position:absolute;inset-inline-end:10px;top:10px;border:0;background:none;color:var(--muted);font-size:1.2rem;padding:6px 10px}
 .locked .lk-x{display:none}
-.lk-ic{width:54px;height:54px;border-radius:16px;background:var(--green-soft);color:var(--green);display:grid;place-items:center;margin:0 auto 8px}
-.lk-ic svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lk-in h2{margin:0 0 4px;text-align:center;font-family:var(--f-display);font-size:1.2rem;color:var(--green)}
 .lk-in>p{margin:0 0 10px;text-align:center;color:var(--muted);font-size:.92rem;line-height:1.7}
 .lk-st{text-align:center;font-weight:600;color:var(--ink)!important}
@@ -1006,7 +1004,6 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-perk i svg{width:18px;height:18px;fill:none;stroke:#F3E2AE;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .lk-perk b{display:block;font-size:.84rem;color:var(--ink)}
 .lk-share{display:block;text-align:center;margin:0 0 12px;text-decoration:none}.lk-share[hidden]{display:none}
-.lk-day{margin:0 0 12px;text-align:center;font-size:.9rem;font-weight:700;color:var(--gold,#a8771c)}.lk-day[hidden]{display:none}
 .lk-plan{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.lk-plan[hidden]{display:none}
 .lk-plan button{border:1.5px solid var(--line,#ccc);border-radius:12px;background:var(--surface,#fff);color:inherit;padding:8px 6px;font:inherit;text-align:center;cursor:pointer}
 .lk-plan button b{display:block;font-size:.95rem}.lk-plan button small{display:block;font-size:.78rem;opacity:.8;line-height:1.4}
@@ -1014,16 +1011,14 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 .lk-fam{margin:0 0 14px;padding:10px 12px;border:1.5px solid var(--gold,#C9952E);border-radius:12px}.lk-fam[hidden]{display:none}
 .lk-fam h3{margin:0 0 4px;font-size:1rem}.lk-fam p{margin:0 0 8px;font-size:.85rem}.lk-fam ul{margin:0 0 8px;padding:0 1.2em 0 0;font-size:.9rem}
 .lk-fam .row{display:flex;gap:6px}.lk-fam input{flex:1;min-width:0;direction:ltr;text-transform:uppercase}
-.lk-steps{margin:0 0 12px;padding:0 1.3em 0 0;font-size:.9rem;line-height:1.8}
-.fr .lk-steps{padding:0 0 0 1.3em}
 .lk-id{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px dashed var(--orn);border-radius:12px;padding:8px 12px;margin:0 0 10px}
 .lk-id small{color:var(--muted);font-size:.78rem;display:block}
 .lk-id b{direction:ltr;font:700 1.25rem/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;unicode-bidi:isolate}
 .lk-row{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .lk-row .btn{flex:1 1 auto;text-align:center;text-decoration:none}
-.lk-pay{margin:0 0 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lk-pay{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .lk-pay h3{grid-column:1/-1;margin:0;font-size:.86rem;color:var(--muted);font-weight:600}
-.lk-pay .pm{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 8px;border:1px solid var(--line);border-radius:12px;padding:7px 9px;background:var(--surface);color:var(--ink);font:inherit;text-align:start}
+.lk-pay .pm{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2px 8px;border:1.5px solid var(--line);border-radius:14px;padding:8px 9px;position:relative;transition:border-color .2s,box-shadow .2s,transform .15s;background:var(--surface);color:var(--ink);font:inherit;text-align:start}
 .lk-pay button.pm{cursor:pointer}
 .lk-pay .pm i{grid-row:1/3;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;font:700 .95rem/1 var(--f-display);font-style:normal}
 .lk-pay .pm img{grid-row:1/3;width:44px;height:44px;border-radius:10px;background:#fff;object-fit:contain;border:1px solid var(--line)}
@@ -1034,7 +1029,7 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 #lkCode{width:100%;min-height:74px;direction:ltr;text-align:left;font:500 .8rem/1.6 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);margin:0 0 8px;resize:vertical}
 #lkCode::placeholder{font-family:var(--f-body);font-size:.9rem;direction:rtl;text-align:right}
 .fr #lkCode::placeholder{direction:ltr;text-align:left}
-.lk-auto{display:grid;gap:5px;margin:0 0 12px}
+.lk-auto{display:grid;gap:5px;margin:0}
 .lk-auto label{font-size:.84rem;font-weight:600;color:var(--muted)}
 .lk-auto input{font:600 1.05rem/1.3 ui-monospace,Menlo,Consolas,monospace;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:center;width:100%}
 .lk-auto .btn{margin-top:6px;padding-block:12px;font-size:1rem}
@@ -1048,6 +1043,58 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 #lkMsg{min-height:1.5em;margin:6px 0 0;text-align:center;font-size:.9rem;color:var(--red)}
 #lkMsg.ok{color:var(--green)}
 #lock:not([hidden])~.toast{z-index:95}
+/* شاشة الاشتراك: بطاقة السعر، ثم الخطوات الأربع */
+.lk-hero{text-align:center;margin:2px 0 12px}
+.lk-logo{display:block;width:64px;height:64px;border-radius:18px;margin:0 auto 8px;box-shadow:0 6px 18px rgba(10,53,40,.25),0 0 0 2px var(--orn)}
+.lk-hero h2{font-size:1.3rem!important}
+.lk-hero .lk-st{margin:2px 0 0;font-size:.9rem}
+.lk-st[hidden]{display:none}
+.lk-price{position:relative;overflow:hidden;border-radius:20px;padding:16px 16px 14px;margin:0 0 12px;text-align:center;color:#F7EBC8;
+  background:radial-gradient(120% 90% at 85% 0%,#1E7A5B 0,#0F5641 45%,#0A3528 100%);box-shadow:0 10px 24px rgba(10,53,40,.28),inset 0 0 0 1px #C9A44C66}
+.lk-price::before{content:"";position:absolute;inset:0;background:var(--khatam-faint) center/56px;opacity:.12;pointer-events:none}
+.lk-price::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,#ffffff22,transparent);animation:lkShine 4.5s ease-in-out infinite}
+@keyframes lkShine{0%,60%{left:-60%}100%{left:130%}}
+.lk-price>*{position:relative}
+.lk-price .tag{display:inline-block;font-size:.74rem;font-weight:700;letter-spacing:.02em;color:#0A3528;background:#E6BC62;border-radius:999px;padding:3px 11px;margin-bottom:8px}
+.lk-price .amt{display:flex;align-items:baseline;justify-content:center;gap:8px;line-height:1}
+.lk-price .amt b{font:800 3.1rem/1 var(--f-display);color:#FFE7A8;text-shadow:0 2px 0 #0006;font-variant-numeric:lining-nums}
+.lk-price .amt span{font-size:1rem;font-weight:700;color:#F3E2AE}
+.lk-price .per{margin:6px 0 0;font-size:.92rem;color:#E9DDB8}
+.lk-price .day{display:inline-flex;align-items:center;gap:6px;margin:10px 0 0;padding:5px 12px;border-radius:999px;background:#ffffff14;border:1px solid #E6BC6266;font-size:.84rem;font-weight:700;color:#FFE7A8}
+.lk-price .ask{margin:4px 0 10px;font-size:1rem;font-weight:700;color:#FFE7A8}
+.lk-price .btn{background:#E6BC62;color:#0A3528;border:0;text-decoration:none;display:inline-block}
+.lk-p{margin:0 0 12px!important;font-size:.88rem!important}
+.lk-cta{display:block;width:100%;padding-block:13px;font-size:1.05rem;margin:0 0 16px;border-radius:14px}
+.lk-how{margin:0 0 14px}
+.lk-how>h3{margin:0 0 10px;text-align:center;font:700 1.05rem/1.4 var(--f-display);color:var(--green)}
+.lk-step{position:relative;border:1.5px solid var(--line);border-radius:16px;padding:10px 12px 12px;margin:0 0 10px;background:var(--surface);transition:border-color .25s,box-shadow .25s}
+.lk-step:not(:last-child)::after{content:"";position:absolute;bottom:-11px;inset-inline-start:25px;width:2px;height:10px;background:var(--orn)}
+.lk-step header{display:flex;align-items:center;gap:10px;margin:0 0 9px}
+.lk-step header i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:800 .95rem/1 var(--f-display);font-style:normal;background:var(--green-soft);color:var(--green);border:1.5px solid var(--orn);transition:background .25s,color .25s}
+.lk-step header b{font-size:.95rem;color:var(--ink)}
+.lk-step.on{border-color:var(--orn);box-shadow:0 6px 18px rgba(201,164,76,.22)}
+.lk-step.on header i{background:var(--green);color:var(--on-green)}
+.lk-step.done header i{background:var(--green);color:var(--on-green);font-size:0}
+.lk-step.done header i::before{content:"✓";font-size:.95rem}
+.lk-step.dim{opacity:.62}
+.lk-step .lk-note{margin:0;font-size:.86rem;line-height:1.75;color:var(--muted);text-align:start}
+#lkS4{margin:0}
+.lk-xfer{font-size:.88rem;color:var(--muted);line-height:1.7}
+.lk-xfer .hint{margin:0;padding:10px;border-radius:12px;background:var(--green-soft);text-align:center}
+.lk-xfer .box{display:grid;gap:8px}
+.lk-xfer .ln{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--gold-soft);border:1px dashed var(--orn)}
+.lk-xfer .ln small{display:block;font-size:.76rem;color:var(--muted)}
+.lk-xfer .ln b{display:block;font-size:1.25rem;color:var(--ink);line-height:1.3}
+.lk-xfer .ln b.num{direction:ltr;unicode-bidi:isolate;font:800 1.4rem/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em;text-align:start}
+.lk-xfer .ln .btn{flex:none;padding:8px 14px}
+.lk-xfer .ln img{width:34px;height:34px;border-radius:9px;background:#fff;object-fit:contain;flex:none}
+.lk-xfer .tip{margin:2px 0 0;font-size:.8rem}
+.lk-pay .pm[aria-pressed="true"]::after{content:"✓";position:absolute;top:-7px;inset-inline-end:-6px;width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--on-green);font-size:.72rem;font-weight:800;display:grid;place-items:center}
+.lk-pay .pm:active{transform:scale(.97)}
+.lk-pay .pm span{font-size:.82rem!important;color:var(--muted)}
+.lk-plan{margin:0 0 10px!important}
+.lk-plan button{border-radius:14px!important;padding:9px 6px!important}
+@media (prefers-reduced-motion:reduce){.lk-price::after{animation:none;display:none}}
 #splash{position:fixed;inset:0;z-index:100;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s ease,visibility .5s}
 #splash.out{opacity:0;visibility:hidden}
 #splash img{width:132px;height:132px;border-radius:30px;box-shadow:0 10px 30px rgba(10,53,40,.25),0 0 0 2px #C9A44C;animation:splashIn .7s ease both}
@@ -1151,14 +1198,37 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
 <div id="sky" aria-hidden="true"><i></i><i></i></div>
 <div id="lock" dir="rtl" lang="ar" hidden><div class="lk-in" role="dialog" aria-modal="true" aria-labelledby="lkT">
   <button type="button" class="lk-x" id="lkX" aria-label="إغلاق">✕</button>
-  <div class="lk-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5M12 14.5v2.5"/></svg></div>
-  <h2 id="lkT"></h2>
-  <p class="lk-st" id="lkSt"></p>
-  <p id="lkP"></p>
+  <div class="lk-hero"><img class="lk-logo" id="lkLogo" alt="" width="64" height="64"><h2 id="lkT"></h2><p class="lk-st" id="lkSt"></p></div>
+  <div class="lk-plan" id="lkPlan" hidden></div>
+  <div class="lk-price" id="lkPrice"></div>
+  <p class="lk-p" id="lkP"></p>
   <div class="lk-perks" id="lkPerks" hidden></div>
-  <p class="lk-day" id="lkDay" hidden></p>
-  <a class="btn lk-share" id="lkShare" hidden rel="noopener"></a>
+  <button type="button" class="btn primary lk-cta" id="lkCta">اشترك الآن</button>
+  <section class="lk-how" id="lkHow" aria-labelledby="lkHowT">
+    <h3 id="lkHowT">طريقة الاشتراك في 4 خطوات</h3>
+    <div class="lk-step" id="lkS1"><header><i>1</i><b>اختر التطبيق الذي ستدفع به</b></header><div class="lk-pay" id="lkPay"></div></div>
+    <div class="lk-step" id="lkS2"><header><i>2</i><b>حوّل المبلغ إلى رقم الناشر</b></header><div class="lk-xfer" id="lkXfer"></div></div>
+    <div class="lk-step" id="lkS3"><header><i>3</i><b>أخبرنا أنك دفعت</b></header>
+      <div class="lk-auto" id="lkAuto">
+        <label id="lkPhoneL" for="lkPhone"></label><input id="lkPhone" type="tel" inputmode="numeric" autocomplete="off" maxlength="20" dir="ltr">
+        <label id="lkRefL" for="lkRef"></label><input id="lkRef" type="text" autocomplete="off" maxlength="40" dir="ltr">
+        <button type="button" class="btn primary" id="lkSend"></button>
+        <p id="lkAutoMsg" role="status"></p>
+      </div></div>
+    <div class="lk-step" id="lkS4"><header><i>4</i><b>يُفتح التطبيق وحده</b></header><p class="lk-note">يصل الدفع إلى هاتف الناشر فيُفتح تطبيقك تلقائيًا خلال دقائق، لسنة كاملة. أبقِ الإنترنت مفتوحًا، ولا حاجة إلى إرسال أي شيء آخر.</p></div>
+  </section>
+  <div class="lk-fam" id="lkFam" hidden></div>
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
+  <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
+  <a class="btn lk-share" id="lkShare" hidden rel="noopener"></a>
+  <details class="lk-man" id="lkMan"><summary id="lkManS"></summary>
+  <div class="lk-row" id="lkContact" hidden></div>
+    <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
+    <textarea id="lkCode" autocomplete="off" autocapitalize="characters" spellcheck="false"></textarea>
+    <div class="lk-row"><button type="button" class="btn" id="lkPaste"></button><button type="button" class="btn primary" id="lkGo"></button></div>
+    <p id="lkMsg" role="status"></p>
+  </details>
+</div></div>
   <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
   <div class="lk-fam" id="lkFam" hidden></div>
   <div class="lk-plan" id="lkPlan" hidden></div>
@@ -3723,7 +3793,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','famPrice','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','famPrice','amount','famAmount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string')SUB[k]=c[k]});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
@@ -3745,14 +3815,16 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     if(st.verified===false&&!paid){$('lkT').textContent=L('اتصل بالإنترنت لبدء التجربة','Connectez-vous pour commencer l’essai');
       $('lkSt').textContent=L('تبدأ التجربة المجانية (24 ساعة) بعد اتصال واحد بالإنترنت. افتح الإنترنت وانتظر لحظة.','L’essai gratuit (24 heures) commence après une connexion. Activez Internet et patientez un instant.')}
     $('lkSt').hidden=!$('lkSt').textContent;
-    $('lkP').textContent=(paid?L('للتجديد ادفع ثم اضغط «دفعتُ» كما في الاشتراك الأول. ','Pour renouveler, payez puis touchez « J’ai payé », comme la première fois. ')
-      :trial?L('التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. ','L’application est gratuite 24 heures après son installation, puis elle se verrouille jusqu’à l’abonnement. '):L('استعملتَ التطبيق 24 ساعة مجانًا. للاستمرار اشترك لسنة كاملة. ','Vous avez utilisé l’application gratuitement pendant 24 heures. Pour continuer, abonnez-vous pour un an. '))
-       +(SUB.price?L('الاشتراك: ','Abonnement : ')+SUB.price+'.':L('الاشتراك سنوي.','L’abonnement est annuel.'));
+    $('lkP').textContent=paid?'للتجديد اتبع الخطوات نفسها أدناه، فتُضاف سنة إلى اشتراكك.'
+      :trial?'التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. اشترك مرة واحدة واستعمله سنة كاملة بكل ما فيه:'
+      :'انتهت الـ24 ساعة المجانية. اشترك مرة واحدة واستعمل التطبيق سنة كاملة بكل ما فيه:';
+    {const lg=$('lkLogo'),sl=document.querySelector('.seal');if(sl&&lg.src!==sl.src)lg.src=sl.src}
     {const E=$('lkPlan');E.hidden=!SUB.famPrice;if(!E.hidden){
       E.innerHTML='<button type="button" data-plan="one"><b></b><small></small></button><button type="button" data-plan="family"><b></b><small></small></button>';
       const [b1,b2]=E.children;b1.firstChild.textContent=L('فردي','Individuel');b1.lastChild.textContent=SUB.price||L('هاتف واحد','Un téléphone');
       b2.firstChild.textContent=L('عائلي','Famille');b2.lastChild.textContent=SUB.famPrice;
       [b1,b2].forEach(b=>b.setAttribute('aria-pressed',b.dataset.plan===planSel))}}
+    if(!SUB.famPrice)planSel='one';priceBox(paid);
     famBox(paid);
     {const S=$('lkShare');S.hidden=!SUB.link;if(SUB.link){S.textContent=L('أرسل التطبيق لصديق بواتساب','Envoyer l’application à un ami');
       S.href='https://wa.me/?text='+encodeURIComponent(L('التقويم الموريتاني: المواقيت والأذان والمنازل والمصحف، وويدجت وخلفيات من تراثنا. جرّبه يومًا مجانًا:\n','Le Calendrier mauritanien : prières, adhan, manazil, Coran, widgets et fonds d’écran. Essai gratuit d’un jour :\n')+SUB.link)}}
@@ -3775,24 +3847,18 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
         ['lock',L('إشعار شاشة القفل','Écran verrouillé'),L('اليوم والصلاة القادمة','le jour et la prochaine prière')]];
       E.innerHTML=P.map(()=>'<div class="lk-perk"><i><svg viewBox="0 0 24 24" aria-hidden="true"></svg></i><span><b></b><small></small></span></div>').join('');
       [...E.children].forEach((d,i)=>{d.querySelector('svg').innerHTML=I[P[i][0]];d.querySelector('b').textContent=P[i][1];d.querySelector('small').textContent=P[i][2]})}
-     const D=$('lkDay'),amt=parseInt(String(SUB.amount||'').replace(/\D/g,''),10);D.hidden=paid||!(amt>0);
-     if(!D.hidden){const d=amt/365;D.textContent=d<1?L('أقل من أوقية واحدة في اليوم، طوال السنة','Moins d’un ouguiya par jour, toute l’année')
-       :L('نحو '+Math.ceil(d)+' أوقية في اليوم، طوال السنة','Environ '+Math.ceil(d)+' ouguiyas par jour, toute l’année')}}
-    const steps=[L('ادفع قيمة الاشتراك من أحد التطبيقات أدناه إلى رقم الناشر.','Réglez l’abonnement depuis l’une des applications ci-dessous, au numéro de l’éditeur.'),L('اختر التطبيق الذي دفعت به، واكتب رقم حسابك الذي دفعت منه، ثم اضغط «دفعتُ».','Choisissez l’application utilisée, saisissez le numéro du compte avec lequel vous avez payé, puis touchez « J’ai payé ».'),L('يُفتح التطبيق تلقائيًا بعد وصول الدفع.','L’application s’ouvre automatiquement dès que le paiement est reçu.')];
-    $('lkSteps').innerHTML=steps.map(()=>'<li></li>').join('');[...$('lkSteps').children].forEach((li,i)=>{li.textContent=steps[i]});
+    }
     {const P=$('lkPay'),any=SUB.pay.some(m=>m.num);P.hidden=!SUB.pay.length;P.innerHTML='';
-     const h=document.createElement('h3');h.textContent=any?L('اختر التطبيق الذي تدفع به (يُنسخ رقم الناشر بالضغط)','Choisissez l’application de paiement (le numéro de l’éditeur est copié)'):L('اختر التطبيق الذي دفعت به','Choisissez l’application utilisée');P.append(h);
      for(const m of SUB.pay){const e=document.createElement('button');e.type='button';e.className='pm';e.dataset.app=m.k;e.setAttribute('aria-pressed',appSel===m.k);if(m.num)e.dataset.num=m.num;
        let i;if(PAY_IMG[m.k]){i=document.createElement('img');i.src=PAY_IMG[m.k];i.alt='';i.width=44;i.height=44}
        else{i=document.createElement('i');i.style.background=m.c;i.textContent=(fr?m.fr:m.n).replace(/^ال/,'').charAt(0)}
        const b=document.createElement('b');b.textContent=fr?m.fr:m.n;e.append(i,b);
-       if(m.num){const n=document.createElement('span');n.textContent=m.num;e.append(n)}
-       else{const n=document.createElement('small');n.textContent=L('الرقم من الناشر','Numéro : auprès de l’éditeur');e.append(n)}
        P.append(e)}}
-    $('lkPhoneL').textContent=L('رقم حسابك الذي دفعت منه','Numéro du compte avec lequel vous avez payé');$('lkPhone').placeholder='4X XX XX XX';
-    $('lkRefL').textContent=L('رقم العملية (اختياري، يسرّع المطابقة)','Référence de l’opération (facultatif)');
-    $('lkSend').textContent=L('دفعتُ — فعّل تطبيقي','J’ai payé — activer mon application');
-    $('lkManS').textContent=L('عندي رمز تفعيل، أو أريد مراسلة الناشر','J’ai un code d’activation, ou je veux écrire à l’éditeur');
+    xferBox();
+    $('lkPhoneL').textContent='رقم حسابك الذي دفعت منه (8 أرقام)';$('lkPhone').placeholder='4X XX XX XX';
+    $('lkRefL').textContent='رقم العملية من رسالة البنك (اختياري، يسرّع التفعيل)';
+    $('lkSend').textContent='دفعتُ — فعّل تطبيقي';
+    $('lkManS').textContent='عندي رمز تفعيل، أو أحتاج مساعدة من الناشر';
     {const p=jget('mrcal.subReq'),m=$('lkAutoMsg');if(p&&!paid){m.className='ok';m.textContent=pendingText(p);if(!$('lkPhone').value)$('lkPhone').value=p.phone||''}}
     $('lkIdL').textContent=L('رقم جهازك','Numéro de votre appareil');$('lkId').textContent=showId(st.id);$('lkCopy').textContent=L('نسخ','Copier');
     const c=$('lkContact');c.innerHTML='';
@@ -3804,6 +3870,35 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     $('lkCode').placeholder=L('الصق رمز التفعيل هنا','Collez ici le code d’activation');
     $('lkPaste').textContent=L('لصق','Coller');$('lkGo').textContent=L('تفعيل','Activer');$('lkX').setAttribute('aria-label',L('إغلاق','Fermer'));
   }
+  // السعر والمبلغ: من إعدادات الناشر (sub_config/public)؛ المبلغ بالأرقام إن وُجد، وإلا الأرقام في نص السعر
+  const numIn=x=>{const m=west(String(x||'')).replace(/(\d)[\s,.](?=\d{3}\b)/g,'$1').match(/\d+/);return m?parseInt(m[0],10):0};
+  function plan(){const fam=SUB.famPrice&&planSel==='family';
+    const text=fam?SUB.famPrice:SUB.price,amt=numIn(fam?(SUB.famAmount||SUB.famPrice):(SUB.amount||SUB.price));
+    const unit=/قديم/.test(text)?'أوقية قديمة':'أوقية جديدة';return {fam,text,amt,unit}}
+  function priceBox(paid){const E=$('lkPrice'),p=plan();E.innerHTML='';
+    const el=(t,c,x)=>{const d=document.createElement(t);if(c)d.className=c;if(x!=null)d.textContent=x;return d};
+    E.append(el('span','tag',paid?'تجديد الاشتراك':p.fam?'الاشتراك العائلي · حتى 5 هواتف':'الاشتراك السنوي'));
+    if(p.amt>0){const a=el('div','amt');a.append(el('b','',p.amt.toLocaleString('en-US')),el('span','',p.unit));E.append(a);
+      E.append(el('p','per',p.fam?'في السنة، لخمسة هواتف من العائلة':'في السنة كاملة، دفعة واحدة'));
+      const d=p.amt/365,ph=Math.ceil(p.amt/5);
+      E.append(el('span','day',p.fam?'نحو '+ph+' '+p.unit+' للهاتف الواحد':d<1?'أقل من أوقية واحدة في اليوم':'نحو '+Math.ceil(d)+' '+p.unit+' في اليوم'))}
+    else{E.append(el('p','ask','السعر عند الناشر'));
+      if(SUB.whatsapp){const a=el('a','btn','اسأل عن السعر بواتساب');a.rel='noopener';
+        a.href='https://wa.me/'+SUB.whatsapp+'?text='+encodeURIComponent('السلام عليكم، كم سعر الاشتراك في التقويم الموريتاني؟');E.append(a)}
+      else E.append(el('p','per','اتصل بالإنترنت ليظهر السعر.'))}}
+  function xferBox(){const X=$('lkXfer'),m=SUB.pay.find(x=>x.k===appSel),p=plan();X.innerHTML='';
+    const el=(t,c,x)=>{const d=document.createElement(t);if(c)d.className=c;if(x!=null)d.textContent=x;return d};
+    $('lkS1').className='lk-step '+(m?'done':'on');$('lkS2').className='lk-step '+(m?'on':'dim');$('lkS3').className='lk-step'+(m?'':' dim');
+    if(!m){X.append(el('p','hint','اختر تطبيق الدفع أعلاه ليظهر رقم الناشر فيه.'));return}
+    const box=el('div','box');
+    const l1=el('div','ln'),t1=el('span');t1.append(el('small','','المبلغ'),el('b','',p.amt>0?p.amt.toLocaleString('en-US')+' '+p.unit:(p.text||'اسأل الناشر عن السعر')));l1.append(t1);box.append(l1);
+    const l2=el('div','ln'),t2=el('span');t2.append(el('small','','رقم الناشر في '+m.n));
+    if(m.num){t2.append(el('b','num',m.num));const c=el('button','btn','نسخ');c.type='button';
+      c.onclick=()=>{let ok=false;try{ok=A.copy(m.num)}catch(x){}toast(ok?'نُسخ الرقم، الصقه في '+m.n:'تعذّر النسخ')};l2.append(t2,c)}
+    else{t2.append(el('b','','يُرسله إليك الناشر'));l2.append(t2);
+      if(SUB.whatsapp){const a=el('a','btn','اطلبه');a.rel='noopener';a.href='https://wa.me/'+SUB.whatsapp+'?text='+encodeURIComponent('السلام عليكم، ما رقم الدفع في '+m.n+' للاشتراك في التقويم الموريتاني؟');l2.append(a)}}
+    if(PAY_IMG[m.k]){const i=el('img');i.src=PAY_IMG[m.k];i.alt='';l2.prepend(i)}
+    box.append(l2,el('p','tip','افتح تطبيق '+m.n+'، وحوّل المبلغ كاملًا إلى هذا الرقم، ثم عد إلى هنا.'));X.append(box)}
   // the family: a family subscriber adds up to 4 more phones by their device numbers (sub_family/<this phone>);
   // the publisher's phone gives each its code. The list comes from this phone's code document (fam).
   let famLoaded=0;
@@ -3840,10 +3935,11 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   $('lkX').onclick=()=>{if(!locked)lock.hidden=true};
   lock.addEventListener('click',e=>{if(e.target===lock&&!locked)lock.hidden=true});
   $('lkPlan').addEventListener('click',e=>{const b=e.target.closest('[data-plan]');if(!b)return;planSel=b.dataset.plan;
-    $('lkPlan').querySelectorAll('[data-plan]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+    $('lkPlan').querySelectorAll('[data-plan]').forEach(x=>x.setAttribute('aria-pressed',x===b));priceBox(st.until>st.now);xferBox()});
+  $('lkCta').onclick=()=>$('lkHow').scrollIntoView({behavior:'smooth',block:'start'});
   $('lkPay').addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(!b)return;appSel=b.dataset.app;
-    $('lkPay').querySelectorAll('[data-app]').forEach(x=>x.setAttribute('aria-pressed',x===b));
-    if(b.dataset.num){let ok=false;try{ok=A.copy(b.dataset.num)}catch(x){}if(ok)toast(L('نُسخ رقم الدفع','Numéro de paiement copié'))}});
+    $('lkPay').querySelectorAll('[data-app]').forEach(x=>x.setAttribute('aria-pressed',x===b));xferBox();
+    setTimeout(()=>$('lkS2').scrollIntoView({behavior:'smooth',block:'nearest'}),60)});
   $('lkSend').onclick=async()=>{const m=$('lkAutoMsg'),ph=west($('lkPhone').value).replace(/\D/g,''),ref=west($('lkRef').value).trim().slice(0,40);m.className='';
     if(!appSel){m.textContent=L('اختر أولًا التطبيق الذي دفعت به.','Choisissez d’abord l’application utilisée.');return}
     if(ph.length<8||ph.length>15){m.textContent=L('اكتب رقم حسابك الذي دفعت منه (8 أرقام).','Saisissez le numéro du compte utilisé (8 chiffres).');return}
