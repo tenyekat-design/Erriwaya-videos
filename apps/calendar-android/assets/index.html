@@ -1186,6 +1186,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
         <p class="warn" id="adhWarn" hidden>اسمح للتطبيق بالإشعارات من إعدادات الهاتف ليصلك الأذان.</p>
       </div>
       <div class="row"><label for="sTheme">المظهر</label><select id="sTheme"><option value="auto">تلقائي: ليلي من المغرب إلى الشروق</option><option value="light">نهاري دائمًا</option><option value="dark">ليلي دائمًا</option></select></div>
+      <div class="row" id="lnRow" hidden><label for="lnOn" title="يظهر على شاشة القفل في كل الهواتف، ومنها سامسونغ التي لا تقبل ويدجت التطبيقات هناك">إشعار اليوم على شاشة القفل</label><input type="checkbox" id="lnOn" style="width:22px;height:22px"><small class="note" style="flex-basis:100%;margin:0">اليوم والتاريخ الهجري والميلادي والصلاة القادمة بعدّ تنازلي، بلا صوت. في سامسونغ: الإعدادات ← شاشة القفل ← الإشعارات ← «التفاصيل».</small></div>
       <div class="row" id="wBgRow" hidden><label title="لكل الويدجت؛ ولكل ويدجت إعداده: اضغط عليه مطوّلًا ثم الإعدادات">خلفية الويدجت</label><div class="seg" id="wBgSeg" role="group" aria-label="خلفية الويدجت"><button type="button" data-v="100">معتمة</button><button type="button" data-v="75">75%</button><button type="button" data-v="50">50%</button><button type="button" data-v="25">25%</button><button type="button" data-v="0">شفافة</button></div></div>
       <div class="row"><label for="sAdj">ضبط الهجري</label><select id="sAdj"><option value="-2">تأخير يومين</option><option value="-1">تأخير يوم</option><option value="0">بدون تعديل (أم القرى)</option><option value="1">تقديم يوم</option><option value="2">تقديم يومين</option></select></div>
       <p class="note">المواقيت محسوبة فلكيًا لإحداثيات كل مدينة، وقد تختلف بدقيقة أو دقيقتين عن الجداول الرسمية. التاريخ الهجري حسابي، وقد يتقدم أو يتأخر يومًا عن رؤية الهلال المعتمدة في موريتانيا؛ اضبطه هنا عند الحاجة.</p>
@@ -2202,6 +2203,9 @@ function applyTheme(){const t=themeNow(),r=document.documentElement;if(r.dataset
   $('themeBtn').setAttribute('aria-label',t==='dark'?'الوضع النهاري':'الوضع الليلي');
   if(themeSent!==t){themeSent=t;try{const A=window.AndroidApp;if(A&&typeof A.setTheme==='function')A.setTheme(t==='dark')}catch(e){}}}
 // the widgets' background, from solid to see-through (Android app only)
+if(window.AndroidApp&&typeof window.AndroidApp.setLockNote==='function'){const c=document.getElementById('lnOn');document.getElementById('lnRow').hidden=false;
+  try{c.checked=!!window.AndroidApp.lockNote()}catch(e){}
+  c.addEventListener('change',()=>{try{window.AndroidApp.setLockNote(c.checked)}catch(e){}say(c.checked?'ظهر إشعار اليوم على شاشة القفل':'أُزيل إشعار اليوم')})}
 if(window.AndroidApp&&typeof window.AndroidApp.setWidgetBg==='function'){const seg=$('wBgSeg'),mark=()=>{let v=100;try{v=window.AndroidApp.widgetBg()}catch(e){}seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===v))};
   $('wBgRow').hidden=false;mark();seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;try{window.AndroidApp.setWidgetBg(+b.dataset.v)}catch(x){}mark();say('خلفية الويدجت: '+b.textContent)})}
 $('sTheme').value=store.get('theme','auto');

@@ -221,6 +221,17 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setWidgetBg(int percent) { Widgets.setBg(MainActivity.this, percent); }
 
+        /** «إشعار اليوم» on the lock screen (LockNote): on or off; turning it on asks for notifications if needed. */
+        @JavascriptInterface
+        public boolean lockNote() { return LockNote.on(MainActivity.this); }
+
+        @JavascriptInterface
+        public void setLockNote(boolean on) {
+            if (on && Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED)
+                runOnUiThread(() -> requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 8));
+            LockNote.set(MainActivity.this, on);
+        }
+
         /** One of the heritage wallpapers (assets/wallpapers/<name>.jpg) on the home screen (1), the lock screen (2) or both (3), for subscribers; "", "locked" or the error. */
         @JavascriptInterface
         public String setWallpaper(String name, int which) {

@@ -70,6 +70,7 @@ final class Widgets {
         CalendarWidget.updateAll(ctx);
         DayWidget.updateAll(ctx);
         MonthWidget.updateAll(ctx);
+        LockNote.update(ctx);
     }
 
     private static int clamp(int v) { return Math.max(0, Math.min(100, v)); }

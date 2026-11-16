@@ -59,6 +59,8 @@
         <!-- /PUBLISHER-ONLY -->
         <!-- each widget's own settings (background, and for the months which names): long-press the widget, then its settings -->
         <!-- a photo behind a widget: picked, cropped to the widget's shape, dimmed (from the widget's settings) -->
+        <!-- «إشعار اليوم»: redraws the lock-screen notification at midnight and at each prayer -->
+        <receiver android:name=".LockNote" android:exported="false" />
         <activity android:name=".WidgetPhoto" android:exported="false" android:label="خلفية الويدجت"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:excludeFromRecents="true" />
         <!-- the launcher reads the widgets' photos from here (files/wbg only, read-only) -->

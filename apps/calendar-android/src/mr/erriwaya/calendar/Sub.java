@@ -284,6 +284,7 @@ final class Sub {
             DayWidget.updateAll(ctx);
             MonthWidget.updateAll(ctx);
             ClockWidget.updateAll(ctx);
+            LockNote.update(ctx);
         } catch (Exception ignored) { }
     }
 
