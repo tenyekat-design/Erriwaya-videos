@@ -3565,11 +3565,9 @@ window.addEventListener('hashchange',route);route();
    A phrase added to the calendar view needs its French here, or it shows in Arabic. */
 (function(){
 "use strict";
-let lang='ar';try{lang=JSON.parse(localStorage.getItem('mrcal.lang'))||'ar'}catch(e){}
-const band=document.querySelector('.app-in');
-if(band){const b=document.createElement('button');b.type='button';b.className='lang-btn';b.setAttribute('data-keep','');
-  b.textContent=lang==='fr'?'العربية':'Français';b.lang=lang==='fr'?'ar':'fr';
-  b.onclick=()=>{try{localStorage.setItem('mrcal.lang',JSON.stringify(lang==='fr'?'ar':'fr'))}catch(e){}location.reload()};band.append(b)}
+// The French interface is withdrawn (the owner's choice, 16 Nov 2026: most of the app had no French): no button, and a phone
+// left in French comes back to Arabic. The phrase table below stays, unused, should French return.
+let lang='ar';try{if(localStorage.getItem('mrcal.lang'))localStorage.setItem('mrcal.lang',JSON.stringify('ar'))}catch(e){}
 if(lang!=='fr')return;
 const GM=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const D=[
