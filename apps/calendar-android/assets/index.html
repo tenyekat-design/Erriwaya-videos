@@ -1918,7 +1918,8 @@ const MNZ={"label":"تقويم المنازل الموريتاني: دورة م�
 /* Two calculations, from tools/mansions-local-solar-stellar.json:
    - the solar one (الحساب الشمسي): each mansion from its dawn rising, on the dates of the owner's guide (16 Nov 2026), kept in
      MNZ.m[i][1..2]: الثريا on 7 June, الدبران on 20 June…, 13 days each and الجبهة 14 (before: الثريا on 9 June, every 13 days).
-   - the stellar one (الحساب النجمي): the dates of the Shinqiti poem «قال ابن عبدم مجيب السائل» (three are inferred). */
+   - the stellar one (الحساب النجمي): on the same dates, the raqib (the fifteenth mansion) that rises at nightfall (the owner's
+     list, 16 Nov 2026; before: the dates of the Shinqiti poem «قال ابن عبدم مجيب السائل», kept in NJM for its lore). */
 const NJM=[[9,22,0,[]],[10,5,0,[]],[10,18,0,["يُشار إلى طلوع الثريا في بعض الروايات الموريتانية باعتباره من أنجام الحر والغبار؛ وترد تسمية «أدموع الثريا» للأمطار المتوقعة أو المفاجئة خلال موسمه."]],[10,31,1,["في رواية منشورة يتباهى الدبران على الثريا بشدة «الردم»؛ وهي حكاية تصويرية لشدة الغبار والحر، لا تفسير سببي للطقس.","يذكر المصدر أن المسافرين في البادية كانوا يحتاطون من حر هذه المواسم ويتزودون بالماء في رحلاتهم."]],[11,13,0,[]],[11,26,0,[]],[12,9,0,[]],[12,22,0,[]],[1,4,0,[]],[1,17,0,[]],[1,30,0,[]],[2,12,0,[]],[2,25,0,[]],[3,10,1,[]],[3,23,1,[]],[4,5,0,[]],[4,18,0,[]],[5,1,0,[]],[5,14,0,[]],[5,27,0,[]],[6,9,0,[]],[6,22,0,[]],[7,5,0,[]],[7,18,0,[]],[8,1,0,[]],[8,14,0,[]],[8,27,0,[]],[9,9,0,[]]];
 const MNZ_ALL=true;   // the mansions page shows all 28 (the owner's request of 16 Nov 2026, to check them); false: today's three only
 function mnzOf(jdn){   // the dawn rising of each mansion on its date in MNZ.m (the owner's guide of 16 Nov 2026: الثريا 7 June, الجبهة 14 days)
@@ -1928,12 +1929,9 @@ function mnzOf(jdn){   // the dawn rising of each mansion on its date in MNZ.m (
   const n=L[(i+1)%28],a=jdnOf(y,L[i][1],L[i][2]),b=jdnOf(key(n)<key(L[i])?y+1:y,n[1],n[2])-1;
   return {i,a,b,day:jdn-a+1,len:b-a+1};
 }
-function njmOf(jdn){
-  const g=gOf(jdn),k=g.m*100+g.d,key=x=>x[0]*100+x[1];let i=-1,y=g.y;
-  for(let j=0;j<28;j++)if(key(NJM[j])<=k&&(i<0||key(NJM[j])>key(NJM[i])))i=j;
-  if(i<0){i=NJM.reduce((b,x,j)=>key(x)>key(NJM[b])?j:b,0);y--}        // early in the year: the period that began late last year
-  const n=NJM[(i+1)%28],a=jdnOf(y,NJM[i][0],NJM[i][1]),b=jdnOf(key(n)<key(NJM[i])?y+1:y,n[0],n[1])-1;
-  return {i,a,b,day:jdn-a+1,len:b-a+1};
+function njmOf(jdn){   // the stellar reckoning on the same dates as the solar one (the owner's list of 16 Nov 2026):
+  // the star of the period is the raqib, the fifteenth mansion, rising at nightfall while the mansion rises at dawn
+  const r=mnzOf(jdn);return {i:(r.i+14)%28,a:r.a,b:r.b,day:r.day,len:r.len};
 }
 /* The stars of each mansion (catalogue: d3-celestial, from Hipparcos; J2000): name, constellation, chart centre and radius,
    the mansion's stars [ra,dec,mag] (the first is its principal star) and the field stars around them. */
@@ -2051,10 +2049,10 @@ function manazilView(el){
   const one=i=>{
     const M=MNZ.m[i],r=seg[i],here=i===cur.i,v=star?climSpan(r.a,r.b,si):MNZ.c[i][si],sm=star?mnzOf(Math.round((r.a+r.b)/2)).i:i,SM=MNZ.m[sm];
     return `<div class="mz-name">${M[0]}<small>المنزلة ${i+1} من 28</small></div>
-      <div class="mz-dates">${mnzSpan(r.a,r.b)} · ${r.len} يومًا${star&&NJM[i][2]?' · <small>بدايتها مستنتجة من ترتيب القصيدة</small>':''}${here?` · <b>${isToday?'اليوم':'يوم'} ${cur.day} منها</b>`:''}</div>
+      <div class="mz-dates">${mnzSpan(r.a,r.b)} · ${r.len} يومًا${here?` · <b>${isToday?'اليوم':'يوم'} ${cur.day} منها</b>`:''}</div>
       ${here?`<div class="mz-bar"><i style="width:${(cur.day/cur.len*100).toFixed(1)}%"></i></div>`:''}
       ${astro(i,r)}
-      <dl class="mz-lore">${[['أسماؤها',M[3]],['نجومها',M[4]],['الموسم',M[11]],['أصل التسمية',M[10]],['رقيبها',M[9]?`${M[9]}: يطلع أول الليل حين تطلع ${M[0]} فجرًا`:'']].concat(star?[['الموسم في هذه المدة',`<small class="mz-src">منزلة ${SM[0]} في الحساب الشمسي</small>`],['الأجواء',SM[5]],['الزراعة والرعي',SM[6]],['الثمار التقليدية',SM[8]],['البحر',SM[7]]]:[['الأجواء',M[5]],['الزراعة والرعي',M[6]],['الثمار التقليدية',M[8]],['البحر',M[7]]]).concat([['الموروث',NJM[sm][3].join('<br>')]]).filter(x=>x[1]).map(([t,v])=>`<div><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <dl class="mz-lore">${[['أسماؤها',M[3]],['نجومها',M[4]],['الموسم',(star?SM:M)[11]],['أصل التسمية',M[10]],star?['يطلع أول الليل',M[9]?`حين تطلع منزلة ${M[9]} فجرًا`:'']:['رقيبها',M[9]?`${M[9]}: يطلع أول الليل حين تطلع ${M[0]} فجرًا`:'']].concat(star?[['الموسم في هذه المدة',`<small class="mz-src">منزلة ${SM[0]} في الحساب الشمسي</small>`],['الأجواء',SM[5]],['الزراعة والرعي',SM[6]],['الثمار التقليدية',SM[8]],['البحر',SM[7]]]:[['الأجواء',M[5]],['الزراعة والرعي',M[6]],['الثمار التقليدية',M[8]],['البحر',M[7]]]).concat([['الموروث',NJM[sm][3].join('<br>')]]).filter(x=>x[1]).map(([t,v])=>`<div><dt>${t}</dt><dd>${v}</dd></div>`).join('')}</dl>
       ${`<div class="mz-clim"><h3>${star?'مناخ هذه المدة':'مناخ المنزلة'} <small>معدل 1991–2020 · محطة ${MNZ.st[si][0]}</small></h3>
         <dl><div><dt>الحرارة</dt><dd class="num">${n(v[2])}°</dd></div><div><dt>العظمى · الصغرى</dt><dd class="num">${n(v[3])}° · ${n(v[4])}°</dd></div>
         <div><dt>المطر</dt><dd class="num">${n(v[0])} مم</dd></div><div><dt>أيام المطر</dt><dd class="num">${n(v[1])}</dd></div>
@@ -2072,7 +2070,7 @@ function manazilView(el){
       <div class="mz-mid" id="mzMid">${mid(cur.i)}</div></div>
       <div class="mz-one" id="mzOne">${one(cur.i)}</div>
     </section>
-    <section class="card"><h2 class="mz-t">${near?(star?'النجم الحالي وما قبله وما بعده':'المنزلة الحالية وما قبلها وما بعدها'):star?'النجوم ومواعيدها <small>المنظومة الشنقيطية</small>':`المنازل ومناخها <small>محطة ${MNZ.st[si][0]}</small>`}</h2>
+    <section class="card"><h2 class="mz-t">${near?(star?'النجم الحالي وما قبله وما بعده':'المنزلة الحالية وما قبلها وما بعدها'):star?'النجوم ومواعيدها <small>الرقيب الطالع أول الليل</small>':`المنازل ومناخها <small>محطة ${MNZ.st[si][0]}</small>`}</h2>
     <ol class="mz-list${near?' near':''}">${(near?near.map(r=>r.i):MNZ.m.map((M,i)=>i)).map((i,k)=>{const M=MNZ.m[i],v=MNZ.c[i][si];return `<li><button type="button" data-i="${i}"${i===cur.i?' aria-current="true"':''}><b class="num">${near?['السابقة','الحالية','اللاحقة'][k]:i+1}</b><span>${M[0]}<small class="num">${mnzSpan(seg[i].a,seg[i].b)}</small></span>${star?`<i class="num">${seg[i].len} يومًا</i>`:`<i class="num">${n(v[2],0)}°</i><i class="num">${n(v[0])} مم</i>`}</button></li>`}).join('')}</ol></section>`;
   const pick=i=>{el.querySelectorAll('.mz-list [aria-current]').forEach(x=>x.removeAttribute('aria-current'));el.querySelector(`.mz-list [data-i="${i}"]`).setAttribute('aria-current','true');
     el.querySelectorAll('.mz-ring path').forEach(p=>p.classList.toggle('sel',+p.dataset.i===i&&i!==cur.i));$('mzOne').innerHTML=one(i);$('mzSky').innerHTML=starChart(i,1);$('mzMid').innerHTML=mid(i)};
