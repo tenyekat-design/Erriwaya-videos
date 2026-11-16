@@ -66,6 +66,88 @@ button{cursor:pointer}
 .pc-tx b{font-family:var(--f-display);font-size:1.08rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-tx small{font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-chev{flex:none;color:var(--muted);font-size:1.3rem;line-height:1}
+
+/* ---- the place as a living sky: its colours follow the hour (night, dawn, day, dusk: set by tick()), stars twinkle,
+        the sun or the moon glows, clouds drift, a light sweeps across; the name rises in when it changes ---- */
+#placeChip{position:relative;overflow:hidden;isolation:isolate;border:0;color:#fff;background:var(--skyb);background-size:220% 220%;
+  animation:skyDrift 22s ease-in-out infinite alternate;box-shadow:0 8px 22px rgba(12,22,70,.28),inset 0 0 0 1px rgba(255,255,255,.14)}
+#placeChip[data-sky="night"]{--skyb:linear-gradient(115deg,#070D33 0%,#14227A 45%,#35226B 100%)}
+#placeChip[data-sky="dawn"]{--skyb:linear-gradient(115deg,#1E2768 0%,#8A4D8C 45%,#F0A36A 100%)}
+#placeChip[data-sky="day"]{--skyb:linear-gradient(115deg,#0F4E9E 0%,#2C8AD0 50%,#79C3EC 100%)}
+#placeChip[data-sky="dusk"]{--skyb:linear-gradient(115deg,#1B1450 0%,#A23E6A 50%,#F08A45 100%)}
+@keyframes skyDrift{from{background-position:0% 40%}to{background-position:100% 60%}}
+.pc-sky{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.pc-sky i{position:absolute;display:block}
+.pc-sky .st{inset:0;background-image:radial-gradient(1.4px 1.4px at 12% 30%,#fff 50%,transparent 52%),radial-gradient(1px 1px at 28% 70%,#fff 50%,transparent 52%),radial-gradient(1.2px 1.2px at 46% 22%,#fff 50%,transparent 52%),radial-gradient(1px 1px at 63% 64%,#fff 50%,transparent 52%),radial-gradient(1.5px 1.5px at 81% 34%,#fff 50%,transparent 52%),radial-gradient(1px 1px at 93% 76%,#fff 50%,transparent 52%);opacity:0;transition:opacity 2s}
+.pc-sky .s2{background-position:7px 9px;transform:scale(1.3)}
+#placeChip[data-sky="night"] .st{opacity:.9;animation:twinkle 3.2s ease-in-out infinite alternate}
+#placeChip[data-sky="night"] .s2{animation-delay:-1.6s}
+#placeChip[data-sky="dawn"] .st,#placeChip[data-sky="dusk"] .st{opacity:.35}
+@keyframes twinkle{from{opacity:.25}to{opacity:.95}}
+.pc-sky .orb{width:46px;height:46px;border-radius:50%;left:3%;top:-16px;transition:all 2s}
+#placeChip[data-sky="night"] .orb{background:transparent;box-shadow:inset -9px 5px 0 0 #F6DFA0;filter:drop-shadow(0 0 10px rgba(246,223,160,.55));transform:rotate(-20deg)}
+#placeChip[data-sky="day"] .orb{background:radial-gradient(circle,#FFF3C4 0 38%,#FFD36A 60%,rgba(255,211,106,0) 72%);animation:sunPulse 4s ease-in-out infinite;width:62px;height:62px;top:-36px}
+#placeChip[data-sky="dawn"] .orb,#placeChip[data-sky="dusk"] .orb{background:radial-gradient(circle,#FFE2A8 0 34%,#FF9D57 58%,rgba(255,157,87,0) 72%);top:auto;bottom:-50px;width:70px;height:70px;animation:sunPulse 5s ease-in-out infinite}
+@keyframes sunPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.12);opacity:1}}
+.pc-sky .cl{height:14px;border-radius:14px;background:rgba(255,255,255,.55);filter:blur(3px);opacity:0;transition:opacity 2s}
+.pc-sky .c1{width:70px;top:10px;left:-80px;animation:cloud 26s linear infinite}
+.pc-sky .c2{width:48px;bottom:9px;left:-60px;animation:cloud 34s linear infinite;animation-delay:-14s}
+#placeChip[data-sky="day"] .cl{opacity:.8}#placeChip[data-sky="dawn"] .cl,#placeChip[data-sky="dusk"] .cl{opacity:.35}
+@keyframes cloud{from{transform:translateX(0)}to{transform:translateX(520px)}}
+.pc-sky .sweep{top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-18deg);animation:sweep 7s ease-in-out infinite}
+@keyframes sweep{0%,60%{left:-50%}100%{left:130%}}
+#placeChip .pc-ic{position:relative;background:rgba(255,255,255,.16);color:#FFE9A8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);backdrop-filter:blur(4px)}
+#placeChip .pc-ic svg{animation:pinHop 3.6s ease-in-out infinite}
+#placeChip .pc-ic::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 0 rgba(255,233,168,.55);animation:ripple 2.4s ease-out infinite}
+@keyframes pinHop{0%,70%,100%{transform:translateY(0)}78%{transform:translateY(-4px)}86%{transform:translateY(0)}92%{transform:translateY(-1.5px)}}
+@keyframes ripple{from{box-shadow:0 0 0 0 rgba(255,233,168,.5)}to{box-shadow:0 0 0 12px rgba(255,233,168,0)}}
+#placeChip .pc-tx b{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+#placeChip .pc-tx small{color:rgba(255,255,255,.82)}
+#placeChip.pc-new .pc-tx b{animation:pcIn .8s cubic-bezier(.2,.8,.2,1)}
+#placeChip.pc-new .pc-tx small{animation:pcIn .8s .12s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes pcIn{from{opacity:0;transform:translateY(70%);letter-spacing:.18em;filter:blur(5px)}to{opacity:1;transform:none;letter-spacing:normal;filter:none}}
+#placeChip .pc-find{color:#fff;background:rgba(255,255,255,.14);border-radius:12px;width:36px;height:36px;display:grid;place-items:center;flex:none}
+.pc-wx{flex:none;display:flex;align-items:center;gap:4px;padding:3px 8px 3px 6px;border-radius:12px;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.pc-wx[hidden]{display:none}
+.pc-wx svg{width:24px;height:24px;fill:none;stroke:#FFE9A8;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pc-wx b{font:700 1.15rem/1 var(--f-display,inherit);color:#fff;font-variant-numeric:tabular-nums}
+.pc-wx.k-sun svg{animation:spin 24s linear infinite}
+.pc-wx.k-part svg,.pc-wx.k-cloud svg,.pc-wx.k-fog svg{animation:drift 4s ease-in-out infinite alternate}
+.pc-wx.k-rain svg,.pc-wx.k-storm svg{animation:drift 2.4s ease-in-out infinite alternate}
+.pc-wx.pop b{animation:pop .6s ease-out}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes drift{from{transform:translateX(-2px)}to{transform:translateX(2px)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.15)}100%{transform:none;opacity:1}}
+/* the weather row in the day card: the same life */
+.wx .wx-ic{animation:drift 4s ease-in-out infinite alternate}
+/* ---- the next prayer: a bar of the time gone since the last one, a light running through it, a glow in the last 15 minutes ---- */
+.next{position:relative;overflow:hidden}
+.nx-bar{height:6px;border-radius:6px;background:rgba(0,0,0,.09);margin-top:7px;overflow:hidden}
+[data-theme="dark"] .nx-bar{background:rgba(255,255,255,.12)}
+.nx-bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--gold,#C9952E),var(--green,#13604A));position:relative;transition:width 1s linear;overflow:hidden}
+.nx-bar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(100%);animation:barRun 2.2s linear infinite}
+@keyframes barRun{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.next .cd{display:inline-block;transition:color .4s}
+.next.tick .cd{animation:tickIn .45s ease-out}
+@keyframes tickIn{from{opacity:.55;transform:translateY(-2px)}to{opacity:1;transform:none}}
+.next.soon{animation:soonGlow 1.8s ease-in-out infinite}
+.next.soon .cd{color:var(--gold,#C9952E)}
+@keyframes soonGlow{0%,100%{box-shadow:0 0 0 0 rgba(201,149,46,0)}50%{box-shadow:0 0 0 4px rgba(201,149,46,.35)}}
+/* ---- the ad space: a light sweeps across it, the megaphone calls, the button breathes, the line under it changes ---- */
+.ad-cta,.ad-card{position:relative;overflow:hidden}
+.ad-cta::after,.ad-card::after{content:"";position:absolute;top:0;bottom:0;width:45%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-18deg);animation:adShine 5s ease-in-out infinite;pointer-events:none}
+@keyframes adShine{0%,55%{left:-60%}100%{left:130%}}
+.ad-ic svg{transform-origin:30% 50%;animation:adCall 3.2s ease-in-out infinite}
+@keyframes adCall{0%,60%,100%{transform:rotate(0)}66%{transform:rotate(-12deg) scale(1.08)}72%{transform:rotate(9deg) scale(1.08)}78%{transform:rotate(-6deg)}84%{transform:rotate(0)}}
+.ad-cta em{animation:adBreath 2.6s ease-in-out infinite}
+@keyframes adBreath{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,149,46,.5)}50%{transform:scale(1.06);box-shadow:0 0 0 6px rgba(201,149,46,0)}}
+.ad-cta{animation:adBorder 3s ease-in-out infinite}
+@keyframes adBorder{0%,100%{border-color:var(--orn)}50%{border-color:var(--gold,#C9952E)}}
+.ad-msg span.roll{animation:adRoll .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes adRoll{from{opacity:0;transform:translateY(60%)}to{opacity:1;transform:none}}
+.ad-card{animation:adFloat 6s ease-in-out infinite alternate}
+@keyframes adFloat{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){#placeChip,#placeChip *,#placeChip::after,.pc-sky *,.next,.next *,.nx-bar i::after,.ad-cta,.ad-cta *,.ad-cta::after,.ad-card,.ad-card::after,.wx .wx-ic{animation:none!important;transition:none!important}}
 .place-find{flex:none;width:54px;border:1px solid var(--orn);border-radius:16px;background:var(--surface);color:var(--green);display:grid;place-items:center;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .cpick-back{border:0;background:none;color:var(--green);font-size:1.6rem;line-height:1;padding:0 6px 0 2px;cursor:pointer}
 .pk-sg{display:grid;gap:4px;padding:10px 18px 16px;border-top:1.5px solid var(--orn)}
@@ -295,7 +377,8 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
   .mnz{flex:1 1 40%;min-width:0;margin:2px 0 0;padding:4px 8px;font-size:.82rem;justify-content:center;border-radius:10px}.mnz+.mnz{margin-top:2px}
   .mnz span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mnz .ic{width:15px;height:15px}
   #dOcc,#dNotes,.day-head .wx{flex-basis:100%}#dOcc{font-size:.84rem}
-  .next{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;text-align:start;min-width:0}
+  .next{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;text-align:start;min-width:0;flex-wrap:wrap}
+  .nx-tx{display:contents}.nx-bar{flex-basis:100%;margin-top:2px;height:5px}
   .next .lbl{display:none}.next .pn{font-size:1.05rem}.next .cdrow{display:grid;justify-items:end;gap:0;margin:0}.next .cdl{font-size:.74rem}.next .cd{font-size:1.35rem;line-height:1.1}
   .band{height:12px;margin:12px 0 10px}.band .hrs,.band .mk span{display:none}.band .now{top:-5px;bottom:-5px}
   .times{gap:4px}.times li{padding:6px 1px 5px;border-radius:9px;gap:0}.t-ic{width:17px;height:17px;margin-bottom:1px}.t-name{font-size:.72rem}.times .t-val{font-size:.96rem}
@@ -1089,8 +1172,8 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   </section>
   <div class="cal-top">
     <div class="place-bar">
-      <button type="button" class="place-chip" id="placeChip" aria-label="تغيير المكان"><span class="pc-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg></span>
-        <span class="pc-tx"><b id="pcName"></b><small id="pcPath"></small></span><span class="pc-find" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span></button>
+      <button type="button" class="place-chip" id="placeChip" data-sky="night" aria-label="تغيير المكان"><span class="pc-sky" aria-hidden="true"><i class="st s1"></i><i class="st s2"></i><i class="orb"></i><i class="cl c1"></i><i class="cl c2"></i><i class="sweep"></i></span><span class="pc-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg></span>
+        <span class="pc-tx"><b id="pcName"></b><small id="pcPath"></small></span><span class="pc-wx" id="pcWx" hidden></span><span class="pc-find" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span></button>
     </div>
     <div class="clock"><span class="clk-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="fc" cx="12" cy="12" r="9"/><path class="tk" d="M12 4.6v1.3M19.4 12h-1.3M12 19.4v-1.3M4.6 12h1.3"/><path id="clkH" class="hh" d="M12 12V7.9"/><path id="clkM" class="mh" d="M12 12V5.7"/><path id="clkS" class="sh" d="M12 13.8V5"/><circle class="pin" cx="12" cy="12" r="1.1"/></svg></span><b id="clock">--:--:--</b><small>توقيت موريتانيا (غرينتش)</small></div>
     <div class="city-pick" hidden><select id="citySel" aria-hidden="true" tabindex="-1"></select></div>
@@ -1488,7 +1571,7 @@ const vesc=x=>String(x).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;
 function setPlace(cid,vid){S.city=cid;S.vil=vid||'';store.set('city',cid);store.set('vil',S.vil);renderCities();renderVil();renderCal();renderDay();renderRam();pushAdhan();loadWx()}
 function renderVil(){
   const pn=$('pcName');if(pn){const c=commune(),v=S.vil&&CITIES.find(x=>x.id===S.vil),M=moughOf(S.city);
-    pn.textContent=v?v.name:c.name;
+    const nm=v?v.name:c.name;if(pn.textContent!==nm){pn.textContent=nm;const ch=$('placeChip');if(ch){ch.classList.remove('pc-new');void ch.offsetWidth;ch.classList.add('pc-new')}}
     $('pcPath').textContent=[v?'بلدية '+c.name:'',M.ids.length>1||v?'مقاطعة '+M.m:'','ولاية '+M.w].filter(Boolean).join(' · ')}
   const cb=$('comBtn');if(cb){const M=moughOf(S.city);cb.innerHTML=vesc(commune().name)+(M.ids.length>1?` <small>(${M.ids.length} بلديات)</small>`:'')}
   const b=$('vilBtn');if(!b)return;const L=VILLAGES.filter(c=>c.vc===S.city),v=S.vil&&CITIES.find(c=>c.id===S.vil);
@@ -1955,6 +2038,11 @@ const wxKind=c=>c===0?'sun':c<=2?'part':c===3?'cloud':c<=48?'fog':c>=95?'storm':
 const WX_NAME={sun:'صحو',part:'غائم جزئيًا',cloud:'غائم',fog:'ضباب',rain:'مطر',storm:'عاصفة رعدية'};
 let WX=store.get('wx',null);
 function showWx(){const el=$('wx'),c=city(),w=WX,ok=w&&w.id===c.id&&Date.now()-w.t<6*3600e3&&S.sel===todayJdn();
+  // the temperature also sits in the place's sky, counting up to its value when it changes
+  {const pw=$('pcWx'),fresh=w&&w.id===c.id&&Date.now()-w.t<6*3600e3;pw.hidden=!fresh;
+   if(fresh){const k=wxKind(w.code),key=w.id+':'+w.now+':'+k;if(pw.dataset.k!==key){const from=+(pw.dataset.v||w.now-6);pw.dataset.k=key;pw.dataset.v=w.now;
+     pw.className='pc-wx k-'+k+' pop';pw.title=WX_NAME[k];pw.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b>${from}°</b>`;
+     const b=pw.querySelector('b'),t0=performance.now(),dur=900;const step=t=>{const f=Math.min(1,(t-t0)/dur),v=Math.round(from+(w.now-from)*(1-Math.pow(1-f,3)));b.textContent=v+'°';if(f<1)requestAnimationFrame(step)};requestAnimationFrame(step)}}}
   el.hidden=!ok;if(!ok)return;
   const k=wxKind(w.code);
   el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small><i class="wl">العظمى </i>${w.hi}°<i class="wl"> · الصغرى </i><i class="ws"> / </i>${w.lo}°</small></span>`
@@ -2030,6 +2118,9 @@ function tick(){
   const n=nowInfo();$('clock').textContent=n.hms;clockHands();
   if(!S.sel)return;
   const tj=jdnOf(n.y,n.m,n.d),box=$('next');
+  {const ch=$('placeChip'),tn=prayerTimes(n.y,n.m,n.d,city()),h=n.h;
+   const sky=h<tn.fajr||h>=tn.isha?'night':h<tn.sunrise+.6?'dawn':h<tn.maghrib-.6?'day':'dusk';
+   if(ch&&ch.dataset.sky!==sky)ch.dataset.sky=sky}
   if(S.sel!==tj){box.innerHTML=`<div class="lbl">تعرض يومًا غير اليوم</div><button class="btn primary" id="backToday" style="margin-top:6px">العودة إلى اليوم</button>`;document.querySelectorAll('#times li').forEach(li=>li.classList.remove('on'));return}
   const c=city(),t=prayerTimes(n.y,n.m,n.d,c);
   const order=['fajr','dhuhr','asr','maghrib','isha'];
@@ -2040,6 +2131,7 @@ function tick(){
   const iqAt=cur?t[cur]+(S.iq[cur]||0)/60:null;
   const toIqama=cur&&n.h<iqAt;
   const kk=toIqama?cur:nk,tt=toIqama?iqAt:target;
+  const from=toIqama?t[kk]:cur?t[cur]:t.isha-24;
   if(!cur)cur='isha';
   let s=Math.max(0,Math.round((tt-n.h)*3600));
   const cd=pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60);
@@ -2047,7 +2139,10 @@ function tick(){
   const html=toIqama
     ?`<div class="lbl">صلاة ${name} في ${c.name}</div><div class="pn">أُذِّن ${fmt(t[kk])} · الإقامة ${fmt(tt)}</div><div class="cdrow iq"><span class="cdl">الوقت المتبقي للإقامة</span><span class="cd">${cd}</span></div>`
     :`<div class="lbl">الصلاة القادمة في ${c.name}</div><div class="cdrow"><span class="cdl">المتبقي لأذان ${name}</span><span class="cd">${cd}</span></div>`;
-  if(box.innerHTML!==html)box.innerHTML=html;
+  let tx=box.querySelector('.nx-tx');if(!tx){box.innerHTML='<div class="nx-tx"></div><div class="nx-bar" aria-hidden="true"><i></i></div>';tx=box.firstChild}
+  if(tx.innerHTML!==html){tx.innerHTML=html;box.classList.remove('tick');void box.offsetWidth;box.classList.add('tick')}
+  box.querySelector('.nx-bar i').style.width=(Math.max(0,Math.min(1,(n.h-from)/Math.max(1e-6,tt-from)))*100).toFixed(2)+'%';
+  box.classList.toggle('soon',s>0&&s<900);
   document.querySelectorAll('#times li').forEach(li=>li.classList.toggle('on',li.dataset.k===cur));
   const mk=$('nowMk');if(mk)mk.style.right=(n.h/24*100).toFixed(2)+'%';
 }
@@ -3776,6 +3871,9 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   // on the lock screen: a glimpse of them, to make the subscription worth it
   const lw=$('lkWalls');if(lw&&app){lw.querySelector('div').innerHTML=WALLS.map(([k])=>'<img alt="" draggable="false" src="wallpapers/'+k+'-s.jpg">').join('');lw.hidden=false}
 })();
+(function(){const sp=document.querySelector('.ad-cta .ad-msg span');if(!sp)return;
+  const L=['مساحتك الإعلانية أمام مستخدمي التقويم كل يوم','شعارك فوق مواقيت الصلاة، يراه المستخدم كل يوم','إعلان واحد ثابت وهادئ، دون تتبّع','لمؤسستك ومحلّك وخدمتك: تواصل معنا'];let i=0;
+  setInterval(()=>{if(document.hidden||document.documentElement.classList.contains('locked'))return;i=(i+1)%L.length;sp.textContent=L[i];sp.classList.remove('roll');void sp.offsetWidth;sp.classList.add('roll')},4200)})();
 (function(){const slot=document.getElementById('adslot'),a=document.getElementById('spons');if(!slot||!a)return;
   if(SPONSOR.name){
     document.getElementById('sponsName').textContent=SPONSOR.name;
