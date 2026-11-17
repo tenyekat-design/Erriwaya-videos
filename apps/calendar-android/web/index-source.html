@@ -3874,9 +3874,9 @@ const AD_CONTACT={whatsapp:'22236152800',phone:'',email:''};   // the advertiser
    for sendMessage a last fire-and-forget attempt. Resolves to Telegram's answer, or {ok:false,error_code:0,description}. */
 window.tgCall=async(token,method,params)=>{const q=new URLSearchParams();for(const k in params||{})q.set(k,params[k]);
   const url='https://api.telegram.org/bot'+token+'/'+method+'?'+q,why=[];
-  try{const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);const r=await fetch(url,{signal:c.signal});clearTimeout(t);return await r.json()}catch(e){why.push('web: '+(e.name||e))}
+  try{const c=new AbortController(),t=setTimeout(()=>c.abort(),15000);const r=await fetch(url,{signal:c.signal,cache:'no-store'});clearTimeout(t);return await r.json()}catch(e){why.push('web: '+(e.name||e))}
   try{const A=window.AndroidApp;if(A&&typeof A.tg==='function'){const r=JSON.parse(A.tg(token,method,JSON.stringify(params||{}))||'{}');if(r.ok||r.error_code)return r.error_code===0?Object.assign(r,{description:why.concat(r.description).join(' / ')}):r}}catch(e){}
-  if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors'});return{ok:true,blind:true}}catch(e){}}
+  if(method==='sendMessage'){try{await fetch(url,{mode:'no-cors',cache:'no-store'});return{ok:true,blind:true}}catch(e){}}
   return{ok:false,error_code:0,description:why.join(' / ')}};
 const SUB={price:'200 أوقية جديدة في السنة',famPrice:'',amount:'200',link:'',whatsapp:'22236152800',phone:'',pay:[
   {k:'bankily',n:'بنكيلي',fr:'Bankily',c:'#0B7A4B',num:''},
