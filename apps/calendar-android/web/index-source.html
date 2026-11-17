@@ -1912,7 +1912,7 @@ async function subAdmin(el){
   el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>${vesc(a.email)} · <a href="#sg-admin">اقتراحات القرى</a></p></div>
     <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
     <section class="card sb" id="sbCatch"></section>
-    <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="60"></label>`).join('')}</div>
+    <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" name="sb_${k}_${Math.random().toString(36).slice(2,7)}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="60" autocomplete="off" autocorrect="off" spellcheck="false"></label>`).join('')}</div>
       <button type="button" class="btn primary" id="sbSave">حفظ</button><p class="sg-msg" id="sbCfgM"></p></section>
     <section class="card sb"><h2>إشعار تيليغرام <small>للمشرف فقط، لا يظهر للمشتركين</small></h2>
       <p class="mut">أنشئ بوتًا من <b dir="ltr">@BotFather</b> والصق رمزه، ثم افتح البوت في تيليغرام وأرسل له أي رسالة، ثم «اكتشف معرّفي»، ثم «حفظ».</p>
