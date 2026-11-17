@@ -1932,7 +1932,7 @@ async function subAdmin(el){
       // the bot, from its own document (or, once, from where the previous version kept it)
       el.querySelectorAll('#sbTgF input').forEach(i=>{const v=typeof t[i.dataset.k]==='string'?t[i.dataset.k]:c[i.dataset.k];if(typeof v==='string')i.value=v});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount,famAmount:c.famAmount||''}))}catch(e){}})();
   $('sbSave').onclick=async()=>{const f={},M=$('sbCfgM');el.querySelectorAll('#sbCfg input').forEach(i=>{f[i.dataset.k]=i.value.trim()});
-    f.amount=f.amount.replace(/\D/g,'');f.famAmount=(f.famAmount||'').replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});M.textContent='جارٍ الحفظ…';
+    f.amount=f.amount.replace(/\D/g,'');f.famAmount=(f.famAmount||'').replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});['whatsapp','phone'].forEach(k=>{if(/^\d{8}$/.test(f[k]))f[k]='222'+f[k]});el.querySelectorAll('#sbCfg input').forEach(i=>{if(i.dataset.k in f)i.value=f[i.dataset.k]});M.textContent='جارٍ الحفظ…';
     try{await subCommit([{update:{name:`${SG_DOCS}/sub_config/public`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))}}]);
       if(nat)A.paySet(JSON.stringify({amount:f.amount,famAmount:f.famAmount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
     catch(e){M.textContent=e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد':'تعذّر الحفظ. هل أُضيفت قواعد الاشتراك في Firestore؟'}};
@@ -3912,7 +3912,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
   const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
-  function applyCfg(c){if(!c)return;['price','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string'&&c[k].trim())SUB[k]=c[k].trim()});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
+  function applyCfg(c){if(!c)return;['price','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string'&&c[k].trim())SUB[k]=c[k].trim()});['whatsapp','phone'].forEach(k=>{const v=String(SUB[k]||'').replace(/\D/g,'');SUB[k]=/^\d{8}$/.test(v)?'222'+v:v});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
   async function loadCfg(force){const s0=jget('mrcal.subCfg');if(!force&&s0&&Date.now()-s0.at<3*3600e3)return;
     try{const r=await net(FS+'/sub_config/public');if(r.status===404){jset('mrcal.subCfg',{at:Date.now(),c:(s0&&s0.c)||{}});return}if(!r.ok)return;
