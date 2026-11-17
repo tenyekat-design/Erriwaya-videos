@@ -378,7 +378,7 @@ public class MainActivity extends Activity {
             sPage = pool.load(getAssets().openFd("sounds/page.wav"), 1);
         } catch (Exception e) { pool = null; }
         Sub.syncDayWidget(this);
-        new Thread(() -> Sub.verify(getApplicationContext())).start();   // when this phone's free day began, from the server
+        new Thread(() -> { Sub.verify(getApplicationContext()); Sub.ping(getApplicationContext()); }).start();   // when this phone's free day began, from the server; and the daily "used today" count
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
         WebSettings s = web.getSettings();

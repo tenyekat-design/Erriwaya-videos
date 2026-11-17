@@ -167,6 +167,7 @@ button{cursor:pointer}
 .linkish{border:0;background:none;color:var(--green);font:inherit;text-decoration:underline;padding:0;cursor:pointer}
 .sg-tabs{display:flex;justify-content:center;gap:8px;margin:10px 0}.sg-tabs button{border:1.5px solid var(--orn);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 16px;font:600 .9rem var(--f-body)}
 .sg-tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.st-h{margin:0 0 8px;font-size:1rem;color:var(--ink)}.st-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.st-t{border:1.5px solid var(--orn);border-radius:14px;padding:10px;text-align:center;background:var(--surface)}.st-t b{display:block;font-size:1.6rem;color:var(--green)}.st-t small{color:var(--muted)}.st-n{margin:8px 0 0;font-size:.85rem;color:var(--muted)}.st-v{list-style:none;margin:0;padding:0}.st-v li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--orn)}
 .sg-it{display:grid;gap:4px}.sg-it h3{margin:0;font-size:1.15rem;color:var(--ink)}.sg-it p{margin:0;font-size:.93rem}.sg-it .mut{color:var(--muted)}
 .sg-k{display:flex;justify-content:space-between;align-items:center}.sg-k b{font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--green);color:var(--on-green)}.sg-k b.fix{background:var(--gold)}.sg-k small{color:var(--muted)}
 .sg-note{background:var(--bg,#f6f1e4);border-radius:8px;padding:6px 10px}.sg-edit{display:grid;gap:4px;font-size:.85rem;color:var(--muted);margin-top:4px}.sg-edit input{font:inherit;padding:7px 10px;border:1.5px solid var(--line);border-radius:10px}
@@ -1874,7 +1875,7 @@ async function sgAdmin(el){
         store.set(SG_AUTH,{email:j.email,rt:j.refreshToken,id:j.idToken,exp:Date.now()+(+j.expiresIn)*1000});sgBg(j.refreshToken);
         try{window.AndroidApp.requestNotifications()}catch(e){}sgAdmin(el)}catch(e){M.textContent='تعذّر الاتصال بالإنترنت'}};
     return}
-  el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>${vesc(a.email)} · <a href="#sub-admin">الاشتراكات</a> · <button type="button" class="linkish" id="sgOut">خروج</button></p></div>
+  el.innerHTML=`<div class="lib-h"><h1>اقتراحات القرى</h1><p>${vesc(a.email)} · <a href="#sub-admin">الاشتراكات</a> · <a href="#stats-admin">الإحصاءات</a> · <button type="button" class="linkish" id="sgOut">خروج</button></p></div>
     <div class="sg-tabs" role="tablist">${[['new','جديدة'],['accepted','مقبولة'],['rejected','مرفوضة']].map(([k,t])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${sgTab===k}">${t}</button>`).join('')}</div>
     <div id="sgL"><p class="empty">جارٍ التحميل…</p></div>`;
   $('sgOut').onclick=()=>{store.set(SG_AUTH,null);sgBg('');sgAdmin(el)};
@@ -2007,7 +2008,41 @@ async function subAdmin(el){
       const plan=b.closest('[data-plan]').dataset.plan;if(typeof A.payManualPlan==='function')A.payManualPlan(id,plan);else A.payManual(id)}
     else try{await subCommit([{delete:`${SG_DOCS}/sub_requests/${id}`}]);loadReq()}catch(x){b.disabled=false;say('تعذّر الحذف')}};
 }
-window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin});
+// ---- the admin: statistics. Phones that installed the app (sub_trials: one record per phone, written at its first run)
+//      and phones that used it lately (calendar_seen: written once a day by each phone, with its version).
+async function statsAdmin(el){
+  const a=store.get(SG_AUTH,null);
+  if(!a){el.innerHTML=`<div class="lib-h"><h1>الإحصاءات</h1><p>للمشرف فقط</p></div><section class="card"><p class="empty">سجّل الدخول أولًا من <a href="#sg-admin">صفحة المشرف</a> ثم عد إلى هنا.</p></section>`;return}
+  el.innerHTML=`<div class="lib-h"><h1>الإحصاءات</h1><p><a href="#sg-admin">اقتراحات القرى</a> · <a href="#sub-admin">الاشتراكات</a></p></div><div id="stL"><p class="empty">جارٍ الحساب…</p></div>`;
+  const L=$('stL');let tok;try{tok=await sgToken()}catch(e){}
+  if(!tok){L.innerHTML='<p class="empty">تعذّر الاتصال بالحساب. تحقق من الإنترنت، أو اخرج وادخل من جديد.</p>';return}
+  const since=d=>new Date(Date.now()-d*864e5).toISOString();
+  const count=async(col,days)=>{const q={from:[{collectionId:col}]};
+    if(days)q.where={fieldFilter:{field:{fieldPath:'t'},op:'GREATER_THAN_OR_EQUAL',value:{timestampValue:since(days)}}};
+    const r=await sgFetch(SG_FS+':runAggregationQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredAggregationQuery:{structuredQuery:q,aggregations:[{alias:'n',count:{}}]}})});
+    if(!r.ok)throw new Error(r.status);const j=await r.json();return +(((j[0]||{}).result||{}).aggregateFields||{}).n?.integerValue||0};
+  let N;
+  try{N=await Promise.all([count('sub_trials',0),count('sub_trials',1),count('sub_trials',7),count('sub_trials',30)])}
+  catch(e){L.innerHTML='<p class="empty">تعذّر حساب الإحصاءات. تحقق من الإنترنت، ومن لصق قواعد Firestore.</p>';return}
+  let A=null,V=[];
+  try{A=await Promise.all([count('calendar_seen',1),count('calendar_seen',7),count('calendar_seen',30)]);
+    const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'}]},
+        where:{fieldFilter:{field:{fieldPath:'t'},op:'GREATER_THAN_OR_EQUAL',value:{timestampValue:since(30)}}},limit:5000}})});
+    if(r.ok){const m={};(await r.json()).filter(x=>x.document).forEach(x=>{const v=sgRead(x.document).v||'?';m[v]=(m[v]||0)+1});
+      V=Object.entries(m).sort((p,q)=>q[1]-p[1])}}
+  catch(e){A=null}
+  const n=x=>x.toLocaleString('ar-u-nu-latn');
+  const tile=(v,t)=>`<div class="st-t"><b>${n(v)}</b><small>${t}</small></div>`;
+  L.innerHTML=`<section class="card"><h3 class="st-h">التثبيت</h3><div class="st-g">${tile(N[0],'كل الأجهزة')}${tile(N[1],'جديدة اليوم')}${tile(N[2],'في 7 أيام')}${tile(N[3],'في 30 يومًا')}</div>
+    <p class="mut st-n">كل هاتف يُحسب مرة واحدة، ولو حُذف التطبيق وأُعيد تثبيته. تُحسب الهواتف من أول تشغيل لنسخة فيها الاشتراك.</p></section>
+    <section class="card"><h3 class="st-h">الاستعمال</h3>${A?`<div class="st-g">${tile(A[0],'فتحوه اليوم')}${tile(A[1],'في 7 أيام')}${tile(A[2],'في 30 يومًا')}</div>
+    ${V.length?`<h3 class="st-h">الإصدارات (آخر 30 يومًا)</h3><ul class="st-v">${V.map(([v,c])=>`<li><bdi dir="ltr">${vesc(v)}</bdi><b>${n(c)}</b></li>`).join('')}</ul>`:''}
+    <p class="mut st-n">يُحسب الهاتف حين يفتح التطبيق وهو متصل، مرة في اليوم، من النسخة التي فيها هذا العدّاد.</p>`
+    :'<p class="empty">لا أرقام بعد: تظهر بعد لصق قاعدة calendar_seen في Firestore وتحديث الهواتف.</p>'}</section>`;
+}
+window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin,statsAdmin});
 // the hidden way in: five quick taps on the version line at the bottom of the calendar
 {let n=0,t0=0;document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('#appVer')))return;const now=Date.now();n=now-t0<700?n+1:1;t0=now;if(n>=5){n=0;location.hash='#sg-admin'}})}
 // a city (مدينة) is a moughataa, its seat the commune of the same name; the commune (بلدية) belongs to it; villages to the commune
@@ -2428,7 +2463,7 @@ $('cHm').innerHTML=HM.map((n,i)=>`<option value="${i+1}">${hmB(i+1)}</option>`).
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>renderDay());
 new MutationObserver(()=>renderDay()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-window.APP={sgAdmin:(window.APP||{}).sgAdmin,subAdmin:(window.APP||{}).subAdmin,manazil:manazilView,cities:CITIES,options:()=>moughOptions(),city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
+window.APP={sgAdmin:(window.APP||{}).sgAdmin,subAdmin:(window.APP||{}).subAdmin,statsAdmin:(window.APP||{}).statsAdmin,manazil:manazilView,cities:CITIES,options:()=>moughOptions(),city:()=>city(),commune:()=>S.city,setCity(id){const c=CITIES.find(c=>c.id===id);if(!c)return;if(c.vc)setPlace(c.vc,c.id);else setPlace(id,'')}};
 (()=>{const v=$('appVer');if(v){const n=v.dataset.v;v.textContent=n.indexOf('APP_VERSION')<0?'إصدار التطبيق '+n:'نسخة الويب'}})();
 
 /* ---------- adhan alerts (Android app): the page hands the coming times to the app ---------- */
@@ -3699,6 +3734,7 @@ function route(){
   else if(h==='manazil'){view='v-manazil';tab='manazil';window.APP.manazil($('v-manazil'))}
   else if(h==='sg-admin'){view='v-sg';tab='';window.APP.sgAdmin($('v-sg'))}
   else if(h==='sub-admin'){view='v-sg';tab='';window.APP.subAdmin($('v-sg'))}
+  else if(h==='stats-admin'){view='v-sg';tab='';window.APP.statsAdmin($('v-sg'))}
   else if(h==='tasbih'){view='v-tasbih';tab='tasbih';tasbih($('v-tasbih'))}
   if(view!=='v-tasbih'&&window.AndroidApp)try{window.AndroidApp.setVolumeKeys(false)}catch(e){}
   VIEWS.forEach(v=>{const e=$(v);if(e)e.hidden=v!==view});

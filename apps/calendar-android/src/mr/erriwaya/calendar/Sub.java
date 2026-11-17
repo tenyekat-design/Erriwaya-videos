@@ -215,6 +215,29 @@ final class Sub {
         return ok;
     }
 
+    /**
+     * Once a day, tells the server this phone opened the app (Firestore calendar_seen/<the phone's number>: the server's time
+     * and the app's version), so the admin's statistics page can count the phones that use it (today, in 7 days, in 30 days)
+     * and which version they run. Nothing else is sent. A network call, off the main thread; a failure waits for tomorrow's try.
+     */
+    static void ping(Context ctx) {
+        SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        long day = System.currentTimeMillis() / 86400000L;
+        if (sp.getLong("pingDay", -1) == day) return;
+        try {
+            String id = deviceId(ctx), ver = "?";
+            try { ver = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName; } catch (Exception ignored) { }
+            if (ver == null) ver = "?";
+            if (ver.length() > 20) ver = ver.substring(0, 20);
+            String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
+            String body = "{\"writes\":[{\"update\":{\"name\":\"" + docs + "/calendar_seen/" + id + "\",\"fields\":{\"v\":{\"stringValue\":"
+                    + org.json.JSONObject.quote(ver) + "}}},\"updateMask\":{\"fieldPaths\":[\"v\"]},"
+                    + "\"updateTransforms\":[{\"fieldPath\":\"t\",\"setToServerValue\":\"REQUEST_TIME\"}]}]}";
+            Object[] w = http("POST", SuggestJob.FS.replaceAll("/documents$", "") + "/documents:commit", body);
+            if ((Integer) w[0] == 200) sp.edit().putLong("pingDay", day).apply();
+        } catch (Exception ignored) { }
+    }
+
     /** "2026-11-15T08:30:00.123456Z" as milliseconds. */
     private static long stamp(String iso) throws Exception {
         java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US);

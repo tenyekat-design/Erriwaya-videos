@@ -48,3 +48,12 @@
         && request.resource.data.t == request.time;
       allow list, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
     }
+    // calendar_seen/<رقم الجهاز>: آخر يوم فُتح فيه التطبيق على الهاتف وإصداره، يكتبه التطبيق مرة في اليوم بوقت الخادم؛
+    // منه تُحسب الأجهزة النشطة في صفحة «الإحصاءات»، ولا يقرؤه إلا المشرف.
+    match /calendar_seen/{id} {
+      allow create, update: if id.matches('^[A-Z2-7]{10}$')
+        && request.resource.data.keys().hasOnly(['t', 'v'])
+        && request.resource.data.t == request.time
+        && request.resource.data.v is string && request.resource.data.v.size() <= 20;
+      allow read, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
