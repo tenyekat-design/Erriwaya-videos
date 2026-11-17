@@ -1790,7 +1790,7 @@ const SG_DOCS='projects/erriwaya-68022/databases/(default)/documents',SG_FS='htt
   SG_KEY='AIzaSyBAPju15XYiYBEq7_AKVzqdd6KpVvH6Orc',SG_COL='village_suggestions';
 const sgv=v=>typeof v==='number'?{doubleValue:v}:{stringValue:String(v)};
 const sgRead=d=>{const o={id:d.name.split('/').pop()},F=d.fields||{};for(const k in F){const x=F[k];o[k]='stringValue' in x?x.stringValue:'doubleValue' in x?+x.doubleValue:'integerValue' in x?+x.integerValue:'timestampValue' in x?x.timestampValue:null}return o};
-const sgFetch=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
+const sgFetch=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal,cache:'no-store'},o)).finally(()=>clearTimeout(t))};
 // accepted suggestions, merged into the list of villages (a new village, or a corrected name or place)
 function sgApply(L){(L||[]).forEach(s=>{
   if(s.kind==='fix'){const c=CITIES.find(x=>x.id===s.target);if(!c)return;if(s.name)c.name=s.name;if(typeof s.lat==='number'){c.lat=s.lat;c.lng=s.lng}return}
@@ -3904,7 +3904,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   let st=state(),locked=false;
   const FS='https://firestore.googleapis.com/v1/projects/erriwaya-68022/databases/(default)/documents',DOCS='projects/erriwaya-68022/databases/(default)/documents';
   const jget=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-  const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal},o)).finally(()=>clearTimeout(t))};
+  const net=(url,o={},ms=12000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(url,Object.assign({signal:c.signal,cache:'no-store'},o)).finally(()=>clearTimeout(t))};
   const west=x=>String(x).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
   function applyCfg(c){if(!c)return;['price','amount','link','whatsapp','phone','tgToken','tgChat'].forEach(k=>{if(typeof c[k]==='string'&&c[k].trim())SUB[k]=c[k].trim()});['whatsapp','phone'].forEach(k=>{const v=String(SUB[k]||'').replace(/\D/g,'');SUB[k]=/^\d{8}$/.test(v)?'222'+v:v});SUB.pay.forEach(m=>{if(typeof c[m.k]==='string')m.num=c[m.k]})}
   applyCfg((jget('mrcal.subCfg')||{}).c);
