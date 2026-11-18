@@ -602,6 +602,42 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wv-al div.hi{background:var(--red-soft)}
 .wv-al svg{flex:none;width:20px;height:20px;margin-top:1px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .wv-al div.hi svg{color:var(--red)}
+.wv-scw{position:relative;margin:-12px -12px 0;border-radius:16px 16px 12px 12px;overflow:hidden;height:190px;background:#5AA5E0}
+.wv-sc{display:block;width:100%;height:100%}
+.wv-scw .tx{position:absolute;top:12px;inset-inline-start:16px;display:grid;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45);line-height:1.25}
+.wv-scw .tx b{font-size:3rem;line-height:1;font-variant-numeric:tabular-nums}
+.wv-scw .tx span{font-size:1.05rem;font-weight:700}.wv-scw .tx small{font-size:.85rem;opacity:.92}
+@keyframes scDrift{from{transform:translateX(-140px)}to{transform:translateX(430px)}}
+@keyframes scRain{to{transform:translateY(40px)}}
+@keyframes scFlash{0%,86%,100%{opacity:0}88%{opacity:.55}90%{opacity:0}92%{opacity:.35}94%{opacity:0}}
+@keyframes scBolt{0%,86%,100%{opacity:0}88%,93%{opacity:1}}
+@keyframes scFog{0%,100%{transform:translateX(-40px)}50%{transform:translateX(40px)}}
+@keyframes scSlide{to{transform:translateX(-400px)}}
+@keyframes scTw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes scGl{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
+.sc-cl{animation:scDrift linear infinite}
+.sc-rn{animation:scRain .45s linear infinite}
+.sc-fl{opacity:0;animation:scFlash 4.5s linear infinite}.sc-bt{opacity:0;animation:scBolt 4.5s linear infinite}
+.sc-fg{animation:scFog 7s ease-in-out infinite}
+.sc-ds,.sc-wd{animation:scSlide linear infinite}
+.sc-tw{animation:scTw 3s ease-in-out infinite}
+.sc-ry,.sc-gl{transform-box:fill-box;transform-origin:center}.sc-ry{animation:wiSpin 30s linear infinite}.sc-gl{animation:scGl 4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.wv-sc *{animation:none!important}.sc-fl,.sc-bt{opacity:0}}
+.wv-g small svg{width:17px;height:17px;vertical-align:-3px;margin-inline-end:4px}
+.wv-d>div.k-sun{background:linear-gradient(to left,rgba(255,201,60,.22),var(--surface) 65%)}
+.wv-d>div.k-part{background:linear-gradient(to left,rgba(255,201,60,.14),rgba(143,163,188,.12) 30%,var(--surface) 70%)}
+.wv-d>div.k-cloud,.wv-d>div.k-fog{background:linear-gradient(to left,rgba(143,163,188,.24),var(--surface) 65%)}
+.wv-d>div.k-rain{background:linear-gradient(to left,rgba(47,140,255,.22),var(--surface) 65%)}
+.wv-d>div.k-storm{background:linear-gradient(to left,rgba(124,92,255,.26),var(--surface) 65%)}
+.wv-h>div.k-sun{background:linear-gradient(to bottom,rgba(255,201,60,.22),var(--surface) 70%)}
+.wv-h>div.k-part{background:linear-gradient(to bottom,rgba(255,201,60,.13),var(--surface) 70%)}
+.wv-h>div.k-cloud,.wv-h>div.k-fog{background:linear-gradient(to bottom,rgba(143,163,188,.24),var(--surface) 70%)}
+.wv-h>div.k-rain{background:linear-gradient(to bottom,rgba(47,140,255,.22),var(--surface) 70%)}
+.wv-h>div.k-storm{background:linear-gradient(to bottom,rgba(124,92,255,.26),var(--surface) 70%)}
+.wv-h>div.wv-nt{background:linear-gradient(to bottom,rgba(44,56,112,.32),var(--surface) 75%)}
+@keyframes wiTw{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+.wi-st{transform-box:fill-box;transform-origin:center;animation:wiTw 2.4s ease-in-out infinite}.wi-st2{animation-delay:-1.2s}
+@media (prefers-reduced-motion:reduce){.wi-st{animation:none!important}}
 .wv-now{display:flex;align-items:center;gap:12px}
 .wv-now>svg{width:54px;height:54px;flex:none;fill:none;stroke:var(--green);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .wv-now b{font-size:2.2rem;line-height:1;color:var(--ink)}
@@ -2359,29 +2395,32 @@ const WX_IC={sun:WI_RAYS+'<circle cx="12" cy="12" r="4.3" fill="#FFC93C" stroke=
  cloud:'<path class="wi-cl2" transform="translate(6.2 -2.6) scale(.62)" d="M7.5 18.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 9.6 4.5 4.5 0 0 0 7.5 18.5z" fill="#C9D3E0" stroke="#8FA3BC" stroke-width="1.6" stroke-linejoin="round"/><path class="wi-cl" d="M7.5 19.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 10.6 4.5 4.5 0 0 0 7.5 19.5z" fill="#F4F7FB" stroke="#8FA3BC" stroke-width="1.2" stroke-linejoin="round"/>',
  rain:'<g class="wi-dr" stroke="#2F8CFF" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M9 17.6l-.9 2.4"/><path d="M13 17.6l-.9 2.4"/><path d="M17 17.6l-.9 2.4"/></g><path class="wi-cl" d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z" fill="#DCE4EE" stroke="#7F93AE" stroke-width="1.2" stroke-linejoin="round"/>',
  storm:'<g class="wi-dr" stroke="#2F8CFF" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M8.2 17.4l-.8 2.2"/><path d="M17.2 17.4l-.8 2.2"/></g><path class="wi-cl" d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z" fill="#8E9CB3" stroke="#5F708A" stroke-width="1.2" stroke-linejoin="round"/><path class="wi-bt" d="M12.9 13.2l-2.7 4.3h2.5l-1.5 4.3 4.6-5.9h-2.6l1.7-2.7z" fill="#FFC93C" stroke="#E08A00" stroke-width=".9" stroke-linejoin="round"/>',
- fog:'<g class="wi-fg" stroke="#9DB0C8" stroke-width="2" stroke-linecap="round" fill="none"><path d="M4 9h16"/><path d="M4 13h16"/><path d="M6.5 17h11"/></g>'};
+ fog:'<g class="wi-fg" stroke="#9DB0C8" stroke-width="2" stroke-linecap="round" fill="none"><path d="M4 9h16"/><path d="M4 13h16"/><path d="M6.5 17h11"/></g>',
+ moon:'<path d="M14.6 3.6A8.4 8.4 0 1 0 20.4 15 6.8 6.8 0 0 1 14.6 3.6z" fill="#F7E7A6" stroke="#E0B84A" stroke-width="1.1" stroke-linejoin="round"/><path class="wi-st" d="M19.4 3.2l.55 1.35 1.35.55-1.35.55-.55 1.35-.55-1.35-1.35-.55 1.35-.55z" fill="#FFE27A" stroke="none"/><circle class="wi-st wi-st2" cx="21" cy="10" r=".7" fill="#FFE27A" stroke="none"/>',
+ mpart:'<g transform="translate(-2.6 -3) scale(.74)"><path d="M14.6 3.6A8.4 8.4 0 1 0 20.4 15 6.8 6.8 0 0 1 14.6 3.6z" fill="#F7E7A6" stroke="#E0B84A" stroke-width="1.4" stroke-linejoin="round"/></g><path class="wi-st" d="M19.6 2.6l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#FFE27A" stroke="none"/><path class="wi-cl" d="M9.5 19.5h8a3.5 3.5 0 0 0 .5-6.95A4.8 4.8 0 0 0 9 11.8 3.9 3.9 0 0 0 9.5 19.5z" fill="#E6ECF4" stroke="#8FA3BC" stroke-width="1.2" stroke-linejoin="round"/>'};
+const nightK=(k,day)=>day===0&&k==='sun'?'moon':day===0&&k==='part'?'mpart':k;   // is_day 0 → moon
 const wxKind=c=>c===0?'sun':c<=2?'part':c===3?'cloud':c<=48?'fog':c>=95?'storm':'rain';
 const WX_NAME={sun:'صحو',part:'غائم جزئيًا',cloud:'غائم',fog:'ضباب',rain:'مطر',storm:'عاصفة رعدية'};
 let WX=store.get('wx',null);
-window.wxKit={WX_IC,WX_NAME,wxKind,DAYS,city,store};   // for the «الطقس» screen, in a later script
+window.wxKit={WX_IC,WX_NAME,wxKind,DAYS,city,store,nightK};   // for the «الطقس» screen, in a later script
 function showWx(){const el=$('wx'),c=city(),w=WX,ok=w&&w.id===c.id&&Date.now()-w.t<6*3600e3&&S.sel===todayJdn();
   // the temperature also sits in the place's sky, counting up to its value when it changes
   {const pw=$('pcWx'),fresh=w&&w.id===c.id&&Date.now()-w.t<6*3600e3;pw.hidden=!fresh;
    if(fresh){const k=wxKind(w.code),key=w.id+':'+w.now+':'+k;if(pw.dataset.k!==key){const from=+(pw.dataset.v||w.now-6);pw.dataset.k=key;pw.dataset.v=w.now;
-     pw.className='pc-wx k-'+k+' pop';pw.title=WX_NAME[k];pw.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b>${from}°</b>`;
+     pw.className='pc-wx k-'+k+' pop';pw.title=WX_NAME[k];pw.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[nightK(k,w.day)]}</svg><b>${from}°</b>`;
      const b=pw.querySelector('b'),t0=performance.now(),dur=900;const step=t=>{const f=Math.min(1,(t-t0)/dur),v=Math.round(from+(w.now-from)*(1-Math.pow(1-f,3)));b.textContent=v+'°';if(f<1)requestAnimationFrame(step)};requestAnimationFrame(step)}}}
   el.hidden=!ok;if(!ok)return;
   const k=wxKind(w.code);
-  el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[k]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small><i class="wl">العظمى </i>${w.hi}°<i class="wl"> · الصغرى </i><i class="ws"> / </i>${w.lo}°</small></span>`
+  el.innerHTML=`<svg class="wx-ic" viewBox="0 0 24 24" aria-hidden="true">${WX_IC[nightK(k,w.day)]}</svg><b class="wx-t">${w.now}°</b><span class="wx-d"><span>${WX_NAME[k]}</span><small><i class="wl">العظمى </i>${w.hi}°<i class="wl"> · الصغرى </i><i class="ws"> / </i>${w.lo}°</small></span>`
    +`<span class="wx-n">${w.days.map(d=>`<span><small>${DAYS[dowOf(d.j)]}</small><svg viewBox="0 0 24 24" aria-hidden="true">${WX_IC[wxKind(d.code)]}</svg><b>${d.hi}°</b><i>${d.lo}°</i></span>`).join('')}</span>`}
 async function loadWx(){const c=city();
   if(WX&&WX.id===c.id&&Date.now()-WX.t<45*60e3){showWx();return}
   showWx();
   try{
-    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=GMT&forecast_days=4`);
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lng}&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=GMT&forecast_days=4`);
     if(!r.ok){wxRetry();return}const j=await r.json(),d=j.daily,R=Math.round;
     if(c.id!==city().id)return;
-    WX={id:c.id,t:Date.now(),now:R(j.current.temperature_2m),code:j.current.weather_code,hi:R(d.temperature_2m_max[0]),lo:R(d.temperature_2m_min[0]),
+    WX={id:c.id,t:Date.now(),now:R(j.current.temperature_2m),code:j.current.weather_code,day:j.current.is_day,hi:R(d.temperature_2m_max[0]),lo:R(d.temperature_2m_min[0]),
       days:[1,2,3].map(i=>{const [y,m,dd]=d.time[i].split('-').map(Number);return {j:jdnOf(y,m,dd),hi:R(d.temperature_2m_max[i]),lo:R(d.temperature_2m_min[i]),code:d.weather_code[i]}})};
     store.set('wx',WX);wxTries=0;showWx();
   }catch(e){wxRetry()}}
@@ -4272,7 +4311,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
 // «الطقس» (18 نوفمبر 2026): توقعات المكان المختار من Open-Meteo (الرياح والأمطار والعواصف والغبار) وصور القمر الصناعي Meteosat من EUMETSAT
 // كل ساعة (الصور الساعية مجانية بلا قيد في سياسة EUMETSAT). شاشة كاملة من أيقونة «الطقس» مع أدوات التقويم.
 (function(){const $=id=>document.getElementById(id),box=$('wxv');if(!box)return;
-  const K=window.wxKit;if(!K)return;const {WX_IC,WX_NAME,wxKind,DAYS,city,store}=K;
+  const K=window.wxKit;if(!K)return;const {WX_IC,WX_NAME,wxKind,DAYS,city,store,nightK}=K;
   const R=Math.round,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
   const SVG=(p,c)=>'<svg viewBox="0 0 24 24" aria-hidden="true"'+(c?' class="'+c+'"':'')+'>'+p+'</svg>';
   const DIRS=['شمالية','شمالية شرقية','شرقية','جنوبية شرقية','جنوبية','جنوبية غربية','غربية','شمالية غربية'];
@@ -4292,6 +4331,42 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const dayName=(t,i)=>i===0?'اليوم':i===1?'غدًا':DAYS[new Date(t+'T12:00:00Z').getUTCDay()];
   let D=store.get('wxv',null),busy=false;
 
+
+  /* the coloured, moving picture of the weather now (sky by weather and day/night, sun or moon, clouds, rain, lightning, fog, dust, wind, dunes with a tent and an acacia) */
+  const SKY={sun:['#3D9BE9','#A8DBFF'],part:['#5AA5E0','#CBE6F7'],cloud:['#7D93AE','#C9D5E2'],rain:['#546A86','#A2B4C8'],storm:['#2B3150','#5D6585'],fog:['#A9B4BF','#DCE2E6'],dust:['#B98250','#EBCB9C']};
+  const SKYN={sun:['#071037','#24306A'],part:['#0A1440','#2C3870'],cloud:['#1B2340','#3C4566'],rain:['#141B33','#36405E'],storm:['#0B0F24','#2B2F48'],fog:['#2A3046','#4B5268'],dust:['#3A2A2A','#6B5040']};
+  const CLP='M18 42h70a18 18 0 0 0 3-35.7A26 26 0 0 0 42 12 20 20 0 0 0 18 42z';
+  function scene(k,day,deg,spd,dust){
+    const dk=dust!=null&&dust>=200&&k!=='rain'&&k!=='storm'?'dust':k,[s0,s1]=(day?SKY:SKYN)[dk],n=!day;
+    const west=deg==null||(((deg%360)+360)%360)<180,dir=west?'normal':'reverse';
+    let g='<svg class="wv-sc" viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="scS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+s0+'"/><stop offset="1" stop-color="'+s1+'"/></linearGradient>'
+      +'<radialGradient id="scG"><stop offset="0" stop-color="#FFE9A0" stop-opacity=".85"/><stop offset="1" stop-color="#FFE9A0" stop-opacity="0"/></radialGradient>'
+      +'<mask id="scM"><rect width="400" height="190" fill="#fff"/><circle cx="93" cy="42" r="22" fill="#000"/></mask></defs><rect width="400" height="190" fill="url(#scS)"/>';
+    if(n&&k!=='storm'&&k!=='rain')for(let i=0;i<26;i++)g+='<circle class="sc-tw" cx="'+((i*73+11)%400)+'" cy="'+((i*37)%100+6)+'" r="'+(i%3?.9:1.5)+'" fill="#fff" style="animation-delay:-'+(i*.37%3).toFixed(2)+'s"/>';
+    if(k==='sun'||k==='part'||k==='cloud'||dk==='dust'){
+      if(day){let r='';for(let a=0;a<360;a+=30){const c=Math.cos(a*Math.PI/180),s2=Math.sin(a*Math.PI/180);r+='M'+(80+c*33).toFixed(1)+' '+(52+s2*33).toFixed(1)+'L'+(80+c*43).toFixed(1)+' '+(52+s2*43).toFixed(1)}
+        g+='<circle class="sc-gl" cx="80" cy="52" r="62" fill="url(#scG)"'+(k==='cloud'?' opacity=".5"':'')+'/><path class="sc-ry" d="'+r+'" stroke="#FFD34D" stroke-width="4" stroke-linecap="round"'+(dk==='dust'?' opacity=".6"':'')+'/><circle cx="80" cy="52" r="24" fill="'+(dk==='dust'?'#FFD9A0':'#FFC93C')+'" stroke="#F59E0B" stroke-width="2"/>'}
+      else g+='<circle class="sc-gl" cx="80" cy="50" r="52" fill="url(#scG)" opacity=".45"/><circle cx="80" cy="50" r="24" fill="#F7EBC2" mask="url(#scM)"/>'}
+    const NC={part:2,cloud:4,rain:4,storm:5,fog:1}[k]||0,CC=day?{part:'#fff',cloud:'#F4F7FB',rain:'#D3DCE7',storm:'#7C869E',fog:'#EEF1F4'}:{part:'#5B6585',cloud:'#4E5878',rain:'#46506C',storm:'#2E3550',fog:'#5B6278'};
+    for(let i=0;i<NC;i++){const sc=(.9+(i%3)*.35).toFixed(2),y=6+(i*23)%60,d=34+i*9;
+      g+='<g class="sc-cl" style="animation-duration:'+d+'s;animation-delay:-'+(d*(i*.29+.1)%d).toFixed(1)+'s;animation-direction:'+dir+'"><g transform="translate(0 '+y+') scale('+sc+')"><path d="'+CLP+'" fill="'+CC[k]+'" opacity="'+(i%2?.85:1)+'"/></g></g>'}
+    if(k==='storm')g+='<rect class="sc-fl" width="400" height="190" fill="#fff"/><path class="sc-bt" d="M262 46l-20 42h15l-12 42 36-55h-16l15-29z" fill="#FFE27A" stroke="#F5A300" stroke-width="1.5"/>';
+    if(k==='rain'||k==='storm'){let r='';for(let row=0;row<14;row++)for(let x=-40;x<460;x+=(k==='storm'?22:28)){const xx=x+(row%2)*13;r+='M'+xx+' '+(row*20-60)+'l-2 11'}
+      g+='<g transform="skewX('+(spd>=15?(west?-14:14):0)+')"><path class="sc-rn" d="'+r+'" stroke="'+(day?'#E6F3FF':'#9FC7FF')+'" stroke-width="1.7" stroke-linecap="round" opacity=".7"/></g>'}
+    if(k==='fog')for(let i=0;i<4;i++)g+='<rect class="sc-fg" x="-120" y="'+(70+i*22)+'" width="640" height="15" rx="7.5" fill="#fff" opacity="'+(n?.18:.42)+'" style="animation-delay:-'+i*1.3+'s"/>';
+    const wavy=(col,op,cls,dur,seed,dash)=>{let p='';for(let x=0;x<400;x+=dash?23:100){const y=dash?30+((x*7+seed)%140):40+((x+seed)%90);p+=dash?'M'+x+' '+y+'h'+(4+x%7)+'M'+(x+400)+' '+y+'h'+(4+x%7):'M'+x+' '+y+'q22 -8 44 0t44 0M'+(x+400)+' '+y+'q22 -8 44 0t44 0'}
+      return '<path class="'+cls+'" d="'+p+'" stroke="'+col+'" stroke-width="'+(dash?2.2:1.6)+'" stroke-linecap="round" fill="none" opacity="'+op+'" style="animation-duration:'+dur+'s;animation-direction:'+dir+'"/>'};
+    if(dk==='dust')g+='<rect width="400" height="190" fill="#D9A066" opacity=".28"/>'+wavy('#F3D2A2',.9,'sc-ds',4,13,1)+wavy('#E0B07A',.7,'sc-ds',6,57,1);
+    if(spd>=18)g+=wavy(day?'#ffffff':'#C9D4FF',.55,'sc-wd',Math.max(1.3,70/spd).toFixed(1),5,0);
+    const B=day?(dk==='dust'?['#E2B27A','#C98A4B']:['#EBC68C','#D49B58']):['#3B3866','#2A2852'],T=day?'#7A4B2A':'#1A1838',A=day?'#5E7B3A':'#1A1838';
+    g+='<path d="M0 150Q70 128 140 142T280 136T400 144V190H0z" fill="'+B[0]+'"/><path d="M196 141v-13m0 4l-8-6m8 2l7-5" stroke="'+T+'" stroke-width="2.4" stroke-linecap="round" fill="none"/><ellipse cx="196" cy="121" rx="21" ry="6.5" fill="'+A+'"/>'
+      +'<path d="M0 172Q90 146 190 162T400 156V190H0z" fill="'+B[1]+'"/><path d="M276 161l30-17 30 17z" fill="'+T+'"/><path d="M306 144v17M285 161h42" stroke="'+(day?'#F2D5A8':'#4A4680')+'" stroke-width="1.6"/>';
+    return g+'</svg>'}
+  const ST={wind:'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8" stroke="#3FA9F5" stroke-width="2.2" fill="none" stroke-linecap="round"/>',
+    gust:'<path d="M3 7h8a2.5 2.5 0 1 0-2.5-2.5M3 11.5h14a3 3 0 1 1-3 3M3 16h6M13 19.5h7" stroke="#14B8A6" stroke-width="2.2" fill="none" stroke-linecap="round"/>',
+    rain:'<path d="M12 3.5c3.2 4.2 5.5 7.2 5.5 10a5.5 5.5 0 0 1-11 0c0-2.8 2.3-5.8 5.5-10z" fill="#7CC0FF" stroke="#2F8CFF" stroke-width="1.4"/>',
+    vis:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="#EFE7FF" stroke="#8B5CF6" stroke-width="1.6"/><circle cx="12" cy="12" r="3.3" fill="#8B5CF6"/>'};
+  const sI=x=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+x+'</svg>';
   function alerts(f,q){const h=f.hourly,out=[],st=startIdx(h.time,f.current.time),end=Math.min(h.time.length,st+48);
     const when=i=>whenT(h.time[i]),whenT=t=>{const d=Math.floor((Date.parse(t+':00Z')-Date.parse(h.time[st].slice(0,10)+'T00:00:00Z'))/864e5);return (d===0?'اليوم':d===1?'غدًا':DAYS[new Date(t+':00Z').getUTCDay()])+' نحو '+hhmm(t)};
     let s=-1,gi=-1,g=0,vi=-1;
@@ -4316,21 +4391,21 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     const cond=dust!=null&&dust>=200&&(k==='sun'||k==='part')?'غبار':WX_NAME[k];
     let h='';
     if(A.length)h+='<div class="wv-al">'+A.map(a=>'<div'+(a.hi?' class="hi"':'')+'>'+SVG(AL_IC[a.k])+'<span>'+a.t+'</span></div>').join('')+'</div>';
-    h+='<div class="wv-card"><div class="wv-now">'+SVG(WX_IC[k])+'<div><b>'+R(cu.temperature_2m)+'°</b><br><span>'+cond+' · الرطوبة '+R(cu.relative_humidity_2m)+'%</span></div></div><div class="wv-g">'
-      +'<div><small>الرياح</small><b>'+R(cu.wind_speed_10m)+' كم/س</b>'+arrow(cu.wind_direction_10m)+'<br><i>'+DIRS[dirI(cu.wind_direction_10m)]+(ln?' · '+ln:'')+'</i></div>'
-      +'<div><small>الهبّات</small><b>'+R(cu.wind_gusts_10m)+' كم/س</b></div>'
-      +'<div><small>المطر الآن</small><b>'+(cu.precipitation>0?cu.precipitation+' ملم':'لا مطر')+'</b></div>'
-      +'<div><small>الرؤية</small><b>'+(cu.visibility==null?'—':cu.visibility>=10000?'جيدة':(R(cu.visibility/100)/10)+' كم')+'</b></div>'
-      +(dust!=null?'<div style="grid-column:1/-1"><small>الغبار</small><b>'+dustName(dust)+'</b> <i>('+R(dust)+' ميكروغرام/م³)</i></div>':'')
+    h+='<div class="wv-card"><div class="wv-scw">'+scene(k,cu.is_day!==0,cu.wind_direction_10m,cu.wind_speed_10m,dust)+'<div class="tx"><b>'+R(cu.temperature_2m)+'°</b><span>'+cond+'</span><small>الرطوبة '+R(cu.relative_humidity_2m)+'%</small></div></div><div class="wv-g">'
+      +'<div><small>'+sI(ST.wind)+'الرياح</small><b>'+R(cu.wind_speed_10m)+' كم/س</b>'+arrow(cu.wind_direction_10m)+'<br><i>'+DIRS[dirI(cu.wind_direction_10m)]+(ln?' · '+ln:'')+'</i></div>'
+      +'<div><small>'+sI(ST.gust)+'الهبّات</small><b>'+R(cu.wind_gusts_10m)+' كم/س</b></div>'
+      +'<div><small>'+sI(ST.rain)+'المطر الآن</small><b>'+(cu.precipitation>0?cu.precipitation+' ملم':'لا مطر')+'</b></div>'
+      +'<div><small>'+sI(ST.vis)+'الرؤية</small><b>'+(cu.visibility==null?'—':cu.visibility>=10000?'جيدة':(R(cu.visibility/100)/10)+' كم')+'</b></div>'
+      +(dust!=null?'<div style="grid-column:1/-1"><small>'+sI(AL_IC.dust)+'الغبار</small><b>'+dustName(dust)+'</b> <i>('+R(dust)+' ميكروغرام/م³)</i></div>':'')
       +'</div></div>';
     const hr=f.hourly,st=startIdx(hr.time,cu.time);
     h+='<h3>الساعات القادمة</h3><div class="wv-h">';
-    for(let i=st;i<Math.min(hr.time.length,st+24);i+=3){const kk=wxKind(hr.weather_code[i]),p=hr.precipitation_probability[i];
-      h+='<div><b>'+hhmm(hr.time[i])+'</b>'+SVG(WX_IC[kk])+'<small class="rp">'+(p==null?'':'مطر '+p+'%')+'</small><small>'+R(hr.wind_gusts_10m[i])+' كم/س</small></div>'}
+    for(let i=st;i<Math.min(hr.time.length,st+24);i+=3){const kk=wxKind(hr.weather_code[i]),p=hr.precipitation_probability[i],nd=hr.is_day?hr.is_day[i]:1;
+      h+='<div class="k-'+kk+(nd===0?' wv-nt':'')+'"><b>'+hhmm(hr.time[i])+'</b>'+SVG(WX_IC[nightK(kk,nd)])+'<small class="rp">'+(p==null?'':'مطر '+p+'%')+'</small><small>'+R(hr.wind_gusts_10m[i])+' كم/س</small></div>'}
     h+='</div><h3>الأيام السبعة</h3><div class="wv-d">';
     const dl=f.daily;
     dl.time.forEach((t,i)=>{const kk=wxKind(dl.weather_code[i]),p=dl.precipitation_sum[i],pp=dl.precipitation_probability_max[i];
-      h+='<div><span class="dn">'+dayName(t,i)+'</span>'+SVG(WX_IC[kk])+'<span class="ds">'+WX_NAME[kk]+(p>=0.2?' · <span class="rp">'+(R(p*10)/10)+' ملم</span>':pp>=20?' · <span class="rp">مطر '+pp+'%</span>':'')
+      h+='<div class="k-'+kk+'"><span class="dn">'+dayName(t,i)+'</span>'+SVG(WX_IC[kk])+'<span class="ds">'+WX_NAME[kk]+(p>=0.2?' · <span class="rp">'+(R(p*10)/10)+' ملم</span>':pp>=20?' · <span class="rp">مطر '+pp+'%</span>':'')
         +'<br>رياح '+DIRS[dirI(dl.wind_direction_10m_dominant[i])]+' · هبّات '+R(dl.wind_gusts_10m_max[i])+'</span><span class="dt"><b>'+R(dl.temperature_2m_max[i])+'°</b> <i>'+R(dl.temperature_2m_min[i])+'°</i></span></div>'});
     h+='</div>';
     if(Date.now()-D.t>2*3600e3)h+='<p class="wv-src">آخر تحديث قبل '+R((Date.now()-D.t)/3600e3)+' ساعة: تعذّر الاتصال.</p>';
@@ -4341,8 +4416,8 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     if(busy)return;busy=true;draw();
     try{const q='latitude='+c.lat+'&longitude='+c.lng+'&timezone=GMT';
       const [a,b]=await Promise.all([
-        fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,visibility'
-          +'&hourly=weather_code,precipitation_probability,wind_gusts_10m,visibility'
+        fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,visibility'
+          +'&hourly=weather_code,is_day,precipitation_probability,wind_gusts_10m,visibility'
           +'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,wind_direction_10m_dominant&forecast_days=7').then(r=>r.ok?r.json():null),
         fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=dust&hourly=dust&forecast_days=2').then(r=>r.ok?r.json():null).catch(()=>null)]);
       if(!a||!a.current)throw 0;
@@ -4403,7 +4478,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   window.wxvOpen=open;
   const tiles=$('tiles');
   if(tiles){const b=document.createElement('button');b.type='button';b.dataset.open='wxv';b.setAttribute('aria-expanded','false');
-    b.innerHTML='<span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z"/><path class="w1" d="M4 18.5h9M7 21h10"/></svg></span><span>الطقس</span>';
+    b.innerHTML='<span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+WX_IC.part+'</svg></span><span>الطقس</span>';
     b.addEventListener('click',e=>{e.stopPropagation();open()});
     tiles.insertBefore(b,tiles.firstChild);
     const n=tiles.querySelectorAll('button').length;tiles.style.gridTemplateColumns='repeat('+(n<=5?n:Math.ceil(n/2))+',minmax(0,1fr))'}
