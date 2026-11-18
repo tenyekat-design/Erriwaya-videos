@@ -115,7 +115,20 @@ button{cursor:pointer}
 .pc-wx[hidden]{display:none}
 .pc-wx svg{width:24px;height:24px;fill:none;stroke:#FFE9A8;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .pc-wx b{font:700 1.15rem/1 var(--f-display,inherit);color:#fff;font-variant-numeric:tabular-nums}
-.pc-wx.k-sun svg{animation:spin 24s linear infinite}
+/* the weather icons' own motion (WX_IC) */
+@keyframes wiSpin{to{transform:rotate(360deg)}}
+@keyframes wiDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(1.3px)}}
+@keyframes wiDrop{0%{transform:translateY(-2.5px);opacity:0}25%{opacity:1}100%{transform:translateY(3px);opacity:0}}
+@keyframes wiFlash{0%,58%,100%{opacity:1}62%{opacity:.2}66%{opacity:1}70%{opacity:.35}74%{opacity:1}}
+@keyframes wiFog{0%,100%{transform:translateX(-1.2px)}50%{transform:translateX(1.2px)}}
+.wi-ry,.wi-cl,.wi-cl2,.wi-dr path,.wi-fg path{transform-box:fill-box;transform-origin:center}
+.wi-ry{animation:wiSpin 16s linear infinite}
+.wi-cl{animation:wiDrift 4.5s ease-in-out infinite}
+.wi-cl2{animation:wiDrift 6s ease-in-out infinite reverse}
+.wi-dr path{animation:wiDrop 1.15s linear infinite}.wi-dr path:nth-child(2){animation-delay:.38s}.wi-dr path:nth-child(3){animation-delay:.76s}
+.wi-bt{animation:wiFlash 2.8s ease-in-out infinite}
+.wi-fg path{animation:wiFog 3.2s ease-in-out infinite}.wi-fg path:nth-child(2){animation-direction:reverse}
+@media (prefers-reduced-motion:reduce){.wi-ry,.wi-cl,.wi-cl2,.wi-dr path,.wi-bt,.wi-fg path{animation:none!important}}
 .pc-wx.k-part svg,.pc-wx.k-cloud svg,.pc-wx.k-fog svg{animation:drift 4s ease-in-out infinite alternate}
 .pc-wx.k-rain svg,.pc-wx.k-storm svg{animation:drift 2.4s ease-in-out infinite alternate}
 .pc-wx.pop b{animation:pop .6s ease-out}
@@ -2345,12 +2358,14 @@ const IC_BELL='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M
  IC_PIN='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg>',
  IC_MOON='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 14.6A8.3 8.3 0 1 1 9.4 4.4a6.7 6.7 0 0 0 10.2 10.2z"/></svg>';
 /* ---------- temperature (Open-Meteo, for the chosen commune's coordinates; needs the network) ---------- */
-const WX_IC={sun:T_IC.dhuhr,
- cloud:'<path d="M7.5 18.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 9.6 4.5 4.5 0 0 0 7.5 18.5z"/>',
- part:'<circle cx="8.5" cy="8" r="3"/><path d="M8.5 2.5v1M3 8h1M4.6 4.1l.7.7M12.4 4.1l-.7.7M9.5 19h8a3.5 3.5 0 0 0 .5-6.95A4.8 4.8 0 0 0 9 11.3 3.9 3.9 0 0 0 9.5 19z"/>',
- rain:'<path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15zM9 18l-1 2.5M13 18l-1 2.5M17 18l-1 2.5"/>',
- storm:'<path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15zM12.5 14.5l-2 3.5h3l-2 3.5"/>',
- fog:'<path d="M4 9h16M4 13h16M6.5 17h11"/>'};
+/* coloured, lively weather icons (18 Nov 2026): the colours are set on the shapes, so they win over the stroke colour of each place's CSS */
+const WI_RAYS='<g class="wi-ry" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.4 5.4l1.6 1.6M17 17l1.6 1.6M5.4 18.6L7 17M17 7l1.6-1.6"/></g>';
+const WX_IC={sun:WI_RAYS+'<circle cx="12" cy="12" r="4.3" fill="#FFC93C" stroke="#F59E0B" stroke-width="1.2"/>',
+ part:'<g transform="translate(-3.4 -3.4) scale(.78)">'+WI_RAYS+'<circle cx="12" cy="12" r="4.3" fill="#FFC93C" stroke="#F59E0B" stroke-width="1.4"/></g><path class="wi-cl" d="M9.5 19.5h8a3.5 3.5 0 0 0 .5-6.95A4.8 4.8 0 0 0 9 11.8 3.9 3.9 0 0 0 9.5 19.5z" fill="#F4F7FB" stroke="#8FA3BC" stroke-width="1.2" stroke-linejoin="round"/>',
+ cloud:'<path class="wi-cl2" transform="translate(6.2 -2.6) scale(.62)" d="M7.5 18.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 9.6 4.5 4.5 0 0 0 7.5 18.5z" fill="#C9D3E0" stroke="#8FA3BC" stroke-width="1.6" stroke-linejoin="round"/><path class="wi-cl" d="M7.5 19.5h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 10.6 4.5 4.5 0 0 0 7.5 19.5z" fill="#F4F7FB" stroke="#8FA3BC" stroke-width="1.2" stroke-linejoin="round"/>',
+ rain:'<g class="wi-dr" stroke="#2F8CFF" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M9 17.6l-.9 2.4"/><path d="M13 17.6l-.9 2.4"/><path d="M17 17.6l-.9 2.4"/></g><path class="wi-cl" d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z" fill="#DCE4EE" stroke="#7F93AE" stroke-width="1.2" stroke-linejoin="round"/>',
+ storm:'<g class="wi-dr" stroke="#2F8CFF" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M8.2 17.4l-.8 2.2"/><path d="M17.2 17.4l-.8 2.2"/></g><path class="wi-cl" d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z" fill="#8E9CB3" stroke="#5F708A" stroke-width="1.2" stroke-linejoin="round"/><path class="wi-bt" d="M12.9 13.2l-2.7 4.3h2.5l-1.5 4.3 4.6-5.9h-2.6l1.7-2.7z" fill="#FFC93C" stroke="#E08A00" stroke-width=".9" stroke-linejoin="round"/>',
+ fog:'<g class="wi-fg" stroke="#9DB0C8" stroke-width="2" stroke-linecap="round" fill="none"><path d="M4 9h16"/><path d="M4 13h16"/><path d="M6.5 17h11"/></g>'};
 const wxKind=c=>c===0?'sun':c<=2?'part':c===3?'cloud':c<=48?'fog':c>=95?'storm':'rain';
 const WX_NAME={sun:'صحو',part:'غائم جزئيًا',cloud:'غائم',fog:'ضباب',rain:'مطر',storm:'عاصفة رعدية'};
 let WX=store.get('wx',null);
@@ -4277,7 +4292,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     if(i===4)return 'الگبيلية';
     if(i>=5)return 'الساحلية';return ''};
   const arrow=deg=>'<svg class="wv-arr" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate('+((deg+180)%360)+' 12 12)" d="M12 2l5 9h-3.5v11h-3V11H7z"/></svg>';
-  const AL_IC={storm:WX_IC.storm,wind:'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/>',rain:WX_IC.rain,dust:'<path d="M3 8h13M5 12h15M3 16h11"/><circle cx="19" cy="7" r=".6"/><circle cx="17" cy="16" r=".6"/>',vis:WX_IC.fog};
+  const AL_IC={storm:WX_IC.storm,wind:'<g class="wi-fg" stroke="#3FA9F5" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h8"/></g>',rain:WX_IC.rain,dust:'<g class="wi-fg" stroke="#D08A3E" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M3 8h13"/><path d="M5 12h15"/><path d="M3 16h11"/></g><circle cx="19.5" cy="7" r="1" fill="#D08A3E"/><circle cx="17.5" cy="16" r="1" fill="#D08A3E"/>',vis:WX_IC.fog};
   const dustName=v=>v==null?'':v<60?'لا غبار يُذكر':v<200?'غبار خفيف':v<500?'غبار متوسط':'غبار كثيف';
   const hhmm=t=>t.slice(11,16);
   const dayName=(t,i)=>i===0?'اليوم':i===1?'غدًا':DAYS[new Date(t+'T12:00:00Z').getUTCDay()];
