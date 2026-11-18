@@ -204,21 +204,42 @@ final class Pay {
 
     /** plan "family": the code's document also says so, and keeps the phones added to it (fam, up to FAMILY). */
     static boolean deliver(String token, String id, String code, int day, String how, String plan) {
+        return deliver(token, id, code, day, how, plan, null, null);
+    }
+
+    /** With the key and the phone's current document: a family renewal keeps its phones, each re-signed to the new day. */
+    static boolean deliver(String token, String id, String code, int day, String how, String plan, String key, JSONObject cur) {
         try {
             String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
             JSONObject fields = new JSONObject().put("code", str(code)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
                     .put("how", str(how)).put("t", new JSONObject().put("timestampValue", SuggestJob.iso(System.currentTimeMillis())));
-            if ("family".equals(plan)) fields.put("plan", str("family")).put("fam", str(""));
+            JSONArray extra = new JSONArray();
+            if ("family".equals(plan)) {
+                String fam = cur != null && "family".equals(sv(cur, "plan")) && dayOf(cur) >= System.currentTimeMillis() / Sub.DAY ? sv(cur, "fam") : "";
+                StringBuilder kept = new StringBuilder();
+                for (String m : fam.split(",")) {
+                    if (!m.matches("[A-Z2-7]{10}") || key == null) continue;
+                    String mc = sign(key, m, day);
+                    if (mc == null) continue;
+                    extra.put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + m)
+                            .put("fields", new JSONObject().put("code", str(mc)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
+                                    .put("how", str("family:" + id)).put("t", new JSONObject().put("timestampValue", SuggestJob.iso(System.currentTimeMillis()))))));
+                    if (kept.length() > 0) kept.append(',');
+                    kept.append(m);
+                }
+                fields.put("plan", str("family")).put("fam", str(kept.toString()));
+            }
             JSONObject w1 = new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + id).put("fields", fields));
             JSONObject w2 = new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_requests/" + id)
                     .put("fields", new JSONObject().put("status", str("done"))))
                     .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("status")))
                     .put("currentDocument", new JSONObject().put("exists", true));
-            String body = new JSONObject().put("writes", new JSONArray().put(w1).put(w2)).toString();
+            JSONArray all = new JSONArray().put(w1).put(w2), alone = new JSONArray().put(w1);
+            for (int i = 0; i < extra.length(); i++) { all.put(extra.get(i)); alone.put(extra.get(i)); }
             String url = SuggestJob.FS.replaceAll("/documents$", "") + "/documents:commit";
-            if (SuggestJob.http(url, "application/json", body, token) != null) return true;
+            if (SuggestJob.http(url, "application/json", new JSONObject().put("writes", all).toString(), token) != null) return true;
             // no request document (a code made by hand for a phone that never asked): the code alone
-            return SuggestJob.http(url, "application/json", new JSONObject().put("writes", new JSONArray().put(w1)).toString(), token) != null;
+            return SuggestJob.http(url, "application/json", new JSONObject().put("writes", alone).toString(), token) != null;
         } catch (Exception e) { return false; }
     }
 
@@ -297,6 +318,32 @@ final class Pay {
 
     static int yearFromNow() { return (int) (System.currentTimeMillis() / Sub.DAY) + YEAR_DAYS; }
 
+    /** The phone's sub_codes document (its fields), or null when it has none or the account cannot be read. */
+    static JSONObject current(String tok, String id) {
+        try {
+            String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
+            String got = SuggestJob.http(SuggestJob.FS + ":batchGet", "application/json",
+                    new JSONObject().put("documents", new JSONArray().put(docs + "/sub_codes/" + id)).toString(), tok);
+            if (got == null) return null;
+            JSONArray g = new JSONArray(got);
+            return g.length() > 0 && g.getJSONObject(0).optJSONObject("found") != null ? g.getJSONObject(0).getJSONObject("found").optJSONObject("fields") : null;
+        } catch (Exception e) { return null; }
+    }
+
+    private static int dayOf(JSONObject f) {
+        try { return f == null || f.optJSONObject("day") == null ? -1 : Integer.parseInt(f.getJSONObject("day").optString("integerValue", "-1")); }
+        catch (Exception e) { return -1; }
+    }
+
+    /**
+     * The last day of a new paid year (the owner's choice, 18 Nov 2026): a year added to what is left of the running
+     * subscription, so a renewal before the end loses no day and two payments make two years; from today otherwise.
+     */
+    static int nextDay(JSONObject cur) {
+        int today = (int) (System.currentTimeMillis() / Sub.DAY), d = dayOf(cur);
+        return (d >= today ? d : today) + YEAR_DAYS;
+    }
+
     /** Pairs the waiting requests with the kept messages; returns how many phones were activated (-1: could not reach the account). */
     static synchronized int sync(Context ctx) {
         try {
@@ -331,9 +378,10 @@ final class Pay {
                 for (int k = 0; k < msgs.length() && !hit; k++) {
                     JSONObject m = msgs.getJSONObject(k);
                     if (!m.optString("used").isEmpty() || !matches(m.optString("text"), phone, ref, want)) continue;
-                    int day = yearFromNow();
+                    JSONObject cur = current(tok, id);
+                    int day = nextDay(cur);
                     String code = sign(key, id, day);
-                    if (code != null && deliver(tok, id, code, day, "auto", plan)) {
+                    if (code != null && deliver(tok, id, code, day, "auto", plan, key, cur)) {
                         m.put("used", id); hit = true; done++; lastId = id;
                     }
                 }
@@ -390,12 +438,13 @@ final class Pay {
     static String manual(Context ctx, String id, boolean deliverIt, String plan) {
         String key = sp(ctx).getString("key", null);
         if (key == null || id == null || !id.matches("[A-Z2-7]{10}")) return "";
-        int day = yearFromNow();
+        String tok = token(ctx);
+        JSONObject cur = tok == null ? null : current(tok, id);
+        int day = nextDay(cur);
         String code = sign(key, id, day);
         if (code == null) return "";
         if (deliverIt) {
-            String tok = token(ctx);
-            if (tok == null || !deliver(tok, id, code, day, "manual", plan)) return "";
+            if (tok == null || !deliver(tok, id, code, day, "manual", plan, key, cur)) return "";
         }
         return code;
     }

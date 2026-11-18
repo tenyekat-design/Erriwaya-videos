@@ -164,6 +164,7 @@ button{cursor:pointer}
 .sg-tabs{display:flex;justify-content:center;gap:8px;margin:10px 0}.sg-tabs button{border:1.5px solid var(--orn);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 16px;font:600 .9rem var(--f-body)}
 .sg-tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
 .st-l{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}.st-s{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--surface)}.st-s>div{display:flex;flex-direction:column;gap:2px;min-width:0}.st-s>div:last-child{align-items:flex-end;text-align:left}.st-s small{color:var(--muted);font-size:.74rem}.st-ok{color:var(--green)}.st-w{color:#b7791f}.st-x{color:#c0392b}
+.sb-dup{margin:6px 0;padding:6px 8px;border-radius:8px;background:#fff4e0;color:#8a5a00;font-size:.85rem}
 .st-h{margin:0 0 8px;font-size:1rem;color:var(--ink)}.st-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.st-t{border:1.5px solid var(--orn);border-radius:14px;padding:10px;text-align:center;background:var(--surface)}.st-t b{display:block;font-size:1.6rem;color:var(--green)}.st-t small{color:var(--muted)}.st-n{margin:8px 0 0;font-size:.85rem;color:var(--muted)}.st-v{list-style:none;margin:0;padding:0}.st-v li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--orn)}
 .sg-it{display:grid;gap:4px}.sg-it h3{margin:0;font-size:1.15rem;color:var(--ink)}.sg-it p{margin:0;font-size:.93rem}.sg-it .mut{color:var(--muted)}
 .sg-k{display:flex;justify-content:space-between;align-items:center}.sg-k b{font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--green);color:var(--on-green)}.sg-k b.fix{background:var(--gold)}.sg-k small{color:var(--muted)}
@@ -2002,8 +2003,16 @@ async function subAdmin(el){
       if(!r.ok)throw new Error(r.status);rows=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document)).sort((x,y)=>String(y.t).localeCompare(String(x.t)))}
     catch(e){R.innerHTML=`<p class="empty">${e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد.':'تعذّر التحميل. إن كانت هذه أول مرة فأضف قواعد الاشتراك إلى Firestore.'}</p>`;return}
     const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
+    // a phone already subscribed: its approval adds a year after its last day (Pay.nextDay), so a request sent twice for one
+    // payment is not approved twice by mistake
+    const run={};try{const t=await sgToken();if(rows.length&&t){const r=await sgFetch(SG_FS+':batchGet',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},
+        body:JSON.stringify({documents:rows.map(q=>`${SG_DOCS}/sub_codes/${q.id}`)})});
+      if(r.ok)(await r.json()).filter(x=>x.found).forEach(x=>{const c=sgRead(x.found);if(Number.isFinite(c.day))run[c.id]=c.day})}}catch(e){}
+    const today=Math.floor(Date.now()/864e5),dd=d=>new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    const note=id=>run[id]==null?'':run[id]>=today?`<p class="sb-dup">هذا الجهاز مشترك حتى ${dd(run[id])}: التفعيل يضيف سنة بعد هذا التاريخ (حتى ${dd(run[id]+365)}). لا تفعّله إلا إن وصل دفع جديد.</p>`
+      :`<p class="mut">كان مشتركًا حتى ${dd(run[id])} (تجديد).</p>`;
     R.innerHTML=rows.length?rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}" data-plan="${q.plan==='family'?'family':'one'}"><div class="sg-k"><b>${vesc(AP[q.app]||q.app||'')}${q.plan==='family'?' · عائلي':''}</b><small>${q.t?subWhen(q.t):''}</small></div>
-      <p>دفع من: <b dir="ltr" class="num">${vesc(q.phone||'')}</b>${q.ref?` · العملية: <b dir="ltr">${vesc(q.ref)}</b>`:''}</p><p class="mut">الجهاز <span dir="ltr">${vesc(subId(q.id||''))}</span></p>
+      <p>دفع من: <b dir="ltr" class="num">${vesc(q.phone||'')}</b>${q.ref?` · العملية: <b dir="ltr">${vesc(q.ref)}</b>`:''}</p><p class="mut">الجهاز <span dir="ltr">${vesc(subId(q.id||''))}</span></p>${note(q.id)}
       <div class="sg-act"><button type="button" class="btn primary" data-do="ok">وصل الدفع: فعِّله</button><button type="button" class="btn" data-do="del">حذف الطلب</button></div></article>`).join(''):'<p class="empty">لا طلبات تنتظر.</p>'}
   loadReq();
   $('sbReq').onclick=async e=>{const b=e.target.closest('[data-do]');if(!b)return;const id=b.closest('[data-id]').dataset.id;b.disabled=true;
