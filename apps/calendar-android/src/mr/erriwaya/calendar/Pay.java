@@ -371,7 +371,8 @@ final class Pay {
                 String phone = f.optJSONObject("phone") == null ? "" : f.getJSONObject("phone").optString("stringValue");
                 String ref = f.optJSONObject("ref") == null ? "" : f.getJSONObject("ref").optString("stringValue");
                 String stamp = f.optJSONObject("t") == null ? "" : f.getJSONObject("t").optString("timestampValue");
-                String plan = "family".equals(sv(f, "plan")) ? "family" : "one", want = "family".equals(plan) ? famAmount : amount;
+                // the family plan is no longer sold (the owner's choice, 18 Nov 2026): every request is for one phone
+                String plan = "one", want = amount;
                 if (want.isEmpty()) want = amount;
                 if (!id.matches("[A-Z2-7]{10}")) continue;
                 boolean hit = false;
@@ -436,6 +437,7 @@ final class Pay {
     static String manual(Context ctx, String id, boolean deliverIt) { return manual(ctx, id, deliverIt, "one"); }
 
     static String manual(Context ctx, String id, boolean deliverIt, String plan) {
+        plan = "one";   // no family plan any more (18 Nov 2026)
         String key = sp(ctx).getString("key", null);
         if (key == null || id == null || !id.matches("[A-Z2-7]{10}")) return "";
         String tok = token(ctx);

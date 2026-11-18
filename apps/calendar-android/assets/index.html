@@ -1918,7 +1918,7 @@ async function sgAdmin(el){
 }
 // ---- the admin: subscriptions. What subscribers see (price, payment numbers), the catcher that pairs payments with
 //      requests on this phone (Pay.java), and the requests still waiting, each confirmable with one tap.
-const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['link','رابط تحميل التطبيق (لزر «أرسله لصديق»)','https://…'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['famPrice','سعر الاشتراك العائلي كما يُعرض (حتى 5 هواتف؛ اتركه فارغًا لإخفائه)','500 أوقية جديدة في السنة لخمسة هواتف'],['famAmount','مبلغ العائلي بالأرقام (للمطابقة)','500'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
+const SUB_KEYS=[['price','السعر كما يُعرض','200 أوقية جديدة في السنة'],['link','رابط تحميل التطبيق (لزر «أرسله لصديق»)','https://…'],['amount','المبلغ بالأرقام (للمطابقة)','200'],['bankily','رقمك في بنكيلي',''],['masrvi','رقمك في مصرفي',''],['sedad','رقمك في السداد',''],['bim','رقمك في بيم بانك',''],['whatsapp','واتساب للتواصل (بالصيغة الدولية بلا +)','222XXXXXXXX'],['phone','هاتف للاتصال (بالصيغة الدولية بلا +)','']];
 const subId=i=>i.slice(0,5)+'-'+i.slice(5);
 const subWhen=t=>{const x=new Date(t);return `${x.getUTCDate()} ${GM[x.getUTCMonth()]} · ${String(x.getUTCHours()).padStart(2,'0')}:${String(x.getUTCMinutes()).padStart(2,'0')}`};
 const subCommit=async writes=>{const t=await sgToken();if(!t)throw new Error('auth');const r=await sgFetch(SG_FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({writes})});if(!r.ok)throw new Error(r.status)};
@@ -1940,11 +1940,11 @@ async function subAdmin(el){
       const t=g.ok?sgRead(await g.json()):{};if(!r.ok)return;const c=sgRead(await r.json());
       el.querySelectorAll('#sbCfg input').forEach(i=>{if(typeof c[i.dataset.k]==='string')i.value=c[i.dataset.k]});
       // the bot, from its own document (or, once, from where the previous version kept it)
-      el.querySelectorAll('#sbTgF input').forEach(i=>{const v=typeof t[i.dataset.k]==='string'?t[i.dataset.k]:c[i.dataset.k];if(typeof v==='string')i.value=v});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount,famAmount:c.famAmount||''}))}catch(e){}})();
+      el.querySelectorAll('#sbTgF input').forEach(i=>{const v=typeof t[i.dataset.k]==='string'?t[i.dataset.k]:c[i.dataset.k];if(typeof v==='string')i.value=v});if(nat&&c.amount)A.paySet(JSON.stringify({amount:c.amount,famAmount:''}))}catch(e){}})();
   $('sbSave').onclick=async()=>{const f={},M=$('sbCfgM');el.querySelectorAll('#sbCfg input').forEach(i=>{f[i.dataset.k]=i.value.trim()});
-    f.amount=f.amount.replace(/\D/g,'');f.famAmount=(f.famAmount||'').replace(/\D/g,'');['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});['whatsapp','phone'].forEach(k=>{if(/^\d{8}$/.test(f[k]))f[k]='222'+f[k]});el.querySelectorAll('#sbCfg input').forEach(i=>{if(i.dataset.k in f)i.value=f[i.dataset.k]});M.textContent='جارٍ الحفظ…';
+    f.amount=f.amount.replace(/\D/g,'');f.famPrice='';f.famAmount='';/* the family plan is no longer sold (the owner's choice, 18 Nov 2026): saving clears it for older versions too */['bankily','masrvi','sedad','bim','whatsapp','phone'].forEach(k=>{f[k]=f[k].replace(/[^\d]/g,'')});['whatsapp','phone'].forEach(k=>{if(/^\d{8}$/.test(f[k]))f[k]='222'+f[k]});el.querySelectorAll('#sbCfg input').forEach(i=>{if(i.dataset.k in f)i.value=f[i.dataset.k]});M.textContent='جارٍ الحفظ…';
     try{await subCommit([{update:{name:`${SG_DOCS}/sub_config/public`,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,sgv(v)]))}}]);
-      if(nat)A.paySet(JSON.stringify({amount:f.amount,famAmount:f.famAmount}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
+      if(nat)A.paySet(JSON.stringify({amount:f.amount,famAmount:''}));M.textContent='';say('حُفظ. يظهر عند المشتركين خلال ساعات، وفورًا عند فتح شاشة الاشتراك');drawCatch()}
     catch(e){M.textContent=e.message==='auth'?'انتهت الجلسة: اخرج وادخل من جديد':'تعذّر الحفظ. هل أُضيفت قواعد الاشتراك في Firestore؟'}};
   // Telegram: find the admin's chat with the bot, and send a test
   const tgIn=k=>el.querySelector(`#sbTgF [data-k="${k}"]`);
@@ -3986,12 +3986,12 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       :trial?'التطبيق مجاني 24 ساعة بعد تثبيته، ثم يُقفل حتى الاشتراك. اشترك مرة واحدة واستعمله سنة كاملة بكل ما فيه:'
       :'انتهت الـ24 ساعة المجانية. اشترك مرة واحدة واستعمل التطبيق سنة كاملة بكل ما فيه:';
     {const lg=$('lkLogo'),sl=document.querySelector('.seal');if(sl&&lg.src!==sl.src)lg.src=sl.src}
-    {const E=$('lkPlan');E.hidden=!SUB.famPrice;if(!E.hidden){
+    {const E=$('lkPlan');E.hidden=true;if(!E.hidden){
       E.innerHTML='<button type="button" data-plan="one"><b></b><small></small></button><button type="button" data-plan="family"><b></b><small></small></button>';
       const [b1,b2]=E.children;b1.firstChild.textContent=L('فردي','Individuel');b1.lastChild.textContent=SUB.price||L('هاتف واحد','Un téléphone');
       b2.firstChild.textContent=L('عائلي','Famille');b2.lastChild.textContent=SUB.famPrice;
       [b1,b2].forEach(b=>b.setAttribute('aria-pressed',b.dataset.plan===planSel))}}
-    if(!SUB.famPrice)planSel='one';priceBox(paid);
+    planSel='one';priceBox(paid);
     famBox(paid);
     {const S=$('lkShare');S.hidden=!SUB.link;if(SUB.link){S.textContent=L('أرسل التطبيق لصديق بواتساب','Envoyer l’application à un ami');
       S.href='https://wa.me/?text='+encodeURIComponent(L('التقويم الموريتاني: المواقيت والأذان والمنازل والمصحف، وويدجت وخلفيات من تراثنا. جرّبه يومًا مجانًا:\n','Le Calendrier mauritanien : prières, adhan, manazil, Coran, widgets et fonds d’écran. Essai gratuit d’un jour :\n')+SUB.link)}}
@@ -4038,7 +4038,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   }
   // السعر والمبلغ: من إعدادات الناشر (sub_config/public)؛ المبلغ بالأرقام إن وُجد، وإلا الأرقام في نص السعر
   const numIn=x=>{const m=west(String(x||'')).replace(/(\d)[\s,.](?=\d{3}\b)/g,'$1').match(/\d+/);return m?parseInt(m[0],10):0};
-  function plan(){const fam=SUB.famPrice&&planSel==='family';
+  function plan(){const fam=false;/* no family plan any more (18 Nov 2026) */
     const text=fam?SUB.famPrice:SUB.price,amt=numIn(fam?(SUB.famAmount||SUB.famPrice):(SUB.amount||SUB.price));
     const unit=/قديم/.test(text)?'أوقية قديمة':'أوقية جديدة';return {fam,text,amt,unit}}
   function priceBox(paid){const E=$('lkPrice'),p=plan();E.innerHTML='';
@@ -4111,7 +4111,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
      const t='السلام عليكم، دفعت '+(pl.amt>0?pl.amt+' '+pl.unit:'قيمة الاشتراك')+' للاشتراك في تطبيق التقويم الموريتاني.\nتطبيق الدفع: '+(AP[appSel]||appSel)+'\nدفعت من الرقم: '+ph+'\nرقم جهازي: '+showId(st.id)+'\n\n(أرفقت صورة العملية)';
      const w=document.createElement('a');w.href='https://wa.me/'+(SUB.whatsapp||'22236152800')+'?text='+encodeURIComponent(t);w.rel='noopener';document.body.append(w);w.click();w.remove()}
     // an individual request stays exactly as before (no plan field: it passes the old rules too); only a family one says so
-    const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');if(SUB.famPrice&&planSel==='family')f.plan='family';b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
+    const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
       if(!r.ok)throw new Error(r.status);
