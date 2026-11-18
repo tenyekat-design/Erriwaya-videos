@@ -1,0 +1,15 @@
+{
+ "files": {
+  "c/places.json": 1,
+  "c/h-events.json": 1,
+  "c/g-events.json": 1,
+  "c/mansions.json": 1,
+  "c/mansion-stars-lore.json": 1,
+  "c/stars.json": 1,
+  "c/reciters.json": 1,
+  "c/library.json": 1,
+  "c/library-groups.json": 1,
+  "c/sponsor.json": 1,
+  "c/ad-contact.json": 1
+ }
+}

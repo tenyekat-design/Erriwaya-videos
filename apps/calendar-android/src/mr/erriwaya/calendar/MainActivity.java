@@ -41,6 +41,10 @@ public class MainActivity extends Activity {
         public void setVolumeKeys(boolean on) { volumeKeysCount = on; }
 
         /** The admin signed in on «اقتراحات القرى» (Firebase refresh token), or signed out (""): starts or stops the checks. */
+        /** Remote content: the downloaded c/<key>.json for RC() in the page, or "" (Content). */
+        @JavascriptInterface
+        public String contentGet(String path) { return Content.get(MainActivity.this, path); }
+
         @JavascriptInterface
         public void sgAdmin(String refreshToken) { SuggestJob.setAdmin(MainActivity.this, refreshToken); }
 
@@ -389,6 +393,12 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);                     // downloaded mushaf pages live in the app's files
         s.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);  // pages seen once open again from the cache   // tasbih clicks also sound when counting with the volume keys
         web.setWebViewClient(new WebViewClient() {
+            /** Books and pictures added on the content branch, and newer copies of the APK's (Content). */
+            @Override
+            public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req) {
+                return Content.intercept(getApplicationContext(), req.getUrl());
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
                 Uri u = req.getUrl();
@@ -413,6 +423,12 @@ public class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 35) Edge.apply(root, topBar, bottomBar);
         // Android 13+: the back gesture comes through this callback (onBackPressed is no longer called from targetSdk 36)
         if (Build.VERSION.SDK_INT >= 33) Back.register(this);
+        // new content (tables, books, the sponsor…) from the content branch; the page shows it as soon as it is safe
+        Content.schedule(getApplicationContext());
+        new Thread(() -> {
+            if (Content.sync(getApplicationContext()) && web != null)
+                web.post(() -> web.evaluateJavascript("window.rcUpdated&&rcUpdated()", null));
+        }).start();
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html" + hashOf(getIntent()));
     }
