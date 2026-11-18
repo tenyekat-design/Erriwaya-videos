@@ -574,6 +574,65 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 #walls{position:fixed;inset:0;z-index:96;background:#03062B;color:#F2EEDC;overflow:auto;padding:14px 14px 90px}
 #walls[hidden]{display:none}
 .locked #walls:not([hidden]){display:block!important}
+/* «الطقس»: شاشة كاملة (التوقعات وصور القمر الصناعي) */
+#wxv{position:fixed;inset:0;z-index:95;background:var(--bg);color:var(--ink);overflow:auto;padding:12px 12px 40px}
+#wxv[hidden]{display:none}
+.locked #wxv{display:none!important}
+#wxv header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#wxv h2{margin:0;font-size:1.25rem;color:var(--green);flex:1;min-width:0}
+#wxv h2 small{display:block;font-size:.8rem;color:var(--muted);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wxv .wv-x{flex:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;width:38px;height:38px;font-size:1rem}
+#wxv h3{margin:16px 2px 8px;font-size:1rem;color:var(--green)}
+.wv-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
+.wv-al{display:grid;gap:6px;margin-bottom:10px}
+.wv-al div{display:flex;gap:8px;align-items:flex-start;border-radius:12px;padding:8px 10px;background:var(--gold-soft);color:var(--ink);font-size:.9rem;line-height:1.5}
+.wv-al div.hi{background:var(--red-soft)}
+.wv-al svg{flex:none;width:20px;height:20px;margin-top:1px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wv-al div.hi svg{color:var(--red)}
+.wv-now{display:flex;align-items:center;gap:12px}
+.wv-now>svg{width:54px;height:54px;flex:none;fill:none;stroke:var(--green);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.wv-now b{font-size:2.2rem;line-height:1;color:var(--ink)}
+.wv-now span{color:var(--muted);font-size:.95rem}
+.wv-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.wv-g div{border:1px solid var(--line);border-radius:12px;padding:7px 10px}
+.wv-g small{display:block;color:var(--muted);font-size:.78rem}
+.wv-g b{font-size:1rem}
+.wv-g i{font-style:normal;color:var(--gold);font-size:.85rem}
+.wv-arr{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-inline-start:4px}
+.wv-arr path{fill:var(--green)}
+.wv-h{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.wv-h>div{flex:none;width:68px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 2px;font-size:.8rem}
+.wv-h svg{width:26px;height:26px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block;margin:2px auto}
+.wv-h b{display:block;font-size:.85rem}
+.wv-h small{display:block;color:var(--muted)}
+.wv-h .rp{color:#2F6FB0}
+:root[data-theme="dark"] .wv-h .rp,:root[data-theme="dark"] .wv-d .rp{color:#8CC4FF}
+.wv-d{display:grid;gap:6px}
+.wv-d>div{display:grid;grid-template-columns:4.6em 30px 1fr auto;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:7px 10px;font-size:.88rem}
+.wv-d svg{width:28px;height:28px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wv-d .dn{font-weight:700}
+.wv-d .ds{color:var(--muted);font-size:.8rem;line-height:1.45}
+.wv-d .dt{white-space:nowrap}.wv-d .dt i{font-style:normal;color:var(--muted)}
+.wv-sat{position:relative;width:100%;max-width:560px;margin:0 auto;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#0B1020}
+.wv-sat img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;transition:opacity .25s}
+.wv-sat img.on{opacity:1}
+.wv-sat svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.wv-sat .t{position:absolute;top:8px;inset-inline-start:8px;background:#000a;color:#fff;border-radius:8px;padding:2px 8px;font-size:.82rem}
+.wv-sat .cr{position:absolute;bottom:6px;inset-inline-end:8px;color:#fffc;font-size:.68rem;direction:ltr}
+.wv-sat .ld{position:absolute;inset:0;display:grid;place-items:center;color:#fffc;font-size:.9rem;text-align:center;padding:20px}
+.wv-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.wv-chips button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:.85rem}
+.wv-chips button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.wv-ctl{display:flex;align-items:center;gap:10px;max-width:560px;margin:8px auto 0}
+.wv-ctl button{flex:none;width:40px;height:40px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--green);display:grid;place-items:center}
+.wv-ctl button svg{width:18px;height:18px;fill:currentColor}
+.wv-ctl input{flex:1;accent-color:var(--green);direction:ltr}
+.wv-key{max-width:560px;margin:6px auto 0;color:var(--muted);font-size:.84rem;line-height:1.55}
+.wv-src{margin:18px 2px 0;color:var(--muted);font-size:.78rem;line-height:1.6}
+.wv-msg{text-align:center;color:var(--muted);padding:24px 8px}
+.wv-msg button{margin-top:10px;border:1.5px solid var(--green);color:var(--green);background:none;border-radius:999px;padding:7px 18px;font:inherit}
+[data-open="wxv"] .tile-ic{position:relative}
+[data-open="wxv"].warn .tile-ic::after{content:"";position:absolute;top:2px;inset-inline-end:2px;width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 2px var(--surface)}
 .lk-more{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px}
 #walls header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
 #walls h2{margin:0;font-size:1.25rem;color:#E6BC62;flex:1}
@@ -1279,6 +1338,16 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
     <p id="lkMsg" role="status"></p>
   </details>
 </div></div>
+<div id="wxv" dir="rtl" lang="ar" hidden role="dialog" aria-modal="true" aria-labelledby="wvT">
+  <header><h2 id="wvT">الطقس<small id="wvPl"></small></h2><button type="button" class="wv-x" id="wvR" aria-label="تحديث">⟳</button><button type="button" class="wv-x" id="wvX" aria-label="إغلاق">✕</button></header>
+  <div id="wvBody"></div>
+  <h3>صور القمر الصناعي</h3>
+  <div class="wv-chips" id="wvChips"></div>
+  <div class="wv-sat" id="wvSat"><img alt="" id="wvI0"><img alt="" id="wvI1"><svg id="wvMap" viewBox="0 0 1450 1450" aria-hidden="true"></svg><span class="t" id="wvTm"></span><span class="cr">© EUMETSAT</span><div class="ld" id="wvLd">جارٍ تحميل الصور…</div></div>
+  <div class="wv-ctl"><button type="button" id="wvPlay" aria-label="تشغيل الحركة"></button><input type="range" id="wvRg" min="0" max="5" step="1" value="5" aria-label="ساعة الصورة"></div>
+  <p class="wv-key" id="wvKey"></p>
+  <p class="wv-src">التوقعات من Open-Meteo (نماذج عالمية، رخصة CC BY 4.0)، وهي توقعات لا إنذارات رسمية. صور Meteosat من EUMETSAT، صورة كل ساعة بتوقيت موريتانيا.</p>
+</div>
 <div id="walls" dir="rtl" lang="ar" hidden role="dialog" aria-modal="true" aria-labelledby="wlT">
   <header><h2 id="wlT">الخلفيات</h2><button type="button" class="wl-x" id="wlX" aria-label="إغلاق">✕</button></header>
   <p class="wl-p" id="wlP">خلفيات للهاتف من التراث الموريتاني، بألوان الويدجت. اختر واحدة ثم مكانها.</p>
@@ -1454,7 +1523,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
       <p><b>الإنترنت.</b> المواقيت والتقويم والنصوص تعمل دون اتصال. يُستعمل الاتصال فقط لتحميل صور صفحات المصحف (GitHub) ولسماع التلاوات (mp3quran.net وarchive.org)، وهذه المواقع ترى عنوان اتصالك كأي موقع تزوره.</p>
       <p><b>المصادر.</b> نصوص المصحف وخطوطه بروايات ورش وقالون وحفص: مجمع الملك فهد لطباعة المصحف الشريف. صفحات ورش: المصحف الأثري برواية ورش من طريق الأزرق مضبوطًا بألوان التابعين. صفحات قالون وحفص: مصحف المدينة النبوية. صحيح البخاري وموطأ مالك: hadith-api وsunnah.com. حصن المسلم: سعيد بن علي بن وهف القحطاني. قائمة البلديات ومواقعها: open-admin-data (رخصة CC-BY-4.0). المواقيت حساب فلكي لإحداثيات كل بلدية.</p>
       <p><b>المتون.</b> مختصر الأخضري (طبعة صبيح بالقاهرة) ومتن الآجرومية: من نصوص المكتبة الشاملة كما في مدوّنة OpenITI.</p>
-      <p><b>الطقس.</b> درجات الحرارة من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك.</p>
+      <p><b>الطقس.</b> درجات الحرارة والرياح والأمطار والغبار من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك. صور القمر الصناعي Meteosat من EUMETSAT، لا يُرسل إليها شيء عنك.</p>
       <p><b>الناشر.</b> تقويم موريتانيا</p>
     </details>
   </section>
@@ -2279,6 +2348,7 @@ const WX_IC={sun:T_IC.dhuhr,
 const wxKind=c=>c===0?'sun':c<=2?'part':c===3?'cloud':c<=48?'fog':c>=95?'storm':'rain';
 const WX_NAME={sun:'صحو',part:'غائم جزئيًا',cloud:'غائم',fog:'ضباب',rain:'مطر',storm:'عاصفة رعدية'};
 let WX=store.get('wx',null);
+window.wxKit={WX_IC,WX_NAME,wxKind,DAYS,city,store};   // for the «الطقس» screen, in a later script
 function showWx(){const el=$('wx'),c=city(),w=WX,ok=w&&w.id===c.id&&Date.now()-w.t<6*3600e3&&S.sel===todayJdn();
   // the temperature also sits in the place's sky, counting up to its value when it changes
   {const pw=$('pcWx'),fresh=w&&w.id===c.id&&Date.now()-w.t<6*3600e3;pw.hidden=!fresh;
@@ -3820,7 +3890,7 @@ const D=[
 ['رمضان السابق','Ramadan précédent'],['رمضان التالي','Ramadan suivant'],['أول يوم','Premier jour'],['آخر يوم','Dernier jour'],['أقصر صيام','Jeûne le plus court'],['أطول صيام','Jeûne le plus long'],['مدة الصيام','Durée'],
 ['الإمساك عند أذان الفجر، والإفطار عند أذان المغرب. بداية الشهر حسابية وقد تتقدم أو تتأخر يومًا عن رؤية الهلال. الصفوف المظلَّلة: العشر الأواخر.','Le jeûne commence à l’adhan du Fajr et se rompt à l’adhan du Maghrib. Le début du mois est calculé ; il peut avancer ou retarder d’un jour par rapport à l’observation du croissant. Lignes teintées : les dix dernières nuits.'],
 ['صحو','Dégagé'],['غائم جزئيًا','Partiellement nuageux'],['غائم','Nuageux'],['ضباب','Brouillard'],['مطر','Pluie'],['عاصفة رعدية','Orage'],['العظمى','Max'],['الصغرى','Min'],
-['الطقس.','Météo.'],['درجات الحرارة من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك.','Les températures viennent d’Open-Meteo (licence CC BY 4.0). Les coordonnées de la commune choisie lui sont envoyées, pas votre position.'],['أدوات التقويم','Outils du calendrier'],['جدول المواقيت','Horaires du mois'],['ملاحظة وتذكير','Note et rappel'],['الأذان والإقامة','Adhan et iqama'],['حول التطبيق','À propos'],
+['الطقس.','Météo.'],['درجات الحرارة والرياح والأمطار والغبار من Open-Meteo (رخصة CC BY 4.0). تُرسل إليه إحداثيات البلدية المختارة، لا موقعك. صور القمر الصناعي Meteosat من EUMETSAT، لا يُرسل إليها شيء عنك.','Températures, vent, pluie et poussière : Open-Meteo (licence CC BY 4.0). Les coordonnées de la commune choisie lui sont envoyées, pas votre position. Images satellite Meteosat : EUMETSAT, rien sur vous ne leur est envoyé.'],['أدوات التقويم','Outils du calendrier'],['جدول المواقيت','Horaires du mois'],['ملاحظة وتذكير','Note et rappel'],['الأذان والإقامة','Adhan et iqama'],['حول التطبيق','À propos'],
 [' · عطلة رسمية',' · jour férié'],['أضف ملاحظة أو تذكيرًا','Ajouter une note ou un rappel'],['(كل سنة)','(chaque année)'],['حذف الملاحظة','Supprimer la note'],['ملاحظة جديدة','Nouvelle note'],['ملاحظة ليوم ','Note pour le '],
 ['اكتب الملاحظة أو المناسبة…','Écrivez la note ou l’événement…'],['نص الملاحظة','Texte de la note'],['التكرار','Répétition'],['لا تتكرر','Aucune'],['كل سنة ميلادية','Chaque année grégorienne'],['كل سنة هجرية','Chaque année hégirienne'],
 ['ذكّرني بها في يومها','Me la rappeler ce jour-là'],['وقت التذكير','Heure du rappel'],['التذكير يصل من تطبيق أندرويد، بتوقيت موريتانيا.','Le rappel est envoyé par l’application Android, à l’heure de Mauritanie.'],['حفظ الملاحظة','Enregistrer la note'],['حُفظت الملاحظة','Note enregistrée'],['حُذفت الملاحظة','Note supprimée'],
@@ -4183,6 +4253,148 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     const more=$('lkMore');if(more){more.hidden=false;$('lkSeeW').onclick=()=>{try{A.showWidgets()}catch(x){}};$('lkSeeB').onclick=open}}
   // on the lock screen: a glimpse of them, to make the subscription worth it
   const lw=$('lkWalls');if(lw&&app){lw.querySelector('div').innerHTML=WALLS.map(([k])=>'<img alt="" draggable="false" src="wallpapers/'+k+'-s.jpg">').join('');lw.hidden=false}
+})();
+// «الطقس» (18 نوفمبر 2026): توقعات المكان المختار من Open-Meteo (الرياح والأمطار والعواصف والغبار) وصور القمر الصناعي Meteosat من EUMETSAT
+// كل ساعة (الصور الساعية مجانية بلا قيد في سياسة EUMETSAT). شاشة كاملة من أيقونة «الطقس» مع أدوات التقويم.
+(function(){const $=id=>document.getElementById(id),box=$('wxv');if(!box)return;
+  const K=window.wxKit;if(!K)return;const {WX_IC,WX_NAME,wxKind,DAYS,city,store}=K;
+  const R=Math.round,esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  const SVG=(p,c)=>'<svg viewBox="0 0 24 24" aria-hidden="true"'+(c?' class="'+c+'"':'')+'>'+p+'</svg>';
+  const DIRS=['شمالية','شمالية شرقية','شرقية','جنوبية شرقية','جنوبية','جنوبية غربية','غربية','شمالية غربية'];
+  const dirI=d=>R((((d%360)+360)%360)/45)%8;
+  // الأسماء المحلية التي أعطاها صاحب التطبيق: الگتمه (شمالية شرقية باردة مغبرّة، نوفمبر-يناير)، إريفي (حارة مغبرّة، مايو-الدبران)،
+  // اشريگيه (شرقية حارة في الخريف)، الگبيلية (جنوبية)، الساحلية (غربية من البحر)
+  const localName=(deg,spd,mo,day)=>{if(spd<10)return '';const i=dirI(deg);
+    if(i===1&&(mo>=11||mo===1))return 'الگتمه';
+    if(i>=1&&i<=3&&(mo===5||(mo===6&&day<=20)))return 'إريفي';
+    if((i===2||i===3)&&mo>=7&&mo<=10)return 'اشريگيه';
+    if(i===4)return 'الگبيلية';
+    if(i>=5)return 'الساحلية';return ''};
+  const arrow=deg=>'<svg class="wv-arr" viewBox="0 0 24 24" aria-hidden="true"><path transform="rotate('+((deg+180)%360)+' 12 12)" d="M12 2l5 9h-3.5v11h-3V11H7z"/></svg>';
+  const AL_IC={storm:WX_IC.storm,wind:'<path d="M3 8h11a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h8"/>',rain:WX_IC.rain,dust:'<path d="M3 8h13M5 12h15M3 16h11"/><circle cx="19" cy="7" r=".6"/><circle cx="17" cy="16" r=".6"/>',vis:WX_IC.fog};
+  const dustName=v=>v==null?'':v<60?'لا غبار يُذكر':v<200?'غبار خفيف':v<500?'غبار متوسط':'غبار كثيف';
+  const hhmm=t=>t.slice(11,16);
+  const dayName=(t,i)=>i===0?'اليوم':i===1?'غدًا':DAYS[new Date(t+'T12:00:00Z').getUTCDay()];
+  let D=store.get('wxv',null),busy=false;
+
+  function alerts(f,q){const h=f.hourly,out=[],st=startIdx(h.time,f.current.time),end=Math.min(h.time.length,st+48);
+    const when=i=>whenT(h.time[i]),whenT=t=>{const d=Math.floor((Date.parse(t+':00Z')-Date.parse(h.time[st].slice(0,10)+'T00:00:00Z'))/864e5);return (d===0?'اليوم':d===1?'غدًا':DAYS[new Date(t+':00Z').getUTCDay()])+' نحو '+hhmm(t)};
+    let s=-1,gi=-1,g=0,vi=-1;
+    for(let i=st;i<end;i++){if(s<0&&h.weather_code[i]>=95)s=i;if(h.wind_gusts_10m[i]>g){g=h.wind_gusts_10m[i];gi=i}if(vi<0&&h.visibility&&h.visibility[i]!=null&&h.visibility[i]<1000)vi=i}
+    if(s>=0)out.push({k:'storm',hi:true,t:'عاصفة رعدية محتملة '+when(s)+'.'});
+    if(g>=60)out.push({k:'wind',hi:true,t:'رياح قوية: هبّات حتى '+R(g)+' كم/س '+when(gi)+'.'});
+    else if(g>=45)out.push({k:'wind',t:'رياح نشطة: هبّات حتى '+R(g)+' كم/س '+when(gi)+'.'});
+    const dl=f.daily;for(let i=0;i<2&&i<dl.time.length;i++){const p=dl.precipitation_sum[i];if(p>=20){out.push({k:'rain',hi:p>=40,t:'أمطار '+(p>=40?'غزيرة جدًا':'غزيرة')+' متوقعة '+dayName(dl.time[i],i)+': نحو '+R(p)+' ملم.'});break}}
+    if(q&&q.hourly&&q.hourly.dust){const qs=startIdx(q.hourly.time,f.current.time);let m=0,mi=-1;for(let i=qs;i<Math.min(q.hourly.time.length,qs+24);i++){const v=q.hourly.dust[i];if(v!=null&&v>m){m=v;mi=i}}
+      if(m>=500)out.push({k:'dust',hi:true,t:'غبار كثيف متوقع '+whenT(q.hourly.time[mi])+' ('+R(m)+' ميكروغرام/م³).'});
+      else if(m>=200)out.push({k:'dust',t:'غبار متوسط متوقع '+whenT(q.hourly.time[mi])+'.'})}
+    if(vi>=0&&!out.some(a=>a.k==='dust'))out.push({k:'vis',t:'رؤية ضعيفة (أقل من كيلومتر) '+when(vi)+'.'});
+    return out}
+  function startIdx(times,now){const k=now.slice(0,13)+':00';let i=times.findIndex(t=>t>=k);return i<0?0:i}
+
+  function draw(){const c=city(),body=$('wvBody');$('wvPl').textContent=c.name;
+    const tile=document.querySelector('#tiles [data-open="wxv"]');
+    if(!D||D.id!==c.id){if(tile)tile.classList.remove('warn');if(!busy)body.innerHTML='<div class="wv-msg">جارٍ تحميل الطقس…</div>';return}
+    const f=D.f,q=D.q,cu=f.current,k=wxKind(cu.weather_code),dust=q&&q.current?q.current.dust:null,A=alerts(f,q);
+    if(tile)tile.classList.toggle('warn',A.some(a=>a.hi));
+    const mo=+cu.time.slice(5,7),dy=+cu.time.slice(8,10),ln=localName(cu.wind_direction_10m,cu.wind_speed_10m,mo,dy);
+    const cond=dust!=null&&dust>=200&&(k==='sun'||k==='part')?'غبار':WX_NAME[k];
+    let h='';
+    if(A.length)h+='<div class="wv-al">'+A.map(a=>'<div'+(a.hi?' class="hi"':'')+'>'+SVG(AL_IC[a.k])+'<span>'+a.t+'</span></div>').join('')+'</div>';
+    h+='<div class="wv-card"><div class="wv-now">'+SVG(WX_IC[k])+'<div><b>'+R(cu.temperature_2m)+'°</b><br><span>'+cond+' · الرطوبة '+R(cu.relative_humidity_2m)+'%</span></div></div><div class="wv-g">'
+      +'<div><small>الرياح</small><b>'+R(cu.wind_speed_10m)+' كم/س</b>'+arrow(cu.wind_direction_10m)+'<br><i>'+DIRS[dirI(cu.wind_direction_10m)]+(ln?' · '+ln:'')+'</i></div>'
+      +'<div><small>الهبّات</small><b>'+R(cu.wind_gusts_10m)+' كم/س</b></div>'
+      +'<div><small>المطر الآن</small><b>'+(cu.precipitation>0?cu.precipitation+' ملم':'لا مطر')+'</b></div>'
+      +'<div><small>الرؤية</small><b>'+(cu.visibility==null?'—':cu.visibility>=10000?'جيدة':(R(cu.visibility/100)/10)+' كم')+'</b></div>'
+      +(dust!=null?'<div style="grid-column:1/-1"><small>الغبار</small><b>'+dustName(dust)+'</b> <i>('+R(dust)+' ميكروغرام/م³)</i></div>':'')
+      +'</div></div>';
+    const hr=f.hourly,st=startIdx(hr.time,cu.time);
+    h+='<h3>الساعات القادمة</h3><div class="wv-h">';
+    for(let i=st;i<Math.min(hr.time.length,st+24);i+=3){const kk=wxKind(hr.weather_code[i]),p=hr.precipitation_probability[i];
+      h+='<div><b>'+hhmm(hr.time[i])+'</b>'+SVG(WX_IC[kk])+'<small class="rp">'+(p==null?'':'مطر '+p+'%')+'</small><small>'+R(hr.wind_gusts_10m[i])+' كم/س</small></div>'}
+    h+='</div><h3>الأيام السبعة</h3><div class="wv-d">';
+    const dl=f.daily;
+    dl.time.forEach((t,i)=>{const kk=wxKind(dl.weather_code[i]),p=dl.precipitation_sum[i],pp=dl.precipitation_probability_max[i];
+      h+='<div><span class="dn">'+dayName(t,i)+'</span>'+SVG(WX_IC[kk])+'<span class="ds">'+WX_NAME[kk]+(p>=0.2?' · <span class="rp">'+(R(p*10)/10)+' ملم</span>':pp>=20?' · <span class="rp">مطر '+pp+'%</span>':'')
+        +'<br>رياح '+DIRS[dirI(dl.wind_direction_10m_dominant[i])]+' · هبّات '+R(dl.wind_gusts_10m_max[i])+'</span><span class="dt"><b>'+R(dl.temperature_2m_max[i])+'°</b> <i>'+R(dl.temperature_2m_min[i])+'°</i></span></div>'});
+    h+='</div>';
+    if(Date.now()-D.t>2*3600e3)h+='<p class="wv-src">آخر تحديث قبل '+R((Date.now()-D.t)/3600e3)+' ساعة: تعذّر الاتصال.</p>';
+    body.innerHTML=h}
+
+  async function load(force){const c=city();
+    if(!force&&D&&D.id===c.id&&Date.now()-D.t<30*60e3){draw();return}
+    if(busy)return;busy=true;draw();
+    try{const q='latitude='+c.lat+'&longitude='+c.lng+'&timezone=GMT';
+      const [a,b]=await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?'+q+'&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,visibility'
+          +'&hourly=weather_code,precipitation_probability,wind_gusts_10m,visibility'
+          +'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,wind_direction_10m_dominant&forecast_days=7').then(r=>r.ok?r.json():null),
+        fetch('https://air-quality-api.open-meteo.com/v1/air-quality?'+q+'&current=dust&hourly=dust&forecast_days=2').then(r=>r.ok?r.json():null).catch(()=>null)]);
+      if(!a||!a.current)throw 0;
+      if(c.id===city().id){D={id:c.id,t:Date.now(),f:a,q:b};store.set('wxv',D)}
+      busy=false;draw()
+    }catch(e){busy=false;
+      if(D&&D.id===c.id)draw();
+      else $('wvBody').innerHTML='<div class="wv-msg">تعذّر تحميل الطقس. تحتاج هذه الصفحة إلى الإنترنت.<br><button type="button" id="wvAgain">إعادة المحاولة</button></div>'}}
+  box.addEventListener('click',e=>{if(e.target.id==='wvAgain')load(true)});
+
+  /* ---- صور Meteosat (EUMETView WMS)؛ الحدود من world-atlas 50m مرسومة فوقها بالإسقاط نفسه (خط الطول والعرض) ---- */
+  const BOX={w:-18.5,e:-4,s:13.5,n:28},X=l=>R((l-BOX.w)*100),Y=l=>R((BOX.n-l)*100);
+  const SAT=[
+    {k:'geo',n:'الصورة الحقيقية',l:'mtg_fd:rgb_geocolour',key:'السحب بيضاء، والأرض بلونها الطبيعي في النهار.'},
+    {k:'dust',n:'الغبار',l:'msg_fes:rgb_dust',key:'الغبار وردي أو أرجواني، والسحب الكثيفة العالية حمراء داكنة، والأرض الصافية زرقاء فاتحة.'},
+    {k:'ir',n:'السحب ليلًا ونهارًا',l:'msg_fes:ir108',key:'كلما ابيضّت السحابة كانت أعلى وأبرد: السحب الرعدية بيضاء ناصعة.'},
+    {k:'rain',n:'المطر',l:'mtg_fd:rgb_geocolour,msg_fes:h60b',key:'الألوان فوق الصورة شدة المطر كما يقدّرها القمر الصناعي، وقد لا يبلغ المطر الأرض كله.'}];
+  const TOWNS=[['نواكشوط',-15.98,18.09],['نواذيبو',-17.04,20.94],['أطار',-13.05,20.52],['ازويرات',-12.47,22.73],['تجكجه',-11.43,18.55],['كيفه',-11.40,16.62],['النعمة',-7.26,16.62],['سيلبابي',-12.18,15.16]];
+  const url=(L,t)=>'https://view.eumetsat.int/geoserver/wms?service=WMS&version=1.3.0&request=GetMap&layers='+L+'&styles=&format=image/jpeg&crs=EPSG:4326&bbox='+BOX.s+','+BOX.w+','+BOX.n+','+BOX.e+'&width=720&height=720&time='+t;
+  const iso=ms=>new Date(ms).toISOString().slice(0,13)+':00:00Z';
+  let layer=store.get('wxvSat','geo'),frames=[],fi=0,timer=0,playing=true,front=0,token=0;
+  if(!SAT.some(s=>s.k===layer))layer='geo';
+  const PLAY='<svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg>',PAUSE='<svg viewBox="0 0 24 24"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z"/></svg>';
+  function mapSvg(){const c=city(),x=X(c.lng),y=Y(c.lat),T='paint-order="stroke" stroke="#000b" stroke-width="9" fill="#fff" font-size="38" font-family="inherit"';
+    $('wvMap').innerHTML='<path d="M216 -38l -8 23 -8 9 -4 3 -12 2 -14 -14 -6 -14 -4 -5 6 -4 9 1 19 -3 4 -1 20 -15 20 -2 0 5 -22 15M479 -91l -7 6 -8 -2M494 -96l -15 5M430 -17l -13 11 -14 -2 -2 -2 13 -3 13 -9 8 -19 12 -21 3 -9 4 -3 7 -1 3 1 3 5 0 10 -3 18 -7 16 -27 8M310 -15l -1 8 3 8 -1 12 -5 6 -12 6 -9 -1 -6 -2 -10 -11 0 -10 9 -7 4 -9 23 1 2 -1 1 -1 2 1M132 -2l -4 1 -5 -3 -6 -8 4 -6 3 -2 5 0 8 4 3 5 0 3 -8 6M61 19l -9 16 -13 -6 -3 -2 -2 -3 12 -1 12 -8 3 4M67 -49l -3 1 -2 -8 -12 -20 7 -8 13 -1 6 6 2 7 -3 3 1 7 -2 5 -7 8M981 71l 20 11 18 12 19 11 19 11 19 11 19 11 18 11 19 11 19 11 19 11 18 11 19 11 19 11 19 11 19 11 18 11 16 10 24 14 23 14 23 14 -35 0 -47 0 -32 0 -33 0 -30 1 2 22 3 25 3 25 3 25 3 25 3 25 2 24 3 25 3 25 3 25 3 25 2 25 3 25 3 25 3 24 3 25 3 25 3 25 3 25 3 25 2 25 3 25 3 24 3 25 3 25 2 25 3 25 3 25 3 24 3 25 3 25 2 25 3 25 3 24 12 13 15 16 -4 22 -6 27 -5 29 -21 0 -21 0 -20 0 -20 0 -21 0 -20 0 -21 0 -20 0 -21 0 -20 0 -20 0 -21 0 -20 0 -21 0 -20 0 -20 0 -21 0 -19 0 -11 0 -5 -3 -1 -15 -4 1 -4 5 -2 5 1 6 -1 5 -13 2 -17 4 -19 3 -19 -1 -6 -2 -7 -2 -15 -2 -8 0 -10 0 -11 2 -3 2 -9 12 -8 13 -5 0 -6 -7 -16 -14 -20 -18 -8 -8 -5 -2 -10 7 -8 6 -8 8 -4 9 -3 10 -1 11 -3 14 -7 10 -8 8 -6 4 -3 3 -17 -7 9 16 -2 8 -2 11 6 8 6 6 4 5 5 6 1 14 -1 9 3 5 3 6 0 4 -2 4 -6 6 -1 10 9 12 6 7 0 3 2 5 5 4 3 -1 3 -4 1 -2 9 1 4 1 5 8 2 5 1 7 6 8 5 6 0 4 5 5 -3 11 1 5 -3 15 -1 7 0 3M561 1548l -4 -1 -3 2M542 1546l 2 -4 0 -3 -2 -2 -6 -1 -9 0 -14 -1 -3 -1 -33 -1 -33 -1 -29 0 -36 0 -25 0 -24 0 -18 9M174 1547l 8 -3 13 -5 6 3 4 0 1 -3 -1 -1 -10 -4 -5 -6 -4 3 -3 7 -3 2 -5 2 -2 -5 -1 -4 2 -3 -1 -18 1 -10 0 -8 5 -6 6 -3 22 -1 20 0 20 0 20 0 2 -16 6 -2 9 -2 18 -2 19 -2 5 -3 3 -6 2 -4 4 -3 5 2 8 3 7 4 8 3 6 3 14 6 23 8 19 3 24 -6 16 -3 2 -8 -2 -7 -13 -6 -17 0 -5 2 -8 2 -5 1 -8 -1 -10 -6 -6 -6 -9 -2 -11 -3 -16 -11 -9 -3 -9 0 -16 2 -16 6 -8 14 -16 0 -33 0 -31 -1 -25 1 -3 -10 -6 -8 -10 -7 -2 -6 4 -6 9 -5 2 -3 -5 0 -7 4 -5 0 -1 -9 -8 -12 -9 -19 -11 -8 -9 -16 -9 -6 -9 -3 -7 1 -2 7 -9 -10 12 -4 26 -13 31 -37 27 -44 3 -11 4 -8 2 -18 4 -10 4 -3 4 -8 6 -14 6 -8 7 -2 6 1 4 3 11 2 19 0 15 -2 10 -5 14 -2 17 0 9 -2 1 -5 2 -1 4 2 3 -1 3 -3 3 0 3 3 14 0 25 -1 24 8 21 16 12 11 0 5 4 6 6 5 6 1 5 -3 5 0 2 4 7 1 6 -2 5 0 1 3 1 1 3 1 5 3 6 9 5 12 4 15 5 8 7 2 3 3 1 4 2 2 3 1 6 0 6 5 7 11 1 5 -1 3 0 2 5 2 4 3 3 6 8 5 12 4 8 6 5 9 11 7 2 1M981 34l 0 17 0 20 1 17 0 20 0 20 0 22 0 23 0 16 0 11 -21 0 -18 0 -19 0 -18 0 -19 0 -19 0 -18 0 -19 0 -19 0 -18 0 -19 0 -19 0 -18 0 -19 0 -18 0 -19 0 -19 0 -15 0 0 12 0 14 0 14 0 13 0 14 0 13 0 14 0 14 0 13 0 14 0 14 0 13 0 14 0 13 0 14 0 14 0 13 0 12 0 11 -6 4 -15 5 -14 6 -19 3 -6 2 -12 8 -16 10 -13 9 -9 12 -3 6 -2 7 1 6 5 13 1 6 1 12 1 12 1 13 1 13 1 14 1 15 1 14 0 10 1 14 -15 0 -23 0 -22 0 -23 0 -24 0 -23 0 -22 0 -23 0 -23 0 -23 0 -23 0 -23 0 -23 0 -23 0 -23 0 -23 0 -23 0 -13 0 -3 19 -4 13 -2 11 1 9 -5 -5 9 -52 1 -4M213 829l -7 10 -2 -4 -2 -6 6 -9 3 -5 5 -2 -3 16M196 1216l 0 -45 6 -16 2 -15 11 -33 14 -26 13 -36 5 -34 -2 -33 -4 -30 -6 -20 -6 -28 -10 -15 -17 -14 -4 -7 4 -3 11 -2 6 -10 -13 4 16 -32 5 -21 -1 -14 3 -9 -13 -19 -9 -23 -5 -4 -5 -2 0 6 -3 5 -6 -3 -11 -18 -15 -28 -5 -3 -4 4 -3 4 -5 23M1368 300l 30 20 28 18 33 21 33 21 32 22M1546 1436l -16 -3 -5 1 -2 8 0 18 -3 12 -10 4 -7 4 -6 2 -5 -1 -27 -18 -10 -3 -10 2 -10 7 -5 5 -6 6 -7 8 2 7 5 7 4 10 -1 9 -25 12 2 4 4 5M477 1533l 0 8M174 1494l -1 -9 -5 -19 7 -9 8 -5 5 4 2 8 5 6 14 3 14 -2 9 1 -1 -5 3 -5 17 -3 18 -2 19 -3 15 0 4 -1 -1 -1 -13 -2 -28 4 -29 1 -21 11 -9 -1 -9 -11 -3 -13M1024 -98l -8 5 -6 5 -16 11 -10 5 -2 3 -1 7 0 15 0 15 0 21 0 21 0 24 -13 0 1 5 2 8 1 7 -1 4 -1 6 0 5 2 6 3 6 0 4 -4 3 -10 2 -11 1 -8 0 -13 -1 -8 0 -6 0 -6 1 -8 4 -8 6 -11 8 -6 5 -8 1 -8 0 -8 -4 -5 -2 -4 0 -5 3 -7 2 -6 0 -11 -4 -12 -6 -7 -3 -10 -1 -11 -2 -7 1 -9 0 -13 4 -10 3 -11 3 -13 3 3 9 4 4 0 7 -2 5 -6 5 -7 6 -4 5 -4 7 -3 4 -6 6 -4 9 -2 5 -2 6 -4 1 -12 2 -8 2 -7 2 -3 3 0 1 -2 7 0 5 -2 4 -3 10 -4 9 -3 12 -3 10 -4 16 -4 15 -5 14 -4 9 -3 5 -7 6 -6 4 -7 5 -8 5 -11 6 -9 5 -4 2 -4 3 -7 7 -6 10 -4 8 -7 13 -5 7 -3 4 -8 4 -9 3 -10 4 -8 4 -11 4 -7 4 -5 6 -4 7 -5 10 -4 11 -2 7 -6 24 -2 14 -2 9 -3 11 -2 17 0 14 -2 8 -1 6 -5 7 -4 5 -7 7 -6 4 -2 4 -6 5 -6 8 -5 5 1 4 1 7 -3 7 -3 8 -8 10 -9 5 -13 1 -18 0 -14 -1 -17 0 -15 -2 -14 -2 -17 -1 -12 0 -15 2 -39 0 -15 1 -22 4 -5 1 7 -48 14 -26 11 -11 16 -6 16 -26 6 -24 10 -12 3 -8 -4 -7 10 -13 11 -20 6 -12 13 -20 2 -4 -1 -5 -6 4 -5 7 -7 6 3 -7 5 -10 12 -11 19 -12 40 -41 15 -7 13 -17 5 -15 2 -35 5 -18 8 -15 11 -26 8 -12 5 -23 6 -9 10 -5 14 -12 22 -7 25 -15 12 -10 9 -13 8 -28 15 -28 8 -22 1 -1 13 -11 9 -14 16 -7 32 -3 48 -12 44 -18 12 -7 13 -15 22 -18 41 -23" fill="none" stroke="#FFE7A0" stroke-width="2.2" vector-effect="non-scaling-stroke" opacity=".9"/>'
+      +TOWNS.filter(t=>Math.hypot(X(t[1])-x,Y(t[2])-y)>90).map(t=>'<circle cx="'+X(t[1])+'" cy="'+Y(t[2])+'" r="7" fill="#fff" stroke="#000" stroke-width="3"/><text x="'+X(t[1])+'" y="'+(Y(t[2])-16)+'" text-anchor="middle" '+T+'>'+t[0]+'</text>').join('')
+      +'<g transform="translate('+x+' '+y+')"><path d="M0 0c-14-22-24-34-24-48a24 24 0 0 1 48 0c0 14-10 26-24 48z" fill="#E0463A" stroke="#fff" stroke-width="5"/><circle cy="-48" r="8" fill="#fff"/></g>'
+      +'<text x="'+x+'" y="'+(y+46)+'" text-anchor="middle" '+T.replace('#fff"','#FFE7A0"')+'>'+esc(c.name)+'</text>'}
+  function chips(){$('wvChips').innerHTML=SAT.map(s=>'<button type="button" data-k="'+s.k+'" aria-pressed="'+(s.k===layer)+'">'+s.n+'</button>').join('');
+    $('wvKey').textContent=SAT.find(s=>s.k===layer).key}
+  $('wvChips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.dataset.k===layer)return;layer=b.dataset.k;store.set('wxvSat',layer);chips();sat()});
+  const tm=t=>{const d=new Date(t);return 'الساعة '+String(d.getUTCHours()).padStart(2,'0')+':00 · '+(d.getUTCDate()===new Date().getUTCDate()?'اليوم':'أمس')};
+  function show(i){if(!frames[i])return;fi=i;$('wvRg').value=i;const a=$('wvI'+front),b=$('wvI'+(1-front));
+    b.src=frames[i].u;b.classList.add('on');a.classList.remove('on');front=1-front;$('wvTm').textContent=tm(frames[i].t)}
+  function tick(){clearTimeout(timer);if(!playing||box.hidden||!frames.length)return;
+    timer=setTimeout(()=>{show((fi+1)%frames.length);tick()},fi===frames.length-1?1800:700)}
+  const probe=u=>new Promise(res=>{const im=new Image();im.onload=()=>res(im.naturalWidth>0);im.onerror=()=>res(false);im.src=u});
+  async function sat(){const my=++token,L=SAT.find(s=>s.k===layer).l;clearTimeout(timer);frames=[];
+    $('wvLd').hidden=false;$('wvLd').textContent='جارٍ تحميل الصور…';$('wvTm').textContent='';$('wvI0').classList.remove('on');$('wvI1').classList.remove('on');
+    // آخر صورة ساعية متاحة (تصل عادة بعد ربع ساعة إلى نصف ساعة)
+    let t=Math.floor((Date.now()-20*60e3)/3600e3)*3600e3,ok=false;
+    for(let n=0;n<6&&!ok;n++){ok=await probe(url(L,iso(t)));if(my!==token)return;if(!ok)t-=3600e3}
+    if(!ok){$('wvLd').textContent='تعذّر تحميل صور القمر الصناعي الآن.';return}
+    const ts=[5,4,3,2,1,0].map(k=>t-k*3600e3),res=await Promise.all(ts.slice(0,5).map(x=>probe(url(L,iso(x)))));if(my!==token)return;
+    frames=ts.filter((x,i)=>i===5||res[i]).map(x=>({t:x,u:url(L,iso(x))}));
+    $('wvRg').max=frames.length-1;$('wvLd').hidden=true;show(frames.length-1);tick()}
+  $('wvRg').addEventListener('input',e=>{playing=false;$('wvPlay').innerHTML=PLAY;clearTimeout(timer);show(+e.target.value)});
+  $('wvPlay').addEventListener('click',()=>{playing=!playing;$('wvPlay').innerHTML=playing?PAUSE:PLAY;if(playing){if(fi===frames.length-1)show(0);tick()}});
+  $('wvPlay').innerHTML=PAUSE;
+
+  let pushed=false;
+  const open=()=>{box.hidden=false;box.scrollTop=0;try{history.pushState({wxv:1},'');pushed=true}catch(e){}
+      mapSvg();chips();playing=true;$('wvPlay').innerHTML=PAUSE;load(false);sat()},
+    hide=()=>{box.hidden=true;clearTimeout(timer);token++};
+  $('wvX').onclick=()=>{if(pushed){pushed=false;history.back()}else hide()};
+  $('wvR').onclick=()=>{load(true);sat()};
+  window.addEventListener('popstate',()=>{if(!box.hidden){pushed=false;hide()}});
+  window.wxvOpen=open;
+  const tiles=$('tiles');
+  if(tiles){const b=document.createElement('button');b.type='button';b.dataset.open='wxv';b.setAttribute('aria-expanded','false');
+    b.innerHTML='<span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 15h9.5a4 4 0 0 0 .6-7.95A5.5 5.5 0 0 0 7 6.1 4.5 4.5 0 0 0 7.5 15z"/><path class="w1" d="M4 18.5h9M7 21h10"/></svg></span><span>الطقس</span>';
+    b.addEventListener('click',e=>{e.stopPropagation();open()});
+    tiles.insertBefore(b,tiles.firstChild);
+    const n=tiles.querySelectorAll('button').length;tiles.style.gridTemplateColumns='repeat('+(n<=5?n:Math.ceil(n/2))+',minmax(0,1fr))'}
+  // علامة حمراء على الأيقونة حين يُتوقع خطر في اليومين القادمين (من آخر قراءة محفوظة)
+  draw();setTimeout(()=>{if(!D||Date.now()-D.t>3*3600e3)load(false)},6000);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(timer)}else if(!box.hidden){load(false);tick()}});
 })();
 (function(){const sp=document.querySelector('.ad-cta .ad-msg span');if(!sp)return;
   const L=['مساحتك الإعلانية أمام مستخدمي التقويم كل يوم','شعارك فوق مواقيت الصلاة، يراه المستخدم كل يوم','إعلان واحد ثابت وهادئ، دون تتبّع','لمؤسستك ومحلّك وخدمتك: تواصل معنا'];let i=0;
