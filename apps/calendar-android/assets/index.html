@@ -784,7 +784,9 @@ body.has-player.mushaf #v-quran.paged{padding-bottom:var(--qp-h,120px)}
 .hd{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;scroll-margin-top:70px}
 .hd.mark{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft)}
 .hd .n{display:inline-block;background:var(--green-soft);color:var(--green);font-weight:700;border-radius:6px;padding:0 8px;font-size:.82rem;margin-bottom:4px;font-variant-numeric:tabular-nums}
-.hd p{margin:0;font-size:var(--hs,1.06rem);line-height:2;white-space:pre-line}
+@font-face{font-family:"Al-Quds";src:url(fonts/al-quds.woff2) format("woff2");font-display:swap}
+/* the library's texts (books, verse matns and poetry) in Al-Quds, the owner's choice (18 Nov 2026) */
+.hd p{margin:0;font-family:"Al-Quds",var(--f-naskh);font-size:calc(var(--hs,1.06rem) * 1.12);line-height:2;white-space:pre-line}
 .hd .fn{color:var(--muted);font-size:.8rem;line-height:1.7}
 .stack{display:grid;gap:10px}
 .fs{display:flex;gap:4px}
