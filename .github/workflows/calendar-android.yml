@@ -39,3 +39,16 @@ jobs:
           git add -f apps/calendar-android/dist/mauritania-calendar.apk apps/calendar-android/dist/mauritania-calendar-publisher.apk
           git diff --cached --quiet || git commit -m "Build calendar APK (run ${{ github.run_number }})"
           git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
+      # the subscribers' APK (never the publisher's) at a fixed address that downloads at once:
+      # https://github.com/<repo>/releases/download/calendar/mauritania-calendar.apk
+      # The release is not marked "latest", so releases/latest keeps pointing at the Erriwaya app.
+      - name: Publish the subscribers' APK at its fixed download link
+        if: github.ref_name == 'claude/calendar-subscription'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          R=${{ github.repository }}
+          gh release view calendar --repo "$R" >/dev/null 2>&1 || \
+            gh release create calendar --repo "$R" --latest=false --title "التقويم الموريتاني" \
+              --notes "ملف تثبيت التطبيق للمشتركين، يُحدَّث مع كل نسخة."
+          gh release upload calendar apps/calendar-android/dist/mauritania-calendar.apk --clobber --repo "$R"
