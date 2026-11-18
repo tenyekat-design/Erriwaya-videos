@@ -3,17 +3,31 @@
   "c/ad-contact.json": 1,
   "c/g-events.json": 1,
   "c/h-events.json": 1,
-  "c/library-groups.json": 1,
-  "c/library.json": 1,
+  "c/library-groups.json": 2,
+  "c/library.json": 2,
   "c/mansion-stars-lore.json": 1,
   "c/mansions.json": 1,
   "c/places.json": 1,
   "c/reciters.json": 1,
   "c/sponsor.json": 1,
-  "c/stars.json": 1
+  "c/stars.json": 1,
+  "data/muallaqat.js": 1,
+  "img/book-muallaqat.webp": 1,
+  "data/mutanabbi.js": 1,
+  "img/book-mutanabbi.webp": 1,
+  "data/busiri.js": 1,
+  "img/book-busiri.webp": 1,
+  "data/kaab.js": 1,
+  "img/book-kaab.webp": 1,
+  "data/shanfara.js": 1,
+  "img/book-shanfara.webp": 1,
+  "data/khansa.js": 1,
+  "img/book-khansa.webp": 1
  },
  "news": {
-  "id": 0,
-  "t": ""
+  "id": 1,
+  "t": "كتب جديدة في المكتبة: الشعر",
+  "b": "المعلقات السبع، والمتنبي، والبوصيري، وكعب بن زهير، والشنفرى، والخنساء.",
+  "h": "#lib"
  }
 }
