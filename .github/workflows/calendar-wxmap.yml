@@ -1,0 +1,36 @@
+# خريطة توقعات الطقس لتطبيق «التقويم الموريتاني»: كل 6 ساعات تُجلب توقعات ECMWF (عبر Open-Meteo) وغبار CAMS لشبكة
+# فوق موريتانيا وتُكتب wxmap.json في فرع calendar-wxmap (التزام واحد يُستبدل كل مرة، فلا يكبر التاريخ).
+# الجدولة لا تعمل إلا من الفرع الافتراضي، فهذا الملف نفسه موجود فيه، ويأخذ السكربت دائمًا من فرع التطبيق.
+name: calendar-wxmap
+on:
+  schedule:
+    - cron: '23 1,7,13,19 * * *'
+  workflow_dispatch:
+  push:
+    branches: [claude/calendar-subscription]
+    paths:
+      - "apps/calendar-android/tools/wxmap.py"
+      - ".github/workflows/calendar-wxmap.yml"
+permissions:
+  contents: write
+concurrency: calendar-wxmap
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/calendar-subscription
+          sparse-checkout: apps/calendar-android/tools/wxmap.py
+          sparse-checkout-cone-mode: false
+      - name: Fetch the forecast grid
+        run: python3 apps/calendar-android/tools/wxmap.py /tmp/wxmap.json && ls -l /tmp/wxmap.json
+      - name: Publish (single commit, force-pushed)
+        run: |
+          mkdir pub && cd pub && git init -q -b calendar-wxmap
+          cp /tmp/wxmap.json .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wxmap.json && git commit -qm "Forecast map $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" HEAD:calendar-wxmap
