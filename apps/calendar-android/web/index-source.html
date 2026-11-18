@@ -163,6 +163,7 @@ button{cursor:pointer}
 .linkish{border:0;background:none;color:var(--green);font:inherit;text-decoration:underline;padding:0;cursor:pointer}
 .sg-tabs{display:flex;justify-content:center;gap:8px;margin:10px 0}.sg-tabs button{border:1.5px solid var(--orn);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 16px;font:600 .9rem var(--f-body)}
 .sg-tabs button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.st-l{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}.st-s{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--surface)}.st-s>div{display:flex;flex-direction:column;gap:2px;min-width:0}.st-s>div:last-child{align-items:flex-end;text-align:left}.st-s small{color:var(--muted);font-size:.74rem}.st-ok{color:var(--green)}.st-w{color:#b7791f}.st-x{color:#c0392b}
 .st-h{margin:0 0 8px;font-size:1rem;color:var(--ink)}.st-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.st-t{border:1.5px solid var(--orn);border-radius:14px;padding:10px;text-align:center;background:var(--surface)}.st-t b{display:block;font-size:1.6rem;color:var(--green)}.st-t small{color:var(--muted)}.st-n{margin:8px 0 0;font-size:.85rem;color:var(--muted)}.st-v{list-style:none;margin:0;padding:0}.st-v li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--orn)}
 .sg-it{display:grid;gap:4px}.sg-it h3{margin:0;font-size:1.15rem;color:var(--ink)}.sg-it p{margin:0;font-size:.93rem}.sg-it .mut{color:var(--muted)}
 .sg-k{display:flex;justify-content:space-between;align-items:center}.sg-k b{font-size:.78rem;padding:2px 10px;border-radius:999px;background:var(--green);color:var(--on-green)}.sg-k b.fix{background:var(--gold)}.sg-k small{color:var(--muted)}
@@ -2042,7 +2043,31 @@ async function statsAdmin(el){
     <section class="card"><h3 class="st-h">الاستعمال</h3>${A?`<div class="st-g">${tile(A[0],'فتحوه اليوم')}${tile(A[1],'في 7 أيام')}${tile(A[2],'في 30 يومًا')}</div>
     ${V.length?`<h3 class="st-h">الإصدارات (آخر 30 يومًا)</h3><ul class="st-v">${V.map(([v,c])=>`<li><bdi dir="ltr">${vesc(v)}</bdi><b>${n(c)}</b></li>`).join('')}</ul>`:''}
     <p class="mut st-n">يُحسب الهاتف حين يفتح التطبيق وهو متصل، مرة في اليوم، من النسخة التي فيها هذا العدّاد.</p>`
-    :'<p class="empty">لا أرقام بعد: تظهر بعد لصق قاعدة calendar_seen في Firestore وتحديث الهواتف.</p>'}</section>`;
+    :'<p class="empty">لا أرقام بعد: تظهر بعد لصق قاعدة calendar_seen في Firestore وتحديث الهواتف.</p>'}</section>
+    <section class="card" id="stSub"><h3 class="st-h">المشتركون</h3><p class="empty">جارٍ الحساب…</p></section>`;
+  // the subscribed phones: every sub_codes document (a code the publisher's phone or the admin gave), with its last day;
+  // the phone number the payer gave and the payment app come from the matching sub_requests document when there is one
+  const S=$('stSub');
+  try{
+    const list=async col=>{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:col}],limit:5000}})});
+      if(!r.ok)throw new Error(r.status);return (await r.json()).filter(x=>x.document).map(x=>sgRead(x.document))};
+    const [C,Q]=await Promise.all([list('sub_codes'),list('sub_requests').catch(()=>[])]);
+    const req={};Q.forEach(q=>req[q.id]=q);
+    const today=Math.floor(Date.now()/864e5);
+    const R=C.filter(c=>Number.isFinite(c.day)).map(c=>{const q=req[c.id]||{},fam=String(c.how||'').startsWith('family:');
+      return{id:c.id,end:c.day,left:c.day-today+1,from:c.t?Math.floor(Date.parse(c.t)/864e5):null,
+        phone:q.phone||'',app:q.app||'',plan:c.plan==='family'?'عائلي':fam?'فرد في عائلة':'فردي',fam:c.fam?String(c.fam).split(',').filter(Boolean).length:0}});
+    const act=R.filter(r=>r.left>0),old=R.filter(r=>r.left<=0),soon=act.filter(r=>r.left<=30);
+    const dt=d=>new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+    const APPS={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'BIM'};
+    const left=r=>r.left>0?`باقٍ ${n(r.left)} يومًا`:`انتهى منذ ${n(1-r.left)} يومًا`;
+    const row=r=>`<li class="st-s"><div><b><bdi dir="ltr">${vesc(r.phone||r.id)}</bdi></b><small>${r.plan}${r.plan==='عائلي'?` · ${n(r.fam)} أجهزة معه`:''}${r.app?' · '+(APPS[r.app]||vesc(r.app)):''}</small></div>
+      <div><small>${r.from!=null?'من '+dt(r.from)+' ':''}إلى ${dt(r.end)}</small><b class="${r.left>0?(r.left<=30?'st-w':'st-ok'):'st-x'}">${left(r)}</b></div></li>`;
+    S.innerHTML=`<h3 class="st-h">المشتركون</h3><div class="st-g">${tile(act.length,'أجهزة مشتركة الآن')}${tile(soon.length,'تنتهي خلال 30 يومًا')}${tile(act.filter(r=>r.plan==='عائلي').length,'اشتراكات عائلية')}${tile(old.length,'انتهى اشتراكها')}</div>
+      ${R.length?`<ul class="st-l">${act.sort((a,b)=>a.left-b.left).concat(old.sort((a,b)=>b.end-a.end)).map(row).join('')}</ul>`:'<p class="empty">لا مشتركين بعد.</p>'}
+      <p class="mut st-n">كل جهاز يُحسب وحده (في العائلي: الدافع وكل جهاز أضافه). المدة من يوم التفعيل إلى آخر يوم يعمل فيه الرمز؛ الرقم المعروض هو رقم الدفع الذي كتبه المشترك، أو رقم الجهاز إن فُعِّل يدويًا.</p>`;
+  }catch(e){S.innerHTML='<h3 class="st-h">المشتركون</h3><p class="empty">تعذّر جلب الاشتراكات. تحقق من الإنترنت.</p>'}
 }
 window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin,statsAdmin});
 // the hidden way in: five quick taps on the version line at the bottom of the calendar
