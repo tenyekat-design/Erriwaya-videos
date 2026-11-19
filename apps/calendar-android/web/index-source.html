@@ -1405,20 +1405,39 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
    script of the app's mushaf; a slim strip from the top that leaves the app usable beneath it (owner found a full-screen
    cover annoying); swipe it up or tap it to close, otherwise it slides away by itself */
 #ayahGl{position:fixed;left:0;right:0;top:0;z-index:90;display:flex;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 0;
-  pointer-events:none;opacity:0;transition:opacity .5s ease}
-#ayahGl[hidden]{display:none}#ayahGl.in{opacity:1}
-#ayahGl figure{pointer-events:auto;margin:0;max-width:460px;width:100%;padding:10px 16px 9px;text-align:center;border-radius:16px;position:relative;overflow:hidden;
-  background:var(--paper);background-image:var(--khatam-faint);background-size:48px 48px;box-shadow:0 8px 24px rgba(0,0,0,.18),0 0 0 1px var(--orn);
-  transform:translateY(-120%);transition:transform .6s cubic-bezier(.2,.8,.2,1);touch-action:none}
-#ayahGl.in figure{transform:translateY(var(--ay-dy,0px))}
-#ayahGl.drag figure{transition:none}
-#ayahGl blockquote{margin:0;font-family:"warsh10",var(--f-display);font-size:1.22rem;line-height:1.95;color:var(--green);word-spacing:.04em}
-#ayahGl figcaption{display:inline-flex;align-items:center;gap:6px;margin-top:2px;color:var(--gold);font-weight:700;font-size:.74rem}
+  pointer-events:none}
+#ayahGl[hidden]{display:none}
+/* see-through glass: the app shows through it, softly blurred only behind the strip */
+#ayahGl figure{pointer-events:auto;margin:0;max-width:460px;width:100%;padding:10px 16px 9px;text-align:center;border-radius:18px;position:relative;overflow:hidden;
+  background:rgba(255,253,246,.42);background:color-mix(in srgb,var(--paper) 42%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:0 6px 22px rgba(0,0,0,.12),inset 0 0 0 1px rgba(255,255,255,.35),0 0 0 1px color-mix(in srgb,var(--orn) 55%,transparent);
+  opacity:0;transform:translateY(-110%) scale(.94);touch-action:none}
+/* entrance (~0.6 s): drops in with a light spring, the verse unveils from the right, one gold gleam crosses it */
+#ayahGl.in figure{opacity:1;transform:translateY(var(--ay-dy,0px));
+  animation:ayIn .55s cubic-bezier(.22,1.35,.36,1) both}
+#ayahGl.in blockquote{animation:ayTxt .6s .15s cubic-bezier(.3,.7,.2,1) both}
+#ayahGl.in figcaption{animation:ayCap .4s .45s ease-out both}
+#ayahGl figure::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,226,150,.45) 50%,transparent 65%);transform:translateX(120%)}
+#ayahGl.in figure::after{animation:aySheen .9s .35s ease-out both}
+#ayahGl.out figure{animation:ayOut .35s ease-in both}
+#ayahGl.drag figure{animation:none;transition:none}
+#ayahGl blockquote{margin:0;font-family:"warsh10",var(--f-display);font-size:1.22rem;line-height:1.95;color:var(--green);word-spacing:.04em;
+  text-shadow:0 0 10px color-mix(in srgb,var(--paper) 85%,transparent),0 0 2px color-mix(in srgb,var(--paper) 90%,transparent)}
+#ayahGl figcaption{display:inline-flex;align-items:center;gap:6px;margin-top:2px;color:var(--gold);font-weight:700;font-size:.74rem;
+  text-shadow:0 0 6px color-mix(in srgb,var(--paper) 85%,transparent)}
 #ayahGl figcaption i{width:5px;height:5px;transform:rotate(45deg);background:var(--gold);display:inline-block}
 #ayahGl figure>u{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--orn);opacity:.7;transform-origin:left;text-decoration:none}
 #ayahGl.in figure>u{animation:ayGo var(--ay-t,8s) linear forwards}
 @keyframes ayGo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
-@media (prefers-reduced-motion:reduce){#ayahGl,#ayahGl figure{transition:none}#ayahGl.in figure>u{animation:none}}
+@keyframes ayIn{0%{opacity:0;transform:translateY(-110%) scale(.94);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:none}}
+@keyframes ayTxt{from{opacity:0;clip-path:inset(0 0 0 100%)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes ayCap{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes aySheen{from{transform:translateX(120%)}to{transform:translateX(-120%)}}
+@keyframes ayOut{from{opacity:1;transform:translateY(var(--ay-dy,0px))}to{opacity:0;transform:translateY(-110%) scale(.96)}}
+@media (prefers-reduced-motion:reduce){#ayahGl.in figure,#ayahGl.in blockquote,#ayahGl.in figcaption,#ayahGl.out figure{animation:none}
+  #ayahGl.in figure::after{animation:none}#ayahGl.in figure>u{animation:none}}
 .mem-home .mh-ic,.mem-lib .mh-ic{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);border:1px solid var(--orn)}
 .mem-home .mh-ic svg,.mem-lib .mh-ic svg{width:28px;height:28px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .mem-home .mh-ic svg .ln,.mem-lib .mh-ic svg .ln{stroke:var(--gold)}
@@ -5072,7 +5091,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const busy=()=>{const h=location.hash||'';if(/^#(read|quran|sg-|sub-|stats)/.test(h))return true;
     const l=$('lock');if(l&&!l.hidden)return true;const w=$('wxv');if(w&&!w.hidden)return true;
     return document.hidden||!!document.getElementById('splash')};
-  function close(){if(E.hidden)return;E.classList.remove('in','drag');E.style.removeProperty('--ay-dy');clearTimeout(hideT);setTimeout(()=>{E.hidden=true},650)}
+  function close(){if(E.hidden||E.classList.contains('out'))return;E.classList.remove('drag');E.classList.add('out');clearTimeout(hideT);setTimeout(()=>{E.hidden=true;E.classList.remove('in','out');E.style.removeProperty('--ay-dy')},360)}
   function show(){if(busy())return;
     if(!window.needData)return;window.needData('ayat').then(L=>{if(!L||!L.length||busy())return;
       let last=-1;try{last=+localStorage.getItem('mrcal.ayahGl')}catch(e){}
@@ -5081,7 +5100,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       E.querySelector('blockquote').innerHTML=esc(x.t);E.querySelector('figcaption').innerHTML=`<i></i>سورة ${esc(nm)} · ${ref}<i></i>`;
       E.setAttribute('aria-label','آية: سورة '+nm);
       const t=Math.min(14,Math.max(7,x.t.length*.09));E.style.setProperty('--ay-t',t+'s');
-      E.hidden=false;void E.offsetWidth;E.classList.add('in');shown=Date.now();clearTimeout(hideT);hideT=setTimeout(close,t*1000)}).catch(()=>{})}
+      E.classList.remove('in','out','drag');E.style.removeProperty('--ay-dy');E.hidden=false;void E.offsetWidth;E.classList.add('in');shown=Date.now();clearTimeout(hideT);hideT=setTimeout(close,t*1000)}).catch(()=>{})}
   // swipe up (or tap) to put it away; the app beneath stays usable throughout
   const F=E.querySelector('figure');let y0=null,dy=0;
   F.addEventListener('pointerdown',e=>{y0=e.clientY;dy=0;try{F.setPointerCapture(e.pointerId)}catch(_){}});
