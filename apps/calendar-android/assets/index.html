@@ -4043,7 +4043,7 @@ const MEM=(()=>{
   const byId=id=>all().find(e=>e.id===id);
   const LABEL=()=>(D.display_policy&&D.display_policy.fallback_label)||'من الذاكرة الوطنية • قراءة مختارة (ليست ذكرى اليوم)';
   function shareText(e){const s=srcOf(e);
-    return e.title+'\n'+when(e)+(e.location?' · '+e.location:'')+'\n\n'+e.description+(e.body&&e.body.length?'\n\n'+e.body.join('\n\n'):'')+(s.length?'\n\nالمصدر: '+s.map(x=>x.name).join('؛ '):'')+'\n\n— ذاكرة موريتانيا · التقويم الموريتاني'}
+    return e.title+'\n'+when(e)+(e.location?' · '+e.location:'')+'\n\n'+e.description+(e.body&&e.body.length?'\n\n'+e.body.join('\n\n'):'')+'\n\n— ذاكرة موريتانيا · التقويم الموريتاني'}
   function share(e){const t=shareText(e),a=A();
     try{if(a&&a.share){a.share(t);return}}catch(x){}
     if(navigator.share){navigator.share({title:e.title,text:t}).catch(()=>{});return}
@@ -4059,7 +4059,6 @@ const MEM=(()=>{
     return `<article class="mm-it" data-id="${esc(e.id)}"><div class="mm-meta"><span class="mm-date">${esc(when(e))}</span>${ann!=null?`<span class="mm-ago">${ago(ann)}</span>`:''}<span class="mm-cat">${esc(e.category||'')}</span></div>
       <h3>${esc(e.title)}</h3><p class="mm-d">${esc(e.description)}</p>${e.location?`<p class="mm-loc">${IC.pin}${esc(e.location)}</p>`:''}
       ${e.body&&e.body.length?`<div class="mm-body" hidden>${e.facts&&e.facts.length?`<dl class="mm-facts">${e.facts.map(f=>`<dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd>`).join('')}</dl>`:''}${e.body.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}
-      ${s.length?`<p class="mm-src">المصدر: ${s.map(x=>esc(x.name)).join('، ')}</p>`:''}
       <div class="mm-act">${e.body&&e.body.length?`<button type="button" class="mm-more" data-more aria-expanded="false">${IC.book}<span>اقرأ القصة كاملة</span></button>`:''}<button type="button" data-fav aria-pressed="${f}">${IC.fav}<span>${f?'في المفضلة':'المفضلة'}</span></button><button type="button" data-share>${IC.share}<span>مشاركة</span></button></div></article>`}
   // the home card: today's anniversaries, or a chosen reading clearly marked as not today's
   function home(){const el=$('memHome');if(!el)return;
@@ -4073,7 +4072,7 @@ const MEM=(()=>{
     load().then(()=>{if(!day)day=todayISO();
       const cats=[...new Set(all().map(e=>e.category).filter(Boolean))];
       const cov=D.coverage||{};
-      el.innerHTML=`<a class="qback" href="#cal">› الرئيسية</a><div class="lib-h"><h1>ذاكرة موريتانيا</h1><p>${cov.event_count||D.events.length} حدثًا مؤرخًا على ${cov.distinct_days||''} يومًا، و${D.heritage_features.length} مواد تراثية، و${Object.keys(D.sources).length} مرجعًا</p></div>
+      el.innerHTML=`<a class="qback" href="#cal">› الرئيسية</a><div class="lib-h"><h1>ذاكرة موريتانيا</h1><p>${cov.event_count||D.events.length} حدثًا مؤرخًا على ${cov.distinct_days||''} يومًا، و${D.heritage_features.length} مواد تراثية</p></div>
         <section class="card mm-today" id="mmDay"></section>
         <h2 class="lib-g"><span>الموسوعة</span></h2>
         <div class="mm-tools"><input class="search" id="mmQ" type="search" placeholder="ابحث: معركة، رئيس، مدينة، سنة…" autocomplete="off" value="${esc(q)}">
@@ -4081,9 +4080,7 @@ const MEM=(()=>{
           <button type="button" class="mm-favb" id="mmFav" aria-pressed="${onlyFav}">${IC.fav}<span>المفضلة <i id="mmFavN"></i></span></button></div>
           <div class="mm-chips" id="mmCats"><button type="button" data-c="" aria-pressed="${!cat}">الكل</button>${cats.map(c=>`<button type="button" data-c="${esc(c)}" aria-pressed="${c===cat}">${esc(c)}</button>`).join('')}</div></div>
         <p class="mm-n" id="mmN"></p><div id="mmList"></div>
-        <section class="card mm-note" id="mmNote"></section>
-        <details class="intro mm-srcs"><summary>المراجع (${Object.keys(D.sources).length})</summary><ol>${Object.values(D.sources).map(s=>`<li>${esc(s.name)}</li>`).join('')}</ol>
-          <p class="note">${esc((D.display_policy&&D.display_policy.notes)||'')}</p></details>`;
+        <section class="card mm-note" id="mmNote"></section>`;
       drawDay();drawList();drawNote();
       let t=0;$('mmQ').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{q=e.target.value;drawList()},200)});
       $('mmMon').onchange=e=>{mon=e.target.value;drawList()};

@@ -6,6 +6,16 @@ import json, os
 H = os.path.dirname(os.path.abspath(__file__))
 d = json.load(open(os.path.join(H, 'mauritania_memory.json'), encoding='utf-8'))
 a = json.load(open(os.path.join(H, 'articles.json'), encoding='utf-8')) if os.path.exists(os.path.join(H, 'articles.json')) else {}
+import re
+def fix(v):
+    # House style: «ولد» in names, and Taya is «ولد الطايع», never «الطايع» alone.
+    if isinstance(v, str):
+        v = v.replace('وِلْ', 'ولد').replace('وِل ', 'ولد ')
+        return re.sub(r'(?<!أحمد )(?<!ولد )(?<!سيدي )الطايع', 'ولد الطايع', v)
+    if isinstance(v, list): return [fix(x) for x in v]
+    if isinstance(v, dict): return {k: fix(x) for k, x in v.items()}
+    return v
+d = fix(d); a = fix(a)
 ids = {e['id'] for e in d['events'] + d['heritage_features']}
 unknown = set(a) - ids
 assert not unknown, unknown
