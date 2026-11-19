@@ -10,7 +10,7 @@ FAIL=0
 ADB=$(command -v adb)
 adb(){ timeout 90 "$ADB" "$@"; }
 # stop at once if the emulator is gone, instead of running every step against nothing
-alive(){ [ "$(timeout 15 adb get-state 2>/dev/null)" = device ] || { echo "FAIL: the emulator stopped responding (step ${STEP:-?})"; adb logcat -d > $OUT/logcat.txt 2>/dev/null; exit 1; }; }
+alive(){ [ "$(timeout 15 adb get-state 2>/dev/null)" = device ] || { echo "FAIL: the emulator stopped responding (step ${STEP:-?})"; echo "---- last log lines ----"; grep -v " V/\| D/" $OUT/logcat-live.txt | tail -120; exit 1; }; }
 ok(){ echo "PASS: $1"; }
 ko(){ echo "FAIL: $1"; FAIL=1; }
 # any capture of the screen (screencap, or the emulator's own) brings this CI emulator down while the app is shown,
