@@ -1430,6 +1430,10 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 .mm-d{margin:0;font-family:var(--f-naskh);font-size:1rem;line-height:1.95}
 .mm-loc{display:flex;align-items:center;gap:4px;margin:4px 0 0;color:var(--muted);font-size:.84rem}
 .mm-loc svg{width:15px;height:15px;fill:none;stroke:var(--gold);stroke-width:1.8}
+.mm-lock{text-align:center;padding:18px 16px}.mm-lock h3{margin:6px 0 6px;color:var(--green);font-size:1.1rem}.mm-lock p{margin:0 0 12px;line-height:1.9;color:var(--muted);font-size:.92rem}
+.mm-lki svg,.mm-ll svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.mm-lki{display:inline-flex;color:var(--gold,#b8892b)}
+.mm-ll{display:grid;gap:6px;margin:10px 0 14px}.mm-ll button{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;text-align:start;background:var(--card,#fffaf0);border:1px solid var(--line,#e6d6b0);border-radius:12px;padding:10px 12px;font:inherit;color:inherit}
+.mm-ll span{font-size:.78rem;color:var(--green);white-space:nowrap}.mm-ll b{font-weight:600;font-size:.93rem;min-width:0}.mm-ll svg{width:18px;height:18px;color:var(--muted)}
 .mm-src{margin:6px 0 0;font-size:.78rem;color:var(--muted);line-height:1.7}.mm-src a{color:var(--green)}
 .mm-ver{margin:2px 0 0;font-size:.74rem;color:var(--muted);font-style:italic}
 .mm-act{display:flex;gap:8px;margin:8px 0 6px}
@@ -4041,6 +4045,10 @@ const MEM=(()=>{
   const srcOf=e=>(e.source_ids||[]).map(s=>D.sources[s]).filter(Boolean);
   const all=()=>[...D.events,...D.heritage_features];
   const byId=id=>all().find(e=>e.id===id);
+  // the full encyclopedia is for subscribers; today's memory (home card, its story, sharing, the notification) is for everyone
+  const paid=()=>{const a=A();if(!a||typeof a.subState!=='function')return true;try{const t=JSON.parse(a.subState());return t.until>t.now}catch(e){return false}};
+  const LOCK='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>';
+  const subscribe=()=>{if(window.subSheet)window.subSheet();else toast('الموسوعة كاملة للمشتركين')};
   const LABEL=()=>(D.display_policy&&D.display_policy.fallback_label)||'من الذاكرة الوطنية • قراءة مختارة (ليست ذكرى اليوم)';
   function shareText(e){const s=srcOf(e);
     return e.title+'\n'+when(e)+(e.location?' · '+e.location:'')+'\n\n'+e.description+(e.body&&e.body.length?'\n\n'+e.body.join('\n\n'):'')+'\n\n— ذاكرة موريتانيا · التقويم الموريتاني'}
@@ -4069,7 +4077,7 @@ const MEM=(()=>{
   // ---- the encyclopedia ----
   let day=null,q='',cat='',mon='',onlyFav=false;
   function view(el){loading(el);
-    load().then(()=>{if(!day)day=todayISO();
+    load().then(()=>{if(!paid()){locked(el);return}if(!day)day=todayISO();
       const cats=[...new Set(all().map(e=>e.category).filter(Boolean))];
       const cov=D.coverage||{};
       el.innerHTML=`<a class="qback" href="#cal">› الرئيسية</a><div class="lib-h"><h1>ذاكرة موريتانيا</h1><p>${cov.event_count||D.events.length} حدثًا مؤرخًا على ${cov.distinct_days||''} يومًا، و${D.heritage_features.length} مواد تراثية</p></div>
@@ -4094,8 +4102,24 @@ const MEM=(()=>{
         if(f){const on=togFav(x.id);el.querySelectorAll(`.mm-it[data-id="${CSS.escape(x.id)}"] [data-fav]`).forEach(b=>{b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'في المفضلة':'المفضلة'});toast(on?'أُضيف إلى المفضلة':'أُزيل من المفضلة');$('mmFavN').textContent=favs().length||'';if(onlyFav)drawList()}
         if(s)share(x)};
     }).catch(()=>failed(el))}
-  function drawDay(){const iso=day,r=MM.daily(D,iso),ann=r.type==='anniversary',isT=iso===todayISO();
-    $('mmDay').innerHTML=`<div class="mm-dh"><button type="button" data-nav="-1" aria-label="اليوم السابق">›</button><div><small>${isT?'ذاكرة اليوم':'ذاكرة يوم'}</small><b>${dayLong(iso)}</b></div><button type="button" data-nav="1" aria-label="اليوم التالي">‹</button></div>
+  function locked(el){day=todayISO();
+    const L=all().slice().sort((a,b)=>a.year-b.year||(a.month||0)-(b.month||0)||(a.day||0)-(b.day||0)),n=L.length;
+    el.innerHTML=`<a class="qback" href="#cal">› الرئيسية</a><div class="lib-h"><h1>ذاكرة موريتانيا</h1><p>${n} مادة من تاريخ موريتانيا وتراثها، بقصصها كاملة</p></div>
+      <section class="card mm-today" id="mmDay"></section>
+      <h2 class="lib-g"><span>الموسوعة</span></h2>
+      <section class="card mm-lock"><span class="mm-lki">${LOCK}</span><h3>الموسوعة كاملة للمشتركين</h3>
+        <p>ذاكرة اليوم مفتوحة للجميع. أما الموسوعة، بموادها الـ${n} وقصصها، والبحث فيها والتصفح حسب الشهر والتصنيف والمفضلة، فللمشتركين.</p>
+        <button type="button" class="btn primary" data-sub>اشترك لقراءة الموسوعة كاملة</button></section>
+      <div class="mm-ll">${L.map(e=>`<button type="button" data-sub><span>${esc(when(e))}</span><b>${esc(e.title)}</b>${LOCK}</button>`).join('')}</div>
+      <section class="card mm-note" id="mmNote"></section>`;
+    drawDay(true);drawNote();
+    el.onclick=e=>{if(e.target.closest('[data-sub]')){subscribe();return}
+      const it=e.target.closest('.mm-it'),mo=e.target.closest('[data-more]'),s=e.target.closest('[data-share]'),f=e.target.closest('[data-fav]');
+      if(mo&&it){const b=it.querySelector('.mm-body'),open=b.hidden;b.hidden=!open;mo.setAttribute('aria-expanded',open);mo.querySelector('span').textContent=open?'إخفاء التفاصيل':'اقرأ القصة كاملة';return}
+      if(f){subscribe();return}
+      if(s&&it){const x=byId(it.dataset.id);if(x)share(x)}}}
+  function drawDay(lockedView){const iso=day,r=MM.daily(D,iso),ann=r.type==='anniversary',isT=iso===todayISO();
+    $('mmDay').innerHTML=`<div class="mm-dh">${lockedView?'<span></span>':'<button type="button" data-nav="-1" aria-label="اليوم السابق">›</button>'}<div><small>${isT?'ذاكرة اليوم':'ذاكرة يوم'}</small><b>${dayLong(iso)}</b></div>${lockedView?'<span></span>':'<button type="button" data-nav="1" aria-label="اليوم التالي">‹</button>'}</div>
       ${isT?'':'<button type="button" class="mm-back" data-nav="0">العودة إلى اليوم</button>'}
       ${ann?`<p class="mm-lab">${r.items.length===1?'في مثل هذا اليوم':`في مثل هذا اليوم ${r.items.length} ذكريات`}</p>`:`<p class="mm-lab feat">${esc(LABEL())}</p>`}
       ${r.items.map(e=>item(e,ann?e.anniversary:null)).join('')}`}
