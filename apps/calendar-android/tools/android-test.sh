@@ -7,10 +7,12 @@ cd "$(dirname "$0")/.."
 OUT=test-out; rm -rf $OUT; mkdir -p $OUT
 PKG=mr.erriwaya.calendar
 FAIL=0
+# stop at once if the emulator is gone, instead of running every step against nothing
+alive(){ [ "$(timeout 15 adb get-state 2>/dev/null)" = device ] || { echo "FAIL: the emulator stopped responding (step ${STEP:-?})"; adb logcat -d > $OUT/logcat.txt 2>/dev/null; exit 1; }; }
 ok(){ echo "PASS: $1"; }
 ko(){ echo "FAIL: $1"; FAIL=1; }
-shot(){ adb exec-out screencap -p > $OUT/$1.png; }
-dump(){ adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1; adb shell cat /sdcard/u.xml > $OUT/$1.xml; }
+shot(){ alive; timeout 40 adb shell screencap -p /sdcard/s.png && timeout 40 adb pull /sdcard/s.png $OUT/$1.png >/dev/null; }
+dump(){ alive; timeout 60 adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1; adb shell cat /sdcard/u.xml > $OUT/$1.xml; }
 has(){ grep -q "$2" $OUT/$1.xml; }
 # taps the centre of the first node whose text (or content-desc) contains $2
 tap(){ python3 - "$OUT/$1.xml" "$2" <<'PY' | { read x y && [ -n "$x" ] && adb shell input tap $x $y && echo "tap $x $y"; }
@@ -27,11 +29,13 @@ PY
 }
 adb wait-for-device
 adb shell settings put global window_animation_scale 0; adb shell settings put global transition_animation_scale 0; adb shell settings put global animator_duration_scale 0
-adb install -r --no-incremental dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
+STEP=install; adb install -r --no-incremental dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb logcat -c
-adb shell am start -W -n $PKG/.MainActivity
-sleep 15
+STEP=launch; adb shell am start -W -n $PKG/.MainActivity
+for i in 1 2 3 4 5 6 7 8; do sleep 2; alive; done
+adb logcat -d > $OUT/logcat-launch.txt
+STEP=home
 shot 1-home; dump 1-home
 has 1-home "ذاكرة اليوم" && ok "home card «ذاكرة اليوم»" || ko "home card «ذاكرة اليوم»"
 has 1-home "مواقيت\|الفجر" && ok "the home page still shows the prayer times" || ko "prayer times on the home page"
