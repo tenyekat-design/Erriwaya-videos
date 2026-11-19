@@ -218,7 +218,8 @@ final class Sub {
     /**
      * Once a day, tells the server this phone opened the app (Firestore calendar_seen/<the phone's number>: the server's time
      * and the app's version), so the admin's statistics page can count the phones that use it (today, in 7 days, in 30 days)
-     * and which version they run. Nothing else is sent. A network call, off the main thread; a failure waits for tomorrow's try.
+     * and which version they run (the GitHub emulator's build says «test»: the statistics page uses it to leave those
+     * phones out of both counts, owner, 20 Nov 2026). Nothing else is sent. A network call, off the main thread; a failure waits for tomorrow's try.
      */
     static void ping(Context ctx) {
         SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
@@ -229,7 +230,6 @@ final class Sub {
             try { ver = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName; } catch (Exception ignored) { }
             if (ver == null) ver = "?";
             if (ver.length() > 20) ver = ver.substring(0, 20);
-            if ("test".equals(ver)) return;   // the GitHub emulator's test build is not a phone of a user (owner, 20 Nov 2026)
             String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
             String body = "{\"writes\":[{\"update\":{\"name\":\"" + docs + "/calendar_seen/" + id + "\",\"fields\":{\"v\":{\"stringValue\":"
                     + org.json.JSONObject.quote(ver) + "}}},\"updateMask\":{\"fieldPaths\":[\"v\"]},"

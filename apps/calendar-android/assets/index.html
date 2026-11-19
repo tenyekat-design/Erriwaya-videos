@@ -2342,6 +2342,17 @@ async function statsAdmin(el){
   let N;
   try{N=await Promise.all([count('sub_trials',0),count('sub_trials',1),count('sub_trials',7),count('sub_trials',30)])}
   catch(e){L.innerHTML='<p class="empty">تعذّر حساب الإحصاءات. تحقق من الإنترنت، ومن لصق قواعد Firestore.</p>';return}
+  // the GitHub emulator's test phones (their calendar_seen record says «test») are left out of the installs too:
+  // each one's first run is read from its sub_trials record and taken off the counts it falls in
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'}]},
+        where:{fieldFilter:{field:{fieldPath:'v'},op:'EQUAL',value:{stringValue:'test'}}},limit:2000}})});
+    if(r.ok){const ids=(await r.json()).filter(x=>x.document).map(x=>x.document.name.split('/').pop());
+      const c=[0,1,7,30].map(d=>d?Date.parse(since(d)):0);
+      const T=await Promise.all(ids.map(id=>sgFetch(SG_FS+'/sub_trials/'+id,{headers:{Authorization:'Bearer '+tok}})
+        .then(g=>g.ok?g.json():null).then(j=>j?Date.parse(((j.fields||{}).t||{}).timestampValue||'')||0:null).catch(()=>null)));
+      T.forEach(t=>{if(t===null)return;c.forEach((s,i)=>{if(t>=s&&N[i]>0)N[i]--})})}}
+  catch(e){}
   let A=null,V=[];
   // counted here from the 30 days' records, leaving out the GitHub emulator's test build («test»: not a user's phone)
   try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
