@@ -1,13 +1,8 @@
 # اختبار «التقويم الموريتاني» على محاكي أندرويد قبل الإصدار (فرع التطوير claude/calendar-memory): يبني التطبيق ويشغّل
 # apps/calendar-android/tools/android-test.sh، ويحفظ الصور والسجل.
 name: calendar-android-test
+# يُشغَّل يدويًا فقط: محاكي GitHub يتوقف خلال دقيقة من فتح التطبيق، حتى النسخة المنشورة (19 نوفمبر 2026)، فلا يصلح بعدُ حَكَمًا.
 on:
-  push:
-    branches: [claude/calendar-memory]
-    paths:
-      - "apps/calendar-android/**"
-      - "!apps/calendar-android/dist/**"
-      - ".github/workflows/calendar-android-test.yml"
   workflow_dispatch:
 concurrency: calendar-android-test-${{ github.ref }}
 jobs:
