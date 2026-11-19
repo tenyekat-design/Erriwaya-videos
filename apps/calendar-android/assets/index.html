@@ -1397,6 +1397,59 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 .wz-open svg{width:17px;height:17px;fill:none;stroke:#FFE7A0;stroke-width:2;stroke-linecap:round}
 .leaflet-container{font-family:inherit}
 .leaflet-control-attribution{font-size:9px;direction:ltr}
+/* ذاكرة موريتانيا: بطاقة «ذاكرة اليوم» في الرئيسية، والموسوعة (#memory) */
+.mem-home{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.mem-home[hidden]{display:none}
+.mem-home .mh-ic,.mem-lib .mh-ic{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);border:1px solid var(--orn)}
+.mem-home .mh-ic svg,.mem-lib .mh-ic svg{width:28px;height:28px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.mem-home .mh-ic svg .ln,.mem-lib .mh-ic svg .ln{stroke:var(--gold)}
+.mem-home .mh-tx{flex:1;min-width:0;display:grid;gap:2px}
+.mem-home small{color:var(--gold);font-weight:700;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mem-home b{font-family:var(--f-display);color:var(--green);font-size:1.02rem;line-height:1.5}
+.mem-home em{font-style:normal;color:var(--muted);font-size:.82rem}
+.mem-home.feat small{color:var(--muted);font-weight:600}
+.mem-home .mh-go svg,.mem-lib .mh-go svg{width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mem-lib{display:flex;align-items:center;gap:12px;margin:18px 0 0;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.mem-lib .mh-tx{flex:1;display:grid;gap:2px}.mem-lib b{font-family:var(--f-display);color:var(--green);font-size:1.05rem}.mem-lib small{color:var(--muted);font-size:.84rem}
+#v-mem .lib-h p{font-size:.88rem}
+.mm-today{margin-top:14px}
+.mm-dh{display:flex;align-items:center;gap:10px;text-align:center}
+.mm-dh div{flex:1;display:grid}.mm-dh small{color:var(--gold);font-weight:700;font-size:.82rem}.mm-dh b{font-family:var(--f-display);color:var(--green);font-size:1.12rem}
+.mm-dh button{flex:none;width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--green);font-size:1.3rem;line-height:1}
+.mm-back{display:block;margin:8px auto 0;border:0;background:none;color:var(--green);text-decoration:underline;font:inherit;font-size:.86rem}
+.mm-lab{margin:12px 0 4px;text-align:center;color:var(--green);font-weight:700;font-size:.9rem}
+.mm-lab.feat{color:var(--gold);background:var(--gold-soft);border-radius:10px;padding:6px 10px;font-weight:600;font-size:.84rem}
+.mm-it{border-top:1px solid var(--line);padding:12px 0 4px}
+#mmList .mm-it{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 6px;margin-bottom:10px}
+.mm-today .mm-it:first-of-type{border-top:0}
+.mm-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:.8rem}
+.mm-date{font-weight:700;color:var(--green)}
+.mm-ago{color:var(--on-green);background:var(--green);border-radius:999px;padding:1px 9px;font-size:.76rem}
+.mm-cat{color:var(--gold);border:1px solid var(--orn);border-radius:999px;padding:0 9px;font-size:.74rem}
+.mm-it h3{margin:6px 0 2px;font-family:var(--f-display);font-size:1.05rem;color:var(--ink);line-height:1.5}
+.mm-d{margin:0;font-family:var(--f-naskh);font-size:1rem;line-height:1.95}
+.mm-loc{display:flex;align-items:center;gap:4px;margin:4px 0 0;color:var(--muted);font-size:.84rem}
+.mm-loc svg{width:15px;height:15px;fill:none;stroke:var(--gold);stroke-width:1.8}
+.mm-src{margin:6px 0 0;font-size:.78rem;color:var(--muted);line-height:1.7}.mm-src a{color:var(--green)}
+.mm-ver{margin:2px 0 0;font-size:.74rem;color:var(--muted);font-style:italic}
+.mm-act{display:flex;gap:8px;margin:8px 0 6px}
+.mm-act button,.mm-favb{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:var(--surface);color:var(--green);border-radius:999px;padding:4px 12px;font:inherit;font-size:.82rem}
+.mm-act svg,.mm-favb svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.mm-act [data-fav][aria-pressed="true"],.mm-favb[aria-pressed="true"]{border-color:var(--orn);background:var(--gold-soft);color:var(--gold)}
+.mm-act [data-fav][aria-pressed="true"] svg,.mm-favb[aria-pressed="true"] svg{fill:currentColor}
+.mm-favb i{font-style:normal;font-weight:700}
+.mm-tools{display:grid;gap:8px;margin-top:6px}
+.mm-row{display:flex;gap:8px}.mm-row select{flex:1;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 10px;font:inherit}
+.mm-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}.mm-chips::-webkit-scrollbar{display:none}
+.mm-chips button{flex:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:.82rem;white-space:nowrap}
+.mm-chips button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.mm-n{margin:10px 2px 6px;color:var(--muted);font-size:.84rem}
+.mm-note{margin-top:14px}.mm-note h3{display:flex;align-items:center;gap:6px;margin:0 0 8px;font-family:var(--f-display);color:var(--green);font-size:1rem}
+.mm-note h3 svg{width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:1.8}.mm-note h3 small{color:var(--muted);font-weight:400;font-size:.78rem}
+.mm-sw{display:flex;align-items:center;gap:8px;font-weight:600}.mm-sw input{width:20px;height:20px;accent-color:var(--green)}
+.mm-tm{display:flex;align-items:center;gap:8px;margin:8px 0}.mm-tm[hidden]{display:none}.mm-tm select{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:4px 8px;font:inherit}
+.mm-note .btn{margin-top:8px}
+.mm-srcs{margin-top:14px}.mm-srcs ol{margin:0 0 10px;padding-inline-start:20px;font-size:.84rem;line-height:1.8}.mm-srcs a{color:var(--green)}
 </style>
 </head>
 <body>
@@ -1531,6 +1584,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
     <ol class="times" id="times"></ol>
     <div class="third-row"><div class="third" id="third"></div><div class="third moon" id="moonRow"></div></div>
   </section>
+  <a class="card mem-home" id="memHome" href="#memory" hidden aria-label="ذاكرة اليوم"></a>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
     <button type="button" data-open="month" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M8 2.75v3.5M16 2.75v3.5M3.5 9.75h17"/><path class="dot" d="M8.25 14h.01M12 14h.01M15.75 14h.01M8.25 17h.01M12 17h.01"/></svg></span><span>الشهر</span></button>
@@ -1655,6 +1709,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
 <main class="view wrap" id="v-qibla" dir="rtl" lang="ar" hidden></main>
 <main class="view wrap" id="v-manazil" dir="rtl" lang="ar" hidden></main>
 <main class="view wrap" id="v-sg" dir="rtl" lang="ar" hidden></main>
+<main class="view wrap" id="v-mem" dir="rtl" lang="ar" hidden></main>
 
 <script>
 /* ---------- remote content: each table wrapped in RC('<key>', …) can be replaced, without updating the app, by
@@ -3633,6 +3688,7 @@ const LIB_G=RC('library-groups',[['الحديث والسيرة',['bukhari','muwa
 function libHome(el){
   const last=st.get('lib.last','');
   el.innerHTML=`<div class="lib-h"><h1>المكتبة</h1><p>الحديث والفقه والأذكار، ومتون النحو والصرف</p></div>
+    <a class="card mem-lib" href="#memory"><span class="mh-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10.5A2.5 2.5 0 0 1 20 6.5V7h-3"/><path d="M17 7v11a2.5 2.5 0 0 1-2.5 2.5H6.5A2.5 2.5 0 0 1 4 18v-1h10.5"/><path d="M7 4a2.5 2.5 0 0 0-2.5 2.5V17"/><path class="ln" d="M9 9h5M9 12h5"/></svg></span><span class="mh-tx"><b>ذاكرة موريتانيا</b><small>موسوعة تاريخية: المقاومة، الدولة، الاقتصاد، الثقافة</small></span><span class="mh-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span></a>
     ${LIB_G.map(([g,ks])=>`<h2 class="lib-g"><span>${g}</span></h2><nav class="mus books" aria-label="${g}">${ks.map(k=>{const x=LIB[k];return `<a href="#${k}"><span class="mi ${k}"><img src="img/book-${k}.webp" alt=""></span><b>${x.n}</b><small>${esc(x.full)}</small>${k===last?'<span class="last">آخر ما قرأت</span>':''}</a>`}).join('')}</nav>`).join('')}`;
 }
 function hadithList(el,c){
@@ -3941,8 +3997,135 @@ function tasbih(el){
 }
 document.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!$('v-tasbih').hidden&&document.activeElement===document.body){e.preventDefault();window.tasbihTick&&window.tasbihTick()}});
 
+/* ---------- ذاكرة موريتانيا 2.0 (19 نوفمبر 2026): بطاقة «ذاكرة اليوم» في الرئيسية والموسوعة التاريخية (#memory) ----------
+   البيانات data/memory.js (من tools/memory/mauritania_memory.json، دون editorial_review.json)، ويمكن تحديثها عن بُعد بملف c/memory.json.
+   المنطق من memory.js المرفق بالإضافة كما هو (MauritaniaMemory: daily، search، normalize). كل شيء دون إنترنت إلا روابط المصادر. */
+(function(root,factory){root.MauritaniaMemory=factory()})(window,function(){
+'use strict';
+function today(now=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Nouakchott',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now).filter(x=>['year','month','day'].includes(x.type)).reduce((a,x)=>(a[x.type]=x.value,a),{});}
+function todayISO(now){const t=today(now);return `${t.year}-${t.month}-${t.day}`;}
+function parse(iso){if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw new Error('Invalid date');const [y,m,d]=iso.split('-').map(Number);const v=new Date(0);v.setUTCFullYear(y,m-1,d);v.setUTCHours(0,0,0,0);if(y<1||v.getUTCFullYear()!==y||v.getUTCMonth()!==m-1||v.getUTCDate()!==d)throw new Error('Invalid date');return {year:y,key:iso.slice(5)};}
+function daily(data,iso=todayISO()){const {year,key}=parse(iso);const lookup=new Map([...data.events,...data.heritage_features].map(e=>[e.id,e]));const events=(data.day_index[key]||[]).map(id=>lookup.get(id)).filter(e=>e&&e.year<=year);if(events.length)return {type:'anniversary',items:events.map(e=>({...e,anniversary:year-e.year}))};const item=lookup.get(data.fallback_index[key]);const alternative=item&&item.year<=year?item:[...data.events,...data.heritage_features].find(e=>e.year<=year);return {type:alternative?'feature':'empty',items:alternative?[alternative]:[]};}
+function normalize(value){return String(value??'').normalize('NFKC').replace(/[ً-ٰٟـ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\bould\b/gi,'ولد').replace(/(^|\s)ول(?=\s|$)/g,'$1ولد').toLowerCase().trim();}
+function search(data,query='',category='',month=''){const q=normalize(query);return [...data.events,...data.heritage_features].filter(e=>(!category||e.category===category)&&(!month||e.month===Number(month))&&(!q||normalize([e.title,e.description,e.location,e.date,e.year,e.category].join(' ')).includes(q)));}
+return {todayISO,daily,search,normalize};});
+
+const MEM=(()=>{
+  const MM=window.MauritaniaMemory,A=()=>window.AndroidApp;
+  const MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const WD=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  let D=null,P=null;
+  // the data: a newer copy sent from the publisher (c/memory.json) wins over the one in the app
+  function load(){if(D)return Promise.resolve(D);if(P)return P;
+    try{const a=A();if(a&&a.contentGet){const t=a.contentGet('c/memory.json');if(t){const v=JSON.parse(t);if(v&&v.events&&v.day_index&&v.fallback_index&&v.sources){D=v;return Promise.resolve(D)}}}}catch(e){}
+    return P=need('memory').then(v=>D=v)}
+  // today in Nouakchott (UTC+0); older WebViews without time zones fall back to UTC, which is the same
+  const todayISO=()=>{try{return MM.todayISO()}catch(e){return new Date().toISOString().slice(0,10)}};
+  const isoShift=(iso,n)=>{const [y,m,d]=iso.split('-').map(Number);return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10)};
+  const dayLong=iso=>{const [y,m,d]=iso.split('-').map(Number);return WD[new Date(Date.UTC(y,m-1,d)).getUTCDay()]+' '+d+' '+MON[m-1]+' '+y};
+  const dayShort=iso=>{const [,m,d]=iso.split('-').map(Number);return d+' '+MON[m-1]};
+  const when=e=>e.date_precision==='day'&&e.month&&e.day?e.day+' '+MON[e.month-1]+' '+e.year:e.date_precision==='month'&&e.month?MON[e.month-1]+' '+e.year:'عام '+e.year;
+  const ago=n=>n===0?'هذا العام':n===1?'قبل عام':n===2?'قبل عامين':n<=10?`قبل ${n} أعوام`:`قبل ${n} عامًا`;
+  const favs=()=>st.get('mem.fav',[]);
+  const isFav=id=>favs().includes(id);
+  const togFav=id=>{const f=favs(),i=f.indexOf(id);if(i<0)f.unshift(id);else f.splice(i,1);st.set('mem.fav',f);return i<0};
+  const srcOf=e=>(e.source_ids||[]).map(s=>D.sources[s]).filter(Boolean);
+  const all=()=>[...D.events,...D.heritage_features];
+  const byId=id=>all().find(e=>e.id===id);
+  const LABEL=()=>(D.display_policy&&D.display_policy.fallback_label)||'من الذاكرة الوطنية • قراءة مختارة (ليست ذكرى اليوم)';
+  function shareText(e){const s=srcOf(e);
+    return e.title+'\n'+when(e)+(e.location?' · '+e.location:'')+'\n\n'+e.description+(s.length?'\n\nالمصدر: '+s.map(x=>x.name+(x.url?' ('+x.url+')':'')).join('؛ '):'')+'\n\n— ذاكرة موريتانيا · التقويم الموريتاني'}
+  function share(e){const t=shareText(e),a=A();
+    try{if(a&&a.share){a.share(t);return}}catch(x){}
+    if(navigator.share){navigator.share({title:e.title,text:t}).catch(()=>{});return}
+    try{if(a&&a.copy&&a.copy(t)){toast('نُسخ النص');return}}catch(x){}
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('نُسخ النص'),()=>toast('تعذّرت المشاركة'))}
+  const IC={fav:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.7L12 16.6l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg>',
+    share:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="M8.7 10.8l6.6-4M8.7 13.2l6.6 4"/></svg>',
+    pin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.3"/></svg>',
+    scroll:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10.5A2.5 2.5 0 0 1 20 6.5V7h-3"/><path d="M17 7v11a2.5 2.5 0 0 1-2.5 2.5H6.5A2.5 2.5 0 0 1 4 18v-1h10.5"/><path d="M7 4a2.5 2.5 0 0 0-2.5 2.5V17"/><path class="ln" d="M9 9h5M9 12h5"/></svg>',
+    bell:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10.5a6 6 0 0 1 12 0c0 4.3 1.8 5.4 1.8 5.4H4.2S6 14.8 6 10.5M9.5 18.8a2.5 2.5 0 0 0 5 0"/></svg>'};
+  function item(e,ann){const s=srcOf(e),f=isFav(e.id);
+    return `<article class="mm-it" data-id="${esc(e.id)}"><div class="mm-meta"><span class="mm-date">${esc(when(e))}</span>${ann!=null?`<span class="mm-ago">${ago(ann)}</span>`:''}<span class="mm-cat">${esc(e.category||'')}</span></div>
+      <h3>${esc(e.title)}</h3><p class="mm-d">${esc(e.description)}</p>${e.location?`<p class="mm-loc">${IC.pin}${esc(e.location)}</p>`:''}
+      ${s.length?`<p class="mm-src">المصدر: ${s.map(x=>x.url?`<a href="${esc(x.url)}" rel="noopener">${esc(x.name)}</a>`:esc(x.name)).join('، ')}</p>`:''}
+      ${e.verification||e.note?`<p class="mm-ver">${esc([e.verification,e.note].filter(Boolean).join(' · '))}</p>`:''}
+      <div class="mm-act"><button type="button" data-fav aria-pressed="${f}">${IC.fav}<span>${f?'في المفضلة':'المفضلة'}</span></button><button type="button" data-share>${IC.share}<span>مشاركة</span></button></div></article>`}
+  // the home card: today's anniversaries, or a chosen reading clearly marked as not today's
+  function home(){const el=$('memHome');if(!el)return;
+    load().then(()=>{const iso=todayISO(),r=MM.daily(D,iso);if(!r.items.length){el.hidden=true;return}
+      const e=r.items[0],ann=r.type==='anniversary';
+      el.innerHTML=`<span class="mh-ic">${IC.scroll}</span><span class="mh-tx"><small>${ann?'ذاكرة اليوم · '+dayShort(iso):'ذاكرة اليوم · '+esc(LABEL())}</small><b>${esc(e.title)}</b><em>${ann?esc(when(e))+' · '+ago(e.anniversary)+(r.items.length>1?` · و${r.items.length-1} ${r.items.length-1===1?'ذكرى أخرى':r.items.length-1===2?'ذكريان آخران':'ذكريات أخرى'}`:''):esc(when(e))+' · '+esc(e.category||'')}</em></span><span class="mh-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span>`;
+      el.classList.toggle('feat',!ann);el.dataset.day=iso;el.hidden=false}).catch(()=>{el.hidden=true})}
+  // ---- the encyclopedia ----
+  let day=null,q='',cat='',mon='',onlyFav=false;
+  function view(el){loading(el);
+    load().then(()=>{if(!day)day=todayISO();
+      const cats=[...new Set(all().map(e=>e.category).filter(Boolean))];
+      const cov=D.coverage||{};
+      el.innerHTML=`<a class="qback" href="#cal">› الرئيسية</a><div class="lib-h"><h1>ذاكرة موريتانيا</h1><p>${cov.event_count||D.events.length} حدثًا مؤرخًا على ${cov.distinct_days||''} يومًا، و${D.heritage_features.length} مواد تراثية، و${Object.keys(D.sources).length} مرجعًا</p></div>
+        <section class="card mm-today" id="mmDay"></section>
+        <h2 class="lib-g"><span>الموسوعة</span></h2>
+        <div class="mm-tools"><input class="search" id="mmQ" type="search" placeholder="ابحث: معركة، رئيس، مدينة، سنة…" autocomplete="off" value="${esc(q)}">
+          <div class="mm-row"><select id="mmMon" aria-label="الشهر"><option value="">كل الشهور</option>${MON.map((n,i)=>`<option value="${i+1}"${String(i+1)===mon?' selected':''}>${n}</option>`).join('')}</select>
+          <button type="button" class="mm-favb" id="mmFav" aria-pressed="${onlyFav}">${IC.fav}<span>المفضلة <i id="mmFavN"></i></span></button></div>
+          <div class="mm-chips" id="mmCats"><button type="button" data-c="" aria-pressed="${!cat}">الكل</button>${cats.map(c=>`<button type="button" data-c="${esc(c)}" aria-pressed="${c===cat}">${esc(c)}</button>`).join('')}</div></div>
+        <p class="mm-n" id="mmN"></p><div id="mmList"></div>
+        <section class="card mm-note" id="mmNote"></section>
+        <details class="intro mm-srcs"><summary>المراجع (${Object.keys(D.sources).length})</summary><ol>${Object.values(D.sources).map(s=>`<li>${s.url?`<a href="${esc(s.url)}" rel="noopener">${esc(s.name)}</a>`:esc(s.name)}</li>`).join('')}</ol>
+          <p class="note">${esc((D.display_policy&&D.display_policy.notes)||'')} فتح المراجع يحتاج إلى الإنترنت، وكل ما سواها يعمل دونه.</p></details>`;
+      drawDay();drawList();drawNote();
+      let t=0;$('mmQ').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{q=e.target.value;drawList()},200)});
+      $('mmMon').onchange=e=>{mon=e.target.value;drawList()};
+      $('mmCats').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cat=b.dataset.c;$('mmCats').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawList()});
+      $('mmFav').onclick=()=>{onlyFav=!onlyFav;$('mmFav').setAttribute('aria-pressed',onlyFav);drawList()};
+      el.onclick=e=>{const it=e.target.closest('.mm-it');
+        const f=e.target.closest('[data-fav]'),s=e.target.closest('[data-share]'),nav=e.target.closest('[data-nav]');
+        if(nav){day=nav.dataset.nav==='0'?todayISO():isoShift(day,+nav.dataset.nav);drawDay();return}
+        if(!it)return;const x=byId(it.dataset.id);if(!x)return;
+        if(f){const on=togFav(x.id);el.querySelectorAll(`.mm-it[data-id="${CSS.escape(x.id)}"] [data-fav]`).forEach(b=>{b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'في المفضلة':'المفضلة'});toast(on?'أُضيف إلى المفضلة':'أُزيل من المفضلة');$('mmFavN').textContent=favs().length||'';if(onlyFav)drawList()}
+        if(s)share(x)};
+    }).catch(()=>failed(el))}
+  function drawDay(){const iso=day,r=MM.daily(D,iso),ann=r.type==='anniversary',isT=iso===todayISO();
+    $('mmDay').innerHTML=`<div class="mm-dh"><button type="button" data-nav="-1" aria-label="اليوم السابق">›</button><div><small>${isT?'ذاكرة اليوم':'ذاكرة يوم'}</small><b>${dayLong(iso)}</b></div><button type="button" data-nav="1" aria-label="اليوم التالي">‹</button></div>
+      ${isT?'':'<button type="button" class="mm-back" data-nav="0">العودة إلى اليوم</button>'}
+      ${ann?`<p class="mm-lab">${r.items.length===1?'في مثل هذا اليوم':`في مثل هذا اليوم ${r.items.length} ذكريات`}</p>`:`<p class="mm-lab feat">${esc(LABEL())}</p>`}
+      ${r.items.map(e=>item(e,ann?e.anniversary:null)).join('')}`}
+  function drawList(){let L=MM.search(D,q,cat,mon);if(onlyFav){const f=favs();L=L.filter(e=>f.includes(e.id))}
+    L.sort((a,b)=>a.year-b.year||(a.month||0)-(b.month||0)||(a.day||0)-(b.day||0));
+    $('mmFavN').textContent=favs().length||'';
+    $('mmN').textContent=L.length?`${L.length} ${L.length===1?'مادة':L.length===2?'مادتان':L.length<=10?'مواد':'مادة'}`:'';
+    $('mmList').innerHTML=L.length?L.map(e=>item(e,null)).join(''):`<p class="empty">${onlyFav?'لم تضف شيئًا إلى المفضلة بعد. اضغط ★ على أي حدث.':'لا توجد نتائج لهذا البحث.'}</p>`}
+  // ---- the optional daily notification (Android only, after the system's permission) ----
+  function noteDays(){const o={};for(let t=Date.UTC(2028,0,1);t<Date.UTC(2029,0,1);t+=864e5){const iso=new Date(t).toISOString().slice(0,10),r=MM.daily(D,iso);if(!r.items.length)continue;const e=r.items[0];
+      o[iso.slice(5)]=r.type==='anniversary'?{t:e.title,s:'في مثل هذا اليوم '+when(e)+(r.items.length>1?' · و'+(r.items.length-1)+' '+(r.items.length-1===1?'ذكرى أخرى':'ذكريات أخرى'):'')}:{t:e.title,s:'قراءة مختارة من الذاكرة الوطنية، ليست ذكرى اليوم · '+when(e)}}
+    return o}
+  const cfg=()=>{try{const a=A();return a&&a.memoryNote?JSON.parse(a.memoryNote()||'{}'):{}}catch(e){return {}}};
+  function drawNote(){const el=$('mmNote'),a=A();
+    if(!a||!a.setMemoryNote){el.innerHTML=`<h3>${IC.bell}التنبيه اليومي</h3><p class="note">التنبيه بذاكرة اليوم متاح في تطبيق أندرويد.</p>`;return}
+    const c=cfg(),on=!!c.on,h=c.h==null?8:c.h;
+    el.innerHTML=`<h3>${IC.bell}التنبيه اليومي <small>اختياري</small></h3>
+      <label class="mm-sw"><input type="checkbox" id="mmOn"${on?' checked':''}><span>نبّهني كل يوم بذاكرة اليوم</span></label>
+      <label class="mm-tm"${on?'':' hidden'}>الساعة <select id="mmH">${Array.from({length:17},(_,i)=>i+6).map(x=>`<option value="${x}"${x===h?' selected':''}>${String(x).padStart(2,'0')}:00</option>`).join('')}</select></label>
+      <p class="note" id="mmNoteMsg">إشعار محلي واحد في اليوم يحمل عنوان الحدث، أو «قراءة مختارة» إن لم تكن لليوم ذكرى. لا يُرسل شيء إلى الإنترنت.</p>
+      ${on?'<button type="button" class="btn" id="mmTest">جرّب التنبيه الآن</button>':''}`;
+    const save=on2=>{const hh=+(($('mmH')||{}).value||h);try{a.setMemoryNote(JSON.stringify({on:on2,h:hh,m:0,days:on2?noteDays():{}}))}catch(e){}};
+    $('mmOn').onchange=e=>{const v=e.target.checked;
+      if(v&&a.notificationsAllowed&&!a.notificationsAllowed()){try{a.requestNotifications()}catch(x){}
+        // wait for the system's answer: no notifications without it
+        let n=0;const w=setInterval(()=>{let ok=false;try{ok=a.notificationsAllowed()}catch(x){}
+          if(ok){clearInterval(w);save(true);drawNote();toast('سيصلك التنبيه كل يوم')}
+          else if(++n>40){clearInterval(w);e.target.checked=false;$('mmNoteMsg').textContent='لم يُسمح بالإشعارات. يمكنك السماح بها من إعدادات الهاتف ثم المحاولة مجددًا.'}},500);return}
+      save(v);drawNote();toast(v?'سيصلك التنبيه كل يوم':'أُوقف التنبيه')};
+    const H=$('mmH');if(H)H.onchange=()=>{save(true);toast('حُفظ الوقت')};
+    const T=$('mmTest');if(T)T.onclick=()=>{try{a.testMemoryNote()}catch(e){}}}
+  // the days in the notification are refreshed when the data changes (remote update) or the app opens
+  function refreshNote(){const a=A();if(!a||!a.setMemoryNote||!a.memoryNote)return;const c=cfg();if(!c.on)return;load().then(()=>{try{a.setMemoryNote(JSON.stringify({on:true,h:c.h==null?8:c.h,m:c.m||0,days:noteDays()}))}catch(e){}})}
+  return {home,view,refreshNote};
+})();
+
 /* ---------- router ---------- */
-const VIEWS=['v-cal','v-quran','v-lib','v-hadith','v-hisn','v-tasbih','v-qibla','v-manazil','v-sg'];
+const VIEWS=['v-cal','v-quran','v-lib','v-hadith','v-hisn','v-tasbih','v-qibla','v-manazil','v-sg','v-mem'];
 function route(){
   const h=location.hash.replace(/^#/,'');let m,view='v-cal',tab='cal';
   if(h==='quran'){view='v-quran';tab='quran';quranHome($('v-quran'))}
@@ -3963,12 +4146,14 @@ function route(){
   else if(h==='sub-admin'){view='v-sg';tab='';window.APP.subAdmin($('v-sg'))}
   else if(h==='stats-admin'){view='v-sg';tab='';window.APP.statsAdmin($('v-sg'))}
   else if(h==='tasbih'){view='v-tasbih';tab='tasbih';tasbih($('v-tasbih'))}
+  else if(h==='memory'){view='v-mem';tab='cal';MEM.view($('v-mem'))}
   if(view!=='v-tasbih'&&window.AndroidApp)try{window.AndroidApp.setVolumeKeys(false)}catch(e){}
   VIEWS.forEach(v=>{const e=$(v);if(e)e.hidden=v!==view});
   document.body.classList.toggle('reading',/^page-/.test(h)||h==='tasbih');
   document.body.classList.toggle('mushaf',/^page-/.test(h));if(!/^page-/.test(h)&&TURN)turnEnd();
   document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.v===tab)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  if(view==='v-cal'||view==='v-lib'||view==='v-qibla'||view==='v-manazil'||view==='v-sg'||(view==='v-hadith'&&!/-\d+-/.test(h)))window.scrollTo(0,0);
+  if(view==='v-cal')MEM.home();
+  if(view==='v-mem'||view==='v-cal'||view==='v-lib'||view==='v-qibla'||view==='v-manazil'||view==='v-sg'||(view==='v-hadith'&&!/-\d+-/.test(h)))window.scrollTo(0,0);
 }
 // new content from the internet (Content.java calls rcUpdated): the page reloads to show it, but only when nothing is
 // playing and the reader is on the calendar or the library's home, so no reading or listening is cut
@@ -3977,6 +4162,7 @@ const rcTry=()=>{if(!rcPending||(PL.audio&&!PL.audio.paused))return;const h=loca
 window.rcUpdated=()=>{rcPending=true;rcTry()};
 document.addEventListener('visibilitychange',rcTry);window.addEventListener('hashchange',()=>setTimeout(rcTry,0));
 window.addEventListener('hashchange',route);route();
+MEM.refreshNote();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('v-cal').hidden)MEM.home()});
 })();
 </script>
 <script>
