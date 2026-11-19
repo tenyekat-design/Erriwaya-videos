@@ -13,7 +13,8 @@ adb(){ timeout 90 "$ADB" "$@"; }
 alive(){ [ "$(timeout 15 adb get-state 2>/dev/null)" = device ] || { echo "FAIL: the emulator stopped responding (step ${STEP:-?})"; adb logcat -d > $OUT/logcat.txt 2>/dev/null; exit 1; }; }
 ok(){ echo "PASS: $1"; }
 ko(){ echo "FAIL: $1"; FAIL=1; }
-shot(){ alive; timeout 40 adb shell screencap -p /sdcard/s.png && timeout 40 adb pull /sdcard/s.png $OUT/$1.png >/dev/null; }
+# screencap inside the guest brings this CI emulator down (the published version too), so the picture is taken by the emulator itself
+shot(){ alive; adb emu screenrecord screenshot "$PWD/$OUT/$1.png" >/dev/null 2>&1 || echo "no screenshot $1"; }
 dump(){ alive; timeout 60 adb shell uiautomator dump /sdcard/u.xml >/dev/null 2>&1; adb shell cat /sdcard/u.xml > $OUT/$1.xml; }
 has(){ grep -q "$2" $OUT/$1.xml; }
 # taps the centre of the first node whose text (or content-desc) contains $2

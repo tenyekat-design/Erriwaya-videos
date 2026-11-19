@@ -45,7 +45,7 @@ jobs:
           heap-size: 512M
           disk-size: 4096M
           disable-animations: true
-          emulator-options: -no-window -gpu guest -noaudio -no-boot-anim -camera-back none -no-snapshot
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
           script: bash apps/calendar-android/tools/android-test.sh
       - uses: actions/upload-artifact@v4
         if: always()
