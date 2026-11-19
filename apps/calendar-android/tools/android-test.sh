@@ -27,7 +27,7 @@ PY
 }
 adb wait-for-device
 adb shell settings put global window_animation_scale 0; adb shell settings put global transition_animation_scale 0; adb shell settings put global animator_duration_scale 0
-adb install -r dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
+adb install -r --no-incremental dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb logcat -c
 adb shell am start -W -n $PKG/.MainActivity
