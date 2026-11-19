@@ -1396,6 +1396,13 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 /* ذاكرة موريتانيا: بطاقة «ذاكرة اليوم» في الرئيسية، والموسوعة (#memory) */
 .mem-home{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;text-decoration:none;color:var(--ink)}
 .mem-home[hidden]{display:none}
+/* a verse of the day on the home screen, in the Warsh script of the app's mushaf (data/ayat.js, the same 74 verses as the verses widget) */
+.ayah-home{margin:14px 0 0;padding:16px 18px 14px;text-align:center;position:relative;overflow:hidden;background-image:var(--khatam-faint);background-size:56px 56px}
+.ayah-home[hidden]{display:none}
+.ayah-home::before{content:"";display:block;height:18px;margin:0 auto 6px;max-width:220px;background:var(--divider) center/contain no-repeat;opacity:.85}
+.ayah-home blockquote{margin:0;font-family:"warsh10",var(--f-display);font-size:1.6rem;line-height:2.1;color:var(--green);word-spacing:.04em}
+.ayah-home figcaption{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:3px 14px 5px;border-radius:999px;border:1px solid var(--orn);background:var(--green-soft);color:var(--gold);font-weight:700;font-size:.8rem}
+.ayah-home figcaption i{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);display:inline-block}
 .mem-home .mh-ic,.mem-lib .mh-ic{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:var(--green-soft);border:1px solid var(--orn)}
 .mem-home .mh-ic svg,.mem-lib .mh-ic svg{width:28px;height:28px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .mem-home .mh-ic svg .ln,.mem-lib .mh-ic svg .ln{stroke:var(--gold)}
@@ -1592,6 +1599,7 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
     <div class="third-row"><div class="third" id="third"></div><div class="third moon" id="moonRow"></div></div>
   </section>
   <a class="card mem-home" id="memHome" href="#memory" hidden aria-label="ذاكرة اليوم"></a>
+  <figure class="card ayah-home" id="ayahHome" hidden></figure>
 
   <nav class="tiles" id="tiles" aria-label="أدوات التقويم">
     <button type="button" data-open="month" aria-expanded="false"><span class="tile-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="16" rx="4"/><path d="M8 2.75v3.5M16 2.75v3.5M3.5 9.75h17"/><path class="dot" d="M8.25 14h.01M12 14h.01M15.75 14h.01M8.25 17h.01M12 17h.01"/></svg></span><span>الشهر</span></button>
@@ -4063,7 +4071,13 @@ const MEM=(()=>{
       ${e.body&&e.body.length?`<div class="mm-body" hidden>${e.facts&&e.facts.length?`<dl class="mm-facts">${e.facts.map(f=>`<dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd>`).join('')}</dl>`:''}${e.body.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}
       <div class="mm-act">${e.body&&e.body.length?`<button type="button" class="mm-more" data-more aria-expanded="false">${IC.book}<span>اقرأ القصة كاملة</span></button>`:''}<button type="button" data-fav aria-pressed="${f}">${IC.fav}<span>${f?'في المفضلة':'المفضلة'}</span></button><button type="button" data-share>${IC.share}<span>مشاركة</span></button></div></article>`}
   // the home card: today's anniversaries, or a chosen reading clearly marked as not today's
-  function home(){const el=$('memHome');if(!el)return;
+  function ayah(){const el=$('ayahHome');if(!el)return;   // one verse a day, the same all day long
+    need('ayat').then(L=>{if(!L||!L.length){el.hidden=true;return}
+      const d=new Date(),n=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5),x=L[n%L.length];
+      const nm=x.n.replace(/[\u064B-\u0652\u0670]/g,''),v=x.v,ref=v.length>1?`الآيات ${v[0]}–${v[v.length-1]}`:`الآية ${v[0]}`;
+      el.innerHTML=`<blockquote>${esc(x.t)}</blockquote><figcaption><i></i>سورة ${esc(nm)} · ${ref}<i></i></figcaption>`;
+      el.setAttribute('aria-label','آية: سورة '+nm);el.hidden=false}).catch(()=>{el.hidden=true})}
+  function home(){ayah();const el=$('memHome');if(!el)return;
     load().then(()=>{const iso=todayISO(),r=MM.daily(D,iso);if(!r.items.length){el.hidden=true;return}
       const e=r.items[0],ann=r.type==='anniversary';
       el.innerHTML=`<span class="mh-ic">${IC.scroll}</span><span class="mh-tx"><small>${ann?'ذاكرة اليوم · '+dayShort(iso):'ذاكرة اليوم · '+esc(LABEL())}</small><b>${esc(e.title)}</b><em>${ann?esc(when(e))+' · '+ago(e.anniversary)+(r.items.length>1?` · و${r.items.length-1} ${r.items.length-1===1?'ذكرى أخرى':r.items.length-1===2?'ذكريان آخران':'ذكريات أخرى'}`:''):esc(when(e))+' · '+esc(e.category||'')}</em></span><span class="mh-go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></span>`;
