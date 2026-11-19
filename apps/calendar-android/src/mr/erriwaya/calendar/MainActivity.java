@@ -300,6 +300,13 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> web.evaluateJavascript("window.onPayManual&&window.onPayManual('" + (id == null ? "" : id.replaceAll("[^A-Z2-7]", "")) + "'," + ok + ")", null)); }).start();
         }
 
+        /** Moves a subscription to a new phone (Pay.move): window.onPayMove(result) — "ok:<last day>" or what is wrong. */
+        @JavascriptInterface
+        public void payMove(final String from, final String to) {
+            new Thread(() -> { final String r = Pay.move(MainActivity.this, from, to);
+                runOnUiThread(() -> web.evaluateJavascript("window.onPayMove&&window.onPayMove(" + org.json.JSONObject.quote(r) + ")", null)); }).start();
+        }
+
         /** The page's theme (day, or night: it can differ from the phone's own): the bars around the page follow it. */
         @JavascriptInterface
         public void setTheme(boolean night) { runOnUiThread(() -> { pageNight = night; barColors(); }); }
@@ -403,7 +410,7 @@ public class MainActivity extends Activity {
             sPage = pool.load(getAssets().openFd("sounds/page.wav"), 1);
         } catch (Exception e) { pool = null; }
         Sub.syncDayWidget(this);
-        new Thread(() -> { Sub.verify(getApplicationContext()); Sub.ping(getApplicationContext()); }).start();   // when this phone's free day began, from the server; and the daily "used today" count
+        new Thread(() -> { Sub.verify(getApplicationContext()); Sub.ping(getApplicationContext()); Sub.recheck(getApplicationContext()); }).start();   // when this phone's free day began, from the server; and the daily "used today" count
         web = new WebView(this);
         web.setBackgroundColor(Color.WHITE);   // the page opens on its white splash
         WebSettings s = web.getSettings();

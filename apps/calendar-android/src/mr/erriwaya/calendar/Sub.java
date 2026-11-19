@@ -238,6 +238,30 @@ final class Sub {
         } catch (Exception ignored) { }
     }
 
+    /**
+     * A subscription moved to another phone (the owner's choice, 19 Nov 2026: Pay.move writes "moved" in this phone's
+     * sub_codes document). The code itself works with no network and cannot be withdrawn, so each time the app opens with a
+     * connection it asks: if its document says the subscription moved, the stored code is dropped and the app locks as an
+     * unsubscribed one, with a line saying where it went. A later payment for this phone writes its document afresh
+     * (without "moved") and its new code opens it again. A network call, off the main thread.
+     */
+    static void recheck(Context ctx) {
+        SharedPreferences sp = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        if (sp.getString("code", null) == null) return;
+        try {
+            Object[] r = http("GET", SuggestJob.FS + "/sub_codes/" + deviceId(ctx), null);
+            if ((Integer) r[0] != 200) return;
+            org.json.JSONObject f = new org.json.JSONObject((String) r[1]).optJSONObject("fields");
+            org.json.JSONObject mv = f == null ? null : f.optJSONObject("moved");
+            String to = mv == null ? "" : mv.optString("stringValue");
+            if (!to.matches("[A-Z2-7]{10}")) return;
+            sp.edit().remove("code").putString("movedTo", to).apply();
+            AdhanReceiver.scheduleNext(ctx);
+            Widgets.updateAll(ctx);
+            syncDayWidget(ctx);
+        } catch (Exception ignored) { }
+    }
+
     /** "2026-11-15T08:30:00.123456Z" as milliseconds. */
     private static long stamp(String iso) throws Exception {
         java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US);
@@ -285,7 +309,7 @@ final class Sub {
         int d = lastDay(deviceId(ctx), pasted);
         if (d < 0) return "bad";
         if ((d + 1L) * DAY <= now(ctx)) return "old";
-        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("code", extract(pasted)).apply();
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("code", extract(pasted)).remove("movedTo").apply();
         AdhanReceiver.scheduleNext(ctx);
         CalendarWidget.updateAll(ctx);
         syncDayWidget(ctx);
@@ -313,10 +337,10 @@ final class Sub {
         } catch (Exception ignored) { }
     }
 
-    /** For the page: {"id","now","trialEnd","until","open","verified"}. */
+    /** For the page: {"id","now","trialEnd","until","open","verified","moved"} (moved: the phone its subscription went to). */
     static String state(Context ctx) {
         long n = now(ctx), t = trialEnd(ctx), u = paidUntil(ctx);
         return "{\"id\":\"" + deviceId(ctx) + "\",\"now\":" + n + ",\"trialEnd\":" + t + ",\"until\":" + u + ",\"open\":" + (n < t || n < u)
-                + ",\"verified\":" + verified(ctx) + "}";
+                + ",\"verified\":" + verified(ctx) + ",\"moved\":\"" + ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("movedTo", "") + "\"}";
     }
 }
