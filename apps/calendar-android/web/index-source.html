@@ -1402,20 +1402,20 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 .mem-home{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;text-decoration:none;color:var(--ink)}
 .mem-home[hidden]{display:none}
 /* a verse shown as the app opens, and again during long use (the owner's choice, 19 Nov 2026): data/ayat.js, in the Warsh
-   script of the app's mushaf; a tap anywhere closes it, otherwise it fades by itself */
-#ayahGl{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(8,30,22,.42);
-  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .7s ease}
+   script of the app's mushaf; a slim strip from the top that leaves the app usable beneath it (owner found a full-screen
+   cover annoying); swipe it up or tap it to close, otherwise it slides away by itself */
+#ayahGl{position:fixed;left:0;right:0;top:0;z-index:90;display:flex;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 0;
+  pointer-events:none;opacity:0;transition:opacity .5s ease}
 #ayahGl[hidden]{display:none}#ayahGl.in{opacity:1}
-#ayahGl figure{margin:0;max-width:440px;width:100%;padding:22px 22px 18px;text-align:center;border-radius:22px;position:relative;overflow:hidden;
-  background:var(--paper);background-image:var(--khatam-faint);background-size:56px 56px;box-shadow:0 24px 60px rgba(0,0,0,.28),0 0 0 1.5px var(--orn);
-  transform:translateY(14px) scale(.98);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
-#ayahGl.in figure{transform:none}
-#ayahGl figure::before{content:"";display:block;height:20px;margin:0 auto 10px;max-width:230px;background:var(--divider) center/contain no-repeat}
-#ayahGl blockquote{margin:0;font-family:"warsh10",var(--f-display);font-size:1.75rem;line-height:2.15;color:var(--green);word-spacing:.04em}
-#ayahGl figcaption{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:3px 14px 5px;border-radius:999px;border:1px solid var(--orn);
-  background:var(--green-soft);color:var(--gold);font-weight:700;font-size:.82rem}
-#ayahGl figcaption i{width:6px;height:6px;transform:rotate(45deg);background:var(--gold);display:inline-block}
-#ayahGl figure>u{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--orn);opacity:.7;transform-origin:left;text-decoration:none}
+#ayahGl figure{pointer-events:auto;margin:0;max-width:460px;width:100%;padding:10px 16px 9px;text-align:center;border-radius:16px;position:relative;overflow:hidden;
+  background:var(--paper);background-image:var(--khatam-faint);background-size:48px 48px;box-shadow:0 8px 24px rgba(0,0,0,.18),0 0 0 1px var(--orn);
+  transform:translateY(-120%);transition:transform .6s cubic-bezier(.2,.8,.2,1);touch-action:none}
+#ayahGl.in figure{transform:translateY(var(--ay-dy,0px))}
+#ayahGl.drag figure{transition:none}
+#ayahGl blockquote{margin:0;font-family:"warsh10",var(--f-display);font-size:1.22rem;line-height:1.95;color:var(--green);word-spacing:.04em}
+#ayahGl figcaption{display:inline-flex;align-items:center;gap:6px;margin-top:2px;color:var(--gold);font-weight:700;font-size:.74rem}
+#ayahGl figcaption i{width:5px;height:5px;transform:rotate(45deg);background:var(--gold);display:inline-block}
+#ayahGl figure>u{position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--orn);opacity:.7;transform-origin:left;text-decoration:none}
 #ayahGl.in figure>u{animation:ayGo var(--ay-t,8s) linear forwards}
 @keyframes ayGo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 @media (prefers-reduced-motion:reduce){#ayahGl,#ayahGl figure{transition:none}#ayahGl.in figure>u{animation:none}}
@@ -5061,10 +5061,10 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     const o=info.hidden;info.hidden=!o;b.setAttribute('aria-expanded',String(o));if(o)info.scrollIntoView({block:'nearest',behavior:'smooth'})});})();
 </script>
 <script>
-// a verse as the app opens (and when it comes back after a while away), and again every 15 minutes of continuous use
+// a verse as the app opens (and when it comes back after a while away), and again every 30 minutes of continuous use
 (function(){
-  const GAP=15*60e3,AWAY=10*60e3,$=id=>document.getElementById(id);
-  const E=document.createElement('div');E.id='ayahGl';E.hidden=true;E.dir='rtl';E.lang='ar';E.setAttribute('role','dialog');E.setAttribute('aria-modal','false');
+  const GAP=30*60e3,AWAY=10*60e3,$=id=>document.getElementById(id);
+  const E=document.createElement('div');E.id='ayahGl';E.hidden=true;E.dir='rtl';E.lang='ar';E.setAttribute('role','status');E.setAttribute('aria-live','polite');
   E.innerHTML='<figure><blockquote></blockquote><figcaption></figcaption><u></u></figure>';document.body.append(E);
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   let shown=0,timer=0,hideT=0;
@@ -5072,7 +5072,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const busy=()=>{const h=location.hash||'';if(/^#(read|quran|sg-|sub-|stats)/.test(h))return true;
     const l=$('lock');if(l&&!l.hidden)return true;const w=$('wxv');if(w&&!w.hidden)return true;
     return document.hidden||!!document.getElementById('splash')};
-  function close(){if(E.hidden)return;E.classList.remove('in');clearTimeout(hideT);setTimeout(()=>{E.hidden=true},700)}
+  function close(){if(E.hidden)return;E.classList.remove('in','drag');E.style.removeProperty('--ay-dy');clearTimeout(hideT);setTimeout(()=>{E.hidden=true},650)}
   function show(){if(busy())return;
     if(!window.needData)return;window.needData('ayat').then(L=>{if(!L||!L.length||busy())return;
       let last=-1;try{last=+localStorage.getItem('mrcal.ayahGl')}catch(e){}
@@ -5082,7 +5082,12 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
       E.setAttribute('aria-label','آية: سورة '+nm);
       const t=Math.min(14,Math.max(7,x.t.length*.09));E.style.setProperty('--ay-t',t+'s');
       E.hidden=false;void E.offsetWidth;E.classList.add('in');shown=Date.now();clearTimeout(hideT);hideT=setTimeout(close,t*1000)}).catch(()=>{})}
-  E.addEventListener('click',close);
+  // swipe up (or tap) to put it away; the app beneath stays usable throughout
+  const F=E.querySelector('figure');let y0=null,dy=0;
+  F.addEventListener('pointerdown',e=>{y0=e.clientY;dy=0;try{F.setPointerCapture(e.pointerId)}catch(_){}});
+  F.addEventListener('pointermove',e=>{if(y0==null)return;dy=Math.min(0,e.clientY-y0);if(dy<-4){E.classList.add('drag');E.style.setProperty('--ay-dy',dy+'px')}});
+  const up=()=>{if(y0==null)return;y0=null;E.classList.remove('drag');if(dy<-30||Math.abs(dy)<=4)close();else E.style.removeProperty('--ay-dy')};
+  F.addEventListener('pointerup',up);F.addEventListener('pointercancel',up);
   // continuous use: a verse every GAP while the app stays in front
   const loop=()=>{clearTimeout(timer);timer=setTimeout(()=>{if(busy())loop();else{show();loop()}},GAP)};
   let hidAt=0;
