@@ -32,6 +32,11 @@ final class Widgets {
 
     static void setMonths(Context ctx, int id, String m) { sp(ctx).edit().putString("m_" + id, m).apply(); }
 
+    /** The name widget's name (NameWidget.NAMES key); the first by default. */
+    static String name(Context ctx, int id) { return sp(ctx).getString("n_" + id, NameWidget.NAMES[0][0]); }
+
+    static void setName(Context ctx, int id, String key) { sp(ctx).edit().putString("n_" + id, key).apply(); }
+
     /** The clock widget's model: d1..d8 (figures) or a1..a6 (hands); d1 by default ("d"/"a" from 1.139 mean d1/a1). */
     static String clock(Context ctx, int id) {
         String c = sp(ctx).getString("c_" + id, "d1");
@@ -72,6 +77,7 @@ final class Widgets {
         MonthWidget.updateAll(ctx);
         LockNote.update(ctx);
         AyatWidget.updateAll(ctx);
+        NameWidget.updateAll(ctx);
     }
 
     private static int clamp(int v) { return Math.max(0, Math.min(100, v)); }

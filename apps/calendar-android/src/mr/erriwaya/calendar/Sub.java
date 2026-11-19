@@ -334,6 +334,7 @@ final class Sub {
             LockNote.update(ctx);
             TrialNote.schedule(ctx);
             AyatWidget.updateAll(ctx);
+            NameWidget.updateAll(ctx);
         } catch (Exception ignored) { }
     }
 

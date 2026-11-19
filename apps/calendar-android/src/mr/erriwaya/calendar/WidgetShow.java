@@ -53,6 +53,7 @@ public class WidgetShow extends Activity {
         float cardW = getResources().getDisplayMetrics().widthPixels / dp - 32;
         add(box, "آيات من القرآن", "آية برواية ورش تتبدّل كل ساعة، وباللمس تنتقل إلى غيرها", "widget_ayat", 250, 120, cardW, paid);
         add(box, "يوم الأسبوع بالخط العربي", "اسم اليوم بخط صاحب التطبيق، يُكبَّر كما تشاء", "widget_day", 250, 125, cardW, paid);
+        add(box, "اسمك بالخط العربي", "اسمك بخط الثلث المزخرف: اختره من إعدادات الويدجت", "widget_name", 250, 110, cardW, paid);
         add(box, "الأشهر", "الهجري والحساني والميلادي، معًا أو اثنان أو واحد", "widget_month", 300, 130, cardW, paid);
         add(box, "الساعة", "عشرة أشكال بأرقام طويلة، واثنا عشر ميناءً بعقاربها", "widget_clock_d1", 250, 120, cardW, paid);
         add(box, "الساعة بالعقارب", "", "widget_clock_a2", 180, 180, cardW * 0.6f, paid);
