@@ -1,0 +1,10 @@
+/* ذاكرة موريتانيا — منطق مستقل، دون مكتبات أو اتصال. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.MauritaniaMemory=factory();})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+function today(now=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Nouakchott',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now).filter(x=>['year','month','day'].includes(x.type)).reduce((a,x)=>(a[x.type]=x.value,a),{});}
+function todayISO(now){const t=today(now);return `${t.year}-${t.month}-${t.day}`;}
+function parse(iso){if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw new Error('Invalid date');const [y,m,d]=iso.split('-').map(Number);const v=new Date(0);v.setUTCFullYear(y,m-1,d);v.setUTCHours(0,0,0,0);if(y<1||v.getUTCFullYear()!==y||v.getUTCMonth()!==m-1||v.getUTCDate()!==d)throw new Error('Invalid date');return {year:y,key:iso.slice(5)};}
+function daily(data,iso=todayISO()){const {year,key}=parse(iso);const lookup=new Map([...data.events,...data.heritage_features].map(e=>[e.id,e]));const events=(data.day_index[key]||[]).map(id=>lookup.get(id)).filter(e=>e&&e.year<=year);if(events.length)return {type:'anniversary',items:events.map(e=>({...e,anniversary:year-e.year}))};const item=lookup.get(data.fallback_index[key]);const alternative=item&&item.year<=year?item:[...data.events,...data.heritage_features].find(e=>e.year<=year);return {type:alternative?'feature':'empty',items:alternative?[alternative]:[]};}
+function normalize(value){return String(value??'').normalize('NFKC').replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\bould\b/gi,'ولد').replace(/(^|\s)ول(?=\s|$)/g,'$1ولد').toLowerCase().trim();}
+function search(data,query='',category='',month=''){const q=normalize(query);return [...data.events,...data.heritage_features].filter(e=>(!category||e.category===category)&&(!month||e.month===Number(month))&&(!q||normalize([e.title,e.description,e.location,e.date,e.year,e.category].join(' ')).includes(q)));}
+return {todayISO,daily,search,normalize};});

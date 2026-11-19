@@ -339,6 +339,27 @@ public class MainActivity extends Activity {
             if (id != 0) pool.play(id, 1f, 1f, 1, 0, 1f);
         }
 
+        /** «ذاكرة اليوم»: the optional daily notification (settings and the 366 days' lines, as JSON). */
+        @JavascriptInterface
+        public void setMemoryNote(String json) { MemoryNote.save(MainActivity.this, json); }
+
+        @JavascriptInterface
+        public String memoryNote() { return MemoryNote.state(MainActivity.this); }
+
+        @JavascriptInterface
+        public void testMemoryNote() { MemoryNote.show(MainActivity.this, true); }
+
+        /** Shares a text through Android's share sheet (a «ذاكرة موريتانيا» item). */
+        @JavascriptInterface
+        public void share(String text) {
+            runOnUiThread(() -> {
+                try {
+                    Intent i = new Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text);
+                    startActivity(Intent.createChooser(i, "مشاركة"));
+                } catch (Exception ignored) { }
+            });
+        }
+
         /** Puts text on the clipboard (copied verses). */
         @JavascriptInterface
         public boolean copy(String text) {

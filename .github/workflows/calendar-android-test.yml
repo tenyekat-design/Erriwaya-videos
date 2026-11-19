@@ -1,0 +1,49 @@
+# اختبار «التقويم الموريتاني» على محاكي أندرويد قبل الإصدار (فرع التطوير claude/calendar-memory): يبني التطبيق ويشغّل
+# apps/calendar-android/tools/android-test.sh، ويحفظ الصور والسجل.
+name: calendar-android-test
+# يُشغَّل يدويًا فقط: محاكي GitHub يتوقف خلال دقيقة من فتح التطبيق، حتى النسخة المنشورة (19 نوفمبر 2026)، فلا يصلح بعدُ حَكَمًا.
+on:
+  workflow_dispatch:
+concurrency: calendar-android-test-${{ github.ref }}
+jobs:
+  emulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Build APK
+        run: apps/calendar-android/build.sh
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: "test"
+          KEYSTORE_PASS: ${{ secrets.CALENDAR_KEYSTORE_PASS }}
+          KEYSTORE_ALT: ${{ secrets.CALENDAR_KEYSTORE_B64 }}
+      - name: Logic tests (memory.js on 2026 and 2028)
+        run: cd apps/calendar-android/tools/memory && node test_memory.js
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Test on Android 14 emulator (AOSP)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: default
+          profile: pixel_5
+          ram-size: 3072M
+          heap-size: 512M
+          disk-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
+          script: bash apps/calendar-android/tools/android-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-test
+          path: apps/calendar-android/test-out
