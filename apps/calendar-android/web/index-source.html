@@ -2337,12 +2337,16 @@ async function statsAdmin(el){
   try{N=await Promise.all([count('sub_trials',0),count('sub_trials',1),count('sub_trials',7),count('sub_trials',30)])}
   catch(e){L.innerHTML='<p class="empty">تعذّر حساب الإحصاءات. تحقق من الإنترنت، ومن لصق قواعد Firestore.</p>';return}
   let A=null,V=[];
-  try{A=await Promise.all([count('calendar_seen',1),count('calendar_seen',7),count('calendar_seen',30)]);
-    const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
-      body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'}]},
+  // counted here from the 30 days' records, leaving out the GitHub emulator's test build («test»: not a user's phone)
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'},{fieldPath:'t'}]},
         where:{fieldFilter:{field:{fieldPath:'t'},op:'GREATER_THAN_OR_EQUAL',value:{timestampValue:since(30)}}},limit:5000}})});
-    if(r.ok){const m={};(await r.json()).filter(x=>x.document).forEach(x=>{const v=sgRead(x.document).v||'?';m[v]=(m[v]||0)+1});
-      V=Object.entries(m).sort((p,q)=>q[1]-p[1])}}
+    if(!r.ok)throw new Error(r.status);
+    const m={},c1=Date.parse(since(1)),c7=Date.parse(since(7));A=[0,0,0];
+    (await r.json()).filter(x=>x.document).forEach(x=>{const d=sgRead(x.document),v=d.v||'?';if(v==='test')return;
+      const t=Date.parse(((x.document.fields||{}).t||{}).timestampValue||'')||0;
+      A[2]++;if(t>=c7)A[1]++;if(t>=c1)A[0]++;m[v]=(m[v]||0)+1});
+    V=Object.entries(m).sort((p,q)=>q[1]-p[1])}
   catch(e){A=null}
   const n=x=>x.toLocaleString('ar-u-nu-latn');
   const tile=(v,t)=>`<div class="st-t"><b>${n(v)}</b><small>${t}</small></div>`;

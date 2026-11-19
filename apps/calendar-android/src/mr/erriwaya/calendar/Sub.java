@@ -229,6 +229,7 @@ final class Sub {
             try { ver = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName; } catch (Exception ignored) { }
             if (ver == null) ver = "?";
             if (ver.length() > 20) ver = ver.substring(0, 20);
+            if ("test".equals(ver)) return;   // the GitHub emulator's test build is not a phone of a user (owner, 20 Nov 2026)
             String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/"));
             String body = "{\"writes\":[{\"update\":{\"name\":\"" + docs + "/calendar_seen/" + id + "\",\"fields\":{\"v\":{\"stringValue\":"
                     + org.json.JSONObject.quote(ver) + "}}},\"updateMask\":{\"fieldPaths\":[\"v\"]},"
