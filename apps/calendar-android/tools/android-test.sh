@@ -7,7 +7,8 @@ cd "$(dirname "$0")/.."
 OUT=test-out; rm -rf $OUT; mkdir -p $OUT
 PKG=mr.erriwaya.calendar
 FAIL=0
-adb(){ timeout 90 command adb "$@"; }
+ADB=$(command -v adb)
+adb(){ timeout 90 "$ADB" "$@"; }
 # stop at once if the emulator is gone, instead of running every step against nothing
 alive(){ [ "$(timeout 15 adb get-state 2>/dev/null)" = device ] || { echo "FAIL: the emulator stopped responding (step ${STEP:-?})"; adb logcat -d > $OUT/logcat.txt 2>/dev/null; exit 1; }; }
 ok(){ echo "PASS: $1"; }
@@ -31,21 +32,22 @@ PY
 adb wait-for-device
 adb shell settings put global window_animation_scale 0; adb shell settings put global transition_animation_scale 0; adb shell settings put global animator_duration_scale 0
 # a log of the whole run, kept even if the emulator dies
-(command adb logcat -v time > $OUT/logcat-live.txt 2>&1 &)
+("$ADB" logcat -v time > $OUT/logcat-live.txt 2>&1 &)
 # baseline: the version now published, to tell an emulator problem from one of this build
 STEP=baseline
 curl -sSL -o $OUT/published.apk https://github.com/tenyekat-design/erriwaya-videos/releases/download/calendar/mauritania-calendar.apk && \
-  adb install -r --no-incremental $OUT/published.apk && adb shell am start -W -n $PKG/.MainActivity
+  adb install -r --no-incremental $OUT/published.apk && adb shell am start -W -n $PKG/.MainActivity || echo "FAIL: baseline did not start"
+adb shell pidof $PKG && echo "published version running"
 for i in $(seq 1 30); do sleep 2; alive; done
 echo "PASS: the published version runs 60 s on this emulator"
 shot 0-published
 adb shell am force-stop $PKG
-STEP=install; adb install -r --no-incremental dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
+STEP=install; adb uninstall $PKG; adb install -r --no-incremental dist/mauritania-calendar.apk || { echo "install failed"; exit 1; }
 adb shell pm grant $PKG android.permission.POST_NOTIFICATIONS 2>/dev/null || true
 adb logcat -c
 STEP=launch; adb shell am start -W -n $PKG/.MainActivity
 for i in $(seq 1 30); do sleep 2; alive; done
-echo "PASS: this build runs 60 s"
+adb shell pidof $PKG && echo "PASS: this build runs 60 s"
 adb logcat -d > $OUT/logcat-launch.txt
 STEP=home
 shot 1-home; dump 1-home
