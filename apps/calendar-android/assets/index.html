@@ -2220,6 +2220,10 @@ async function subAdmin(el){
   if(!a){el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>للمشرف فقط</p></div><section class="card"><p class="empty">سجّل الدخول أولًا من <a href="#sg-admin">صفحة المشرف</a> ثم عد إلى هنا.</p></section>`;return}
   el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>${vesc(a.email)} · <a href="#sg-admin">اقتراحات القرى</a></p></div>
     <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
+    <section class="card sb sb-mv"><h2>تفعيل جهاز يدويًا</h2>
+      <p class="mut">لمن دفع ولم يصل طلبه: تأكد من وصول المبلغ، ثم اكتب رقم جهازه (يرسله لك في رسالة واتساب) يُفتح تطبيقه خلال دقائق لسنة كاملة.</p>
+      <div class="sb-form"><label>رقم الجهاز<input id="sbManId" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"></label></div>
+      <button type="button" class="btn primary" id="sbManGo">فعِّل الاشتراك</button><p class="sg-msg" id="sbManM"></p></section>
     <section class="card sb sb-mv"><h2>نقل اشتراك إلى هاتف جديد</h2><div id="sbMvReq"></div>
       <p class="mut">ينتقل ما بقي من الاشتراك إلى الهاتف الجديد، دون زيادة ولا نقص، ويتوقف على الهاتف القديم حين يُفتح متصلًا بالإنترنت.</p>
       <div class="sb-form"><label>رقم الجهاز القديم<input id="sbMvFrom" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"></label><label>رقم الجهاز الجديد<input id="sbMvTo" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"></label></div>
@@ -2331,6 +2335,16 @@ async function subAdmin(el){
     if(typeof A.payMove!=='function'){M.textContent='حدّث تطبيقك إلى آخر نسخة الناشر';return}
     $('sbMvGo').disabled=true;M.textContent='جارٍ النقل…';A.payMove(from,to)};
   $('sbMvGo').onclick=()=>doMove($('sbMvFrom').value,$('sbMvTo').value);
+  // a phone whose request never arrived: the same signed code as the one-tap confirmation, from its device number (20 Nov 2026)
+  $('sbManGo').onclick=()=>{const M=$('sbManM'),id=mvId($('sbManId').value);
+    if(!nat){M.textContent='التفعيل من تطبيق أندرويد على هاتف الناشر';return}
+    if(id.length!==10){M.textContent=MVW.bad;return}
+    const s=JSON.parse(A.payState()||'{}');if(s.key===false||s.hasKey===false){M.textContent=MVW.key;return}
+    $('sbManGo').disabled=true;M.textContent='جارٍ التفعيل…';const was=window.onPayManual;
+    window.onPayManual=(x,ok)=>{window.onPayManual=was;$('sbManGo').disabled=false;
+      M.textContent=ok?'فُعّل اشتراك '+subId(x)+' لسنة: يُفتح تطبيقه خلال دقائق وهو متصل بالإنترنت':'تعذّر التفعيل: تحقق من المفتاح السري في قسم «اللاقط» ومن الإنترنت';
+      if(ok)$('sbManId').value='';if($('sbReq'))loadReq()};
+    A.payManual(id)};
   async function loadMv(){const R=$('sbMvReq');if(!R)return;let rows=[];
     try{const t=await sgToken();if(!t)return;const post=(u,b)=>sgFetch(SG_FS+u,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(b)});
       const r=await post(':runQuery',{structuredQuery:{from:[{collectionId:'sub_moves'}],where:{fieldFilter:{field:{fieldPath:'status'},op:'EQUAL',value:{stringValue:'new'}}},limit:50}});
