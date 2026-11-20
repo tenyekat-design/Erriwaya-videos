@@ -15,14 +15,12 @@ jobs:
         run: |
           set -x
           mkdir -p geo-sources && cd geo-sources
-          curl -fsSL -o MR.zip https://download.geonames.org/export/dump/MR.zip && unzip -o MR.zip MR.txt && rm MR.zip || true
-          curl -fsSL -o alt.zip https://download.geonames.org/export/dump/alternatenames/MR.zip && unzip -o alt.zip MR.txt -d alt && mv alt/MR.txt MR-alternatenames.txt && rm -r alt alt.zip || true
-          Q='[out:json][timeout:600];area["ISO3166-1"="MR"][admin_level=2]->.a;(node(area.a)[place];way(area.a)[place];);out center tags;'
-          for s in https://overpass-api.de/api/interpreter https://overpass.kumi.systems/api/interpreter https://overpass.private.coffee/api/interpreter; do
-            curl -fsS -m 900 --data-urlencode "data=$Q" -o osm-places.json $s && python3 -c "import json;d=json.load(open('osm-places.json'));print(len(d['elements']))" && break
-          done
+          sudo apt-get install -y -q osmium-tool >/dev/null
+          curl -fsSL -A "erriwaya-calendar/1.0" -o mr.osm.pbf https://download.geofabrik.de/africa/mauritania-latest.osm.pbf
+          osmium tags-filter mr.osm.pbf nwr/place -o places.osm.pbf
+          osmium export places.osm.pbf -f geojsonseq -a type,id --geometry-types=point,polygon -o osm-places.geojsonseq
+          wc -l osm-places.geojsonseq; gzip -9 -f osm-places.geojsonseq; rm mr.osm.pbf places.osm.pbf
           ls -la
-          gzip -9 -f MR-alternatenames.txt || true
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
