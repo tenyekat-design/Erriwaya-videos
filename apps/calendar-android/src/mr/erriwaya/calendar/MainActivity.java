@@ -59,11 +59,12 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setAdhanConfig(String json) { AdhanReceiver.saveConfig(MainActivity.this, json); }
 
-        /** «أقرب بلدية إلى موقعي»: asks for the approximate-location permission if needed, then calls window.onLocated(lat, lng, ok). */
+        /** «أقرب مكان إلى موقعي» and «موقعي الحالي بالضبط»: asks for the precise (GPS) location permission if it is not
+         *  granted yet (the phone may still grant only the approximate one), then calls window.onLocated(lat, lng, ok). */
         @JavascriptInterface
         public void locate() {
             runOnUiThread(() -> {
-                if (Locator.allowed(MainActivity.this)) doLocate();
+                if (Locator.precise(MainActivity.this)) doLocate();
                 else Locator.ask(MainActivity.this);
             });
         }
@@ -513,7 +514,9 @@ public class MainActivity extends Activity {
         super.onRequestPermissionsResult(req, perms, res);
         if (req == 8) LockNote.update(this);   // notifications just allowed: show «إشعار اليوم» now
         if (req != Locator.REQUEST) return;
-        if (res.length > 0 && res[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) doLocate();
+        boolean any = false;   // precise or approximate: Android may grant only the approximate one
+        for (int r : res) any |= r == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        if (any) doLocate();
         else located(0, 0, false);
     }
 

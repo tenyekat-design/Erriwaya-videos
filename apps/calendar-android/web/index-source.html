@@ -1771,6 +1771,17 @@ const CITIES=WILAYAS.flatMap(([w,ms])=>ms.flatMap(([m,cs])=>cs.map(([id,name,fr,
 // a village has vc = the id of its commune, and v = that commune's name
 {const N=new Map(CITIES.map(c=>[c.id,c.name]));CITIES.forEach(c=>c.v=c.vc?N.get(c.vc)||'':'')}
 const VILLAGES=CITIES.filter(c=>c.vc);
+/* «موقعي الحالي»: the phone's exact (GPS) position as a place of its own, under the nearest commune; it is in CITIES only
+   (not in VILLAGES), so it shows in no list, and it stays where it was taken until the button is pressed again */
+const HERE_IN_MR=(lat,lng)=>lat>14.6&&lat<27.4&&lng>-17.2&&lng<-4.7;
+function hereSet(lat,lng){let cm=null,bd=1e9;
+  for(const c of CITIES){if(c.vc)continue;const dy=(c.lat-lat)*111.2,dx=(c.lng-lng)*111.2*Math.cos((c.lat+lat)/2*Math.PI/180),k=dx*dx+dy*dy;if(k<bd){bd=k;cm=c}}
+  if(!cm)return null;
+  let h=CITIES.find(c=>c.id==='here');if(!h){h={id:'here',name:'موقعي الحالي',fr:'Ma position',approx:false};CITIES.push(h)}
+  Object.assign(h,{lat:+lat.toFixed(5),lng:+lng.toFixed(5),w:cm.w,m:cm.m,vc:cm.id,v:cm.name});
+  try{localStorage.setItem('mrcal.here',JSON.stringify({lat:h.lat,lng:h.lng}))}catch(e){}
+  return h}
+{let h=null;try{h=JSON.parse(localStorage.getItem('mrcal.here'))}catch(e){}if(h&&HERE_IN_MR(h.lat,h.lng))hereSet(h.lat,h.lng)}
 const cityOptions=sel=>WILAYAS.map(([w,ms])=>`<optgroup label="${wNum(w)?wNum(w)+' · ':''}ولاية ${w}">${ms.flatMap(m=>m[1]).filter(c=>!c[6]).map(([id,name])=>`<option value="${id}"${id===sel?' selected':''}>${name}</option>`).join('')}</optgroup>`).join('');
 const METHODS={
   mwl:{name:'رابطة العالم الإسلامي (18° / 17°)',fajr:18,isha:17},
@@ -1803,7 +1814,7 @@ const S={iq:LOCK_ADHAN?Object.assign({},IQ_DEFAULT):Object.assign({},IQ_DEFAULT,
 S.vil=store.get('vil','');
 {const c=CITIES.find(c=>c.id===S.city);if(c&&c.vc){S.vil=c.id;S.city=c.vc;store.set('city',S.city);store.set('vil',S.vil)}}   // builds 62-65 kept a village as the city
 if(!CITIES.some(c=>c.id===S.city&&!c.vc))S.city='nkc';
-if(S.vil&&!VILLAGES.some(c=>c.id===S.vil&&c.vc===S.city))S.vil='';
+if(S.vil&&!VILLAGES.concat(CITIES.filter(c=>c.id==='here')).some(c=>c.id===S.vil&&c.vc===S.city))S.vil='';
 if(!METHODS[S.method])S.method='mwl';
 const commune=()=>CITIES.find(c=>c.id===S.city);
 const city=()=>(S.vil&&CITIES.find(c=>c.id===S.vil))||commune();   // where the times are computed: the village if one is chosen
@@ -1936,7 +1947,7 @@ const fold=t=>t.normalize('NFD').replace(/[̀-ًͯ-ْـ]/g,'').toLowerCase().rep
 // the Android app can find the phone's rough position; the nearest commune within 150 km is then chosen
 const canLocate=()=>{const A=window.AndroidApp;return !!A&&typeof A.locate==='function'};
 function nearestCity(lat,lng){let best=null,bd=1e9;
-  for(const c of CITIES){const dy=(c.lat-lat)*111.2,dx=(c.lng-lng)*111.2*cos((c.lat+lat)/2),k=Math.sqrt(dx*dx+dy*dy);if(k<bd){bd=k;best=c}}
+  for(const c of CITIES){if(c.id==='here')continue;const dy=(c.lat-lat)*111.2,dx=(c.lng-lng)*111.2*cos((c.lat+lat)/2),k=Math.sqrt(dx*dx+dy*dy);if(k<bd){bd=k;best=c}}
   return bd<=150?best:null}
 const say=t=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.dir='rtl';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)};
 function pickCity(sel,find){
@@ -1952,7 +1963,7 @@ function pickCity(sel,find){
   function show(){
     let h='';
     if(step==='m'){
-      h=head('اختر المقاطعة')+`<div class="cpick-s"><input type="search" placeholder="ابحث عن مقاطعة أو بلدية أو قرية…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-loc>أقرب مكان إلى موقعي</button>':''}</div><div class="cpick-l" id="pkL">`+
+      h=head('اختر المقاطعة')+`<div class="cpick-s"><input type="search" placeholder="ابحث عن مقاطعة أو بلدية أو قرية…" aria-label="بحث" autocomplete="off">${canLocate()?'<button type="button" class="btn cpick-loc" data-here>موقعي الحالي بالضبط (GPS)</button><button type="button" class="btn cpick-loc" data-loc>أقرب مكان إلى موقعي</button>':''}</div><div class="cpick-l" id="pkL">`+
         WILAYAS.map(([w])=>`<section class="cpick-w"><h3>${wNum(w)?`<span class="wn">${wNum(w)}</span>`:''}ولاية ${w}</h3><div class="cpick-g">${MOUGH.filter(x=>x.w===w).map(x=>it(`data-m="${x.cap}"`,x.m,x.ids.length>1?`${x.ids.length} بلديات`:'بلدية واحدة',x===moughOf(S.city))).join('')}</div></section>`).join('')+
         `</div><div class="cpick-l" id="pkR" hidden></div>`;
     }else if(step==='c'){
@@ -1960,7 +1971,7 @@ function pickCity(sel,find){
     }else{
       const V=vill(C);
       h=head(`قرى بلدية ${vesc(C.name)}`,M.ids.length>1?'c':'m')+`<div class="cpick-l"><section class="cpick-w"><div class="cpick-g">${it(`data-vl="" data-c2="${C.id}"`,'مركز البلدية',vesc(C.name),C.id===S.city&&!S.vil)}${V.map(v=>it(`data-vl="${v.id}" data-c2="${C.id}"`,vesc(v.name),vesc(v.fr),v.id===S.vil)).join('')}</div></section>
-        <div class="pk-sg"><button type="button" data-sgk="new">＋ اقترح قرية جديدة في ${vesc(C.name)}</button>${C.id===S.city&&S.vil?'<button type="button" data-sgk="fix">✎ اقترح تصحيحًا للقرية المختارة</button>':''}</div></div>`;
+        <div class="pk-sg"><button type="button" data-sgk="new">＋ اقترح قرية جديدة في ${vesc(C.name)}</button>${C.id===S.city&&S.vil&&S.vil!=='here'?'<button type="button" data-sgk="fix">✎ اقترح تصحيحًا للقرية المختارة</button>':''}</div></div>`;
     }
     d.innerHTML=`<div class="cpick-in" role="dialog" aria-label="اختيار المكان">${h}</div>`;
     const inp=d.querySelector('.cpick-s input');if(inp)inp.addEventListener('input',search);
@@ -1980,6 +1991,14 @@ function pickCity(sel,find){
     if(!b){if(e.target===d)close();return}
     if(b.dataset.x!==undefined){close();return}
     if(b.dataset.back){step=b.dataset.back;show();return}
+    if('here' in b.dataset){
+      b.disabled=true;b.textContent='جارٍ تحديد موقعك بالـGPS…';
+      window.onLocated=(lat,lng,ok)=>{window.onLocated=null;
+        const h=ok&&HERE_IN_MR(lat,lng)?hereSet(lat,lng):null;
+        if(!h){say(ok?'موقعك خارج موريتانيا. اختر من القائمة.':'تعذّر تحديد الموقع. شغّل الموقع (GPS) في الهاتف واسمح به للتطبيق.');b.disabled=false;b.textContent='موقعي الحالي بالضبط (GPS)';return}
+        fin(h.vc,'here');say(`المواقيت والطقس لموقعك الحالي (قرب ${h.v}). اضغط الزر مرة أخرى إذا تنقّلت.`)};
+      try{window.AndroidApp.locate()}catch(x){window.onLocated(0,0,false)}
+      return}
     if('loc' in b.dataset){
       b.disabled=true;b.textContent='جارٍ تحديد الموقع…';
       window.onLocated=(lat,lng,ok)=>{window.onLocated=null;
