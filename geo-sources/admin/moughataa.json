@@ -1,0 +1,47 @@
+{
+  "id": "MR021",
+  "level": 2,
+  "level_name": {
+    "local": "مقاطعة",
+    "en": "Moughataa"
+  },
+  "name": {
+    "local": "Aïoun",
+    "en": "Aïoun",
+    "slug": "aoun-mr021"
+  },
+  "code": {
+    "id": "MR021",
+    "iso": null
+  },
+  "parent": {
+    "id": "MR02",
+    "level": 1,
+    "name": {
+      "local": "Hodh El Gharbi",
+      "en": "Hodh El Gharbi",
+      "slug": "hodh-el-gharbi-mr02"
+    }
+  },
+  "ancestors": [
+    {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    }
+  ],
+  "children_count": {
+    "commune": 7
+  },
+  "zip_codes": [],
+  "geo": {
+    "lat": "16.727",
+    "lon": "-9.272"
+  },
+  "metadata": {},
+  "source": {}
+}

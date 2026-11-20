@@ -1,0 +1,512 @@
+[
+  {
+    "id": "MR07",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Adrar",
+      "en": "Adrar",
+      "slug": "adrar-mr07"
+    },
+    "code": {
+      "id": "MR07",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 4,
+      "commune": 11
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "21.434",
+      "lon": "-9.561"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/adrar-mr07/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR03",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Assaba",
+      "en": "Assaba",
+      "slug": "assaba-mr03"
+    },
+    "code": {
+      "id": "MR03",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 5,
+      "commune": 26
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.713",
+      "lon": "-11.856"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/assaba-mr03/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR05",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Brakna",
+      "en": "Brakna",
+      "slug": "brakna-mr05"
+    },
+    "code": {
+      "id": "MR05",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 6,
+      "commune": 24
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.293",
+      "lon": "-13.279"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/brakna-mr05/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR08",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Dakhlet Nouadhibou",
+      "en": "Dakhlet Nouadhibou",
+      "slug": "dakhlet-nouadhibou-mr08"
+    },
+    "code": {
+      "id": "MR08",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 2,
+      "commune": 6
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "20.168",
+      "lon": "-15.892"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/dakhlet-nouadhibou-mr08/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR04",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Gorgol",
+      "en": "Gorgol",
+      "slug": "gorgol-mr04"
+    },
+    "code": {
+      "id": "MR04",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 5,
+      "commune": 31
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.947",
+      "lon": "-12.676"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/gorgol-mr04/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR10",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Guidimagha",
+      "en": "Guidimagha",
+      "slug": "guidimagha-mr10"
+    },
+    "code": {
+      "id": "MR10",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 4,
+      "commune": 22
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.389",
+      "lon": "-12.206"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/guidimagha-mr10/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR01",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Hodh Chargui",
+      "en": "Hodh Chargui",
+      "slug": "hodh-chargui-mr01"
+    },
+    "code": {
+      "id": "MR01",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 8,
+      "commune": 37
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.653",
+      "lon": "-7.132"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/hodh-chargui-mr01/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR02",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Hodh El Gharbi",
+      "en": "Hodh El Gharbi",
+      "slug": "hodh-el-gharbi-mr02"
+    },
+    "code": {
+      "id": "MR02",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 5,
+      "commune": 29
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.57",
+      "lon": "-9.734"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/hodh-el-gharbi-mr02/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR12",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Inchiri",
+      "en": "Inchiri",
+      "slug": "inchiri-mr12"
+    },
+    "code": {
+      "id": "MR12",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 2,
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "19.69",
+      "lon": "-14.805"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/inchiri-mr12/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR14",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Nouakchott Nord",
+      "en": "Nouakchott Nord",
+      "slug": "nouakchott-nord-mr14"
+    },
+    "code": {
+      "id": "MR14",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 3,
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.102",
+      "lon": "-15.895"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/nouakchott-nord-mr14/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR13",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Nouakchott Ouest",
+      "en": "Nouakchott Ouest",
+      "slug": "nouakchott-ouest-mr13"
+    },
+    "code": {
+      "id": "MR13",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 3,
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.305",
+      "lon": "-15.974"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/nouakchott-ouest-mr13/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR15",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Nouakchott Sud",
+      "en": "Nouakchott Sud",
+      "slug": "nouakchott-sud-mr15"
+    },
+    "code": {
+      "id": "MR15",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 3,
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.943",
+      "lon": "-15.94"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/nouakchott-sud-mr15/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR09",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Tagant",
+      "en": "Tagant",
+      "slug": "tagant-mr09"
+    },
+    "code": {
+      "id": "MR09",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 3,
+      "commune": 10
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.434",
+      "lon": "-10.561"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/tagant-mr09/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR11",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Tiris Zemmour",
+      "en": "Tiris Zemmour",
+      "slug": "tiris-zemmour-mr11"
+    },
+    "code": {
+      "id": "MR11",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 3,
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "23.892",
+      "lon": "-9.587"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/tiris-zemmour-mr11/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  },
+  {
+    "id": "MR06",
+    "level": 1,
+    "level_name": {
+      "local": "ولاية",
+      "en": "Wilaya"
+    },
+    "name": {
+      "local": "Trarza",
+      "en": "Trarza",
+      "slug": "trarza-mr06"
+    },
+    "code": {
+      "id": "MR06",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "moughataa": 7,
+      "commune": 27
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.517",
+      "lon": "-15.054"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/mr/wilayas/trarza-mr06/",
+      "api": "https://openadmindata.org/api/mr/"
+    }
+  }
+]

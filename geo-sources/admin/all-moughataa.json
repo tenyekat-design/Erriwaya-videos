@@ -1,0 +1,2963 @@
+[
+  {
+    "id": "MR074",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Ouadane",
+      "en": "Ouadane",
+      "slug": "ouadane-mr074"
+    },
+    "code": {
+      "id": "MR074",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR07",
+      "level": 1,
+      "name": {
+        "local": "Adrar",
+        "en": "Adrar",
+        "slug": "adrar-mr07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR07",
+        "level": 1,
+        "name": {
+          "local": "Adrar",
+          "en": "Adrar",
+          "slug": "adrar-mr07"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "22.36",
+      "lon": "-8.13"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR072",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Atar",
+      "en": "Atar",
+      "slug": "atar-mr072"
+    },
+    "code": {
+      "id": "MR072",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR07",
+      "level": 1,
+      "name": {
+        "local": "Adrar",
+        "en": "Adrar",
+        "slug": "adrar-mr07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR07",
+        "level": 1,
+        "name": {
+          "local": "Adrar",
+          "en": "Adrar",
+          "slug": "adrar-mr07"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "20.625",
+      "lon": "-13.433"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR071",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Aoujeft",
+      "en": "Aoujeft",
+      "slug": "aoujeft-mr071"
+    },
+    "code": {
+      "id": "MR071",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR07",
+      "level": 1,
+      "name": {
+        "local": "Adrar",
+        "en": "Adrar",
+        "slug": "adrar-mr07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR07",
+        "level": 1,
+        "name": {
+          "local": "Adrar",
+          "en": "Adrar",
+          "slug": "adrar-mr07"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "19.555",
+      "lon": "-13.216"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR073",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Chinguitti",
+      "en": "Chinguitti",
+      "slug": "chinguitti-mr073"
+    },
+    "code": {
+      "id": "MR073",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR07",
+      "level": 1,
+      "name": {
+        "local": "Adrar",
+        "en": "Adrar",
+        "slug": "adrar-mr07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR07",
+        "level": 1,
+        "name": {
+          "local": "Adrar",
+          "en": "Adrar",
+          "slug": "adrar-mr07"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 2
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "20.157",
+      "lon": "-10.245"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR033",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Guerou",
+      "en": "Guerou",
+      "slug": "guerou-mr033"
+    },
+    "code": {
+      "id": "MR033",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR03",
+      "level": 1,
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR03",
+        "level": 1,
+        "name": {
+          "local": "Assaba",
+          "en": "Assaba",
+          "slug": "assaba-mr03"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.876",
+      "lon": "-11.929"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR035",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Kiffa",
+      "en": "Kiffa",
+      "slug": "kiffa-mr035"
+    },
+    "code": {
+      "id": "MR035",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR03",
+      "level": 1,
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR03",
+        "level": 1,
+        "name": {
+          "local": "Assaba",
+          "en": "Assaba",
+          "slug": "assaba-mr03"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 6
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.69",
+      "lon": "-11.323"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR032",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Boumdeid",
+      "en": "Boumdeid",
+      "slug": "boumdeid-mr032"
+    },
+    "code": {
+      "id": "MR032",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR03",
+      "level": 1,
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR03",
+        "level": 1,
+        "name": {
+          "local": "Assaba",
+          "en": "Assaba",
+          "slug": "assaba-mr03"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.744",
+      "lon": "-11.279"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR034",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Kankoussa",
+      "en": "Kankoussa",
+      "slug": "kankoussa-mr034"
+    },
+    "code": {
+      "id": "MR034",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR03",
+      "level": 1,
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR03",
+        "level": 1,
+        "name": {
+          "local": "Assaba",
+          "en": "Assaba",
+          "slug": "assaba-mr03"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.713",
+      "lon": "-11.146"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR031",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Barkéol",
+      "en": "Barkéol",
+      "slug": "barkol-mr031"
+    },
+    "code": {
+      "id": "MR031",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR03",
+      "level": 1,
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR03",
+        "level": 1,
+        "name": {
+          "local": "Assaba",
+          "en": "Assaba",
+          "slug": "assaba-mr03"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 8
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.642",
+      "lon": "-12.443"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR054",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Magtalahjar",
+      "en": "Magtalahjar",
+      "slug": "magtalahjar-mr054"
+    },
+    "code": {
+      "id": "MR054",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.65",
+      "lon": "-13.061"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR052",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Bababé",
+      "en": "Bababé",
+      "slug": "babab-mr052"
+    },
+    "code": {
+      "id": "MR052",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.457",
+      "lon": "-13.948"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR056",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Maal",
+      "en": "Maal",
+      "slug": "maal-mr056"
+    },
+    "code": {
+      "id": "MR056",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.804",
+      "lon": "-13.281"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR055",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "M'Bagne",
+      "en": "M'Bagne",
+      "slug": "mbagne-mr055"
+    },
+    "code": {
+      "id": "MR055",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.273",
+      "lon": "-13.773"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR051",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Aleg",
+      "en": "Aleg",
+      "slug": "aleg-mr051"
+    },
+    "code": {
+      "id": "MR051",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.218",
+      "lon": "-13.806"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR053",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Boghé",
+      "en": "Boghé",
+      "slug": "bogh-mr053"
+    },
+    "code": {
+      "id": "MR053",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR05",
+      "level": 1,
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR05",
+        "level": 1,
+        "name": {
+          "local": "Brakna",
+          "en": "Brakna",
+          "slug": "brakna-mr05"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.652",
+      "lon": "-14.375"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR081",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Nouadhibou",
+      "en": "Nouadhibou",
+      "slug": "nouadhibou-mr081"
+    },
+    "code": {
+      "id": "MR081",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR08",
+      "level": 1,
+      "name": {
+        "local": "Dakhlet Nouadhibou",
+        "en": "Dakhlet Nouadhibou",
+        "slug": "dakhlet-nouadhibou-mr08"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR08",
+        "level": 1,
+        "name": {
+          "local": "Dakhlet Nouadhibou",
+          "en": "Dakhlet Nouadhibou",
+          "slug": "dakhlet-nouadhibou-mr08"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "20.924",
+      "lon": "-15.949"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR082",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Chami",
+      "en": "Chami",
+      "slug": "chami-mr082"
+    },
+    "code": {
+      "id": "MR082",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR08",
+      "level": 1,
+      "name": {
+        "local": "Dakhlet Nouadhibou",
+        "en": "Dakhlet Nouadhibou",
+        "slug": "dakhlet-nouadhibou-mr08"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR08",
+        "level": 1,
+        "name": {
+          "local": "Dakhlet Nouadhibou",
+          "en": "Dakhlet Nouadhibou",
+          "slug": "dakhlet-nouadhibou-mr08"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "20.168",
+      "lon": "-15.892"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR041",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Kaedi",
+      "en": "Kaedi",
+      "slug": "kaedi-mr041"
+    },
+    "code": {
+      "id": "MR041",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR04",
+      "level": 1,
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR04",
+        "level": 1,
+        "name": {
+          "local": "Gorgol",
+          "en": "Gorgol",
+          "slug": "gorgol-mr04"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.958",
+      "lon": "-12.9"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR043",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "M'Bout",
+      "en": "M'Bout",
+      "slug": "mbout-mr043"
+    },
+    "code": {
+      "id": "MR043",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR04",
+      "level": 1,
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR04",
+        "level": 1,
+        "name": {
+          "local": "Gorgol",
+          "en": "Gorgol",
+          "slug": "gorgol-mr04"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 9
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.014",
+      "lon": "-12.377"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR045",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Lexeibe 1",
+      "en": "Lexeibe 1",
+      "slug": "lexeibe-1-mr045"
+    },
+    "code": {
+      "id": "MR045",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR04",
+      "level": 1,
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR04",
+        "level": 1,
+        "name": {
+          "local": "Gorgol",
+          "en": "Gorgol",
+          "slug": "gorgol-mr04"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.174",
+      "lon": "-13.062"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR042",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Maghama",
+      "en": "Maghama",
+      "slug": "maghama-mr042"
+    },
+    "code": {
+      "id": "MR042",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR04",
+      "level": 1,
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR04",
+        "level": 1,
+        "name": {
+          "local": "Gorgol",
+          "en": "Gorgol",
+          "slug": "gorgol-mr04"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 8
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.534",
+      "lon": "-12.854"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR044",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Mounguel",
+      "en": "Mounguel",
+      "slug": "mounguel-mr044"
+    },
+    "code": {
+      "id": "MR044",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR04",
+      "level": 1,
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR04",
+        "level": 1,
+        "name": {
+          "local": "Gorgol",
+          "en": "Gorgol",
+          "slug": "gorgol-mr04"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.487",
+      "lon": "-12.967"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR104",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Wompou",
+      "en": "Wompou",
+      "slug": "wompou-mr104"
+    },
+    "code": {
+      "id": "MR104",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR10",
+      "level": 1,
+      "name": {
+        "local": "Guidimagha",
+        "en": "Guidimagha",
+        "slug": "guidimagha-mr10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR10",
+        "level": 1,
+        "name": {
+          "local": "Guidimagha",
+          "en": "Guidimagha",
+          "slug": "guidimagha-mr10"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.366",
+      "lon": "-12.476"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR102",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Sélibaby",
+      "en": "Sélibaby",
+      "slug": "slibaby-mr102"
+    },
+    "code": {
+      "id": "MR102",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR10",
+      "level": 1,
+      "name": {
+        "local": "Guidimagha",
+        "en": "Guidimagha",
+        "slug": "guidimagha-mr10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR10",
+        "level": 1,
+        "name": {
+          "local": "Guidimagha",
+          "en": "Guidimagha",
+          "slug": "guidimagha-mr10"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.483",
+      "lon": "-12.18"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR103",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Ghabou",
+      "en": "Ghabou",
+      "slug": "ghabou-mr103"
+    },
+    "code": {
+      "id": "MR103",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR10",
+      "level": 1,
+      "name": {
+        "local": "Guidimagha",
+        "en": "Guidimagha",
+        "slug": "guidimagha-mr10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR10",
+        "level": 1,
+        "name": {
+          "local": "Guidimagha",
+          "en": "Guidimagha",
+          "slug": "guidimagha-mr10"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 6
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.029",
+      "lon": "-12.174"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR101",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Ould Yengé",
+      "en": "Ould Yengé",
+      "slug": "ould-yeng-mr101"
+    },
+    "code": {
+      "id": "MR101",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR10",
+      "level": 1,
+      "name": {
+        "local": "Guidimagha",
+        "en": "Guidimagha",
+        "slug": "guidimagha-mr10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR10",
+        "level": 1,
+        "name": {
+          "local": "Guidimagha",
+          "en": "Guidimagha",
+          "slug": "guidimagha-mr10"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 7
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.624",
+      "lon": "-11.902"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR013",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Djiguenni",
+      "en": "Djiguenni",
+      "slug": "djiguenni-mr013"
+    },
+    "code": {
+      "id": "MR013",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 7
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.019",
+      "lon": "-8.785"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR018",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Adel Bagrou",
+      "en": "Adel Bagrou",
+      "slug": "adel-bagrou-mr018"
+    },
+    "code": {
+      "id": "MR018",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.809",
+      "lon": "-6.653"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR015",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Oualata",
+      "en": "Oualata",
+      "slug": "oualata-mr015"
+    },
+    "code": {
+      "id": "MR015",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 2
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "19.887",
+      "lon": "-6.924"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR017",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "N'Beiket Lehwach",
+      "en": "N'Beiket Lehwach",
+      "slug": "nbeiket-lehwach-mr017"
+    },
+    "code": {
+      "id": "MR017",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.549",
+      "lon": "-6.107"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR016",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Timbédra",
+      "en": "Timbédra",
+      "slug": "timbdra-mr016"
+    },
+    "code": {
+      "id": "MR016",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.218",
+      "lon": "-8.216"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR012",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Bassiknou",
+      "en": "Bassiknou",
+      "slug": "bassiknou-mr012"
+    },
+    "code": {
+      "id": "MR012",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.171",
+      "lon": "-6.086"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR014",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Néma",
+      "en": "Néma",
+      "slug": "nma-mr014"
+    },
+    "code": {
+      "id": "MR014",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 10
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.36",
+      "lon": "-7.333"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR011",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Amourj",
+      "en": "Amourj",
+      "slug": "amourj-mr011"
+    },
+    "code": {
+      "id": "MR011",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR01",
+      "level": 1,
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR01",
+        "level": 1,
+        "name": {
+          "local": "Hodh Chargui",
+          "en": "Hodh Chargui",
+          "slug": "hodh-chargui-mr01"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.84",
+      "lon": "-7.392"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR023",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tamchekett",
+      "en": "Tamchekett",
+      "slug": "tamchekett-mr023"
+    },
+    "code": {
+      "id": "MR023",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.117",
+      "lon": "-10.443"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR021",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Aïoun",
+      "en": "Aïoun",
+      "slug": "aoun-mr021"
+    },
+    "code": {
+      "id": "MR021",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 7
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.727",
+      "lon": "-9.272"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR022",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Kobeni",
+      "en": "Kobeni",
+      "slug": "kobeni-mr022"
+    },
+    "code": {
+      "id": "MR022",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 7
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.902",
+      "lon": "-9.452"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR025",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Touil",
+      "en": "Touil",
+      "slug": "touil-mr025"
+    },
+    "code": {
+      "id": "MR025",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "15.556",
+      "lon": "-10.254"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR024",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tintane",
+      "en": "Tintane",
+      "slug": "tintane-mr024"
+    },
+    "code": {
+      "id": "MR024",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR02",
+      "level": 1,
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 6
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.11",
+      "lon": "-10.345"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR122",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Bennechab",
+      "en": "Bennechab",
+      "slug": "bennechab-mr122"
+    },
+    "code": {
+      "id": "MR122",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR12",
+      "level": 1,
+      "name": {
+        "local": "Inchiri",
+        "en": "Inchiri",
+        "slug": "inchiri-mr12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR12",
+        "level": 1,
+        "name": {
+          "local": "Inchiri",
+          "en": "Inchiri",
+          "slug": "inchiri-mr12"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 2
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "19.55",
+      "lon": "-15.153"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR121",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Akjoujt",
+      "en": "Akjoujt",
+      "slug": "akjoujt-mr121"
+    },
+    "code": {
+      "id": "MR121",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR12",
+      "level": 1,
+      "name": {
+        "local": "Inchiri",
+        "en": "Inchiri",
+        "slug": "inchiri-mr12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR12",
+        "level": 1,
+        "name": {
+          "local": "Inchiri",
+          "en": "Inchiri",
+          "slug": "inchiri-mr12"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "19.906",
+      "lon": "-14.241"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR141",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Toujounine",
+      "en": "Toujounine",
+      "slug": "toujounine-mr141"
+    },
+    "code": {
+      "id": "MR141",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR14",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Nord",
+        "en": "Nouakchott Nord",
+        "slug": "nouakchott-nord-mr14"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR14",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Nord",
+          "en": "Nouakchott Nord",
+          "slug": "nouakchott-nord-mr14"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.171",
+      "lon": "-15.929"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR142",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Dar Naïm",
+      "en": "Dar Naïm",
+      "slug": "dar-nam-mr142"
+    },
+    "code": {
+      "id": "MR142",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR14",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Nord",
+        "en": "Nouakchott Nord",
+        "slug": "nouakchott-nord-mr14"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR14",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Nord",
+          "en": "Nouakchott Nord",
+          "slug": "nouakchott-nord-mr14"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.122",
+      "lon": "-15.912"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR143",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Teyarett",
+      "en": "Teyarett",
+      "slug": "teyarett-mr143"
+    },
+    "code": {
+      "id": "MR143",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR14",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Nord",
+        "en": "Nouakchott Nord",
+        "slug": "nouakchott-nord-mr14"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR14",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Nord",
+          "en": "Nouakchott Nord",
+          "slug": "nouakchott-nord-mr14"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.067",
+      "lon": "-15.888"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR133",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Sebkha",
+      "en": "Sebkha",
+      "slug": "sebkha-mr133"
+    },
+    "code": {
+      "id": "MR133",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR13",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Ouest",
+        "en": "Nouakchott Ouest",
+        "slug": "nouakchott-ouest-mr13"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR13",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Ouest",
+          "en": "Nouakchott Ouest",
+          "slug": "nouakchott-ouest-mr13"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.077",
+      "lon": "-16.008"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR131",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Ksar",
+      "en": "Ksar",
+      "slug": "ksar-mr131"
+    },
+    "code": {
+      "id": "MR131",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR13",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Ouest",
+        "en": "Nouakchott Ouest",
+        "slug": "nouakchott-ouest-mr13"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR13",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Ouest",
+          "en": "Nouakchott Ouest",
+          "slug": "nouakchott-ouest-mr13"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.33",
+      "lon": "-15.931"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR132",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tevragh Zeina",
+      "en": "Tevragh Zeina",
+      "slug": "tevragh-zeina-mr132"
+    },
+    "code": {
+      "id": "MR132",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR13",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Ouest",
+        "en": "Nouakchott Ouest",
+        "slug": "nouakchott-ouest-mr13"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR13",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Ouest",
+          "en": "Nouakchott Ouest",
+          "slug": "nouakchott-ouest-mr13"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.3",
+      "lon": "-16.016"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR152",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Arafat",
+      "en": "Arafat",
+      "slug": "arafat-mr152"
+    },
+    "code": {
+      "id": "MR152",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR15",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Sud",
+        "en": "Nouakchott Sud",
+        "slug": "nouakchott-sud-mr15"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR15",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Sud",
+          "en": "Nouakchott Sud",
+          "slug": "nouakchott-sud-mr15"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.054",
+      "lon": "-15.959"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR151",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "El Mina",
+      "en": "El Mina",
+      "slug": "el-mina-mr151"
+    },
+    "code": {
+      "id": "MR151",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR15",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Sud",
+        "en": "Nouakchott Sud",
+        "slug": "nouakchott-sud-mr15"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR15",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Sud",
+          "en": "Nouakchott Sud",
+          "slug": "nouakchott-sud-mr15"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.946",
+      "lon": "-16.005"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR153",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Riad",
+      "en": "Riad",
+      "slug": "riad-mr153"
+    },
+    "code": {
+      "id": "MR153",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR15",
+      "level": 1,
+      "name": {
+        "local": "Nouakchott Sud",
+        "en": "Nouakchott Sud",
+        "slug": "nouakchott-sud-mr15"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR15",
+        "level": 1,
+        "name": {
+          "local": "Nouakchott Sud",
+          "en": "Nouakchott Sud",
+          "slug": "nouakchott-sud-mr15"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.971",
+      "lon": "-15.908"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR091",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Moudjeria",
+      "en": "Moudjeria",
+      "slug": "moudjeria-mr091"
+    },
+    "code": {
+      "id": "MR091",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR09",
+      "level": 1,
+      "name": {
+        "local": "Tagant",
+        "en": "Tagant",
+        "slug": "tagant-mr09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR09",
+        "level": 1,
+        "name": {
+          "local": "Tagant",
+          "en": "Tagant",
+          "slug": "tagant-mr09"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.988",
+      "lon": "-12.137"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR092",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tichit",
+      "en": "Tichit",
+      "slug": "tichit-mr092"
+    },
+    "code": {
+      "id": "MR092",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR09",
+      "level": 1,
+      "name": {
+        "local": "Tagant",
+        "en": "Tagant",
+        "slug": "tagant-mr09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR09",
+        "level": 1,
+        "name": {
+          "local": "Tagant",
+          "en": "Tagant",
+          "slug": "tagant-mr09"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 2
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.537",
+      "lon": "-9.73"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR093",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tidjikja",
+      "en": "Tidjikja",
+      "slug": "tidjikja-mr093"
+    },
+    "code": {
+      "id": "MR093",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR09",
+      "level": 1,
+      "name": {
+        "local": "Tagant",
+        "en": "Tagant",
+        "slug": "tagant-mr09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR09",
+        "level": 1,
+        "name": {
+          "local": "Tagant",
+          "en": "Tagant",
+          "slug": "tagant-mr09"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.441",
+      "lon": "-11.55"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR111",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Bir Moughrein",
+      "en": "Bir Moughrein",
+      "slug": "bir-moughrein-mr111"
+    },
+    "code": {
+      "id": "MR111",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR11",
+      "level": 1,
+      "name": {
+        "local": "Tiris Zemmour",
+        "en": "Tiris Zemmour",
+        "slug": "tiris-zemmour-mr11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR11",
+        "level": 1,
+        "name": {
+          "local": "Tiris Zemmour",
+          "en": "Tiris Zemmour",
+          "slug": "tiris-zemmour-mr11"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "26.163",
+      "lon": "-7.695"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR113",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Zoueirat",
+      "en": "Zoueirat",
+      "slug": "zoueirat-mr113"
+    },
+    "code": {
+      "id": "MR113",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR11",
+      "level": 1,
+      "name": {
+        "local": "Tiris Zemmour",
+        "en": "Tiris Zemmour",
+        "slug": "tiris-zemmour-mr11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR11",
+        "level": 1,
+        "name": {
+          "local": "Tiris Zemmour",
+          "en": "Tiris Zemmour",
+          "slug": "tiris-zemmour-mr11"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "22.726",
+      "lon": "-12.353"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR112",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "F'Deirick",
+      "en": "F'Deirick",
+      "slug": "fdeirick-mr112"
+    },
+    "code": {
+      "id": "MR112",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR11",
+      "level": 1,
+      "name": {
+        "local": "Tiris Zemmour",
+        "en": "Tiris Zemmour",
+        "slug": "tiris-zemmour-mr11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR11",
+        "level": 1,
+        "name": {
+          "local": "Tiris Zemmour",
+          "en": "Tiris Zemmour",
+          "slug": "tiris-zemmour-mr11"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 1
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "23.199",
+      "lon": "-10.605"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR067",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Tekane",
+      "en": "Tekane",
+      "slug": "tekane-mr067"
+    },
+    "code": {
+      "id": "MR067",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 4
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.742",
+      "lon": "-15.17"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR061",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Boutilimit",
+      "en": "Boutilimit",
+      "slug": "boutilimit-mr061"
+    },
+    "code": {
+      "id": "MR061",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 7
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.909",
+      "lon": "-14.328"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR062",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Keur Macen",
+      "en": "Keur Macen",
+      "slug": "keur-macen-mr062"
+    },
+    "code": {
+      "id": "MR062",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.528",
+      "lon": "-16.309"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR064",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Ouad Naga",
+      "en": "Ouad Naga",
+      "slug": "ouad-naga-mr064"
+    },
+    "code": {
+      "id": "MR064",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "18.117",
+      "lon": "-15.422"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR063",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Mederdra",
+      "en": "Mederdra",
+      "slug": "mederdra-mr063"
+    },
+    "code": {
+      "id": "MR063",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 5
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.12",
+      "lon": "-15.771"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR065",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "R'Kiz",
+      "en": "R'Kiz",
+      "slug": "rkiz-mr065"
+    },
+    "code": {
+      "id": "MR065",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 3
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.107",
+      "lon": "-14.997"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR066",
+    "level": 2,
+    "level_name": {
+      "local": "مقاطعة",
+      "en": "Moughataa"
+    },
+    "name": {
+      "local": "Rosso",
+      "en": "Rosso",
+      "slug": "rosso-mr066"
+    },
+    "code": {
+      "id": "MR066",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR06",
+      "level": 1,
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR06",
+        "level": 1,
+        "name": {
+          "local": "Trarza",
+          "en": "Trarza",
+          "slug": "trarza-mr06"
+        }
+      }
+    ],
+    "children_count": {
+      "commune": 2
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.654",
+      "lon": "-15.698"
+    },
+    "metadata": {},
+    "source": {}
+  }
+]

@@ -1,0 +1,3953 @@
+{
+  "_attribution": "Data from Open Admin Data (https://openadmindata.org/mr/) — CC-BY-4.0. Please cite: https://github.com/open-admin-data/mauritania-administrative-divisions",
+  "data": [
+    {
+      "id": "MR07",
+      "name": {
+        "local": "Adrar",
+        "en": "Adrar",
+        "slug": "adrar-mr07"
+      },
+      "code": {
+        "id": "MR07",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR074",
+          "name": {
+            "local": "Ouadane",
+            "en": "Ouadane",
+            "slug": "ouadane-mr074"
+          },
+          "code": {
+            "id": "MR074",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01285",
+              "name": {
+                "local": "Ouadane",
+                "en": "Ouadane",
+                "slug": "ouadane"
+              },
+              "code": {
+                "id": "MR01285",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR072",
+          "name": {
+            "local": "Atar",
+            "en": "Atar",
+            "slug": "atar-mr072"
+          },
+          "code": {
+            "id": "MR072",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01279",
+              "name": {
+                "local": "Atar",
+                "en": "Atar",
+                "slug": "atar"
+              },
+              "code": {
+                "id": "MR01279",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01280",
+              "name": {
+                "local": "AÃ¯n Ehel Taya",
+                "en": "AÃ¯n Ehel Taya",
+                "slug": "an-ehel-taya"
+              },
+              "code": {
+                "id": "MR01280",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01281",
+              "name": {
+                "local": "Tawaz",
+                "en": "Tawaz",
+                "slug": "tawaz"
+              },
+              "code": {
+                "id": "MR01281",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01282",
+              "name": {
+                "local": "Choum",
+                "en": "Choum",
+                "slug": "choum"
+              },
+              "code": {
+                "id": "MR01282",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR071",
+          "name": {
+            "local": "Aoujeft",
+            "en": "Aoujeft",
+            "slug": "aoujeft-mr071"
+          },
+          "code": {
+            "id": "MR071",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01275",
+              "name": {
+                "local": "Aoujeft",
+                "en": "Aoujeft",
+                "slug": "aoujeft"
+              },
+              "code": {
+                "id": "MR01275",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01276",
+              "name": {
+                "local": "Maeden",
+                "en": "Maeden",
+                "slug": "maeden"
+              },
+              "code": {
+                "id": "MR01276",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01277",
+              "name": {
+                "local": "N'Teirguent",
+                "en": "N'Teirguent",
+                "slug": "nteirguent"
+              },
+              "code": {
+                "id": "MR01277",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01278",
+              "name": {
+                "local": "El Medah",
+                "en": "El Medah",
+                "slug": "el-medah"
+              },
+              "code": {
+                "id": "MR01278",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR073",
+          "name": {
+            "local": "Chinguitti",
+            "en": "Chinguitti",
+            "slug": "chinguitti-mr073"
+          },
+          "code": {
+            "id": "MR073",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01283",
+              "name": {
+                "local": "Chinguitti",
+                "en": "Chinguitti",
+                "slug": "chinguitti"
+              },
+              "code": {
+                "id": "MR01283",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01284",
+              "name": {
+                "local": "AÃ¯n Savra",
+                "en": "AÃ¯n Savra",
+                "slug": "an-savra"
+              },
+              "code": {
+                "id": "MR01284",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR03",
+      "name": {
+        "local": "Assaba",
+        "en": "Assaba",
+        "slug": "assaba-mr03"
+      },
+      "code": {
+        "id": "MR03",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR033",
+          "name": {
+            "local": "Guerou",
+            "en": "Guerou",
+            "slug": "guerou-mr033"
+          },
+          "code": {
+            "id": "MR033",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01178",
+              "name": {
+                "local": "Guerou",
+                "en": "Guerou",
+                "slug": "guerou"
+              },
+              "code": {
+                "id": "MR01178",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01179",
+              "name": {
+                "local": "Oudeiy Jrid",
+                "en": "Oudeiy Jrid",
+                "slug": "oudeiy-jrid"
+              },
+              "code": {
+                "id": "MR01179",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01180",
+              "name": {
+                "local": "El Ghaira",
+                "en": "El Ghaira",
+                "slug": "el-ghaira"
+              },
+              "code": {
+                "id": "MR01180",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01181",
+              "name": {
+                "local": "Kamour",
+                "en": "Kamour",
+                "slug": "kamour"
+              },
+              "code": {
+                "id": "MR01181",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR035",
+          "name": {
+            "local": "Kiffa",
+            "en": "Kiffa",
+            "slug": "kiffa-mr035"
+          },
+          "code": {
+            "id": "MR035",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01187",
+              "name": {
+                "local": "Kiffa",
+                "en": "Kiffa",
+                "slug": "kiffa"
+              },
+              "code": {
+                "id": "MR01187",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01188",
+              "name": {
+                "local": "Nouamlein",
+                "en": "Nouamlein",
+                "slug": "nouamlein"
+              },
+              "code": {
+                "id": "MR01188",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01189",
+              "name": {
+                "local": "Aghorat",
+                "en": "Aghorat",
+                "slug": "aghorat"
+              },
+              "code": {
+                "id": "MR01189",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01190",
+              "name": {
+                "local": "El Melgue",
+                "en": "El Melgue",
+                "slug": "el-melgue"
+              },
+              "code": {
+                "id": "MR01190",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01191",
+              "name": {
+                "local": "Kouroudjel",
+                "en": "Kouroudjel",
+                "slug": "kouroudjel"
+              },
+              "code": {
+                "id": "MR01191",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01192",
+              "name": {
+                "local": "Legrane",
+                "en": "Legrane",
+                "slug": "legrane"
+              },
+              "code": {
+                "id": "MR01192",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR032",
+          "name": {
+            "local": "Boumdeid",
+            "en": "Boumdeid",
+            "slug": "boumdeid-mr032"
+          },
+          "code": {
+            "id": "MR032",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01175",
+              "name": {
+                "local": "Boumdeid",
+                "en": "Boumdeid",
+                "slug": "boumdeid"
+              },
+              "code": {
+                "id": "MR01175",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01176",
+              "name": {
+                "local": "Hseiy Tin",
+                "en": "Hseiy Tin",
+                "slug": "hseiy-tin"
+              },
+              "code": {
+                "id": "MR01176",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01177",
+              "name": {
+                "local": "Lavtah",
+                "en": "Lavtah",
+                "slug": "lavtah"
+              },
+              "code": {
+                "id": "MR01177",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR034",
+          "name": {
+            "local": "Kankoussa",
+            "en": "Kankoussa",
+            "slug": "kankoussa-mr034"
+          },
+          "code": {
+            "id": "MR034",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01182",
+              "name": {
+                "local": "Kankoussa",
+                "en": "Kankoussa",
+                "slug": "kankoussa"
+              },
+              "code": {
+                "id": "MR01182",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01183",
+              "name": {
+                "local": "Sani",
+                "en": "Sani",
+                "slug": "sani"
+              },
+              "code": {
+                "id": "MR01183",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01184",
+              "name": {
+                "local": "Blajmil",
+                "en": "Blajmil",
+                "slug": "blajmil"
+              },
+              "code": {
+                "id": "MR01184",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01185",
+              "name": {
+                "local": "Tenaha",
+                "en": "Tenaha",
+                "slug": "tenaha"
+              },
+              "code": {
+                "id": "MR01185",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01186",
+              "name": {
+                "local": "Hamed",
+                "en": "Hamed",
+                "slug": "hamed"
+              },
+              "code": {
+                "id": "MR01186",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR031",
+          "name": {
+            "local": "Barkéol",
+            "en": "Barkéol",
+            "slug": "barkol-mr031"
+          },
+          "code": {
+            "id": "MR031",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01167",
+              "name": {
+                "local": "Barkeiwel",
+                "en": "Barkeiwel",
+                "slug": "barkeiwel"
+              },
+              "code": {
+                "id": "MR01167",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01168",
+              "name": {
+                "local": "Gueller",
+                "en": "Gueller",
+                "slug": "gueller"
+              },
+              "code": {
+                "id": "MR01168",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01169",
+              "name": {
+                "local": "Lebheir",
+                "en": "Lebheir",
+                "slug": "lebheir"
+              },
+              "code": {
+                "id": "MR01169",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01170",
+              "name": {
+                "local": "Laweissi",
+                "en": "Laweissi",
+                "slug": "laweissi"
+              },
+              "code": {
+                "id": "MR01170",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01171",
+              "name": {
+                "local": "Daghveg",
+                "en": "Daghveg",
+                "slug": "daghveg"
+              },
+              "code": {
+                "id": "MR01171",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01172",
+              "name": {
+                "local": "El Ghabra",
+                "en": "El Ghabra",
+                "slug": "el-ghabra"
+              },
+              "code": {
+                "id": "MR01172",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01173",
+              "name": {
+                "local": "R'Dheidhie",
+                "en": "R'Dheidhie",
+                "slug": "rdheidhie"
+              },
+              "code": {
+                "id": "MR01173",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01174",
+              "name": {
+                "local": "Bou Lahrath",
+                "en": "Bou Lahrath",
+                "slug": "bou-lahrath"
+              },
+              "code": {
+                "id": "MR01174",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR05",
+      "name": {
+        "local": "Brakna",
+        "en": "Brakna",
+        "slug": "brakna-mr05"
+      },
+      "code": {
+        "id": "MR05",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR054",
+          "name": {
+            "local": "Magtalahjar",
+            "en": "Magtalahjar",
+            "slug": "magtalahjar-mr054"
+          },
+          "code": {
+            "id": "MR054",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01235",
+              "name": {
+                "local": "Magtalahjar",
+                "en": "Magtalahjar",
+                "slug": "magtalahjar"
+              },
+              "code": {
+                "id": "MR01235",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01236",
+              "name": {
+                "local": "Sangrave",
+                "en": "Sangrave",
+                "slug": "sangrave"
+              },
+              "code": {
+                "id": "MR01236",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01237",
+              "name": {
+                "local": "Djonabe",
+                "en": "Djonabe",
+                "slug": "djonabe"
+              },
+              "code": {
+                "id": "MR01237",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01238",
+              "name": {
+                "local": "Ouad Emmour",
+                "en": "Ouad Emmour",
+                "slug": "ouad-emmour"
+              },
+              "code": {
+                "id": "MR01238",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR052",
+          "name": {
+            "local": "Bababé",
+            "en": "Bababé",
+            "slug": "babab-mr052"
+          },
+          "code": {
+            "id": "MR052",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01228",
+              "name": {
+                "local": "BababÃ©",
+                "en": "BababÃ©",
+                "slug": "babab"
+              },
+              "code": {
+                "id": "MR01228",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01229",
+              "name": {
+                "local": "El Verae",
+                "en": "El Verae",
+                "slug": "el-verae"
+              },
+              "code": {
+                "id": "MR01229",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01230",
+              "name": {
+                "local": "AÃ©rÃ© M'Bar",
+                "en": "AÃ©rÃ© M'Bar",
+                "slug": "ar-mbar"
+              },
+              "code": {
+                "id": "MR01230",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR056",
+          "name": {
+            "local": "Maal",
+            "en": "Maal",
+            "slug": "maal-mr056"
+          },
+          "code": {
+            "id": "MR056",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01243",
+              "name": {
+                "local": "Maal",
+                "en": "Maal",
+                "slug": "maal"
+              },
+              "code": {
+                "id": "MR01243",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01244",
+              "name": {
+                "local": "Roumed",
+                "en": "Roumed",
+                "slug": "roumed"
+              },
+              "code": {
+                "id": "MR01244",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01245",
+              "name": {
+                "local": "Elwad Lebiadh",
+                "en": "Elwad Lebiadh",
+                "slug": "elwad-lebiadh"
+              },
+              "code": {
+                "id": "MR01245",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01246",
+              "name": {
+                "local": "Bourat",
+                "en": "Bourat",
+                "slug": "bourat"
+              },
+              "code": {
+                "id": "MR01246",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01247",
+              "name": {
+                "local": "Djelwar",
+                "en": "Djelwar",
+                "slug": "djelwar"
+              },
+              "code": {
+                "id": "MR01247",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR055",
+          "name": {
+            "local": "M'Bagne",
+            "en": "M'Bagne",
+            "slug": "mbagne-mr055"
+          },
+          "code": {
+            "id": "MR055",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01239",
+              "name": {
+                "local": "M'Bagne",
+                "en": "M'Bagne",
+                "slug": "mbagne"
+              },
+              "code": {
+                "id": "MR01239",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01240",
+              "name": {
+                "local": "Niabina",
+                "en": "Niabina",
+                "slug": "niabina"
+              },
+              "code": {
+                "id": "MR01240",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01241",
+              "name": {
+                "local": "Edebaye El Hejjaj",
+                "en": "Edebaye El Hejjaj",
+                "slug": "edebaye-el-hejjaj"
+              },
+              "code": {
+                "id": "MR01241",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01242",
+              "name": {
+                "local": "Bagodine",
+                "en": "Bagodine",
+                "slug": "bagodine"
+              },
+              "code": {
+                "id": "MR01242",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR051",
+          "name": {
+            "local": "Aleg",
+            "en": "Aleg",
+            "slug": "aleg-mr051"
+          },
+          "code": {
+            "id": "MR051",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01224",
+              "name": {
+                "local": "Aleg",
+                "en": "Aleg",
+                "slug": "aleg"
+              },
+              "code": {
+                "id": "MR01224",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01225",
+              "name": {
+                "local": "Chegar",
+                "en": "Chegar",
+                "slug": "chegar"
+              },
+              "code": {
+                "id": "MR01225",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01226",
+              "name": {
+                "local": "Bouhdida",
+                "en": "Bouhdida",
+                "slug": "bouhdida"
+              },
+              "code": {
+                "id": "MR01226",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01227",
+              "name": {
+                "local": "Aghchourguit",
+                "en": "Aghchourguit",
+                "slug": "aghchourguit"
+              },
+              "code": {
+                "id": "MR01227",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR053",
+          "name": {
+            "local": "Boghé",
+            "en": "Boghé",
+            "slug": "bogh-mr053"
+          },
+          "code": {
+            "id": "MR053",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01231",
+              "name": {
+                "local": "BoghÃ©",
+                "en": "BoghÃ©",
+                "slug": "bogh"
+              },
+              "code": {
+                "id": "MR01231",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01232",
+              "name": {
+                "local": "Dar El Aviye",
+                "en": "Dar El Aviye",
+                "slug": "dar-el-aviye"
+              },
+              "code": {
+                "id": "MR01232",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01233",
+              "name": {
+                "local": "Dar El Barke",
+                "en": "Dar El Barke",
+                "slug": "dar-el-barke"
+              },
+              "code": {
+                "id": "MR01233",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01234",
+              "name": {
+                "local": "Ould Biram",
+                "en": "Ould Biram",
+                "slug": "ould-biram"
+              },
+              "code": {
+                "id": "MR01234",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR08",
+      "name": {
+        "local": "Dakhlet Nouadhibou",
+        "en": "Dakhlet Nouadhibou",
+        "slug": "dakhlet-nouadhibou-mr08"
+      },
+      "code": {
+        "id": "MR08",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR081",
+          "name": {
+            "local": "Nouadhibou",
+            "en": "Nouadhibou",
+            "slug": "nouadhibou-mr081"
+          },
+          "code": {
+            "id": "MR081",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01286",
+              "name": {
+                "local": "Nouadhibou",
+                "en": "Nouadhibou",
+                "slug": "nouadhibou"
+              },
+              "code": {
+                "id": "MR01286",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01287",
+              "name": {
+                "local": "Boulenouar",
+                "en": "Boulenouar",
+                "slug": "boulenouar"
+              },
+              "code": {
+                "id": "MR01287",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01288",
+              "name": {
+                "local": "Inal",
+                "en": "Inal",
+                "slug": "inal"
+              },
+              "code": {
+                "id": "MR01288",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR082",
+          "name": {
+            "local": "Chami",
+            "en": "Chami",
+            "slug": "chami-mr082"
+          },
+          "code": {
+            "id": "MR082",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01289",
+              "name": {
+                "local": "Chami",
+                "en": "Chami",
+                "slug": "chami"
+              },
+              "code": {
+                "id": "MR01289",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01290",
+              "name": {
+                "local": "Tmeimichat",
+                "en": "Tmeimichat",
+                "slug": "tmeimichat"
+              },
+              "code": {
+                "id": "MR01290",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01291",
+              "name": {
+                "local": "Nouamghar",
+                "en": "Nouamghar",
+                "slug": "nouamghar"
+              },
+              "code": {
+                "id": "MR01291",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR04",
+      "name": {
+        "local": "Gorgol",
+        "en": "Gorgol",
+        "slug": "gorgol-mr04"
+      },
+      "code": {
+        "id": "MR04",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR041",
+          "name": {
+            "local": "Kaedi",
+            "en": "Kaedi",
+            "slug": "kaedi-mr041"
+          },
+          "code": {
+            "id": "MR041",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01193",
+              "name": {
+                "local": "Kaedi",
+                "en": "Kaedi",
+                "slug": "kaedi"
+              },
+              "code": {
+                "id": "MR01193",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01194",
+              "name": {
+                "local": "NÃ©rÃ© Walo",
+                "en": "NÃ©rÃ© Walo",
+                "slug": "nr-walo"
+              },
+              "code": {
+                "id": "MR01194",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01195",
+              "name": {
+                "local": "Djewol",
+                "en": "Djewol",
+                "slug": "djewol"
+              },
+              "code": {
+                "id": "MR01195",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01196",
+              "name": {
+                "local": "Toghomadi",
+                "en": "Toghomadi",
+                "slug": "toghomadi"
+              },
+              "code": {
+                "id": "MR01196",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01197",
+              "name": {
+                "local": "TifondÃ© CivÃ©",
+                "en": "TifondÃ© CivÃ©",
+                "slug": "tifond-civ"
+              },
+              "code": {
+                "id": "MR01197",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR043",
+          "name": {
+            "local": "M'Bout",
+            "en": "M'Bout",
+            "slug": "mbout-mr043"
+          },
+          "code": {
+            "id": "MR043",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01206",
+              "name": {
+                "local": "M'Boud",
+                "en": "M'Boud",
+                "slug": "mboud"
+              },
+              "code": {
+                "id": "MR01206",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01207",
+              "name": {
+                "local": "Tikobra",
+                "en": "Tikobra",
+                "slug": "tikobra"
+              },
+              "code": {
+                "id": "MR01207",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01208",
+              "name": {
+                "local": "Terenguel Ehel Moulaye Ely",
+                "en": "Terenguel Ehel Moulaye Ely",
+                "slug": "terenguel-ehel-moulaye-ely"
+              },
+              "code": {
+                "id": "MR01208",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01209",
+              "name": {
+                "local": "N'Djadjbenni GandÃ©ga",
+                "en": "N'Djadjbenni GandÃ©ga",
+                "slug": "ndjadjbenni-gandga"
+              },
+              "code": {
+                "id": "MR01209",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01210",
+              "name": {
+                "local": "Edebaye Ehel Guelaye",
+                "en": "Edebaye Ehel Guelaye",
+                "slug": "edebaye-ehel-guelaye"
+              },
+              "code": {
+                "id": "MR01210",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01211",
+              "name": {
+                "local": "Voum Legleite",
+                "en": "Voum Legleite",
+                "slug": "voum-legleite"
+              },
+              "code": {
+                "id": "MR01211",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01212",
+              "name": {
+                "local": "Chelkhet Tiyab",
+                "en": "Chelkhet Tiyab",
+                "slug": "chelkhet-tiyab"
+              },
+              "code": {
+                "id": "MR01212",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01213",
+              "name": {
+                "local": "Lahrach",
+                "en": "Lahrach",
+                "slug": "lahrach"
+              },
+              "code": {
+                "id": "MR01213",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01214",
+              "name": {
+                "local": "Souve",
+                "en": "Souve",
+                "slug": "souve"
+              },
+              "code": {
+                "id": "MR01214",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR045",
+          "name": {
+            "local": "Lexeibe 1",
+            "en": "Lexeibe 1",
+            "slug": "lexeibe-1-mr045"
+          },
+          "code": {
+            "id": "MR045",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01220",
+              "name": {
+                "local": "Lexeiba 1",
+                "en": "Lexeiba 1",
+                "slug": "lexeiba-1"
+              },
+              "code": {
+                "id": "MR01220",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01221",
+              "name": {
+                "local": "Betengal",
+                "en": "Betengal",
+                "slug": "betengal"
+              },
+              "code": {
+                "id": "MR01221",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01222",
+              "name": {
+                "local": "Talhaye",
+                "en": "Talhaye",
+                "slug": "talhaye"
+              },
+              "code": {
+                "id": "MR01222",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01223",
+              "name": {
+                "local": "Ganki",
+                "en": "Ganki",
+                "slug": "ganki"
+              },
+              "code": {
+                "id": "MR01223",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR042",
+          "name": {
+            "local": "Maghama",
+            "en": "Maghama",
+            "slug": "maghama-mr042"
+          },
+          "code": {
+            "id": "MR042",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01198",
+              "name": {
+                "local": "Maghama",
+                "en": "Maghama",
+                "slug": "maghama"
+              },
+              "code": {
+                "id": "MR01198",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01199",
+              "name": {
+                "local": "Doo",
+                "en": "Doo",
+                "slug": "doo"
+              },
+              "code": {
+                "id": "MR01199",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01200",
+              "name": {
+                "local": "Dolol CivÃ©",
+                "en": "Dolol CivÃ©",
+                "slug": "dolol-civ"
+              },
+              "code": {
+                "id": "MR01200",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01201",
+              "name": {
+                "local": "Beilouguet Litame",
+                "en": "Beilouguet Litame",
+                "slug": "beilouguet-litame"
+              },
+              "code": {
+                "id": "MR01201",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01202",
+              "name": {
+                "local": "Vrea Litame",
+                "en": "Vrea Litame",
+                "slug": "vrea-litame"
+              },
+              "code": {
+                "id": "MR01202",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01203",
+              "name": {
+                "local": "Toulel",
+                "en": "Toulel",
+                "slug": "toulel"
+              },
+              "code": {
+                "id": "MR01203",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01204",
+              "name": {
+                "local": "SagnÃ©",
+                "en": "SagnÃ©",
+                "slug": "sagn"
+              },
+              "code": {
+                "id": "MR01204",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01205",
+              "name": {
+                "local": "Wali Djantang",
+                "en": "Wali Djantang",
+                "slug": "wali-djantang"
+              },
+              "code": {
+                "id": "MR01205",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR044",
+          "name": {
+            "local": "Mounguel",
+            "en": "Mounguel",
+            "slug": "mounguel-mr044"
+          },
+          "code": {
+            "id": "MR044",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01215",
+              "name": {
+                "local": "Mounguel",
+                "en": "Mounguel",
+                "slug": "mounguel"
+              },
+              "code": {
+                "id": "MR01215",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01216",
+              "name": {
+                "local": "Bathet MoÃ¯t",
+                "en": "Bathet MoÃ¯t",
+                "slug": "bathet-mot"
+              },
+              "code": {
+                "id": "MR01216",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01217",
+              "name": {
+                "local": "Bokhol",
+                "en": "Bokhol",
+                "slug": "bokhol"
+              },
+              "code": {
+                "id": "MR01217",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01218",
+              "name": {
+                "local": "Melzem Teichet",
+                "en": "Melzem Teichet",
+                "slug": "melzem-teichet"
+              },
+              "code": {
+                "id": "MR01218",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01219",
+              "name": {
+                "local": "Azgueilem Tiyab",
+                "en": "Azgueilem Tiyab",
+                "slug": "azgueilem-tiyab"
+              },
+              "code": {
+                "id": "MR01219",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR10",
+      "name": {
+        "local": "Guidimagha",
+        "en": "Guidimagha",
+        "slug": "guidimagha-mr10"
+      },
+      "code": {
+        "id": "MR10",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR104",
+          "name": {
+            "local": "Wompou",
+            "en": "Wompou",
+            "slug": "wompou-mr104"
+          },
+          "code": {
+            "id": "MR104",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01319",
+              "name": {
+                "local": "Wompou",
+                "en": "Wompou",
+                "slug": "wompou"
+              },
+              "code": {
+                "id": "MR01319",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01320",
+              "name": {
+                "local": "Agoueinitt",
+                "en": "Agoueinitt",
+                "slug": "agoueinitt"
+              },
+              "code": {
+                "id": "MR01320",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01321",
+              "name": {
+                "local": "Ejar",
+                "en": "Ejar",
+                "slug": "ejar"
+              },
+              "code": {
+                "id": "MR01321",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01322",
+              "name": {
+                "local": "Sagne Dieri",
+                "en": "Sagne Dieri",
+                "slug": "sagne-dieri"
+              },
+              "code": {
+                "id": "MR01322",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01323",
+              "name": {
+                "local": "Arr",
+                "en": "Arr",
+                "slug": "arr"
+              },
+              "code": {
+                "id": "MR01323",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR102",
+          "name": {
+            "local": "Sélibaby",
+            "en": "Sélibaby",
+            "slug": "slibaby-mr102"
+          },
+          "code": {
+            "id": "MR102",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01309",
+              "name": {
+                "local": "SÃ©libabi",
+                "en": "SÃ©libabi",
+                "slug": "slibabi"
+              },
+              "code": {
+                "id": "MR01309",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01310",
+              "name": {
+                "local": "Ould M'Bonny",
+                "en": "Ould M'Bonny",
+                "slug": "ould-mbonny"
+              },
+              "code": {
+                "id": "MR01310",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01311",
+              "name": {
+                "local": "Tachout",
+                "en": "Tachout",
+                "slug": "tachout"
+              },
+              "code": {
+                "id": "MR01311",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01312",
+              "name": {
+                "local": "Hassi Chegar",
+                "en": "Hassi Chegar",
+                "slug": "hassi-chegar"
+              },
+              "code": {
+                "id": "MR01312",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR103",
+          "name": {
+            "local": "Ghabou",
+            "en": "Ghabou",
+            "slug": "ghabou-mr103"
+          },
+          "code": {
+            "id": "MR103",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01313",
+              "name": {
+                "local": "Ghabou",
+                "en": "Ghabou",
+                "slug": "ghabou"
+              },
+              "code": {
+                "id": "MR01313",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01314",
+              "name": {
+                "local": "Chleikha",
+                "en": "Chleikha",
+                "slug": "chleikha"
+              },
+              "code": {
+                "id": "MR01314",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01315",
+              "name": {
+                "local": "Diogountou",
+                "en": "Diogountou",
+                "slug": "diogountou"
+              },
+              "code": {
+                "id": "MR01315",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01316",
+              "name": {
+                "local": "Bayediam",
+                "en": "Bayediam",
+                "slug": "bayediam"
+              },
+              "code": {
+                "id": "MR01316",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01317",
+              "name": {
+                "local": "Gouraye",
+                "en": "Gouraye",
+                "slug": "gouraye"
+              },
+              "code": {
+                "id": "MR01317",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01318",
+              "name": {
+                "local": "Soufi",
+                "en": "Soufi",
+                "slug": "soufi"
+              },
+              "code": {
+                "id": "MR01318",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR101",
+          "name": {
+            "local": "Ould Yengé",
+            "en": "Ould Yengé",
+            "slug": "ould-yeng-mr101"
+          },
+          "code": {
+            "id": "MR101",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01302",
+              "name": {
+                "local": "Ould YengÃ©",
+                "en": "Ould YengÃ©",
+                "slug": "ould-yeng"
+              },
+              "code": {
+                "id": "MR01302",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01303",
+              "name": {
+                "local": "Leebelli",
+                "en": "Leebelli",
+                "slug": "leebelli"
+              },
+              "code": {
+                "id": "MR01303",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01304",
+              "name": {
+                "local": "Tektake",
+                "en": "Tektake",
+                "slug": "tektake"
+              },
+              "code": {
+                "id": "MR01304",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01305",
+              "name": {
+                "local": "Davoue",
+                "en": "Davoue",
+                "slug": "davoue"
+              },
+              "code": {
+                "id": "MR01305",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01306",
+              "name": {
+                "local": "Bouanz",
+                "en": "Bouanz",
+                "slug": "bouanz"
+              },
+              "code": {
+                "id": "MR01306",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01307",
+              "name": {
+                "local": "Lehraj",
+                "en": "Lehraj",
+                "slug": "lehraj"
+              },
+              "code": {
+                "id": "MR01307",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01308",
+              "name": {
+                "local": "Leaweinat",
+                "en": "Leaweinat",
+                "slug": "leaweinat"
+              },
+              "code": {
+                "id": "MR01308",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR01",
+      "name": {
+        "local": "Hodh Chargui",
+        "en": "Hodh Chargui",
+        "slug": "hodh-chargui-mr01"
+      },
+      "code": {
+        "id": "MR01",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR013",
+          "name": {
+            "local": "Djiguenni",
+            "en": "Djiguenni",
+            "slug": "djiguenni-mr013"
+          },
+          "code": {
+            "id": "MR013",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01110",
+              "name": {
+                "local": "Djiguenni",
+                "en": "Djiguenni",
+                "slug": "djiguenni"
+              },
+              "code": {
+                "id": "MR01110",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01111",
+              "name": {
+                "local": "El Mabrouk 1",
+                "en": "El Mabrouk 1",
+                "slug": "el-mabrouk-1"
+              },
+              "code": {
+                "id": "MR01111",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01112",
+              "name": {
+                "local": "Feirenni",
+                "en": "Feirenni",
+                "slug": "feirenni"
+              },
+              "code": {
+                "id": "MR01112",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01113",
+              "name": {
+                "local": "Beneamane",
+                "en": "Beneamane",
+                "slug": "beneamane"
+              },
+              "code": {
+                "id": "MR01113",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01114",
+              "name": {
+                "local": "Aoueinat Ez Bel",
+                "en": "Aoueinat Ez Bel",
+                "slug": "aoueinat-ez-bel"
+              },
+              "code": {
+                "id": "MR01114",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01115",
+              "name": {
+                "local": "Ghlig Ehel Beye",
+                "en": "Ghlig Ehel Beye",
+                "slug": "ghlig-ehel-beye"
+              },
+              "code": {
+                "id": "MR01115",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01116",
+              "name": {
+                "local": "Kasr El Barke",
+                "en": "Kasr El Barke",
+                "slug": "kasr-el-barke"
+              },
+              "code": {
+                "id": "MR01116",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR018",
+          "name": {
+            "local": "Adel Bagrou",
+            "en": "Adel Bagrou",
+            "slug": "adel-bagrou-mr018"
+          },
+          "code": {
+            "id": "MR018",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01135",
+              "name": {
+                "local": "Adel Bagrou",
+                "en": "Adel Bagrou",
+                "slug": "adel-bagrou"
+              },
+              "code": {
+                "id": "MR01135",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01136",
+              "name": {
+                "local": "Elmessgoul",
+                "en": "Elmessgoul",
+                "slug": "elmessgoul"
+              },
+              "code": {
+                "id": "MR01136",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01137",
+              "name": {
+                "local": "Sivane",
+                "en": "Sivane",
+                "slug": "sivane"
+              },
+              "code": {
+                "id": "MR01137",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR015",
+          "name": {
+            "local": "Oualata",
+            "en": "Oualata",
+            "slug": "oualata-mr015"
+          },
+          "code": {
+            "id": "MR015",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01127",
+              "name": {
+                "local": "Oualata",
+                "en": "Oualata",
+                "slug": "oualata"
+              },
+              "code": {
+                "id": "MR01127",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01128",
+              "name": {
+                "local": "Elbatene",
+                "en": "Elbatene",
+                "slug": "elbatene"
+              },
+              "code": {
+                "id": "MR01128",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR017",
+          "name": {
+            "local": "N'Beiket Lehwach",
+            "en": "N'Beiket Lehwach",
+            "slug": "nbeiket-lehwach-mr017"
+          },
+          "code": {
+            "id": "MR017",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01134",
+              "name": {
+                "local": "Nbeikett Lehwache",
+                "en": "Nbeikett Lehwache",
+                "slug": "nbeikett-lehwache"
+              },
+              "code": {
+                "id": "MR01134",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR016",
+          "name": {
+            "local": "Timbédra",
+            "en": "Timbédra",
+            "slug": "timbdra-mr016"
+          },
+          "code": {
+            "id": "MR016",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01129",
+              "name": {
+                "local": "Tembedgha",
+                "en": "Tembedgha",
+                "slug": "tembedgha"
+              },
+              "code": {
+                "id": "MR01129",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01130",
+              "name": {
+                "local": "Touil 1",
+                "en": "Touil 1",
+                "slug": "touil-1"
+              },
+              "code": {
+                "id": "MR01130",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01131",
+              "name": {
+                "local": "Koumbi Saleh",
+                "en": "Koumbi Saleh",
+                "slug": "koumbi-saleh"
+              },
+              "code": {
+                "id": "MR01131",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01132",
+              "name": {
+                "local": "Bousteile",
+                "en": "Bousteile",
+                "slug": "bousteile"
+              },
+              "code": {
+                "id": "MR01132",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01133",
+              "name": {
+                "local": "Hassi M'Hadi",
+                "en": "Hassi M'Hadi",
+                "slug": "hassi-mhadi"
+              },
+              "code": {
+                "id": "MR01133",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR012",
+          "name": {
+            "local": "Bassiknou",
+            "en": "Bassiknou",
+            "slug": "bassiknou-mr012"
+          },
+          "code": {
+            "id": "MR012",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01106",
+              "name": {
+                "local": "Basseknou",
+                "en": "Basseknou",
+                "slug": "basseknou"
+              },
+              "code": {
+                "id": "MR01106",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01107",
+              "name": {
+                "local": "El Megve",
+                "en": "El Megve",
+                "slug": "el-megve"
+              },
+              "code": {
+                "id": "MR01107",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01108",
+              "name": {
+                "local": "Vessale",
+                "en": "Vessale",
+                "slug": "vessale"
+              },
+              "code": {
+                "id": "MR01108",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01109",
+              "name": {
+                "local": "Dhar",
+                "en": "Dhar",
+                "slug": "dhar"
+              },
+              "code": {
+                "id": "MR01109",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR014",
+          "name": {
+            "local": "Néma",
+            "en": "Néma",
+            "slug": "nma-mr014"
+          },
+          "code": {
+            "id": "MR014",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01117",
+              "name": {
+                "local": "NÃ©ma",
+                "en": "NÃ©ma",
+                "slug": "nma"
+              },
+              "code": {
+                "id": "MR01117",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01118",
+              "name": {
+                "local": "Achemime",
+                "en": "Achemime",
+                "slug": "achemime"
+              },
+              "code": {
+                "id": "MR01118",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01119",
+              "name": {
+                "local": "Jreif",
+                "en": "Jreif",
+                "slug": "jreif"
+              },
+              "code": {
+                "id": "MR01119",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01120",
+              "name": {
+                "local": "Bangou",
+                "en": "Bangou",
+                "slug": "bangou"
+              },
+              "code": {
+                "id": "MR01120",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01121",
+              "name": {
+                "local": "Hassi Etile",
+                "en": "Hassi Etile",
+                "slug": "hassi-etile"
+              },
+              "code": {
+                "id": "MR01121",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01122",
+              "name": {
+                "local": "Oum Avnadech",
+                "en": "Oum Avnadech",
+                "slug": "oum-avnadech"
+              },
+              "code": {
+                "id": "MR01122",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01123",
+              "name": {
+                "local": "El Mabrouk 2",
+                "en": "El Mabrouk 2",
+                "slug": "el-mabrouk-2"
+              },
+              "code": {
+                "id": "MR01123",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01124",
+              "name": {
+                "local": "Beribavat",
+                "en": "Beribavat",
+                "slug": "beribavat"
+              },
+              "code": {
+                "id": "MR01124",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01125",
+              "name": {
+                "local": "Noual",
+                "en": "Noual",
+                "slug": "noual"
+              },
+              "code": {
+                "id": "MR01125",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01126",
+              "name": {
+                "local": "Agoueinit",
+                "en": "Agoueinit",
+                "slug": "agoueinit"
+              },
+              "code": {
+                "id": "MR01126",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR011",
+          "name": {
+            "local": "Amourj",
+            "en": "Amourj",
+            "slug": "amourj-mr011"
+          },
+          "code": {
+            "id": "MR011",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01101",
+              "name": {
+                "local": "Amourj",
+                "en": "Amourj",
+                "slug": "amourj"
+              },
+              "code": {
+                "id": "MR01101",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01102",
+              "name": {
+                "local": "Oum Echeich",
+                "en": "Oum Echeich",
+                "slug": "oum-echeich"
+              },
+              "code": {
+                "id": "MR01102",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01103",
+              "name": {
+                "local": "Bougadoum",
+                "en": "Bougadoum",
+                "slug": "bougadoum"
+              },
+              "code": {
+                "id": "MR01103",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01104",
+              "name": {
+                "local": "Djigui",
+                "en": "Djigui",
+                "slug": "djigui"
+              },
+              "code": {
+                "id": "MR01104",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01105",
+              "name": {
+                "local": "Legdour",
+                "en": "Legdour",
+                "slug": "legdour"
+              },
+              "code": {
+                "id": "MR01105",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR02",
+      "name": {
+        "local": "Hodh El Gharbi",
+        "en": "Hodh El Gharbi",
+        "slug": "hodh-el-gharbi-mr02"
+      },
+      "code": {
+        "id": "MR02",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR023",
+          "name": {
+            "local": "Tamchekett",
+            "en": "Tamchekett",
+            "slug": "tamchekett-mr023"
+          },
+          "code": {
+            "id": "MR023",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01152",
+              "name": {
+                "local": "Tamchekett",
+                "en": "Tamchekett",
+                "slug": "tamchekett"
+              },
+              "code": {
+                "id": "MR01152",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01153",
+              "name": {
+                "local": "El Mabrouk 3",
+                "en": "El Mabrouk 3",
+                "slug": "el-mabrouk-3"
+              },
+              "code": {
+                "id": "MR01153",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01154",
+              "name": {
+                "local": "Radhi",
+                "en": "Radhi",
+                "slug": "radhi"
+              },
+              "code": {
+                "id": "MR01154",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01155",
+              "name": {
+                "local": "Guetae-Teidoume",
+                "en": "Guetae-Teidoume",
+                "slug": "guetae-teidoume"
+              },
+              "code": {
+                "id": "MR01155",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01156",
+              "name": {
+                "local": "Sava",
+                "en": "Sava",
+                "slug": "sava"
+              },
+              "code": {
+                "id": "MR01156",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR021",
+          "name": {
+            "local": "Aïoun",
+            "en": "Aïoun",
+            "slug": "aoun-mr021"
+          },
+          "code": {
+            "id": "MR021",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01138",
+              "name": {
+                "local": "AÃ¯oun El Atrouss",
+                "en": "AÃ¯oun El Atrouss",
+                "slug": "aoun-el-atrouss"
+              },
+              "code": {
+                "id": "MR01138",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01139",
+              "name": {
+                "local": "N'Savenni",
+                "en": "N'Savenni",
+                "slug": "nsavenni"
+              },
+              "code": {
+                "id": "MR01139",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01140",
+              "name": {
+                "local": "Doueirare",
+                "en": "Doueirare",
+                "slug": "doueirare"
+              },
+              "code": {
+                "id": "MR01140",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01141",
+              "name": {
+                "local": "Ten Hamadi",
+                "en": "Ten Hamadi",
+                "slug": "ten-hamadi"
+              },
+              "code": {
+                "id": "MR01141",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01142",
+              "name": {
+                "local": "Beneamane",
+                "en": "Beneamane",
+                "slug": "beneamane"
+              },
+              "code": {
+                "id": "MR01142",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01143",
+              "name": {
+                "local": "Egjert",
+                "en": "Egjert",
+                "slug": "egjert"
+              },
+              "code": {
+                "id": "MR01143",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01144",
+              "name": {
+                "local": "Oum Lahyadh",
+                "en": "Oum Lahyadh",
+                "slug": "oum-lahyadh"
+              },
+              "code": {
+                "id": "MR01144",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR022",
+          "name": {
+            "local": "Kobeni",
+            "en": "Kobeni",
+            "slug": "kobeni-mr022"
+          },
+          "code": {
+            "id": "MR022",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01145",
+              "name": {
+                "local": "Koubenni",
+                "en": "Koubenni",
+                "slug": "koubenni"
+              },
+              "code": {
+                "id": "MR01145",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01146",
+              "name": {
+                "local": "Hassi Ehel Ahmed Bechne",
+                "en": "Hassi Ehel Ahmed Bechne",
+                "slug": "hassi-ehel-ahmed-bechne"
+              },
+              "code": {
+                "id": "MR01146",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01147",
+              "name": {
+                "local": "Timzine",
+                "en": "Timzine",
+                "slug": "timzine"
+              },
+              "code": {
+                "id": "MR01147",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01148",
+              "name": {
+                "local": "Leghlig",
+                "en": "Leghlig",
+                "slug": "leghlig"
+              },
+              "code": {
+                "id": "MR01148",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01149",
+              "name": {
+                "local": "Gougui Zemmal",
+                "en": "Gougui Zemmal",
+                "slug": "gougui-zemmal"
+              },
+              "code": {
+                "id": "MR01149",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01150",
+              "name": {
+                "local": "Modibougou",
+                "en": "Modibougou",
+                "slug": "modibougou"
+              },
+              "code": {
+                "id": "MR01150",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01151",
+              "name": {
+                "local": "Voullaniya",
+                "en": "Voullaniya",
+                "slug": "voullaniya"
+              },
+              "code": {
+                "id": "MR01151",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR025",
+          "name": {
+            "local": "Touil",
+            "en": "Touil",
+            "slug": "touil-mr025"
+          },
+          "code": {
+            "id": "MR025",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01163",
+              "name": {
+                "local": "Touil 2",
+                "en": "Touil 2",
+                "slug": "touil-2"
+              },
+              "code": {
+                "id": "MR01163",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01164",
+              "name": {
+                "local": "Baghdad",
+                "en": "Baghdad",
+                "slug": "baghdad"
+              },
+              "code": {
+                "id": "MR01164",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01165",
+              "name": {
+                "local": "Sett",
+                "en": "Sett",
+                "slug": "sett"
+              },
+              "code": {
+                "id": "MR01165",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01166",
+              "name": {
+                "local": "Lehreijat",
+                "en": "Lehreijat",
+                "slug": "lehreijat"
+              },
+              "code": {
+                "id": "MR01166",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR024",
+          "name": {
+            "local": "Tintane",
+            "en": "Tintane",
+            "slug": "tintane-mr024"
+          },
+          "code": {
+            "id": "MR024",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01157",
+              "name": {
+                "local": "Tintan",
+                "en": "Tintan",
+                "slug": "tintan"
+              },
+              "code": {
+                "id": "MR01157",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01158",
+              "name": {
+                "local": "Hassi Abdallah",
+                "en": "Hassi Abdallah",
+                "slug": "hassi-abdallah"
+              },
+              "code": {
+                "id": "MR01158",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01159",
+              "name": {
+                "local": "Aweinat Thalle",
+                "en": "Aweinat Thalle",
+                "slug": "aweinat-thalle"
+              },
+              "code": {
+                "id": "MR01159",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01160",
+              "name": {
+                "local": "AÃ¯n Varbe",
+                "en": "AÃ¯n Varbe",
+                "slug": "an-varbe"
+              },
+              "code": {
+                "id": "MR01160",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01161",
+              "name": {
+                "local": "Egharghar",
+                "en": "Egharghar",
+                "slug": "egharghar"
+              },
+              "code": {
+                "id": "MR01161",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01162",
+              "name": {
+                "local": "Dev-a",
+                "en": "Dev-a",
+                "slug": "dev-a"
+              },
+              "code": {
+                "id": "MR01162",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR12",
+      "name": {
+        "local": "Inchiri",
+        "en": "Inchiri",
+        "slug": "inchiri-mr12"
+      },
+      "code": {
+        "id": "MR12",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR122",
+          "name": {
+            "local": "Bennechab",
+            "en": "Bennechab",
+            "slug": "bennechab-mr122"
+          },
+          "code": {
+            "id": "MR122",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01328",
+              "name": {
+                "local": "Bennechab",
+                "en": "Bennechab",
+                "slug": "bennechab"
+              },
+              "code": {
+                "id": "MR01328",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01329",
+              "name": {
+                "local": "Mheijrat",
+                "en": "Mheijrat",
+                "slug": "mheijrat"
+              },
+              "code": {
+                "id": "MR01329",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR121",
+          "name": {
+            "local": "Akjoujt",
+            "en": "Akjoujt",
+            "slug": "akjoujt-mr121"
+          },
+          "code": {
+            "id": "MR121",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01327",
+              "name": {
+                "local": "Akjoujt",
+                "en": "Akjoujt",
+                "slug": "akjoujt"
+              },
+              "code": {
+                "id": "MR01327",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR14",
+      "name": {
+        "local": "Nouakchott Nord",
+        "en": "Nouakchott Nord",
+        "slug": "nouakchott-nord-mr14"
+      },
+      "code": {
+        "id": "MR14",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR141",
+          "name": {
+            "local": "Toujounine",
+            "en": "Toujounine",
+            "slug": "toujounine-mr141"
+          },
+          "code": {
+            "id": "MR141",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01333",
+              "name": {
+                "local": "Teyaret",
+                "en": "Teyaret",
+                "slug": "teyaret"
+              },
+              "code": {
+                "id": "MR01333",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR142",
+          "name": {
+            "local": "Dar Naïm",
+            "en": "Dar Naïm",
+            "slug": "dar-nam-mr142"
+          },
+          "code": {
+            "id": "MR142",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01334",
+              "name": {
+                "local": "Dar Naim",
+                "en": "Dar Naim",
+                "slug": "dar-naim"
+              },
+              "code": {
+                "id": "MR01334",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR143",
+          "name": {
+            "local": "Teyarett",
+            "en": "Teyarett",
+            "slug": "teyarett-mr143"
+          },
+          "code": {
+            "id": "MR143",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01335",
+              "name": {
+                "local": "Toujounine",
+                "en": "Toujounine",
+                "slug": "toujounine"
+              },
+              "code": {
+                "id": "MR01335",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR13",
+      "name": {
+        "local": "Nouakchott Ouest",
+        "en": "Nouakchott Ouest",
+        "slug": "nouakchott-ouest-mr13"
+      },
+      "code": {
+        "id": "MR13",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR133",
+          "name": {
+            "local": "Sebkha",
+            "en": "Sebkha",
+            "slug": "sebkha-mr133"
+          },
+          "code": {
+            "id": "MR133",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01332",
+              "name": {
+                "local": "Sebkha",
+                "en": "Sebkha",
+                "slug": "sebkha"
+              },
+              "code": {
+                "id": "MR01332",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR131",
+          "name": {
+            "local": "Ksar",
+            "en": "Ksar",
+            "slug": "ksar-mr131"
+          },
+          "code": {
+            "id": "MR131",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01330",
+              "name": {
+                "local": "Ksar",
+                "en": "Ksar",
+                "slug": "ksar"
+              },
+              "code": {
+                "id": "MR01330",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR132",
+          "name": {
+            "local": "Tevragh Zeina",
+            "en": "Tevragh Zeina",
+            "slug": "tevragh-zeina-mr132"
+          },
+          "code": {
+            "id": "MR132",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01331",
+              "name": {
+                "local": "Tefragh Zeina",
+                "en": "Tefragh Zeina",
+                "slug": "tefragh-zeina"
+              },
+              "code": {
+                "id": "MR01331",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR15",
+      "name": {
+        "local": "Nouakchott Sud",
+        "en": "Nouakchott Sud",
+        "slug": "nouakchott-sud-mr15"
+      },
+      "code": {
+        "id": "MR15",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR152",
+          "name": {
+            "local": "Arafat",
+            "en": "Arafat",
+            "slug": "arafat-mr152"
+          },
+          "code": {
+            "id": "MR152",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01337",
+              "name": {
+                "local": "Arafat",
+                "en": "Arafat",
+                "slug": "arafat"
+              },
+              "code": {
+                "id": "MR01337",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR151",
+          "name": {
+            "local": "El Mina",
+            "en": "El Mina",
+            "slug": "el-mina-mr151"
+          },
+          "code": {
+            "id": "MR151",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01336",
+              "name": {
+                "local": "El Mina",
+                "en": "El Mina",
+                "slug": "el-mina"
+              },
+              "code": {
+                "id": "MR01336",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR153",
+          "name": {
+            "local": "Riad",
+            "en": "Riad",
+            "slug": "riad-mr153"
+          },
+          "code": {
+            "id": "MR153",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01338",
+              "name": {
+                "local": "Riyad",
+                "en": "Riyad",
+                "slug": "riyad"
+              },
+              "code": {
+                "id": "MR01338",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR09",
+      "name": {
+        "local": "Tagant",
+        "en": "Tagant",
+        "slug": "tagant-mr09"
+      },
+      "code": {
+        "id": "MR09",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR091",
+          "name": {
+            "local": "Moudjeria",
+            "en": "Moudjeria",
+            "slug": "moudjeria-mr091"
+          },
+          "code": {
+            "id": "MR091",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01292",
+              "name": {
+                "local": "Moudjeria",
+                "en": "Moudjeria",
+                "slug": "moudjeria"
+              },
+              "code": {
+                "id": "MR01292",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01293",
+              "name": {
+                "local": "N'Beike",
+                "en": "N'Beike",
+                "slug": "nbeike"
+              },
+              "code": {
+                "id": "MR01293",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01294",
+              "name": {
+                "local": "Soudoud",
+                "en": "Soudoud",
+                "slug": "soudoud"
+              },
+              "code": {
+                "id": "MR01294",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR092",
+          "name": {
+            "local": "Tichit",
+            "en": "Tichit",
+            "slug": "tichit-mr092"
+          },
+          "code": {
+            "id": "MR092",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01295",
+              "name": {
+                "local": "Tichit",
+                "en": "Tichit",
+                "slug": "tichit"
+              },
+              "code": {
+                "id": "MR01295",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01296",
+              "name": {
+                "local": "Lekhcheb",
+                "en": "Lekhcheb",
+                "slug": "lekhcheb"
+              },
+              "code": {
+                "id": "MR01296",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR093",
+          "name": {
+            "local": "Tidjikja",
+            "en": "Tidjikja",
+            "slug": "tidjikja-mr093"
+          },
+          "code": {
+            "id": "MR093",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01297",
+              "name": {
+                "local": "Tidjikdja",
+                "en": "Tidjikdja",
+                "slug": "tidjikdja"
+              },
+              "code": {
+                "id": "MR01297",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01298",
+              "name": {
+                "local": "El Wahat",
+                "en": "El Wahat",
+                "slug": "el-wahat"
+              },
+              "code": {
+                "id": "MR01298",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01299",
+              "name": {
+                "local": "Tensigh",
+                "en": "Tensigh",
+                "slug": "tensigh"
+              },
+              "code": {
+                "id": "MR01299",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01300",
+              "name": {
+                "local": "Boubacar Ben Amer",
+                "en": "Boubacar Ben Amer",
+                "slug": "boubacar-ben-amer"
+              },
+              "code": {
+                "id": "MR01300",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01301",
+              "name": {
+                "local": "Lehsira",
+                "en": "Lehsira",
+                "slug": "lehsira"
+              },
+              "code": {
+                "id": "MR01301",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR11",
+      "name": {
+        "local": "Tiris Zemmour",
+        "en": "Tiris Zemmour",
+        "slug": "tiris-zemmour-mr11"
+      },
+      "code": {
+        "id": "MR11",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR111",
+          "name": {
+            "local": "Bir Moughrein",
+            "en": "Bir Moughrein",
+            "slug": "bir-moughrein-mr111"
+          },
+          "code": {
+            "id": "MR111",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01324",
+              "name": {
+                "local": "Birmoughrein",
+                "en": "Birmoughrein",
+                "slug": "birmoughrein"
+              },
+              "code": {
+                "id": "MR01324",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR113",
+          "name": {
+            "local": "Zoueirat",
+            "en": "Zoueirat",
+            "slug": "zoueirat-mr113"
+          },
+          "code": {
+            "id": "MR113",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01326",
+              "name": {
+                "local": "Zoueirat",
+                "en": "Zoueirat",
+                "slug": "zoueirat"
+              },
+              "code": {
+                "id": "MR01326",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR112",
+          "name": {
+            "local": "F'Deirick",
+            "en": "F'Deirick",
+            "slug": "fdeirick-mr112"
+          },
+          "code": {
+            "id": "MR112",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01325",
+              "name": {
+                "local": "F'Deirick",
+                "en": "F'Deirick",
+                "slug": "fdeirick"
+              },
+              "code": {
+                "id": "MR01325",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "MR06",
+      "name": {
+        "local": "Trarza",
+        "en": "Trarza",
+        "slug": "trarza-mr06"
+      },
+      "code": {
+        "id": "MR06",
+        "iso": null
+      },
+      "moughataa": [
+        {
+          "id": "MR067",
+          "name": {
+            "local": "Tekane",
+            "en": "Tekane",
+            "slug": "tekane-mr067"
+          },
+          "code": {
+            "id": "MR067",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01271",
+              "name": {
+                "local": "Teikane",
+                "en": "Teikane",
+                "slug": "teikane"
+              },
+              "code": {
+                "id": "MR01271",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01272",
+              "name": {
+                "local": "Chemame",
+                "en": "Chemame",
+                "slug": "chemame"
+              },
+              "code": {
+                "id": "MR01272",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01273",
+              "name": {
+                "local": "Teichteyat",
+                "en": "Teichteyat",
+                "slug": "teichteyat"
+              },
+              "code": {
+                "id": "MR01273",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01274",
+              "name": {
+                "local": "Lexelbe 2",
+                "en": "Lexelbe 2",
+                "slug": "lexelbe-2"
+              },
+              "code": {
+                "id": "MR01274",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR061",
+          "name": {
+            "local": "Boutilimit",
+            "en": "Boutilimit",
+            "slug": "boutilimit-mr061"
+          },
+          "code": {
+            "id": "MR061",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01248",
+              "name": {
+                "local": "Boutilimit",
+                "en": "Boutilimit",
+                "slug": "boutilimit"
+              },
+              "code": {
+                "id": "MR01248",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01249",
+              "name": {
+                "local": "Elb Adress",
+                "en": "Elb Adress",
+                "slug": "elb-adress"
+              },
+              "code": {
+                "id": "MR01249",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01250",
+              "name": {
+                "local": "Ajoueir",
+                "en": "Ajoueir",
+                "slug": "ajoueir"
+              },
+              "code": {
+                "id": "MR01250",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01251",
+              "name": {
+                "local": "N'Teichet",
+                "en": "N'Teichet",
+                "slug": "nteichet"
+              },
+              "code": {
+                "id": "MR01251",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01252",
+              "name": {
+                "local": "Nebaghiye",
+                "en": "Nebaghiye",
+                "slug": "nebaghiye"
+              },
+              "code": {
+                "id": "MR01252",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01253",
+              "name": {
+                "local": "Tenghadej",
+                "en": "Tenghadej",
+                "slug": "tenghadej"
+              },
+              "code": {
+                "id": "MR01253",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01254",
+              "name": {
+                "local": "El Mouyessar",
+                "en": "El Mouyessar",
+                "slug": "el-mouyessar"
+              },
+              "code": {
+                "id": "MR01254",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR062",
+          "name": {
+            "local": "Keur Macen",
+            "en": "Keur Macen",
+            "slug": "keur-macen-mr062"
+          },
+          "code": {
+            "id": "MR062",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01255",
+              "name": {
+                "local": "Keurmacen",
+                "en": "Keurmacen",
+                "slug": "keurmacen"
+              },
+              "code": {
+                "id": "MR01255",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01256",
+              "name": {
+                "local": "N'Diago",
+                "en": "N'Diago",
+                "slug": "ndiago"
+              },
+              "code": {
+                "id": "MR01256",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01257",
+              "name": {
+                "local": "M'Balal",
+                "en": "M'Balal",
+                "slug": "mbalal"
+              },
+              "code": {
+                "id": "MR01257",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR064",
+          "name": {
+            "local": "Ouad Naga",
+            "en": "Ouad Naga",
+            "slug": "ouad-naga-mr064"
+          },
+          "code": {
+            "id": "MR064",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01263",
+              "name": {
+                "local": "Ouad Naga",
+                "en": "Ouad Naga",
+                "slug": "ouad-naga"
+              },
+              "code": {
+                "id": "MR01263",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01264",
+              "name": {
+                "local": "Aouleiygat",
+                "en": "Aouleiygat",
+                "slug": "aouleiygat"
+              },
+              "code": {
+                "id": "MR01264",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01265",
+              "name": {
+                "local": "El Ariye",
+                "en": "El Ariye",
+                "slug": "el-ariye"
+              },
+              "code": {
+                "id": "MR01265",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR063",
+          "name": {
+            "local": "Mederdra",
+            "en": "Mederdra",
+            "slug": "mederdra-mr063"
+          },
+          "code": {
+            "id": "MR063",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01258",
+              "name": {
+                "local": "Mederdra",
+                "en": "Mederdra",
+                "slug": "mederdra"
+              },
+              "code": {
+                "id": "MR01258",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01259",
+              "name": {
+                "local": "Beir Taouress",
+                "en": "Beir Taouress",
+                "slug": "beir-taouress"
+              },
+              "code": {
+                "id": "MR01259",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01260",
+              "name": {
+                "local": "Taguilalet",
+                "en": "Taguilalet",
+                "slug": "taguilalet"
+              },
+              "code": {
+                "id": "MR01260",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01261",
+              "name": {
+                "local": "El Khat",
+                "en": "El Khat",
+                "slug": "el-khat"
+              },
+              "code": {
+                "id": "MR01261",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01262",
+              "name": {
+                "local": "Tiguent (El Jedide)",
+                "en": "Tiguent (El Jedide)",
+                "slug": "tiguent-el-jedide"
+              },
+              "code": {
+                "id": "MR01262",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR065",
+          "name": {
+            "local": "R'Kiz",
+            "en": "R'Kiz",
+            "slug": "rkiz-mr065"
+          },
+          "code": {
+            "id": "MR065",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01266",
+              "name": {
+                "local": "R'Kiz",
+                "en": "R'Kiz",
+                "slug": "rkiz"
+              },
+              "code": {
+                "id": "MR01266",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01267",
+              "name": {
+                "local": "Boutalhaye",
+                "en": "Boutalhaye",
+                "slug": "boutalhaye"
+              },
+              "code": {
+                "id": "MR01267",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01268",
+              "name": {
+                "local": "Bareine",
+                "en": "Bareine",
+                "slug": "bareine"
+              },
+              "code": {
+                "id": "MR01268",
+                "iso": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "MR066",
+          "name": {
+            "local": "Rosso",
+            "en": "Rosso",
+            "slug": "rosso-mr066"
+          },
+          "code": {
+            "id": "MR066",
+            "iso": null
+          },
+          "commune": [
+            {
+              "id": "MR01269",
+              "name": {
+                "local": "Rosso",
+                "en": "Rosso",
+                "slug": "rosso"
+              },
+              "code": {
+                "id": "MR01269",
+                "iso": null
+              }
+            },
+            {
+              "id": "MR01270",
+              "name": {
+                "local": "Jedrel Mouhguen",
+                "en": "Jedrel Mouhguen",
+                "slug": "jedrel-mouhguen"
+              },
+              "code": {
+                "id": "MR01270",
+                "iso": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

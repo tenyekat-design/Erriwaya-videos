@@ -1,0 +1,80 @@
+# Data from Open Admin Data (https://openadmindata.org/mr/) — CC-BY-4.0. Please cite: https://github.com/open-admin-data/mauritania-administrative-divisions
+id,level,level_name.local,level_name.en,name.local,name.en,name.slug,code.id,code.iso,parent.id,parent.name.local,parent.name.en,children_count.wilaya,children_count.moughataa,children_count.commune,zip_codes,geo.lat,geo.lon,source_url
+MR01,1,ولاية,Wilaya,Hodh Chargui,Hodh Chargui,hodh-chargui-mr01,MR01,,,,,,8,37,,18.653,-7.132,https://openadmindata.org/mr/wilayas/hodh-chargui-mr01/
+MR011,2,مقاطعة,Moughataa,Amourj,Amourj,amourj-mr011,MR011,,MR01,Hodh Chargui,Hodh Chargui,,,5,,15.84,-7.392,
+MR012,2,مقاطعة,Moughataa,Bassiknou,Bassiknou,bassiknou-mr012,MR012,,MR01,Hodh Chargui,Hodh Chargui,,,4,,16.171,-6.086,
+MR013,2,مقاطعة,Moughataa,Djiguenni,Djiguenni,djiguenni-mr013,MR013,,MR01,Hodh Chargui,Hodh Chargui,,,7,,16.019,-8.785,
+MR014,2,مقاطعة,Moughataa,Néma,Néma,nma-mr014,MR014,,MR01,Hodh Chargui,Hodh Chargui,,,10,,16.36,-7.333,
+MR015,2,مقاطعة,Moughataa,Oualata,Oualata,oualata-mr015,MR015,,MR01,Hodh Chargui,Hodh Chargui,,,2,,19.887,-6.924,
+MR016,2,مقاطعة,Moughataa,Timbédra,Timbédra,timbdra-mr016,MR016,,MR01,Hodh Chargui,Hodh Chargui,,,5,,16.218,-8.216,
+MR017,2,مقاطعة,Moughataa,N'Beiket Lehwach,N'Beiket Lehwach,nbeiket-lehwach-mr017,MR017,,MR01,Hodh Chargui,Hodh Chargui,,,1,,18.549,-6.107,
+MR018,2,مقاطعة,Moughataa,Adel Bagrou,Adel Bagrou,adel-bagrou-mr018,MR018,,MR01,Hodh Chargui,Hodh Chargui,,,3,,15.809,-6.653,
+MR02,1,ولاية,Wilaya,Hodh El Gharbi,Hodh El Gharbi,hodh-el-gharbi-mr02,MR02,,,,,,5,29,,16.57,-9.734,https://openadmindata.org/mr/wilayas/hodh-el-gharbi-mr02/
+MR021,2,مقاطعة,Moughataa,Aïoun,Aïoun,aoun-mr021,MR021,,MR02,Hodh El Gharbi,Hodh El Gharbi,,,7,,16.727,-9.272,
+MR022,2,مقاطعة,Moughataa,Kobeni,Kobeni,kobeni-mr022,MR022,,MR02,Hodh El Gharbi,Hodh El Gharbi,,,7,,15.902,-9.452,
+MR023,2,مقاطعة,Moughataa,Tamchekett,Tamchekett,tamchekett-mr023,MR023,,MR02,Hodh El Gharbi,Hodh El Gharbi,,,5,,17.117,-10.443,
+MR024,2,مقاطعة,Moughataa,Tintane,Tintane,tintane-mr024,MR024,,MR02,Hodh El Gharbi,Hodh El Gharbi,,,6,,16.11,-10.345,
+MR025,2,مقاطعة,Moughataa,Touil,Touil,touil-mr025,MR025,,MR02,Hodh El Gharbi,Hodh El Gharbi,,,4,,15.556,-10.254,
+MR03,1,ولاية,Wilaya,Assaba,Assaba,assaba-mr03,MR03,,,,,,5,26,,16.713,-11.856,https://openadmindata.org/mr/wilayas/assaba-mr03/
+MR031,2,مقاطعة,Moughataa,Barkéol,Barkéol,barkol-mr031,MR031,,MR03,Assaba,Assaba,,,8,,16.642,-12.443,
+MR032,2,مقاطعة,Moughataa,Boumdeid,Boumdeid,boumdeid-mr032,MR032,,MR03,Assaba,Assaba,,,3,,17.744,-11.279,
+MR033,2,مقاطعة,Moughataa,Guerou,Guerou,guerou-mr033,MR033,,MR03,Assaba,Assaba,,,4,,16.876,-11.929,
+MR034,2,مقاطعة,Moughataa,Kankoussa,Kankoussa,kankoussa-mr034,MR034,,MR03,Assaba,Assaba,,,5,,15.713,-11.146,
+MR035,2,مقاطعة,Moughataa,Kiffa,Kiffa,kiffa-mr035,MR035,,MR03,Assaba,Assaba,,,6,,16.69,-11.323,
+MR04,1,ولاية,Wilaya,Gorgol,Gorgol,gorgol-mr04,MR04,,,,,,5,31,,15.947,-12.676,https://openadmindata.org/mr/wilayas/gorgol-mr04/
+MR041,2,مقاطعة,Moughataa,Kaedi,Kaedi,kaedi-mr041,MR041,,MR04,Gorgol,Gorgol,,,5,,15.958,-12.9,
+MR042,2,مقاطعة,Moughataa,Maghama,Maghama,maghama-mr042,MR042,,MR04,Gorgol,Gorgol,,,8,,15.534,-12.854,
+MR043,2,مقاطعة,Moughataa,M'Bout,M'Bout,mbout-mr043,MR043,,MR04,Gorgol,Gorgol,,,9,,16.014,-12.377,
+MR044,2,مقاطعة,Moughataa,Mounguel,Mounguel,mounguel-mr044,MR044,,MR04,Gorgol,Gorgol,,,5,,16.487,-12.967,
+MR045,2,مقاطعة,Moughataa,Lexeibe 1,Lexeibe 1,lexeibe-1-mr045,MR045,,MR04,Gorgol,Gorgol,,,4,,16.174,-13.062,
+MR05,1,ولاية,Wilaya,Brakna,Brakna,brakna-mr05,MR05,,,,,,6,24,,17.293,-13.279,https://openadmindata.org/mr/wilayas/brakna-mr05/
+MR051,2,مقاطعة,Moughataa,Aleg,Aleg,aleg-mr051,MR051,,MR05,Brakna,Brakna,,,4,,17.218,-13.806,
+MR052,2,مقاطعة,Moughataa,Bababé,Bababé,babab-mr052,MR052,,MR05,Brakna,Brakna,,,3,,16.457,-13.948,
+MR053,2,مقاطعة,Moughataa,Boghé,Boghé,bogh-mr053,MR053,,MR05,Brakna,Brakna,,,4,,16.652,-14.375,
+MR054,2,مقاطعة,Moughataa,Magtalahjar,Magtalahjar,magtalahjar-mr054,MR054,,MR05,Brakna,Brakna,,,4,,17.65,-13.061,
+MR055,2,مقاطعة,Moughataa,M'Bagne,M'Bagne,mbagne-mr055,MR055,,MR05,Brakna,Brakna,,,4,,16.273,-13.773,
+MR056,2,مقاطعة,Moughataa,Maal,Maal,maal-mr056,MR056,,MR05,Brakna,Brakna,,,5,,16.804,-13.281,
+MR06,1,ولاية,Wilaya,Trarza,Trarza,trarza-mr06,MR06,,,,,,7,27,,17.517,-15.054,https://openadmindata.org/mr/wilayas/trarza-mr06/
+MR061,2,مقاطعة,Moughataa,Boutilimit,Boutilimit,boutilimit-mr061,MR061,,MR06,Trarza,Trarza,,,7,,17.909,-14.328,
+MR062,2,مقاطعة,Moughataa,Keur Macen,Keur Macen,keur-macen-mr062,MR062,,MR06,Trarza,Trarza,,,3,,16.528,-16.309,
+MR063,2,مقاطعة,Moughataa,Mederdra,Mederdra,mederdra-mr063,MR063,,MR06,Trarza,Trarza,,,5,,17.12,-15.771,
+MR064,2,مقاطعة,Moughataa,Ouad Naga,Ouad Naga,ouad-naga-mr064,MR064,,MR06,Trarza,Trarza,,,3,,18.117,-15.422,
+MR065,2,مقاطعة,Moughataa,R'Kiz,R'Kiz,rkiz-mr065,MR065,,MR06,Trarza,Trarza,,,3,,17.107,-14.997,
+MR066,2,مقاطعة,Moughataa,Rosso,Rosso,rosso-mr066,MR066,,MR06,Trarza,Trarza,,,2,,16.654,-15.698,
+MR067,2,مقاطعة,Moughataa,Tekane,Tekane,tekane-mr067,MR067,,MR06,Trarza,Trarza,,,4,,16.742,-15.17,
+MR07,1,ولاية,Wilaya,Adrar,Adrar,adrar-mr07,MR07,,,,,,4,11,,21.434,-9.561,https://openadmindata.org/mr/wilayas/adrar-mr07/
+MR071,2,مقاطعة,Moughataa,Aoujeft,Aoujeft,aoujeft-mr071,MR071,,MR07,Adrar,Adrar,,,4,,19.555,-13.216,
+MR072,2,مقاطعة,Moughataa,Atar,Atar,atar-mr072,MR072,,MR07,Adrar,Adrar,,,4,,20.625,-13.433,
+MR073,2,مقاطعة,Moughataa,Chinguitti,Chinguitti,chinguitti-mr073,MR073,,MR07,Adrar,Adrar,,,2,,20.157,-10.245,
+MR074,2,مقاطعة,Moughataa,Ouadane,Ouadane,ouadane-mr074,MR074,,MR07,Adrar,Adrar,,,1,,22.36,-8.13,
+MR08,1,ولاية,Wilaya,Dakhlet Nouadhibou,Dakhlet Nouadhibou,dakhlet-nouadhibou-mr08,MR08,,,,,,2,6,,20.168,-15.892,https://openadmindata.org/mr/wilayas/dakhlet-nouadhibou-mr08/
+MR081,2,مقاطعة,Moughataa,Nouadhibou,Nouadhibou,nouadhibou-mr081,MR081,,MR08,Dakhlet Nouadhibou,Dakhlet Nouadhibou,,,3,,20.924,-15.949,
+MR082,2,مقاطعة,Moughataa,Chami,Chami,chami-mr082,MR082,,MR08,Dakhlet Nouadhibou,Dakhlet Nouadhibou,,,3,,20.168,-15.892,
+MR09,1,ولاية,Wilaya,Tagant,Tagant,tagant-mr09,MR09,,,,,,3,10,,18.434,-10.561,https://openadmindata.org/mr/wilayas/tagant-mr09/
+MR091,2,مقاطعة,Moughataa,Moudjeria,Moudjeria,moudjeria-mr091,MR091,,MR09,Tagant,Tagant,,,3,,17.988,-12.137,
+MR092,2,مقاطعة,Moughataa,Tichit,Tichit,tichit-mr092,MR092,,MR09,Tagant,Tagant,,,2,,18.537,-9.73,
+MR093,2,مقاطعة,Moughataa,Tidjikja,Tidjikja,tidjikja-mr093,MR093,,MR09,Tagant,Tagant,,,5,,18.441,-11.55,
+MR10,1,ولاية,Wilaya,Guidimagha,Guidimagha,guidimagha-mr10,MR10,,,,,,4,22,,15.389,-12.206,https://openadmindata.org/mr/wilayas/guidimagha-mr10/
+MR101,2,مقاطعة,Moughataa,Ould Yengé,Ould Yengé,ould-yeng-mr101,MR101,,MR10,Guidimagha,Guidimagha,,,7,,15.624,-11.902,
+MR102,2,مقاطعة,Moughataa,Sélibaby,Sélibaby,slibaby-mr102,MR102,,MR10,Guidimagha,Guidimagha,,,4,,15.483,-12.18,
+MR103,2,مقاطعة,Moughataa,Ghabou,Ghabou,ghabou-mr103,MR103,,MR10,Guidimagha,Guidimagha,,,6,,15.029,-12.174,
+MR104,2,مقاطعة,Moughataa,Wompou,Wompou,wompou-mr104,MR104,,MR10,Guidimagha,Guidimagha,,,5,,15.366,-12.476,
+MR11,1,ولاية,Wilaya,Tiris Zemmour,Tiris Zemmour,tiris-zemmour-mr11,MR11,,,,,,3,3,,23.892,-9.587,https://openadmindata.org/mr/wilayas/tiris-zemmour-mr11/
+MR111,2,مقاطعة,Moughataa,Bir Moughrein,Bir Moughrein,bir-moughrein-mr111,MR111,,MR11,Tiris Zemmour,Tiris Zemmour,,,1,,26.163,-7.695,
+MR112,2,مقاطعة,Moughataa,F'Deirick,F'Deirick,fdeirick-mr112,MR112,,MR11,Tiris Zemmour,Tiris Zemmour,,,1,,23.199,-10.605,
+MR113,2,مقاطعة,Moughataa,Zoueirat,Zoueirat,zoueirat-mr113,MR113,,MR11,Tiris Zemmour,Tiris Zemmour,,,1,,22.726,-12.353,
+MR12,1,ولاية,Wilaya,Inchiri,Inchiri,inchiri-mr12,MR12,,,,,,2,3,,19.69,-14.805,https://openadmindata.org/mr/wilayas/inchiri-mr12/
+MR121,2,مقاطعة,Moughataa,Akjoujt,Akjoujt,akjoujt-mr121,MR121,,MR12,Inchiri,Inchiri,,,1,,19.906,-14.241,
+MR122,2,مقاطعة,Moughataa,Bennechab,Bennechab,bennechab-mr122,MR122,,MR12,Inchiri,Inchiri,,,2,,19.55,-15.153,
+MR13,1,ولاية,Wilaya,Nouakchott Ouest,Nouakchott Ouest,nouakchott-ouest-mr13,MR13,,,,,,3,3,,18.305,-15.974,https://openadmindata.org/mr/wilayas/nouakchott-ouest-mr13/
+MR131,2,مقاطعة,Moughataa,Ksar,Ksar,ksar-mr131,MR131,,MR13,Nouakchott Ouest,Nouakchott Ouest,,,1,,18.33,-15.931,
+MR132,2,مقاطعة,Moughataa,Tevragh Zeina,Tevragh Zeina,tevragh-zeina-mr132,MR132,,MR13,Nouakchott Ouest,Nouakchott Ouest,,,1,,18.3,-16.016,
+MR133,2,مقاطعة,Moughataa,Sebkha,Sebkha,sebkha-mr133,MR133,,MR13,Nouakchott Ouest,Nouakchott Ouest,,,1,,18.077,-16.008,
+MR14,1,ولاية,Wilaya,Nouakchott Nord,Nouakchott Nord,nouakchott-nord-mr14,MR14,,,,,,3,3,,18.102,-15.895,https://openadmindata.org/mr/wilayas/nouakchott-nord-mr14/
+MR141,2,مقاطعة,Moughataa,Toujounine,Toujounine,toujounine-mr141,MR141,,MR14,Nouakchott Nord,Nouakchott Nord,,,1,,18.171,-15.929,
+MR142,2,مقاطعة,Moughataa,Dar Naïm,Dar Naïm,dar-nam-mr142,MR142,,MR14,Nouakchott Nord,Nouakchott Nord,,,1,,18.122,-15.912,
+MR143,2,مقاطعة,Moughataa,Teyarett,Teyarett,teyarett-mr143,MR143,,MR14,Nouakchott Nord,Nouakchott Nord,,,1,,18.067,-15.888,
+MR15,1,ولاية,Wilaya,Nouakchott Sud,Nouakchott Sud,nouakchott-sud-mr15,MR15,,,,,,3,3,,17.943,-15.94,https://openadmindata.org/mr/wilayas/nouakchott-sud-mr15/
+MR151,2,مقاطعة,Moughataa,El Mina,El Mina,el-mina-mr151,MR151,,MR15,Nouakchott Sud,Nouakchott Sud,,,1,,17.946,-16.005,
+MR152,2,مقاطعة,Moughataa,Arafat,Arafat,arafat-mr152,MR152,,MR15,Nouakchott Sud,Nouakchott Sud,,,1,,18.054,-15.959,
+MR153,2,مقاطعة,Moughataa,Riad,Riad,riad-mr153,MR153,,MR15,Nouakchott Sud,Nouakchott Sud,,,1,,17.971,-15.908,

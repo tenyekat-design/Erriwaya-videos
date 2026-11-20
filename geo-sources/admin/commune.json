@@ -1,0 +1,380 @@
+[
+  {
+    "id": "MR01138",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "AÃ¯oun El Atrouss",
+      "en": "AÃ¯oun El Atrouss",
+      "slug": "aoun-el-atrouss"
+    },
+    "code": {
+      "id": "MR01138",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.693",
+      "lon": "-9.639"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01142",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Beneamane",
+      "en": "Beneamane",
+      "slug": "beneamane"
+    },
+    "code": {
+      "id": "MR01142",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.404",
+      "lon": "-9.585"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01140",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Doueirare",
+      "en": "Doueirare",
+      "slug": "doueirare"
+    },
+    "code": {
+      "id": "MR01140",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.701",
+      "lon": "-9.88"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01143",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Egjert",
+      "en": "Egjert",
+      "slug": "egjert"
+    },
+    "code": {
+      "id": "MR01143",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.053",
+      "lon": "-9.287"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01139",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "N'Savenni",
+      "en": "N'Savenni",
+      "slug": "nsavenni"
+    },
+    "code": {
+      "id": "MR01139",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "17.044",
+      "lon": "-9.719"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01144",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Oum Lahyadh",
+      "en": "Oum Lahyadh",
+      "slug": "oum-lahyadh"
+    },
+    "code": {
+      "id": "MR01144",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.846",
+      "lon": "-8.744"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "MR01141",
+    "level": 3,
+    "level_name": {
+      "local": "بلدية",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ten Hamadi",
+      "en": "Ten Hamadi",
+      "slug": "ten-hamadi"
+    },
+    "code": {
+      "id": "MR01141",
+      "iso": null
+    },
+    "parent": {
+      "id": "MR021",
+      "level": 2,
+      "name": {
+        "local": "Aïoun",
+        "en": "Aïoun",
+        "slug": "aoun-mr021"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "MR02",
+        "level": 1,
+        "name": {
+          "local": "Hodh El Gharbi",
+          "en": "Hodh El Gharbi",
+          "slug": "hodh-el-gharbi-mr02"
+        }
+      },
+      {
+        "id": "MR021",
+        "level": 2,
+        "name": {
+          "local": "Aïoun",
+          "en": "Aïoun",
+          "slug": "aoun-mr021"
+        }
+      }
+    ],
+    "children_count": {},
+    "zip_codes": [],
+    "geo": {
+      "lat": "16.433",
+      "lon": "-9.844"
+    },
+    "metadata": {},
+    "source": {}
+  }
+]
