@@ -29,6 +29,22 @@
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
       allow read, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
     }
+    // sub_moves/<رقم الجهاز الجديد>: طلب نقل اشتراك من هاتف قديم إلى هذا الهاتف (19 نوفمبر 2026): رقم الجهاز القديم إن عرفه
+    // المشترك، أو رقم الحساب الذي دفع منه؛ يكتبه أي تطبيق، ولا يقرؤه ولا ينفّذه إلا المشرف (النقل نفسه يكتبه هاتف المشرف في sub_codes).
+    match /sub_moves/{id} {
+      allow create, update: if id.matches('^[A-Z2-7]{10}$')
+        && request.resource.data.keys().hasOnly(['id', 'from', 'phone', 'status', 't'])
+        && request.resource.data.keys().hasAll(['id', 'status', 't'])
+        && request.resource.data.id == id
+        && request.resource.data.status == 'new'
+        && request.resource.data.get('from', '') is string && request.resource.data.get('from', '').matches('^([A-Z2-7]{10})?$')
+        && request.resource.data.get('phone', '') is string && request.resource.data.get('phone', '').matches('^([0-9]{8,15})?$')
+        && (request.resource.data.get('from', '') != '' || request.resource.data.get('phone', '') != '')
+        && request.resource.data.t == request.time;
+      allow update: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow read, delete: if request.auth != null && request.auth.token.email == 'tenyekat@gmail.com';
+    }
     // sub_codes/<رقم الجهاز>: رمز التفعيل الذي يكتبه هاتف المشرف؛ يقرؤه التطبيق برقم جهازه (الرمز لا يعمل على هاتف آخر)، ولا يُسرد.
     match /sub_codes/{id} {
       allow get: if true;

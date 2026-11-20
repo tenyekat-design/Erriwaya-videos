@@ -1174,6 +1174,11 @@ a.hd.hit small{color:var(--gold);font-weight:600}
 #lkAutoMsg{margin:4px 0 0;min-height:1.4em;text-align:center;font-size:.9rem;color:var(--red);line-height:1.7}
 #lkAutoMsg.ok{color:var(--green)}
 .lk-pay button.pm[aria-pressed="true"]{border-color:var(--green);box-shadow:0 0 0 2px var(--green) inset}
+.lk-mv{margin:0 0 10px;border-top:1px solid var(--line);padding-top:8px}.lk-mv[hidden]{display:none}
+.lk-mv summary{cursor:pointer;color:var(--muted);font-size:.88rem;text-align:center;list-style:none}.lk-mv summary::-webkit-details-marker{display:none}
+.lk-mv[open] summary{margin-bottom:10px}.lk-mv p{margin:0 0 8px;font-size:.85rem}.lk-mv label{display:block;font-size:.85rem;margin:0 0 3px}
+.lk-mv input{width:100%;box-sizing:border-box;margin:0 0 8px;direction:ltr;text-transform:uppercase}.lk-mv .btn{width:100%}
+.sb-mv input{direction:ltr;text-transform:uppercase}.sb-mv .sb-c{margin:4px 0;font-size:.85rem}
 .lk-man{margin:4px 0 0;border-top:1px solid var(--line);padding-top:8px}
 .lk-man summary{cursor:pointer;color:var(--muted);font-size:.88rem;text-align:center;list-style:none}
 .lk-man summary::-webkit-details-marker{display:none}
@@ -1499,6 +1504,13 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <div class="lk-walls" id="lkWalls" hidden><b>مع الاشتراك: خلفيات للهاتف من التراث الموريتاني</b><div></div></div>
   <div class="lk-more" id="lkMore" hidden><button type="button" class="btn" id="lkSeeW">شاهد الويدجت</button><button type="button" class="btn" id="lkSeeB">شاهد الخلفيات</button></div>
   <a class="btn lk-share" id="lkShare" hidden rel="noopener"></a>
+  <details class="lk-mv" id="lkMv" hidden><summary id="lkMvS">غيّرت هاتفك؟ انقل اشتراكك إلى هذا الهاتف</summary>
+    <p>اكتب رقم جهازك القديم إن كنت تعرفه (يظهر في شاشة الاشتراك على الهاتف القديم)، أو رقم الحساب الذي دفعت منه الاشتراك. ينقل الناشر ما بقي من اشتراكك إلى هذا الهاتف، ويتوقف على الهاتف القديم.</p>
+    <label for="lkMvFrom">رقم الجهاز القديم</label><input id="lkMvFrom" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX">
+    <label for="lkMvPh">أو رقم الحساب الذي دفعت منه</label><input id="lkMvPh" type="tel" inputmode="numeric" maxlength="20" autocomplete="off" placeholder="4X XX XX XX">
+    <button type="button" class="btn primary" id="lkMvGo">أرسل طلب النقل</button>
+    <p id="lkMvMsg" role="status"></p>
+  </details>
   <details class="lk-man" id="lkMan"><summary id="lkManS"></summary>
   <div class="lk-row" id="lkContact" hidden></div>
     <div class="lk-id"><span><small id="lkIdL"></small><b id="lkId"></b></span><button type="button" class="btn" id="lkCopy"></button></div>
@@ -2174,6 +2186,10 @@ async function subAdmin(el){
   if(!a){el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>للمشرف فقط</p></div><section class="card"><p class="empty">سجّل الدخول أولًا من <a href="#sg-admin">صفحة المشرف</a> ثم عد إلى هنا.</p></section>`;return}
   el.innerHTML=`<div class="lib-h"><h1>الاشتراكات</h1><p>${vesc(a.email)} · <a href="#sg-admin">اقتراحات القرى</a></p></div>
     <section class="card sb"><h2>طلبات تنتظر</h2><div id="sbReq"><p class="empty">جارٍ التحميل…</p></div></section>
+    <section class="card sb sb-mv"><h2>نقل اشتراك إلى هاتف جديد</h2><div id="sbMvReq"></div>
+      <p class="mut">ينتقل ما بقي من الاشتراك إلى الهاتف الجديد، دون زيادة ولا نقص، ويتوقف على الهاتف القديم حين يُفتح متصلًا بالإنترنت.</p>
+      <div class="sb-form"><label>رقم الجهاز القديم<input id="sbMvFrom" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"></label><label>رقم الجهاز الجديد<input id="sbMvTo" maxlength="11" autocomplete="off" placeholder="XXXXX-XXXXX"></label></div>
+      <button type="button" class="btn primary" id="sbMvGo">انقل الاشتراك</button><p class="sg-msg" id="sbMvM"></p></section>
     <section class="card sb" id="sbCatch"></section>
     <section class="card sb"><h2>ما يراه المشتركون</h2><div class="sb-form" id="sbCfg">${SUB_KEYS.map(([k,l,ph])=>`<label>${l}<input data-k="${k}" name="sb_${k}_${Math.random().toString(36).slice(2,7)}" dir="${k==='price'?'rtl':'ltr'}" placeholder="${ph}" maxlength="60" autocomplete="off" autocorrect="off" spellcheck="false"></label>`).join('')}</div>
       <button type="button" class="btn primary" id="sbSave">حفظ</button><p class="sg-msg" id="sbCfgM"></p></section>
@@ -2258,16 +2274,52 @@ async function subAdmin(el){
     const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
     // a phone already subscribed: its approval adds a year after its last day (Pay.nextDay), so a request sent twice for one
     // payment is not approved twice by mistake
-    const run={};try{const t=await sgToken();if(rows.length&&t){const r=await sgFetch(SG_FS+':batchGet',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},
+    const run={},mvd={};try{const t=await sgToken();if(rows.length&&t){const r=await sgFetch(SG_FS+':batchGet',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},
         body:JSON.stringify({documents:rows.map(q=>`${SG_DOCS}/sub_codes/${q.id}`)})});
-      if(r.ok)(await r.json()).filter(x=>x.found).forEach(x=>{const c=sgRead(x.found);if(Number.isFinite(c.day))run[c.id]=c.day})}}catch(e){}
+      if(r.ok)(await r.json()).filter(x=>x.found).forEach(x=>{const c=sgRead(x.found);if(c.moved)mvd[c.id]=c.moved;else if(Number.isFinite(c.day))run[c.id]=c.day})}}catch(e){}
     const today=Math.floor(Date.now()/864e5),dd=d=>new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
-    const note=id=>run[id]==null?'':run[id]>=today?`<p class="sb-dup">هذا الجهاز مشترك حتى ${dd(run[id])}: التفعيل يضيف سنة بعد هذا التاريخ (حتى ${dd(run[id]+365)}). لا تفعّله إلا إن وصل دفع جديد.</p>`
+    const note=id=>mvd[id]?`<p class="mut">نُقل اشتراك هذا الجهاز إلى ${subId(mvd[id])}: التفعيل يبدأ له سنة جديدة.</p>`:run[id]==null?'':run[id]>=today?`<p class="sb-dup">هذا الجهاز مشترك حتى ${dd(run[id])}: التفعيل يضيف سنة بعد هذا التاريخ (حتى ${dd(run[id]+365)}). لا تفعّله إلا إن وصل دفع جديد.</p>`
       :`<p class="mut">كان مشتركًا حتى ${dd(run[id])} (تجديد).</p>`;
     R.innerHTML=rows.length?rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}" data-plan="${q.plan==='family'?'family':'one'}"><div class="sg-k"><b>${vesc(AP[q.app]||q.app||'')}${q.plan==='family'?' · عائلي':''}</b><small>${q.t?subWhen(q.t):''}</small></div>
       <p>دفع من: <b dir="ltr" class="num">${vesc(q.phone||'')}</b>${q.ref?` · العملية: <b dir="ltr">${vesc(q.ref)}</b>`:''}</p><p class="mut">الجهاز <span dir="ltr">${vesc(subId(q.id||''))}</span></p>${note(q.id)}
       <div class="sg-act"><button type="button" class="btn primary" data-do="ok">وصل الدفع: فعِّله</button><button type="button" class="btn" data-do="del">حذف الطلب</button></div></article>`).join(''):'<p class="empty">لا طلبات تنتظر.</p>'}
   loadReq();
+  // moving a subscription to a new phone: the requests new phones sent (sub_moves), and the form (Pay.move on this phone)
+  const mvId=v=>String(v||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).toUpperCase().replace(/[^A-Z2-7]/g,'');
+  const MVW={key:'المفتاح السري غير محفوظ في هذا الهاتف: الصقه في قسم «اللاقط»',same:'الرقمان متطابقان',bad:'رقم الجهاز 10 حروف وأرقام',auth:'تعذّر الاتصال بالحساب: تحقق من الإنترنت أو ادخل من جديد',
+    none:'لا اشتراك على رقم الجهاز القديم',ended:'اشتراك الجهاز القديم منتهٍ، فلا شيء يُنقل',fail:'تعذّر النقل: تحقق من الإنترنت'};
+  window.onPayMove=r=>{const M=$('sbMvM');if(!M)return;$('sbMvGo').disabled=false;
+    if(r.startsWith('ok:')){const d=+r.slice(3);M.textContent='';say('نُقل الاشتراك حتى '+new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}));$('sbMvFrom').value=$('sbMvTo').value='';loadMv()}
+    else M.textContent=r.startsWith('moved:')?'نُقل هذا الاشتراك من قبل إلى الجهاز '+subId(r.slice(6)):(MVW[r]||'تعذّر النقل')};
+  const doMove=(from,to)=>{const M=$('sbMvM');from=mvId(from);to=mvId(to);
+    if(!nat){M.textContent='النقل من تطبيق أندرويد على هاتف الناشر';return}
+    if(from.length!==10||to.length!==10){M.textContent=MVW.bad;return}if(from===to){M.textContent=MVW.same;return}
+    if(typeof A.payMove!=='function'){M.textContent='حدّث تطبيقك إلى آخر نسخة الناشر';return}
+    $('sbMvGo').disabled=true;M.textContent='جارٍ النقل…';A.payMove(from,to)};
+  $('sbMvGo').onclick=()=>doMove($('sbMvFrom').value,$('sbMvTo').value);
+  async function loadMv(){const R=$('sbMvReq');if(!R)return;let rows=[];
+    try{const t=await sgToken();if(!t)return;const post=(u,b)=>sgFetch(SG_FS+u,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(b)});
+      const r=await post(':runQuery',{structuredQuery:{from:[{collectionId:'sub_moves'}],where:{fieldFilter:{field:{fieldPath:'status'},op:'EQUAL',value:{stringValue:'new'}}},limit:50}});
+      if(!r.ok){R.innerHTML='';return}rows=(await r.json()).filter(x=>x.document).map(x=>sgRead(x.document));
+      // a request with the payment number only: the phones that paid from it (their requests), with their subscriptions
+      for(const q of rows){q.cand=q.from?[q.from]:[];
+        if(!q.from&&q.phone){const c=await post(':runQuery',{structuredQuery:{from:[{collectionId:'sub_requests'}],where:{fieldFilter:{field:{fieldPath:'phone'},op:'EQUAL',value:{stringValue:q.phone}}},limit:10}});
+          if(c.ok)q.cand=[...new Set((await c.json()).filter(x=>x.document).map(x=>sgRead(x.document).id).filter(x=>x&&x!==q.id))]}}
+      const ids=[...new Set(rows.flatMap(q=>q.cand))],sub={};
+      if(ids.length){const g=await post(':batchGet',{documents:ids.map(i=>`${SG_DOCS}/sub_codes/${i}`)});if(g.ok)(await g.json()).filter(x=>x.found).forEach(x=>{const c=sgRead(x.found);sub[c.id]=c})}
+      const today=Math.floor(Date.now()/864e5),dd=d=>new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+      const cs=i=>{const c=sub[i];return !c?'لا اشتراك عليه':c.moved?'نُقل إلى '+subId(c.moved):c.day>=today?'مشترك حتى '+dd(c.day):'انتهى اشتراكه'};
+      R.innerHTML=rows.length?'<h3>طلبات النقل</h3>'+rows.map(q=>`<article class="sg-it sb-req" data-id="${vesc(q.id)}"><div class="sg-k"><b>إلى الجهاز <span dir="ltr">${vesc(subId(q.id))}</span></b><small>${q.t?subWhen(q.t):''}</small></div>
+        ${q.phone?`<p>دفع من: <b dir="ltr" class="num">${vesc(q.phone)}</b></p>`:''}
+        ${q.cand.length?q.cand.map(i=>`<p class="sb-c">الجهاز القديم <b dir="ltr">${vesc(subId(i))}</b> · ${cs(i)} ${sub[i]&&!sub[i].moved&&sub[i].day>=today?`<button type="button" class="btn primary" data-mv="${vesc(i)}">انقله</button>`:''}</p>`).join('')
+          :'<p class="mut">لم يُعرف الجهاز القديم من رقم الدفع: اسأل المشترك عن رقم جهازه القديم، واكتبه في الأسفل.</p>'}
+        <div class="sg-act"><button type="button" class="btn" data-mvfill="${vesc(q.id)}">اكتب الرقمين يدويًا</button><button type="button" class="btn" data-mvdel="${vesc(q.id)}">حذف الطلب</button></div></article>`).join(''):''}
+    catch(e){R.innerHTML=''}}
+  loadMv();
+  $('sbMvReq').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.closest('[data-id]').dataset.id;
+    if(b.dataset.mv)doMove(b.dataset.mv,id);
+    else if(b.dataset.mvfill){$('sbMvTo').value=subId(id);$('sbMvFrom').focus()}
+    else if(b.dataset.mvdel){b.disabled=true;try{await subCommit([{delete:`${SG_DOCS}/sub_moves/${id}`}]);loadMv()}catch(x){b.disabled=false;say('تعذّر الحذف')}}};
   $('sbReq').onclick=async e=>{const b=e.target.closest('[data-do]');if(!b)return;const id=b.closest('[data-id]').dataset.id;b.disabled=true;
     if(b.dataset.do==='ok'){if(!nat){say('التفعيل اليدوي من تطبيق أندرويد على هاتف الناشر');b.disabled=false;return}
       const plan=b.closest('[data-plan]').dataset.plan;if(typeof A.payManualPlan==='function')A.payManualPlan(id,plan);else A.payManual(id)}
@@ -2290,13 +2342,28 @@ async function statsAdmin(el){
   let N;
   try{N=await Promise.all([count('sub_trials',0),count('sub_trials',1),count('sub_trials',7),count('sub_trials',30)])}
   catch(e){L.innerHTML='<p class="empty">تعذّر حساب الإحصاءات. تحقق من الإنترنت، ومن لصق قواعد Firestore.</p>';return}
-  let A=null,V=[];
-  try{A=await Promise.all([count('calendar_seen',1),count('calendar_seen',7),count('calendar_seen',30)]);
-    const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+  // the GitHub emulator's test phones (their calendar_seen record says «test») are left out of the installs too:
+  // each one's first run is read from its sub_trials record and taken off the counts it falls in
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
       body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'}]},
+        where:{fieldFilter:{field:{fieldPath:'v'},op:'EQUAL',value:{stringValue:'test'}}},limit:2000}})});
+    if(r.ok){const ids=(await r.json()).filter(x=>x.document).map(x=>x.document.name.split('/').pop());
+      const c=[0,1,7,30].map(d=>d?Date.parse(since(d)):0);
+      const T=await Promise.all(ids.map(id=>sgFetch(SG_FS+'/sub_trials/'+id,{headers:{Authorization:'Bearer '+tok}})
+        .then(g=>g.ok?g.json():null).then(j=>j?Date.parse(((j.fields||{}).t||{}).timestampValue||'')||0:null).catch(()=>null)));
+      T.forEach(t=>{if(t===null)return;c.forEach((s,i)=>{if(t>=s&&N[i]>0)N[i]--})})}}
+  catch(e){}
+  let A=null,V=[];
+  // counted here from the 30 days' records, leaving out the GitHub emulator's test build («test»: not a user's phone)
+  try{const r=await sgFetch(SG_FS+':runQuery',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+      body:JSON.stringify({structuredQuery:{from:[{collectionId:'calendar_seen'}],select:{fields:[{fieldPath:'v'},{fieldPath:'t'}]},
         where:{fieldFilter:{field:{fieldPath:'t'},op:'GREATER_THAN_OR_EQUAL',value:{timestampValue:since(30)}}},limit:5000}})});
-    if(r.ok){const m={};(await r.json()).filter(x=>x.document).forEach(x=>{const v=sgRead(x.document).v||'?';m[v]=(m[v]||0)+1});
-      V=Object.entries(m).sort((p,q)=>q[1]-p[1])}}
+    if(!r.ok)throw new Error(r.status);
+    const m={},c1=Date.parse(since(1)),c7=Date.parse(since(7));A=[0,0,0];
+    (await r.json()).filter(x=>x.document).forEach(x=>{const d=sgRead(x.document),v=d.v||'?';if(v==='test')return;
+      const t=Date.parse(((x.document.fields||{}).t||{}).timestampValue||'')||0;
+      A[2]++;if(t>=c7)A[1]++;if(t>=c1)A[0]++;m[v]=(m[v]||0)+1});
+    V=Object.entries(m).sort((p,q)=>q[1]-p[1])}
   catch(e){A=null}
   const n=x=>x.toLocaleString('ar-u-nu-latn');
   const tile=(v,t)=>`<div class="st-t"><b>${n(v)}</b><small>${t}</small></div>`;
@@ -2317,18 +2384,19 @@ async function statsAdmin(el){
     const [C,Q]=await Promise.all([list('sub_codes'),list('sub_requests').catch(()=>[])]);
     const req={};Q.forEach(q=>req[q.id]=q);
     const today=Math.floor(Date.now()/864e5);
-    const R=C.filter(c=>Number.isFinite(c.day)).map(c=>{const q=req[c.id]||{},fam=String(c.how||'').startsWith('family:');
+    const moved=C.filter(c=>c.moved).length;
+    const R=C.filter(c=>Number.isFinite(c.day)&&!c.moved).map(c=>{const q=req[c.id]||{},fam=String(c.how||'').startsWith('family:');
       return{id:c.id,end:c.day,left:c.day-today+1,from:c.t?Math.floor(Date.parse(c.t)/864e5):null,
-        phone:q.phone||'',app:q.app||'',plan:c.plan==='family'?'عائلي':fam?'فرد في عائلة':'فردي',fam:c.fam?String(c.fam).split(',').filter(Boolean).length:0}});
+        phone:q.phone||(String(c.how||'').startsWith('move:')?(req[String(c.how).slice(5)]||{}).phone||'':''),app:q.app||(String(c.how||'').startsWith('move:')?(req[String(c.how).slice(5)]||{}).app||'':''),moved:String(c.how||'').startsWith('move:'),plan:c.plan==='family'?'عائلي':fam?'فرد في عائلة':'فردي',fam:c.fam?String(c.fam).split(',').filter(Boolean).length:0}});
     const act=R.filter(r=>r.left>0),old=R.filter(r=>r.left<=0),soon=act.filter(r=>r.left<=30);
     const dt=d=>new Date(d*864e5).toLocaleDateString('ar-u-nu-latn',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     const APPS={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'BIM'};
     const left=r=>r.left>0?`باقٍ ${n(r.left)} يومًا`:`انتهى منذ ${n(1-r.left)} يومًا`;
-    const row=r=>`<li class="st-s"><div><b><bdi dir="ltr">${vesc(r.phone||r.id)}</bdi></b><small>${r.plan}${r.plan==='عائلي'?` · ${n(r.fam)} أجهزة معه`:''}${r.app?' · '+(APPS[r.app]||vesc(r.app)):''}</small></div>
+    const row=r=>`<li class="st-s"><div><b><bdi dir="ltr">${vesc(r.phone||r.id)}</bdi></b><small>${r.plan}${r.moved?' · منقول من هاتف قديم':''}${r.plan==='عائلي'?` · ${n(r.fam)} أجهزة معه`:''}${r.app?' · '+(APPS[r.app]||vesc(r.app)):''}</small></div>
       <div><small>${r.from!=null?'من '+dt(r.from)+' ':''}إلى ${dt(r.end)}</small><b class="${r.left>0?(r.left<=30?'st-w':'st-ok'):'st-x'}">${left(r)}</b></div></li>`;
     S.innerHTML=`<h3 class="st-h">المشتركون</h3><div class="st-g">${tile(act.length,'أجهزة مشتركة الآن')}${tile(soon.length,'تنتهي خلال 30 يومًا')}${tile(act.filter(r=>r.plan==='عائلي').length,'اشتراكات عائلية')}${tile(old.length,'انتهى اشتراكها')}</div>
       ${R.length?`<ul class="st-l">${act.sort((a,b)=>a.left-b.left).concat(old.sort((a,b)=>b.end-a.end)).map(row).join('')}</ul>`:'<p class="empty">لا مشتركين بعد.</p>'}
-      <p class="mut st-n">كل جهاز يُحسب وحده (في العائلي: الدافع وكل جهاز أضافه). المدة من يوم التفعيل إلى آخر يوم يعمل فيه الرمز؛ الرقم المعروض هو رقم الدفع الذي كتبه المشترك، أو رقم الجهاز إن فُعِّل يدويًا.</p>`;
+      <p class="mut st-n">كل جهاز يُحسب وحده (في العائلي: الدافع وكل جهاز أضافه). ${moved?'نُقل '+n(moved)+' اشتراك إلى هواتف جديدة، فلا تُحسب هواتفها القديمة. ':''}المدة من يوم التفعيل إلى آخر يوم يعمل فيه الرمز؛ الرقم المعروض هو رقم الدفع الذي كتبه المشترك، أو رقم الجهاز إن فُعِّل يدويًا.</p>`;
   }catch(e){S.innerHTML='<h3 class="st-h">المشتركون</h3><p class="empty">تعذّر جلب الاشتراكات. تحقق من الإنترنت.</p>'}
 }
 window.APP=Object.assign(window.APP||{},{sgAdmin,subAdmin,statsAdmin});
@@ -2866,6 +2934,7 @@ function warshMoved(M){
     const L=st.get('lastAya.warsh',null);if(L&&L[0])st.set('lastAya.warsh',[L[0],L[1],pg(L[0],L[1])||op(L[2])]);
     st.set('warshPages','athari')}catch(e){}
 }
+window.needData=k=>need(k);   // for the opening verse (outside this scope)
 function need(k){
   if(loaded[k])return Promise.resolve(loaded[k]);
   return new Promise((ok,fail)=>{
@@ -4382,12 +4451,13 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
         if(F.plan&&F.plan.stringValue==='family')jset('mrcal.fam',{fam:(F.fam&&F.fam.stringValue)||'',at:Date.now()});
         if(code&&A.subActivate(code)==='ok'){jset('mrcal.subReq',null);st=state()||st;$('lkAutoMsg').textContent='';hide();toast(L('تم التفعيل تلقائيًا. اشتراكك حتى ','Activé automatiquement. Abonnement jusqu’au ')+dstr(st.until))}}}
     catch(e){}polling=false}
-  const pendingText=p=>L('سُجّل طلبك. إن لم ترسل صورة العملية بعد فاضغط الزر مرة أخرى وأرسلها على واتساب. يُفتح التطبيق تلقائيًا بعد التأكد من الدفع.','Demande reçue.')
+  const pendingText=p=>p.move?'سُجّل طلب النقل. يُفتح التطبيق على هذا الهاتف تلقائيًا بعد أن ينقل الناشر اشتراكك. أبقِ الإنترنت مفتوحًا.':L('سُجّل طلبك. إن لم ترسل صورة العملية بعد فاضغط الزر مرة أخرى وأرسلها على واتساب. يُفتح التطبيق تلقائيًا بعد التأكد من الدفع.','Demande reçue.')
     +(Date.now()-p.at>30*60e3?L(' إن طال الانتظار فتحقق من رقم حسابك أعلاه أو راسل الناشر.',' Si l’attente se prolonge, vérifiez le numéro ci-dessus ou contactez l’éditeur.'):'');
   function fill(){
     const paid=st.until>st.now,trial=!paid&&st.trialEnd>st.now;
     $('lkT').textContent=paid?L('الاشتراك','Abonnement'):trial?L('اشترك في التقويم الموريتاني','Abonnez-vous au Calendrier mauritanien'):st.until?L('انتهى اشتراكك','Votre abonnement est terminé'):L('انتهت التجربة المجانية','L’essai gratuit est terminé');
     $('lkSt').textContent=paid?L('أنت مشترك حتى ','Abonné jusqu’au ')+dstr(st.until):trial?L('تجربة مجانية: بقي ','Essai gratuit : il reste ')+left(st.trialEnd-st.now):'';
+    if(st.moved&&!paid){$('lkT').textContent='نُقل اشتراك هذا الهاتف';$('lkSt').textContent='نُقل اشتراكه إلى الجهاز \u2066'+showId(st.moved)+'\u2069. لتعود إليه اشترك من جديد.'}
     if(st.verified===false&&!paid){$('lkT').textContent=L('اتصل بالإنترنت لبدء التجربة','Connectez-vous pour commencer l’essai');
       $('lkSt').textContent=L('تبدأ التجربة المجانية (24 ساعة) بعد اتصال واحد بالإنترنت. افتح الإنترنت وانتظر لحظة.','L’essai gratuit (24 heures) commence après une connexion. Activez Internet et patientez un instant.')}
     $('lkSt').hidden=!$('lkSt').textContent;
@@ -4433,6 +4503,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     xferBox();
     $('lkPhoneL').textContent='رقم الحساب الذي دفعت منه';$('lkPhone').placeholder='4X XX XX XX';
         $('lkSend').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z"/><path d="M8.6 7.6c.3-.6.6-.6.9-.6h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.5.7c-.1.2-.2.3 0 .6.5.9 1.6 2 2.6 2.5.3.2.5.1.6 0l.7-.9c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.3.4.5 0 .9-.6 1.8-1.5 2-1 .3-2.4.1-4.3-1.1-2.3-1.5-3.6-3.6-3.9-4.6-.3-1-.1-2.1.5-2.9z" fill="currentColor" stroke="none"/></svg><span>أرسل صورة الدفع على واتساب</span>';$('lkWaN').textContent='يفتح واتساب برسالة جاهزة فيها رقم جهازك \u2066'+showId(st.id)+'\u2069، أرفق بها صورة العملية ثم اضغط إرسال.';
+    mvBox(paid);
     $('lkManS').textContent='عندي رمز تفعيل، أو أحتاج مساعدة من الناشر';
     {const p=jget('mrcal.subReq'),m=$('lkAutoMsg');if(p&&!paid){m.className='ok';m.textContent=pendingText(p);if(!$('lkPhone').value)$('lkPhone').value=p.phone||''}}
     $('lkIdL').textContent=L('رقم جهازك','Numéro de votre appareil');$('lkId').textContent=showId(st.id);$('lkCopy').textContent=L('نسخ','Copier');
@@ -4495,6 +4566,25 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
         if(!r.ok)throw new Error(r.status);f.sent=list;jset('mrcal.fam',f);famLoaded=Date.now()+5*60e3;famBox(true);
         $('lkFamMsg').textContent=L('أُرسل. يُفتح تطبيق هذا الفرد تلقائيًا خلال دقائق (أبقِ الإنترنت مفتوحًا عنده).','Envoyé. Son application s’ouvrira d’elle-même dans quelques minutes.')}
       catch(e){m.textContent=L('تعذّر الإرسال. تحقق من الإنترنت.','Envoi impossible. Vérifiez la connexion.')}}}
+  // a subscriber who changed his phone asks to move what is left of his subscription to this one (sub_moves/<this phone>);
+  // the publisher moves it from the admin page (Pay.move) and this phone picks up its code like any other
+  function mvBox(paid){const D=$('lkMv');D.hidden=!!paid;if(paid)return;const p=jget('mrcal.subReq');
+    if(p&&p.move&&!$('lkMvMsg').textContent){$('lkMvMsg').className='ok';$('lkMvMsg').textContent=pendingText(p)}}
+  $('lkMvGo').onclick=async()=>{const m=$('lkMvMsg'),from=west($('lkMvFrom').value).toUpperCase().replace(/[^A-Z2-7]/g,''),ph=west($('lkMvPh').value).replace(/\D/g,'');m.className='';
+    if(from&&from.length!==10){m.textContent='رقم الجهاز 10 حروف وأرقام، مثل ABCDE-FGH23.';$('lkMvFrom').focus();return}
+    if(from===st.id){m.textContent='هذا رقم هذا الهاتف نفسه. اكتب رقم الهاتف القديم.';return}
+    if(!from&&(ph.length<8||ph.length>15)){m.textContent='اكتب رقم الجهاز القديم، أو رقم الحساب الذي دفعت منه (8 أرقام).';return}
+    const b=$('lkMvGo');b.disabled=true;m.className='ok';m.textContent='جارٍ الإرسال…';
+    try{const f={id:st.id,status:'new'};if(from)f.from=from;if(ph.length>=8&&ph.length<=15)f.phone=ph;
+      const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_moves/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
+      if(!r.ok)throw new Error(r.status);
+      const p={at:Date.now(),move:1,phone:ph};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
+      let tg={tgToken:SUB.tgToken,tgChat:SUB.tgChat};
+      try{const g=await net(FS+'/sub_config/tg');if(g.ok){const F=(await g.json()).fields||{};tg={tgToken:F.tgToken&&F.tgToken.stringValue,tgChat:F.tgChat&&F.tgChat.stringValue}}}catch(e){}
+      if(tg.tgToken&&tg.tgChat)window.tgCall(tg.tgToken,'sendMessage',{chat_id:tg.tgChat,text:`🔁 طلب نقل اشتراك — التقويم الموريتاني\nالهاتف الجديد: ${showId(st.id)}${from?'\nالجهاز القديم: '+showId(from):''}${f.phone?'\nدفع من الرقم: '+f.phone:''}\n\nانقله من صفحة «الاشتراكات».`}).catch(()=>{})}
+    catch(e){m.className='';m.textContent='تعذّر الإرسال. تحقق من الإنترنت، أو راسل الناشر بواتساب برقم جهازك هذا ورقم جهازك القديم.'}
+    b.disabled=false};
   function show(force){st=state()||st;loadCfg(lock.hidden);fill();$('lkMsg').textContent='';$('lkMsg').className='';lock.hidden=false;
     if(force&&!locked){locked=true;document.documentElement.classList.add('locked');
       document.querySelectorAll('audio').forEach(a=>{try{a.pause()}catch(e){}});try{A.stopAdhan()}catch(e){}try{A.setVolumeKeys(false)}catch(e){}}}
@@ -4560,7 +4650,7 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
     if(!told){try{localStorage.setItem('mrcal.subTold','1')}catch(e){}setTimeout(()=>toast(L('تجربة مجانية: بقي ','Essai gratuit : il reste ')+left(st.trialEnd-st.now)),2500)}}
 })();
 // «الخلفيات»: a tile of its own; the pictures are seen by all, set only by subscribers (Java checks it too); never downloadable
-(function(){const $=id=>document.getElementById(id),say=t=>{try{toast(t)}catch(e){try{window.say(t)}catch(x){}}};const WALLS=[['qsar','القصر'],['bab','الباب'],['naana','أتاي بالنعناع'],['arguin','حوض آرگين'],['nahr','النهر'],['kharif','الخريف'],['adrar','آدرار'],['ibil','الإبل'],['badiya','البادية'],['mahdara','المحظرة'],['nujum','النجوم'],['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']];
+(function(){const $=id=>document.getElementById(id),say=t=>{try{toast(t)}catch(e){try{window.say(t)}catch(x){}}};const WALLS=[['khiyam','خيام الخريف'],['waha','الواحة'],['shati','شاطئ الصيادين'],['marsa','المرسى'],['nouakchott','نواكشوط'],['qsar','القصر'],['bab','الباب'],['naana','أتاي بالنعناع'],['arguin','حوض آرگين'],['nahr','النهر'],['kharif','الخريف'],['adrar','آدرار'],['ibil','الإبل'],['badiya','البادية'],['mahdara','المحظرة'],['nujum','النجوم'],['chinguetti','شنقيط'],['khaima','الخيمة'],['jild','الجلد'],['atay','أتاي'],['walata','ولاتة'],['qafila','القافلة']];
   const A=window.AndroidApp,app=A&&typeof A.setWallpaper==='function',box=$('walls'),g=$('wallGrid');if(!box||!g)return;
   const LOCK='<i><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></i>';
   const paid=()=>{try{const t=JSON.parse(A.subState());return t.until>t.now}catch(e){return false}};

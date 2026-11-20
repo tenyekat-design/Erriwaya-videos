@@ -34,7 +34,8 @@ import java.util.Iterator;
  *  - c/*.json (the page's tables) are downloaded as soon as their version is higher than the one the phone has
  *    (at first the versions built into the APK, assets/content-base.json); the page reads them through contentGet.
  *  - data/… and img/… (books, covers) are fetched the first time the page asks for them (intercept), then kept.
- *  - "news": {"id": n, "t": "title", "b": "text", "h": "#hash"} raises one notification per new id.
+ *  - "news": {"id": n, "t": "title", "b": "text", "h": "#hash", "u": "https://…"} raises one notification per new id
+ *    (opening the link "u" when there is one, otherwise the page "h").
  * Only content travels this way (JSON tables, book texts, images); the app's code changes only through an update.
  * Also the periodic job (about every 6 hours, with a network) that checks for new content when the app is closed.
  */
@@ -175,6 +176,10 @@ public class Content extends JobService {
             Intent open = new Intent(ctx, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             String h = n.optString("h", "");
             if (h.matches("#[a-z0-9-]+")) open.putExtra("hash", h);
+            // "u": an https link (the new APK's fixed download link…) opened in the browser instead of a page of the app
+            String u = n.optString("u", "");
+            if (u.startsWith("https://") && u.length() < 500)
+                open = new Intent(Intent.ACTION_VIEW, Uri.parse(u)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pi = PendingIntent.getActivity(ctx, JOB_ID, open,
                     PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0));
             Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(ctx, CHANNEL) : new Notification.Builder(ctx);

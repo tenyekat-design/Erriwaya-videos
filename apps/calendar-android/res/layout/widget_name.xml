@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- «اسمك بالخط العربي»: a name in Thuluth (res/drawable-nodpi/nm_*) over the night-blue ground or the user's photo (NameWidget). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nRoot" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/nBg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_day_bg" android:importantForAccessibility="no" />
+    <ImageView android:id="@+id/nImg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:padding="8dp" android:scaleType="fitCenter" android:src="@drawable/nm_mohamedsalem" android:contentDescription="@string/name_widget_name" />
+    <TextView android:id="@+id/nLock" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" android:layout_marginBottom="6dp" android:gravity="center"
+        android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingTop="3dp" android:paddingBottom="3dp" android:visibility="gone"
+        android:background="@drawable/clock_chip" android:text="@string/widget_locked_short" android:textSize="12sp" android:textStyle="bold"
+        android:maxLines="1" android:textColor="#0B1F5C" />
+</FrameLayout>

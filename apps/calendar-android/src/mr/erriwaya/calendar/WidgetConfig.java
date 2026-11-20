@@ -54,6 +54,7 @@ public class WidgetConfig extends Activity {
         if (id == AppWidgetManager.INVALID_APPWIDGET_ID) { finish(); return; }
         AppWidgetProviderInfo info = AppWidgetManager.getInstance(this).getAppWidgetInfo(id);
         final boolean month = info != null && info.provider != null && info.provider.getClassName().endsWith(".MonthWidget");
+        final boolean nameW = info != null && info.provider != null && info.provider.getClassName().endsWith(".NameWidget");
         final boolean clock = info != null && info.provider != null && info.provider.getClassName().endsWith(".ClockWidget");
         float dp = getResources().getDisplayMetrics().density;
 
@@ -106,6 +107,44 @@ public class WidgetConfig extends Activity {
             next.setTextSize(15);
             next.setChecked(Widgets.clockNext(this, id));
             box.addView(next);
+        }
+        // the name: the Thuluth pictures as a grid on the night blue; the chosen one framed in gold
+        final String[] nm = {Widgets.name(this, id)};
+        if (nameW) {
+            box.addView(title("الاسم", dp));
+            final java.util.List<View> cards = new java.util.ArrayList<>();
+            LinearLayout row = null;
+            for (int i = 0; i < NameWidget.NAMES.length; i++) {
+                if (i % 2 == 0) {
+                    row = new LinearLayout(this);
+                    row.setOrientation(LinearLayout.HORIZONTAL);
+                    row.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                    box.addView(row);
+                }
+                final String key = NameWidget.NAMES[i][0];
+                LinearLayout card = new LinearLayout(this);
+                card.setOrientation(LinearLayout.VERTICAL);
+                card.setGravity(Gravity.CENTER);
+                card.setPadding((int) (4 * dp), (int) (6 * dp), (int) (4 * dp), (int) (6 * dp));
+                android.widget.ImageView im = new android.widget.ImageView(this);
+                im.setImageResource(NameWidget.pic(this, key));
+                im.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                im.setBackgroundColor(0xFF06104A);
+                im.setPadding((int) (6 * dp), (int) (6 * dp), (int) (6 * dp), (int) (6 * dp));
+                card.addView(im, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (62 * dp)));
+                TextView l = new TextView(this);
+                l.setText(NameWidget.NAMES[i][1]);
+                l.setTextSize(13);
+                l.setGravity(Gravity.CENTER);
+                card.addView(l);
+                LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+                cp.setMargins((int) (3 * dp), (int) (3 * dp), (int) (3 * dp), (int) (3 * dp));
+                row.addView(card, cp);
+                card.setTag(key);
+                cards.add(card);
+                card.setOnClickListener(v -> { nm[0] = key; for (View c : cards) frame(c, key.equals(c.getTag()), dp); });
+                frame(card, key.equals(nm[0]), dp);
+            }
         }
         box.addView(title("خلفية الويدجت", dp));
         final RadioGroup rg = new RadioGroup(this);
@@ -165,6 +204,7 @@ public class WidgetConfig extends Activity {
         ok.setOnClickListener(v -> {
             int sel = rg.getCheckedRadioButtonId() - 1000;
             if (sel >= 0 && sel < LEVELS.length) Widgets.setBg(this, id, LEVELS[sel]);
+            if (nameW) Widgets.setName(this, id, nm[0]);
             if (clock) { Widgets.setClock(this, id, chosen[0]); Widgets.setClockNext(this, id, next.isChecked()); }
             if (month) {
                 StringBuilder s = new StringBuilder();

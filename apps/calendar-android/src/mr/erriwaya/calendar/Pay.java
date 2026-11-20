@@ -340,7 +340,7 @@ final class Pay {
      * subscription, so a renewal before the end loses no day and two payments make two years; from today otherwise.
      */
     static int nextDay(JSONObject cur) {
-        int today = (int) (System.currentTimeMillis() / Sub.DAY), d = dayOf(cur);
+        int today = (int) (System.currentTimeMillis() / Sub.DAY), d = cur != null && !sv(cur, "moved").isEmpty() ? -1 : dayOf(cur);   // a moved subscription is the new phone's
         return (d >= today ? d : today) + YEAR_DAYS;
     }
 
@@ -431,6 +431,53 @@ final class Pay {
             e.apply();
             return "";
         } catch (Exception e) { return "bad"; }
+    }
+
+    /**
+     * Moves a subscription to a new phone (the owner's choice, 19 Nov 2026): the new phone gets a code for the old one's
+     * last day (no day added, none lost), and the old phone's document says "moved", so its app drops its code the next
+     * time it opens online (Sub.recheck). A move request from the new phone (sub_moves/<new>) is marked done.
+     * Returns "ok:<last day>", or what is wrong: key, same, bad, auth, none (no subscription on the old number),
+     * ended, moved:<number> (already moved), fail.
+     */
+    static String move(Context ctx, String from, String to) {
+        try {
+            String key = sp(ctx).getString("key", null);
+            if (key == null) return "key";
+            from = from == null ? "" : from.toUpperCase(java.util.Locale.ROOT).replaceAll("[^A-Z2-7]", "");
+            to = to == null ? "" : to.toUpperCase(java.util.Locale.ROOT).replaceAll("[^A-Z2-7]", "");
+            if (!from.matches("[A-Z2-7]{10}") || !to.matches("[A-Z2-7]{10}")) return "bad";
+            if (from.equals(to)) return "same";
+            String tok = token(ctx);
+            if (tok == null) return "auth";
+            JSONObject old = current(tok, from);
+            if (old == null) return "none";
+            String was = sv(old, "moved");
+            if (was.matches("[A-Z2-7]{10}")) return "moved:" + was;
+            int today = (int) (System.currentTimeMillis() / Sub.DAY), day = dayOf(old);
+            if (day < today) return "ended";
+            JSONObject mine = current(tok, to);
+            day = Math.max(day, dayOf(mine));   // a new phone already subscribed keeps the later day
+            String code = sign(key, to, day);
+            if (code == null) return "key";
+            String docs = SuggestJob.FS.substring(SuggestJob.FS.indexOf("projects/")), now = SuggestJob.iso(System.currentTimeMillis());
+            JSONArray w = new JSONArray()
+                    .put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + to)
+                            .put("fields", new JSONObject().put("code", str(code)).put("day", new JSONObject().put("integerValue", String.valueOf(day)))
+                                    .put("how", str("move:" + from)).put("t", new JSONObject().put("timestampValue", now)))))
+                    .put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_codes/" + from)
+                            .put("fields", new JSONObject().put("moved", str(to)).put("movedT", new JSONObject().put("timestampValue", now))))
+                            .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("moved").put("movedT"))));
+            String url = SuggestJob.FS.replaceAll("/documents$", "") + "/documents:commit";
+            if (SuggestJob.http(url, "application/json", new JSONObject().put("writes", w).toString(), tok) == null) return "fail";
+            // the new phone's move request, if it sent one (no document: nothing to mark)
+            JSONArray m = new JSONArray().put(new JSONObject().put("update", new JSONObject().put("name", docs + "/sub_moves/" + to)
+                    .put("fields", new JSONObject().put("status", str("done"))))
+                    .put("updateMask", new JSONObject().put("fieldPaths", new JSONArray().put("status")))
+                    .put("currentDocument", new JSONObject().put("exists", true)));
+            SuggestJob.http(url, "application/json", new JSONObject().put("writes", m).toString(), tok);
+            return "ok:" + day;
+        } catch (Exception e) { return "fail"; }
     }
 
     /** A code made by hand from the admin page (one tap on a waiting request): "" when there is no key. */
