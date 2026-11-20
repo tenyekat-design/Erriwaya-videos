@@ -435,9 +435,9 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
   section.card[aria-live]{padding:12px 12px 10px}
   .day-head{gap:8px}.day-head > div:first-child{width:100%;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
   .weekday{font-size:.84rem}.greg{font-size:1.22rem}.hij{flex-basis:100%;font-size:.95rem;margin-top:-2px}
-  .mnz{flex:1 1 40%;min-width:0;margin:2px 0 0;padding:4px 8px;font-size:.82rem;justify-content:center;border-radius:10px}.mnz+.mnz{margin-top:2px}
+  .mnz{flex:1 1 auto;max-width:100%;margin:2px 0 0;padding:4px 8px;font-size:.82rem;justify-content:center;border-radius:10px}.mnz+.mnz{margin-top:2px}
   #dMnz,#dNjm{padding:6px 8px 9px;font-size:.9rem;gap:6px}.mz-b{width:24px;height:24px}#dMnz .mz-b .ic,#dNjm .mz-b .ic{width:16px;height:16px}
-  .mnz span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mnz .ic{width:15px;height:15px}
+  .mnz span{white-space:nowrap}.mnz small{flex:none}#dMnz,#dNjm{padding-inline:8px 10px}.mnz .ic{width:15px;height:15px}
   #dOcc,#dNotes,.day-head .wx{flex-basis:100%}#dOcc{font-size:.84rem}
   .next{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;text-align:start;min-width:0;flex-wrap:wrap}
   .nx-tx{display:contents}.nx-bar{flex-basis:100%;margin-top:2px;height:5px}
@@ -448,6 +448,7 @@ footer{color:var(--muted);font-size:.82rem;text-align:center}
   .tools{grid-template-columns:1fr}
   .next{width:100%}
 }
+@media (max-width:440px){#dMnz small,#dNjm small{display:none}#dMnz,#dNjm{gap:5px}}
 @media (max-width:480px){
   table{font-size:.76rem}
   th,td{padding:5px 2px}
