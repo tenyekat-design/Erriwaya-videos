@@ -1,0 +1,31 @@
+# Fetches the open place gazetteers of Mauritania (GeoNames, OpenStreetMap) into geo-sources/ on this branch.
+name: geo-sources
+on:
+  push:
+    branches: [geo-sources]
+    paths: [".github/workflows/geo-sources.yml"]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        run: |
+          set -x
+          mkdir -p geo-sources && cd geo-sources
+          curl -fsSL -o MR.zip https://download.geonames.org/export/dump/MR.zip && unzip -o MR.zip MR.txt && rm MR.zip || true
+          curl -fsSL -o alt.zip https://download.geonames.org/export/dump/alternatenames/MR.zip && unzip -o alt.zip MR.txt -d alt && mv alt/MR.txt MR-alternatenames.txt && rm -r alt alt.zip || true
+          Q='[out:json][timeout:600];area["ISO3166-1"="MR"][admin_level=2]->.a;(node(area.a)[place];way(area.a)[place];);out center tags;'
+          for s in https://overpass-api.de/api/interpreter https://overpass.kumi.systems/api/interpreter https://overpass.private.coffee/api/interpreter; do
+            curl -fsS -m 900 --data-urlencode "data=$Q" -o osm-places.json $s && python3 -c "import json;d=json.load(open('osm-places.json'));print(len(d['elements']))" && break
+          done
+          ls -la
+          gzip -9 -f MR-alternatenames.txt || true
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f geo-sources
+          git commit -m "Geo sources $(date -u +%FT%H:%MZ)" && git push || true
