@@ -12,28 +12,38 @@ import android.os.Handler;
 import android.os.Looper;
 
 /**
- * The phone's rough position, once, for «أقرب بلدية إلى موقعي». Uses Android's own LocationManager (no Google
- * services needed) with the approximate-location permission only. The position goes to the page and nowhere else.
+ * The phone's position, once, for «أقرب مكان إلى موقعي» and «موقعي الحالي بالضبط (GPS)». Uses Android's own
+ * LocationManager (no Google services needed); with the precise-location permission it waits for a GPS fix, with the
+ * approximate one only it takes the network's. The position goes to the page and nowhere else.
  */
 final class Locator {
     interface Result { void at(double lat, double lng, boolean ok); }
 
     static final int REQUEST = 9;
     private static final String PERMISSION = "android.permission.ACCESS_COARSE_LOCATION";
+    private static final String FINE = "android.permission.ACCESS_FINE_LOCATION";
 
     static boolean allowed(Context c) {
-        return Build.VERSION.SDK_INT < 23 || c.checkSelfPermission(PERMISSION) == PackageManager.PERMISSION_GRANTED;
+        return Build.VERSION.SDK_INT < 23 || c.checkSelfPermission(PERMISSION) == PackageManager.PERMISSION_GRANTED
+                || c.checkSelfPermission(FINE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /** The precise (GPS) permission too; a phone that had granted only the approximate one is asked again for it. */
+    static boolean precise(Context c) {
+        return Build.VERSION.SDK_INT < 23 || c.checkSelfPermission(FINE) == PackageManager.PERMISSION_GRANTED;
     }
 
     static void ask(Activity a) {
-        if (Build.VERSION.SDK_INT >= 23) a.requestPermissions(new String[]{PERMISSION}, REQUEST);
+        if (Build.VERSION.SDK_INT >= 23) a.requestPermissions(new String[]{FINE, PERMISSION}, REQUEST);
     }
 
     /** Must be called on the main thread, with the permission granted. Calls back once, on the main thread. */
     static void locate(Context ctx, final Result out) {
         final LocationManager lm = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         if (lm == null) { out.at(0, 0, false); return; }
-        // a position the phone already knows (at most two hours old) is enough to pick a commune
+        final boolean gps = precise(ctx);
+        // a position the phone already knows is enough: two hours old to pick a place, or with GPS two minutes old
+        // and within 100 m (otherwise a fresh fix is waited for)
         Location best = null;
         java.util.List<String> on;
         try { on = lm.getProviders(true); } catch (Exception e) { on = new java.util.ArrayList<>(); }
@@ -43,16 +53,20 @@ final class Locator {
                 if (l != null && (best == null || l.getTime() > best.getTime())) best = l;
             } catch (Exception ignored) { }
         }
-        if (best != null && System.currentTimeMillis() - best.getTime() < 2 * 3600000L) {
+        if (best != null && (gps ? System.currentTimeMillis() - best.getTime() < 120000L && best.hasAccuracy() && best.getAccuracy() <= 100
+                                 : System.currentTimeMillis() - best.getTime() < 2 * 3600000L)) {
             out.at(best.getLatitude(), best.getLongitude(), true);
             return;
         }
         final Location old = best;
         final boolean[] done = {false};
+        final Location[] got = {null};   // the most accurate fix so far (with GPS: kept until one within 50 m, or the timeout)
         final Handler h = new Handler(Looper.getMainLooper());
         final LocationListener listener = new LocationListener() {
             @Override public void onLocationChanged(Location l) {
                 if (done[0] || l == null) return;
+                if (got[0] == null || (l.hasAccuracy() && (!got[0].hasAccuracy() || l.getAccuracy() < got[0].getAccuracy()))) got[0] = l;
+                if (gps && !(l.hasAccuracy() && l.getAccuracy() <= 50)) return;
                 done[0] = true;
                 try { lm.removeUpdates(this); } catch (Exception ignored) { }
                 out.at(l.getLatitude(), l.getLongitude(), true);
@@ -75,8 +89,9 @@ final class Locator {
             if (done[0]) return;
             done[0] = true;
             try { lm.removeUpdates(listener); } catch (Exception ignored) { }
-            if (old != null) out.at(old.getLatitude(), old.getLongitude(), true);
+            Location l = got[0] != null ? got[0] : old;
+            if (l != null) out.at(l.getLatitude(), l.getLongitude(), true);
             else out.at(0, 0, false);
-        }, 20000);
+        }, gps ? 30000 : 20000);
     }
 }
