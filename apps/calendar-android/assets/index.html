@@ -4646,18 +4646,30 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
      const w=document.createElement('a');w.href='https://wa.me/'+(SUB.whatsapp||'22236152800')+'?text='+encodeURIComponent(t);w.rel='noopener';document.body.append(w);w.click();w.remove()}
     // an individual request stays exactly as before (no plan field: it passes the old rules too); only a family one says so
     const f={id:st.id,app:appSel,phone:ph,ref,status:'new'},b=$('lkSend');b.disabled=true;m.className='ok';m.textContent=L('جارٍ الإرسال…','Envoi…');
+    // the request waits in an outbox until Firestore has it (20 Nov 2026: a request lost to a bad connection never reached
+    // the publisher); it is retried every half minute while the app is open, and when the app comes back
+    jset('mrcal.subOut',{f,at:Date.now()});const p={at:Date.now(),app:appSel,phone:ph,plan:f.plan||'one'};jset('mrcal.subReq',p);lastPoll=0;
+    const ok=await sendOut();
+    m.className='ok';m.textContent=ok?pendingText(p):'لم يصل طلبك بعد لضعف الإنترنت، وسيُرسَل تلقائيًا حين يتصل هاتفك. أبقِ التطبيق مفتوحًا قليلًا، أو أرسل صورة العملية على واتساب.';
+    b.disabled=false};
+  // sends the waiting request (mrcal.subOut), then the publisher's instant notice on Telegram; true once Firestore has it
+  let outBusy=false;
+  async function sendOut(){const o=jget('mrcal.subOut');if(!o||!o.f||outBusy)return!o;outBusy=true;const f=o.f;
     try{const r=await net(FS.replace(/\/documents$/,'')+'/documents:commit',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+st.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})});
+        body:JSON.stringify({writes:[{update:{name:DOCS+'/sub_requests/'+f.id,fields:Object.fromEntries(Object.entries(f).map(([k,v])=>[k,{stringValue:v}]))},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})},20000);
       if(!r.ok)throw new Error(r.status);
-      const p={at:Date.now(),app:appSel,phone:ph,plan:f.plan||'one'};jset('mrcal.subReq',p);m.textContent=pendingText(p);lastPoll=0;
-      // the admin's instant notice on Telegram (sub_config: tgToken, tgChat); the request is already saved either way
+      try{localStorage.removeItem('mrcal.subOut')}catch(e){}
       let tg={tgToken:SUB.tgToken,tgChat:SUB.tgChat};
       try{const g=await net(FS+'/sub_config/tg');if(g.ok){const F=(await g.json()).fields||{};tg={tgToken:F.tgToken&&F.tgToken.stringValue,tgChat:F.tgChat&&F.tgChat.stringValue}}}catch(e){}
       if(tg.tgToken&&tg.tgChat){const AP={bankily:'بنكيلي',masrvi:'مصرفي',sedad:'السداد',bim:'بيم بانك'};
-        const text=`🔔 طلب اشتراك ${f.plan==='family'?'عائلي ':''}جديد — التقويم الموريتاني\nالتطبيق: ${AP[appSel]||appSel}\nدفع من الرقم: ${ph}${ref?'\nرقم العملية: '+ref:''}\nالجهاز: ${showId(st.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
-        window.tgCall(tg.tgToken,'sendMessage',{chat_id:tg.tgChat,text}).catch(()=>{})}}
-    catch(e){m.className='ok';m.textContent='أرسل صورة العملية على واتساب، ويُفعَّل تطبيقك بعد التأكد من الدفع. أبقِ الإنترنت مفتوحًا.';jset('mrcal.subReq',{at:Date.now(),app:appSel,phone:ph,plan:'one'});lastPoll=0}
-    b.disabled=false};
+        const text=`🔔 طلب اشتراك ${f.plan==='family'?'عائلي ':''}جديد — التقويم الموريتاني\nالتطبيق: ${AP[f.app]||f.app}\nدفع من الرقم: ${f.phone}${f.ref?'\nرقم العملية: '+f.ref:''}\nالجهاز: ${showId(f.id)}\n\nتأكد من وصول المبلغ ثم فعِّله من صفحة «الاشتراكات».`;
+        window.tgCall(tg.tgToken,'sendMessage',{chat_id:tg.tgChat,text}).catch(()=>{})}
+      return true}
+    catch(e){return false}
+    finally{outBusy=false}}
+  setInterval(()=>{if(!document.hidden&&jget('mrcal.subOut'))sendOut()},30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&jget('mrcal.subOut'))sendOut()});
+  setTimeout(()=>{if(jget('mrcal.subOut'))sendOut()},3000);
   // looks for this phone's code: every few seconds just after a request, then every minute; every five minutes while locked
   setInterval(()=>{if(document.hidden)return;const p=jget('mrcal.subReq'),paid=st.until>st.now;if(paid&&!p)return;
     const every=p?(Date.now()-p.at<20*60e3?8e3:60e3):locked?5*60e3:0;if(!every||Date.now()-lastPoll<every)return;lastPoll=Date.now();fetchCode()},4000);
