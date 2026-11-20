@@ -4393,7 +4393,8 @@ new MutationObserver(ms=>{for(const m of ms){
 /* خانة الإعلان تحت بطاقة اليوم.
    SPONSOR: الإعلان المعروض؛ يظهر فقط إذا كُتب الاسم، وإلا ظهرت الدعوة «أعلن هنا» وحدها.
      name: اسم المؤسسة · logo: شعارها · banner: صورة عريضة اختيارية (نسبة 32:9) · الصور داخل مجلد assets (مثل 'img/sponsor.png')، لا من الإنترنت ·
-     line: عبارة قصيرة اختيارية · url: رابط يُفتح عند الضغط (اختياري) · tag: الوسم فوق الإعلان («إعلان» أو «بدعم من»)
+     line: عبارة قصيرة اختيارية · url: رابط يُفتح عند الضغط (اختياري) · tag: الوسم فوق الإعلان («إعلان» أو «بدعم من») ·
+     hideFrom: رقم إصدار (مثل 223) لا يظهر الإعلان ابتداءً منه، لخانة «نسخة جديدة» تختفي بعد التحديث
    AD_CONTACT: وسائل تواصل المعلنين، تظهر أزرارًا تحت «أعلن هنا»: whatsapp و phone بالصيغة الدولية بلا + (مثل '222XXXXXXXX') · email */
 const SPONSOR=RC('sponsor',{name:'',logo:'',banner:'',line:'',url:'',tag:'إعلان'});
 const AD_CONTACT=RC('ad-contact',{whatsapp:'22236152800',phone:'',email:''});   // the advertisers' WhatsApp (+222 36 15 28 00)
@@ -5043,7 +5044,11 @@ const PAY_IMG={"bankily":"data:image/webp;base64,UklGRmgKAABXRUJQVlA4IFwKAAAQLgC
   const L=['مساحتك الإعلانية أمام مستخدمي التقويم كل يوم','شعارك فوق مواقيت الصلاة، يراه المستخدم كل يوم','إعلان واحد ثابت وهادئ، دون تتبّع','لمؤسستك ومحلّك وخدمتك: تواصل معنا'];let i=0;
   setInterval(()=>{if(document.hidden||document.documentElement.classList.contains('locked'))return;i=(i+1)%L.length;sp.textContent=L[i];sp.classList.remove('roll');void sp.offsetWidth;sp.classList.add('roll')},4200)})();
 (function(){const slot=document.getElementById('adslot'),a=document.getElementById('spons');if(!slot||!a)return;
-  if(SPONSOR.name){
+  // hideFrom: a version number (like 223) from which the strip is not shown: an «update available» strip disappears once
+  // the phone runs that version (older versions show it, since they do not read this field)
+  const appV=parseInt(((document.getElementById('appVer')||{}).dataset||{}).v?.split('.')[1])||0;
+  const sponsHidden=SPONSOR.hideFrom&&appV>=+SPONSOR.hideFrom;
+  if(SPONSOR.name&&!sponsHidden){
     document.getElementById('sponsName').textContent=SPONSOR.name;
     document.getElementById('sponsTag').textContent=SPONSOR.tag||'إعلان';
     if(SPONSOR.logo){const im=document.getElementById('sponsLogo');im.src=SPONSOR.logo;im.hidden=false;}
