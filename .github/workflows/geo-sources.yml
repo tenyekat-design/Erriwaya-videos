@@ -15,10 +15,11 @@ jobs:
         run: |
           set -x
           mkdir -p geo-sources && cd geo-sources
-          git clone -q --depth 1 https://github.com/open-admin-data/mauritania-administrative-divisions oad
-          find oad -type f -not -path '*/.git/*' | xargs ls -la
-          mkdir -p admin && find oad -type f \( -iname '*.geojson' -o -iname '*.json' -o -iname '*.csv' \) -size -40M -not -path '*/.git/*' -exec cp {} admin/ \;
-          rm -rf oad
+          sudo apt-get install -y -q osmium-tool >/dev/null
+          curl -fsSL -A "erriwaya-calendar/1.0" -o mr.osm.pbf https://download.geofabrik.de/africa/mauritania-latest.osm.pbf
+          osmium tags-filter mr.osm.pbf r/ISO3166-1=MR -o b.pbf
+          osmium export b.pbf -f geojson --geometry-types=polygon -o mr-boundary.geojson
+          ls -la mr-boundary.geojson; rm mr.osm.pbf b.pbf
           ls -la
       - name: Commit
         run: |
