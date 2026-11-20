@@ -54,10 +54,10 @@ assert all(c in name for c in byc), 'village under an unknown commune'
 for w in tree:
     for m in w[1]:
         m[1] += [[v['id'], v['ar'] or v['fr'], v['fr'], float(v['lat']), float(v['lng']), 1 if v.get('approx') else 0, c[0]] for c in list(m[1]) for v in byc.get(c[0], [])]
-js = 'const WILAYAS=[\n' + ',\n'.join('  ' + json.dumps(w, ensure_ascii=False, separators=(',', ':')) for w in tree) + '\n];'
+js = "const WILAYAS=RC('places',[\n" + ',\n'.join('  ' + json.dumps(w, ensure_ascii=False, separators=(',', ':')) for w in tree) + '\n]);'
 p = ROOT / 'web/index-source.html'
 s = p.read_text(encoding='utf-8')
-s, n = re.subn(r'const WILAYAS=\[\n.*?\n\];', lambda m: js, s, count=1, flags=re.S)
+s, n = re.subn(r"const WILAYAS=RC\('places',\[\n.*?\n\]\);", lambda m: js, s, count=1, flags=re.S)
 assert n == 1
 p.write_text(s, encoding='utf-8')
 print(len(rows), 'communes,', len(vil), 'villages,', len(tree), 'wilayas')
