@@ -1469,6 +1469,14 @@ body.mushaf #v-quran.paged{background:linear-gradient(rgba(7,38,28,.86),rgba(7,3
 .mm-facts dt{color:var(--gold);font-weight:700}.mm-facts dd{margin:0;color:var(--ink)}
 .mm-more{border-color:var(--green)!important;background:var(--green)!important;color:var(--on-green)!important}
 .mm-more[aria-expanded="true"]{background:var(--surface)!important;color:var(--green)!important}
+
+/* the clock sits in the place chip, beside the place's name (20 Nov 2026), so the date card comes right under it */
+.pc-clk{flex:none;display:flex;align-items:center;gap:5px;padding:3px 9px 3px 4px;border-radius:12px;background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);color:#fff;direction:ltr}
+.pc-clk b{font-size:1.02rem;font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 1px 6px rgba(0,0,0,.3)}
+.pc-clk .clk-ic{width:26px;height:26px;background:rgba(255,255,255,.9)}.pc-clk .clk-ic svg{width:21px;height:21px}
+.cal-top{margin-bottom:-4px}
+@media (max-width:720px){.pc-clk{padding:2px 7px 2px 3px;gap:4px}.pc-clk b{font-size:.92rem}.pc-clk .clk-ic{width:22px;height:22px}.pc-clk .clk-ic svg{width:18px;height:18px}}
+@media (max-width:360px){.pc-clk .clk-ic{display:none}}
 </style>
 </head>
 <body>
@@ -1587,9 +1595,8 @@ try{var t=JSON.parse(localStorage.getItem('mrcal.theme'))||'auto',h=new Date().g
   <div class="cal-top">
     <div class="place-bar">
       <button type="button" class="place-chip" id="placeChip" data-sky="night" aria-label="تغيير المكان"><span class="pc-sky" aria-hidden="true"><i class="st s1"></i><i class="st s2"></i><i class="orb"></i><i class="cl c1"></i><i class="cl c2"></i><i class="sweep"></i></span><span class="pc-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-6.1-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.9 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg></span>
-        <span class="pc-tx"><b id="pcName"></b><small id="pcPath"></small></span><span class="pc-wx" id="pcWx" hidden></span><span class="pc-find" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span></button>
+        <span class="pc-tx"><b id="pcName"></b><small id="pcPath"></small></span><span class="pc-wx" id="pcWx" hidden></span><span class="pc-clk" title="توقيت موريتانيا (غرينتش)"><span class="clk-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="fc" cx="12" cy="12" r="9"/><path class="tk" d="M12 4.6v1.3M19.4 12h-1.3M12 19.4v-1.3M4.6 12h1.3"/><path id="clkH" class="hh" d="M12 12V7.9"/><path id="clkM" class="mh" d="M12 12V5.7"/><path id="clkS" class="sh" d="M12 13.8V5"/><circle class="pin" cx="12" cy="12" r="1.1"/></svg></span><b id="clock">--:--:--</b></span><span class="pc-find" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span></button>
     </div>
-    <div class="clock"><span class="clk-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="fc" cx="12" cy="12" r="9"/><path class="tk" d="M12 4.6v1.3M19.4 12h-1.3M12 19.4v-1.3M4.6 12h1.3"/><path id="clkH" class="hh" d="M12 12V7.9"/><path id="clkM" class="mh" d="M12 12V5.7"/><path id="clkS" class="sh" d="M12 13.8V5"/><circle class="pin" cx="12" cy="12" r="1.1"/></svg></span><b id="clock">--:--:--</b><small>توقيت موريتانيا (غرينتش)</small></div>
     <div class="city-pick" hidden><select id="citySel" aria-hidden="true" tabindex="-1"></select></div>
   </div>
 
