@@ -459,6 +459,27 @@ public class MainActivity extends Activity {
         }).start();
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html" + hashOf(getIntent()));
+        offerLink(getIntent());
+    }
+
+    /** A notification with a link (the new version's download link): a dialog with its text and a download button. */
+    private void offerLink(Intent i) {
+        String u = i == null ? null : i.getStringExtra("url");
+        if (u == null || !u.startsWith("https://")) return;
+        i.removeExtra("url");
+        String t = i.getStringExtra("urlTitle"), b = i.getStringExtra("urlText");
+        try {
+            android.app.AlertDialog d = new android.app.AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
+                    .setTitle(t == null || t.isEmpty() ? "نسخة جديدة" : t)
+                    .setMessage(b == null ? "" : b)
+                    .setPositiveButton("تنزيل النسخة الجديدة", (x, w) -> {
+                        try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(u))); } catch (Exception ignored) { }
+                    })
+                    .setNegativeButton("لاحقًا", null)
+                    .create();
+            d.show();
+            if (d.getWindow() != null) d.getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        } catch (Exception ignored) { }
     }
 
     /** A notification may open a page of the app (#sg-admin). */
@@ -472,6 +493,7 @@ public class MainActivity extends Activity {
         super.onNewIntent(intent);
         String h = hashOf(intent);
         if (!h.isEmpty() && web != null) web.evaluateJavascript("location.hash='" + h + "'", null);
+        offerLink(intent);
     }
 
     private void doLocate() {
