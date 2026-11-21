@@ -1,0 +1,44 @@
+{
+ "createTime": "2026-11-20T11:00:35.235478Z",
+ "fields": {
+  "author": {
+   "stringValue": "tenyekat@gmail.com"
+  },
+  "body": {
+   "stringValue": ""
+  },
+  "breaking": {
+   "booleanValue": true
+  },
+  "category": {
+   "stringValue": ""
+  },
+  "createdAt": {
+   "timestampValue": "2026-11-20T11:00:35.115Z"
+  },
+  "dossier": {
+   "stringValue": ""
+  },
+  "imageCount": {
+   "integerValue": "0"
+  },
+  "portals": {
+   "arrayValue": {}
+  },
+  "thumb": {
+   "stringValue": ""
+  },
+  "title": {
+   "stringValue": "فرنسا:رئيس الوزراء الفرنسي الأسبق دومينيك دوفيلبان يعلن ترشحه رسميا للانتخابات الرئاسية"
+  },
+  "updatedAt": {
+   "timestampValue": "2026-11-20T11:01:45.075Z"
+  },
+  "writer": {
+   "stringValue": ""
+  }
+ },
+ "images": [],
+ "name": "projects/erriwaya-68022/databases/(default)/documents/articles/HzWK39HLWtFsMivdHEIw",
+ "updateTime": "2026-11-20T11:01:45.081727Z"
+}
